@@ -1,0 +1,98 @@
+login {
+  background-size: contain;
+  background-color: $white;
+  $bgImageHeight: 30%;
+  $landingHeight: 100% - $bgImageHeight;
+
+  ion-label,
+  ion-item:not([margin-bottom]) {
+    margin: 0 !important;
+    margin-bottom: 0 !important;
+  }
+
+  .forgot-password {
+    margin-right: -10px;
+    font-size: 13px;
+  }
+
+  .external-header {
+    margin-bottom: 50px;
+  }
+
+  .logo-wrapper {
+    width: 100%;
+    height: 30%;
+    background-size: cover;
+    background-image: url('../assets/image/bg/login.svg');
+    background-color: $blue50;
+    top: 0;
+    position: absolute;
+    left: 0;
+    right: 0;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .scroll-content {
+    overflow-y: hidden;
+  }
+
+  .stacked-logo {
+    // transition: transform .4s ease-in-out;
+    position: absolute;
+    height: 15rem;
+    top: 55%;
+    width: 15rem;
+    z-index: 999;
+  }
+
+  .bg-white50 {
+    width: 100%;
+  }
+
+  .landing-content {
+    position: absolute;
+    top: $bgImageHeight;
+    width: 100%;
+    height: $landingHeight;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: center;
+    padding-top: 0;
+
+    form {
+      z-index: 10;
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+      justify-content: center;
+      background-color: $blue;
+      transition: margin .4s ease-out;
+    }
+
+    &.no-padding {
+      justify-content: flex-start;
+      transition: 'justify-content'.4s ease-in;
+
+      form {
+        margin-top: 0;
+        transition: margin .4s ease-in;
+      }
+    }
+  }
+
+  .button-wrapper {
+    flex: 0 0 126px;
+  }
+
+  .staging-build {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 80px;
+  }
+}

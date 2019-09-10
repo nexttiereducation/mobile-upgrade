@@ -1,0 +1,24 @@
+survey-phsp-results-college {
+  display: block;
+  ion-card-header.card-header-md {
+    font-size: 11px;
+    letter-spacing: 0.5px;
+    padding: 8px 16px;
+    color: $steel;
+  }
+  ion-card.card-md {
+    .displayHeader {
+      line-height: 1.1;
+      margin-bottom: -4px;
+      font-size: 40px;
+    }
+    &.collegeNameCard {
+      ion-card-header.card-header-md {
+        padding-bottom: 0;
+        + ion-item ion-avatar {
+          margin-right: 8px;
+        }
+      }
+    }
+  }
+}

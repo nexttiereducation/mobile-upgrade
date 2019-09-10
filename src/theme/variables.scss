@@ -1,6 +1,5 @@
 // Ionic Variables and Theming. For more info, please see:
 // http://ionicframework.com/docs/theming/
-
 /** Ionic CSS Variables **/
 :root {
   /** primary **/
@@ -10,7 +9,6 @@
   --ion-color-primary-contrast-rgb: 255, 255, 255;
   --ion-color-primary-shade: #3171e0;
   --ion-color-primary-tint: #4c8dff;
-
   /** secondary **/
   --ion-color-secondary: #0cd1e8;
   --ion-color-secondary-rgb: 12, 209, 232;
@@ -18,7 +16,6 @@
   --ion-color-secondary-contrast-rgb: 255, 255, 255;
   --ion-color-secondary-shade: #0bb8cc;
   --ion-color-secondary-tint: #24d6ea;
-
   /** tertiary **/
   --ion-color-tertiary: #7044ff;
   --ion-color-tertiary-rgb: 112, 68, 255;
@@ -26,7 +23,6 @@
   --ion-color-tertiary-contrast-rgb: 255, 255, 255;
   --ion-color-tertiary-shade: #633ce0;
   --ion-color-tertiary-tint: #7e57ff;
-
   /** success **/
   --ion-color-success: #10dc60;
   --ion-color-success-rgb: 16, 220, 96;
@@ -34,7 +30,6 @@
   --ion-color-success-contrast-rgb: 255, 255, 255;
   --ion-color-success-shade: #0ec254;
   --ion-color-success-tint: #28e070;
-
   /** warning **/
   --ion-color-warning: #ffce00;
   --ion-color-warning-rgb: 255, 206, 0;
@@ -42,7 +37,6 @@
   --ion-color-warning-contrast-rgb: 255, 255, 255;
   --ion-color-warning-shade: #e0b500;
   --ion-color-warning-tint: #ffd31a;
-
   /** danger **/
   --ion-color-danger: #f04141;
   --ion-color-danger-rgb: 245, 61, 61;
@@ -50,7 +44,6 @@
   --ion-color-danger-contrast-rgb: 255, 255, 255;
   --ion-color-danger-shade: #d33939;
   --ion-color-danger-tint: #f25454;
-
   /** dark **/
   --ion-color-dark: #222428;
   --ion-color-dark-rgb: 34, 34, 34;
@@ -58,7 +51,6 @@
   --ion-color-dark-contrast-rgb: 255, 255, 255;
   --ion-color-dark-shade: #1e2023;
   --ion-color-dark-tint: #383a3e;
-
   /** medium **/
   --ion-color-medium: #989aa2;
   --ion-color-medium-rgb: 152, 154, 162;
@@ -66,7 +58,6 @@
   --ion-color-medium-contrast-rgb: 255, 255, 255;
   --ion-color-medium-shade: #86888f;
   --ion-color-medium-tint: #a2a4ab;
-
   /** light **/
   --ion-color-light: #f4f5f8;
   --ion-color-light-rgb: 244, 244, 244;
@@ -75,3 +66,161 @@
   --ion-color-light-shade: #d7d8da;
   --ion-color-light-tint: #f5f6f9;
 }
+
+// Ionic Variables and Theming. For more info, please see:
+// http://ionicframework.com/docs/v2/theming/
+// Font path is used to include ionicons,
+// roboto, and noto sans fonts
+$font-path: "./../assets/fonts";
+// The app direction is used to include
+// rtl styles in your app. For more info, please see:
+// http://ionicframework.com/docs/theming/rtl-support/
+$app-direction: ltr;
+@import "./../../node_modules/@ionic/angular/themes/ionic.globals.scss";
+// Shared Variables
+// --------------------------------------------------
+// To customize the look and feel of this app, you can override
+// the Sass variables found in Ionic's source scss files.
+// To view all the possible Ionic variables, see:
+// http://ionicframework.com/docs/v2/theming/overriding-ionic-variables/
+// Named Color Variables
+// --------------------------------------------------
+// Named colors makes it easy to reuse colors on various components.
+// It's highly recommended to change the default colors
+// to match your app's branding. Ionic uses a Sass map of
+// colors so you can add, rename and remove colors as needed.
+// The "primary" color is the only required color in the map.
+//
+// NOTE: Adding a color to the $colors map will generate CSS styles
+// for all Ionic components. This inflates the size of your CSS file
+// and can slow down your app. If you only need to use the color in
+// a few places, just add it as a variable (e.g. $pink: #FF85FF).
+$black: transparentize(#000000, 0.13);
+$blackTwo: transparentize(#000000, 0.45);
+$blue: #3692cc;
+$blue50: transparentize($blue, 0.5);
+$blueDark: #10446a;
+$blueDarkest: #0c3350;
+$blueMedium: #2e7cb7;
+$gray: #afafaf;
+$grayDark: #484848;
+$grayDark50: transparentize($grayDark, 0.5);
+$grayLight: lighten($gray, 15%);
+$grayLighter: #e1e1e1;
+$grayLighter50: transparentize($grayLighter, 0.5);
+$grayLightest-1: #f5f5f5;
+$grayLightest-2: #f2f2f2;
+$grayLightest: #fafafa;
+$grayLightest90: transparentize($grayLightest, 0.1);
+$green: #31ba82;
+$green10: transparentize($green, 0.9);
+$orange: #fbb534;
+$red: #e81756;
+$red10: transparentize($red, 0.9);
+$steel: #8d8d8f;
+$steel50: transparentize($steel, 0.5);
+$white: #ffffff;
+$white10: transparentize($white, 0.9);
+$white50: transparentize($white, 0.5);
+$colors: (primary: (base: $blue,
+    contrast: $white),
+  black: $black,
+  grayDark50: $grayDark50,
+  green: $green,
+  orange: (base: $orange,
+    contrast: $white),
+  steel: $steel,
+  white: $white,
+  white50: $white50);
+// Variables
+// --------------------------------------------------
+// Shared Sass variables can go here
+$chipHeight: 2.5rem;
+$toolbarTitleFontSize: 1.6rem;
+$chip-button-size: $chipHeight;
+$chip-icon-font-size: 1.6rem;
+$chip-icon-size: $chipHeight;
+$font-family-base: "Roboto",
+"Helvetica Neue",
+sans-serif;
+$img-placeholder-background: linear-gradient(to right,
+  $grayLighter50,
+  $grayLightest-1,
+  $grayLighter);
+$menu-width: 100%;
+$menu-small-width: 100%;
+$toolbar-border-color: transparent;
+$toolbar-text-color: $black;
+// App iOS Variables
+// --------------------------------------------------
+// iOS only Sass variables can go here
+$chip-ios-height: $chipHeight;
+$range-ios-bar-height: 20px;
+$range-ios-knob-background-color: $blue;
+$range-ios-padding-vertical: 0;
+$range-ios-pin-color: $white;
+$searchbar-ios-background-color: $grayLightest;
+$searchbar-ios-input-background-color: $grayLighter50;
+$searchbar-ios-input-clear-icon-svg: "<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'><polygon fill='#5b5b5b' points='405,136.798 375.202,107 256,226.202 136.798,107 107,136.798 226.202,256 107,375.202 136.798,405 256,285.798 375.202,405 405,375.202 285.798,256'/></svg>"; // $searchbar-md-input-clear-icon-svg
+$searchbar-ios-input-height: 2.9rem;
+$searchbar-ios-min-height: 4.9rem;
+$tabs-ios-tab-color-inactive: $black;
+$tabs-ios-tab-icon-size: 2rem;
+$toast-ios-border-radius: 0;
+$toolbar-ios-button-border-radius: 50%;
+$toolbar-ios-button-font-size: $toolbarTitleFontSize;
+// $toolbar-ios-height: 55px;
+$toolbar-ios-padding: 0;
+$toolbar-ios-title-font-size: $toolbarTitleFontSize;
+$toolbar-ios-title-font-weight: 400;
+// App Material Design Variables
+// --------------------------------------------------
+// Material Design only Sass variables can go here
+$badge-md-border-radius: 50%;
+$button-md-large-font-size: 1.7rem;
+$button-md-large-height: 4.9rem;
+$button-md-small-font-size: 1.2rem;
+$checkbox-md-icon-size: 2.1rem;
+$chip-md-height: $chipHeight;
+$item-md-divider-background: $grayLighter50;
+$item-md-divider-color: $black;
+$item-md-divider-font-size: 1.4rem;
+$item-md-detail-push-color: $black;
+$item-md-detail-push-show: true;
+$searchbar-md-background-color: $grayLightest;
+$tabs-md-tab-color-inactive: $black;
+$tabs-md-tab-min-height: 4.9rem;
+// $tabs-md-tab-opacity: 1;
+$toolbar-md-button-border-radius: 50%;
+// $toolbar-md-height: 55px;
+$toolbar-md-padding: 0;
+$toolbar-md-text-color: $black;
+$toolbar-md-title-font-size: $toolbarTitleFontSize;
+$toolbar-md-title-text-color: $black;
+$toolbar-order-md: (back-button: 0,
+  menu-toggle-start: 1,
+  buttons-left: 2,
+  buttons-start: 3,
+  content: 4,
+  buttons-end: 5,
+  buttons-right: 6,
+  menu-toggle-end: 7,
+); // $toolbar-order-ios
+// App Windows Variables
+// --------------------------------------------------
+// Windows only Sass variables can go here
+// App Theme
+// --------------------------------------------------
+// Ionic apps can have different themes applied, which can
+// then be future customized. This import comes last
+// so that the above variables are used and Ionic's
+// default are overridden.
+@import "./../../node_modules/@ionic/angular/themes/ionic.theme.default.scss";
+// Ionicons
+// --------------------------------------------------
+// The premium icon font for Ionic. For more info, please see:
+// http://ionicframework.com/docs/v2/ionicons/
+@import "ionicons";
+// Fonts
+// --------------------------------------------------
+@import "roboto";

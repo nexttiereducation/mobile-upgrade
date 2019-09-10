@@ -1,0 +1,123 @@
+<ion-header mode="ios">
+  <ion-toolbar mode="ios">
+    <ion-buttons start>
+      <button clear
+              color="black"
+              icon-only
+              ion-button
+              (click)="closeShareModal()">
+        <ion-icon name="close"></ion-icon>
+      </button>
+    </ion-buttons>
+    <ion-title mode="ios"> Send {{ itemType }} </ion-title>
+  </ion-toolbar>
+</ion-header>
+<ion-content fullscreen="false"
+             [ngSwitch]="itemType">
+  <!-- SCHOLARSHIP -->
+  <ion-item no-lines
+            *ngSwitchCase="'Scholarship'">
+    <ion-avatar item-left
+                *ngIf="imageUrl">
+      <img class="avatar-shadow bg-white"
+           [src]="imageUrl">
+    </ion-avatar>
+    <div class="body truncate">{{ item.name || item.scholarship?.name }}</div>
+    <div class="subhead truncate">
+      <ng-template [ngIf]="item.award_amount || item.scholarship?.award_amount">
+        <span class="bold text-green"> {{ item.award_amount || item.scholarship?.award_amount }} </span>
+        <span>&thinsp;|&thinsp;</span>
+      </ng-template> {{ item.sponsor?.name || item.scholarship?.sponsor.name }}
+    </div>
+  </ion-item>
+  <!-- COLLEGE -->
+  <ion-item no-lines
+            *ngSwitchCase="'College'">
+    <ion-avatar item-left>
+      <img class="avatar-shadow"
+           [src]="item.photo_url || item.institution.photo_url">
+    </ion-avatar>
+    <div class="body truncate"> {{ item.name || item.institution_name || item.institution.name }} </div>
+    <p>
+      <ion-icon class="subhead"
+                name="pin"></ion-icon>
+      <span class="subhead"
+            *ngIf="item.city && item.state">{{ item.city + ', ' + item.state }}</span>
+      <span class="subhead"
+            *ngIf="item.institution?.city && item.institution?.state">
+        {{ item.institution?.city + ', ' + item.institution?.state }} </span>
+    </p>
+  </ion-item>
+  <!-- TASK -->
+  <ion-item no-lines
+            *ngSwitchCase="'Task'">
+    <ion-avatar item-left>
+      <img class="bg-white"
+           [class.avatar-shadow]="item.task?.task_type == 'CS'"
+           [src]="imageUrl">
+    </ion-avatar>
+    <div class="body truncate">{{ item.task.name }}</div>
+    <p>
+      <ion-icon class="subhead"
+                name="calendar"></ion-icon>
+      <span class="subhead"
+            *ngIf="item.dueDate">Due by {{ item.dueDate | date }}</span>
+    </p>
+  </ion-item>
+  <!-- CONNECTIONS -->
+  <ion-scroll class="connections"
+              scrollX="true">
+    <ion-grid no-padding>
+      <ion-row align-items-between
+               justify-content-start
+               margin-horizontal
+               nowrap>
+        <ion-col align-self-stretch
+                 justify-content-start
+                 margin-right
+                 tappable
+                 text-center
+                 *ngFor="let connection of (connectionProvider.all$ | async)"
+                 (click)="toggleSelection(connection)">
+          <ion-icon class="selected-check"
+                    name="checkmark"
+                    [class.checked]="connection?.isSelected"></ion-icon>
+          <img class="img-avatar"
+               [src]="connection?.profile_photo || 'assets/image/contact/avatar-gray.svg'">
+          <div class="chartPercentage"
+               text-center
+               [style.margin-top.px]="6">{{ connection?.get_full_name || connection?.full_name }}</div>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </ion-scroll>
+  <form (ngSubmit)="send()">
+    <ion-item padding>
+      <ion-input name="message"
+                 [disabled]="!selectedConnections.size"
+                 [placeholder]="selectedConnections.size ? 'Add a message...' : 'Select recipient(s), then add a message'"
+                 [(ngModel)]="message"></ion-input>
+    </ion-item>
+  </form>
+</ion-content>
+<ion-footer>
+  <ion-toolbar [color]="(isSent || isSending) ? 'green' : (selectedConnections.size ? 'primary' : 'white')">
+    <button class="bold"
+            clear
+            color="white"
+            full
+            ion-button
+            type="submit"
+            *ngIf="selectedConnections.size"
+            (click)="send()"
+            [disabled]="isSending"> {{ isSent ? 'Sent!' : (isSending ? 'Sending...' : 'Send') }} </button>
+    <button class="bold"
+            clear
+            color="primary"
+            full
+            ion-button
+            type="button"
+            *ngIf="!selectedConnections.size"
+            (click)="closeShareModal()"> Cancel </button>
+  </ion-toolbar>
+</ion-footer>

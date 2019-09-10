@@ -1,0 +1,23 @@
+messaging {
+  // > ion-header {
+  //   height: 65px;
+  //   > .toolbar-md {
+  //     height: 65px;
+  //   }
+  //   > ion-navbar {
+  //     padding-top: 20px !important;
+  //   }
+  //   + ion-content {
+  //     > .fixed-content,
+  //     > .scroll-content {
+  //       margin-top: 65px !important;
+  //     }
+  //   }
+  // }
+  .item.item-block {
+    min-height: 80px;
+  }
+  .body + .actionIcon {
+    padding-top: 15px;
+  }
+}

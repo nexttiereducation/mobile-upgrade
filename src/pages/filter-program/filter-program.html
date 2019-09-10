@@ -1,0 +1,98 @@
+<ion-header mode="ios">
+  <ion-navbar hideBackButton mode="ios">
+    <ion-buttons start>
+      <button ion-button icon-only clear (click)="back()">
+        <ion-icon name="ios-arrow-back"></ion-icon>
+      </button>
+    </ion-buttons>
+    <ion-title mode="ios">
+      <div class="subhead">{{ title || '' }}</div>
+      {{ category.name }}
+    </ion-title>
+    <ion-buttons end>
+      <button ion-button
+              [color]="category.isActive ? 'primary' : 'steel'"
+              [disabled]="!category.isActive"
+              (click)="clear()">Clear</button>
+    </ion-buttons>
+  </ion-navbar>
+  <ion-searchbar mode="ios"
+                 [(ngModel)]="searchValue"
+                 (ionClear)="clearSearch($event)"
+                 (ionInput)="search($event)"
+                 (keyup.enter)="closeKeyboard()">
+  </ion-searchbar>
+</ion-header>
+
+<ion-content>
+  <ng-template [ngIf]="!category.selectedItems[0]?.id && !items?.length">
+    <empty-state *ngIf="(!searchValue || !searchValue?.length) && addItems"
+                 [emptyState]="addItems"></empty-state>
+    <empty-state *ngIf="searchValue && !isSearching && noResults"
+                 [emptyState]="noResults"></empty-state>
+  </ng-template>
+  <ng-template [ngIf]="itemType === 'program'">
+    <ng-template [ngIf]="category.selectedItems[0]">
+      <ion-item-divider light>Selected Program</ion-item-divider>
+      <ion-item>
+        <ion-radio checked="true"></ion-radio>
+        <ion-label>{{ category.selectedItems[0].id }}</ion-label>
+      </ion-item>
+    </ng-template>
+    <ng-template [ngIf]="items?.length">
+      <ion-item-divider light>Search Results</ion-item-divider>
+      <ion-list radio-group
+                mode="ios"
+                [(ngModel)]="selectedItem">
+        <ng-template ngFor let-item [ngForOf]="items" let-i="index">
+          <ion-item padding-left
+                    *ngIf="i===0 || (item?.name !== items[i-1]?.name)">
+            <ion-radio value="{{item.name}}" (ionSelect)="selectProgram(item)"></ion-radio>
+            <ion-label>{{ item.name }}</ion-label>
+          </ion-item>
+        </ng-template>
+      </ion-list>
+    </ng-template>
+  </ng-template>
+  <ng-template [ngIf]="itemType === 'major'">
+    <ng-template [ngIf]="category?.selectedItems && category.selectedItems?.length">
+      <ion-item-divider light>Selected Majors</ion-item-divider>
+      <ion-item padding-left
+                *ngFor="let item of category?.selectedItems">
+        <ion-label>{{ item.displayValue }}</ion-label>
+      </ion-item>
+    </ng-template>
+    <ng-template [ngIf]="items?.length">
+      <ion-item-divider light>Search Results</ion-item-divider>
+      <ion-list>
+        <ng-template ngFor let-item [ngForOf]="items" let-i="index">
+          <ion-item padding-left
+                    *ngIf="i===0 || (item?.name !== items[i-1]?.name)">
+            <ion-checkbox [checked]="item?.isActive && category?.isActive"
+                          (ionChange)="toggleMajor(item)"></ion-checkbox>
+            <ion-label>{{ item.name }}</ion-label>
+          </ion-item>
+        </ng-template>
+      </ion-list>
+    </ng-template>
+  </ng-template>
+</ion-content>
+
+<ion-footer *ngIf="category.isActive || filterService.filter?.activeChildCount">
+  <ion-toolbar color="primary">
+    <button ion-button clear full icon-right
+            color="white"
+            *ngIf="filterService.isCyol"
+            (click)="viewSummary()">
+      Next
+      <ion-icon name="arrow-forward"></ion-icon>
+    </button>
+    <button ion-button clear full
+            color="white"
+            *ngIf="!filterService.isCyol"
+            (click)="applyFilters()">
+      Apply Filters
+      <ion-badge margin-left class="text-blue bg-white">{{ filterService.filter?.activeChildCount }}</ion-badge>
+    </button>
+  </ion-toolbar>
+</ion-footer>

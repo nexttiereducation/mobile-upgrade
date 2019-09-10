@@ -1,0 +1,29 @@
+colleges-list {
+  display: block;
+
+  ion-card {
+    height: 245px;
+    max-height: 245px;
+    min-height: 245px;
+    width: 100%;
+    max-width: 100%;
+    min-width: 100%;
+  }
+
+  img.img-block {
+    display: block;
+    height: 150px;
+    width: 100%;
+    object-fit: fill;
+  }
+
+  .chip-container {
+    overflow-x: auto;
+    margin-right: 9px;
+    align-items: flex-end;
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+  }
+}

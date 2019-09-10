@@ -1,0 +1,54 @@
+$icomoon-font-path: "../assets/fonts" !default;
+
+@font-face {
+  font-family: 'NextTier-Icons';
+  src:
+    url($icomoon-font-path + '/NextTier-Icons.ttf') format('truetype'),
+    url($icomoon-font-path + '/NextTier-Icons.woff') format('woff'),
+    url($icomoon-font-path + '/NextTier-Icons.svg#NextTier-Icons') format('svg');
+  font-weight: normal;
+  font-style: normal;
+}
+
+[class*="nt-"]:before {
+  /* use !important to prevent issues with browser extensions that change fonts */
+  font-family: 'NextTier-Icons';
+  font-style: normal;
+  font-weight: normal;
+  font-variant: normal;
+  text-transform: none;
+  line-height: 1;
+  display: block;
+  /* Better Font Rendering =========== */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+@mixin makeIcon($arg, $val) {
+
+  .nt-#{$arg}:before,
+  .ion-ios-nt-#{$arg}:before,
+  .ion-md-nt-#{$arg}:before {
+    content: $val;
+  }
+}
+
+$nt-icons: (colleges: "\1f3eb",
+  down: "\25bc",
+  left: "\25c0",
+  messaging: "\1f4ac",
+  profile: "\1f464",
+  right: "\25ba",
+  save: "\2606",
+  saved: "\2605",
+  saving: "\272e",
+  scholarships: "\1f4b0",
+  tasks: "\2705",
+  unsave: "\2715",
+  up: "\25b2"
+);
+
+@each $name,
+$code in $nt-icons {
+  @include makeIcon($name, $code);
+}

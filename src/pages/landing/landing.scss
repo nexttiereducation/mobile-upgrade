@@ -1,0 +1,51 @@
+landing {
+  background-size: contain;
+  background-color: $white;
+  $bgImageHeight: 30%;
+  $landingHeight: 100% - $bgImageHeight;
+  .scroll-content {
+    overflow-y: hidden;
+  }
+
+  .backsplash {
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    z-index: -1;
+    .bg-image {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: $bgImageHeight;
+      background-size: cover;
+      background-image: url('../assets/image/bg/login.svg');
+    }
+    > * {
+      width: 100%;
+    }
+  }
+
+  .bg-white50 {
+    width: 100%;
+  }
+
+  .landing-content {
+    position: absolute;
+    top: $bgImageHeight;
+    width: 100%;
+    height: $landingHeight;
+    .stacked-logo {
+      margin-top: -60px;
+      height: 185px;
+      width: 175px;
+    }
+  }
+
+  .staging-build {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 80px;
+  }
+}

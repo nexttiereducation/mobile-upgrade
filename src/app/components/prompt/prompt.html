@@ -1,0 +1,32 @@
+<ion-header mode="ios">
+  <ion-toolbar mode="ios">
+    <ion-buttons start>
+      <button ion-button clear color="black" icon-only (click)="viewCtrl.dismiss()">
+        <ion-icon name="ios-arrow-up"></ion-icon>
+      </button>
+    </ion-buttons>
+    <ion-title mode="ios">{{ taskTracker?.task.name }}</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <div class="medium" padding
+      *ngIf="prompt.type !== 'high-school' && prompt.type !== 'multiple-choice'">{{ prompt.question }}</div>
+  <prompt-test-dates
+      *ngIf="prompt.type === 'multiple-choice'"
+      [newPrompt]="newPrompt"
+      [prompt]="prompt"></prompt-test-dates>
+  <prompt-select
+      *ngIf="prompt.type === 'drop-down'"
+      [institution]="taskTracker.institution"
+      [newPrompt]="newPrompt"
+      [prompt]="prompt"></prompt-select>
+  <high-school
+      *ngIf="prompt.type === 'high-school'"
+      [isPrompt]="true"></high-school>
+  <prompt-scholarship
+      *ngIf="prompt.type === 'polar'"
+      [newPrompt]="newPrompt"
+      [prompt]="prompt"
+      [scholarshipId]="taskTracker.task.scholarship"></prompt-scholarship>
+</ion-content>

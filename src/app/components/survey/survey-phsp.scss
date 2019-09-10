@@ -1,0 +1,11 @@
+survey-phsp {
+  form {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    justify-content: space-between;
+  }
+  .surveyQuestion:not([no-padding]) {
+    padding: 24px 24px 8px 20px;
+  }
+}

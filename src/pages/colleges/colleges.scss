@@ -1,0 +1,15 @@
+colleges {
+  .title-nav-icon {
+    font-size: 1em;
+    margin-left: 4px;
+  }
+  .title-button {
+    opacity: 1 !important;
+    text-transform: none;
+    font-weight: 400;
+    span,
+    ion-icon {
+      color: $black !important;
+    }
+  }
+}

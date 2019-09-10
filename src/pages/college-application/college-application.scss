@@ -1,0 +1,17 @@
+college-application {
+  .importance-section {
+    > div {
+      border-bottom: 1px solid white;
+    }
+    .tinyHeader {
+      margin-bottom: 2px;
+    }
+    .body {
+      text-transform: capitalize;
+    }
+    ul {
+      padding-left: 15px;
+      margin: 0px;
+    }
+  }
+}

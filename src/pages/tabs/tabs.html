@@ -1,0 +1,24 @@
+<ion-tabs class="app-tabs"
+          selectedIndex="0"
+          #tabContainer>
+  <ion-tab tabIcon="nt-tasks"
+           tabTitle="Tasks"
+           tabUrlPath="tasks"
+           [root]="tasks"></ion-tab>
+  <ion-tab tabBadgeStyle="green"
+           tabIcon="nt-colleges"
+           tabTitle="Colleges"
+           tabUrlPath="colleges"
+           [root]="colleges"
+           [tabBadge]="(recsService.college$ | async)?.length"></ion-tab>
+  <ion-tab tabBadgeStyle="green"
+           tabIcon="nt-scholarships"
+           tabTitle="Scholarships"
+           tabUrlPath="scholarships"
+           [root]="scholarships"
+           [tabBadge]="(recsService.scholarship$ | async)?.length"></ion-tab>
+  <ion-tab tabIcon="nt-profile"
+           tabTitle="Profile"
+           tabUrlPath="profile"
+           [root]="profile"></ion-tab>
+</ion-tabs>

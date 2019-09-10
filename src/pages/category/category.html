@@ -1,0 +1,44 @@
+<ion-header mode="ios">
+  <ion-navbar mode="ios">
+    <ion-title mode="ios">
+      <div class="subhead">{{ title }}</div>
+      {{ category.name }}
+    </ion-title>
+    <ion-buttons end>
+      <button ion-button
+              [color]="category.isActive ? 'primary' : 'steel'"
+              [disabled]="!category.isActive"
+              (click)="clear()">Clear</button>
+    </ion-buttons>
+  </ion-navbar>
+</ion-header>
+<ion-content>
+  <ion-list>
+    <button ion-item
+            *ngFor="let subCategory of category.subCategories"
+            [class.bg-blue10]="subCategory.isActive"
+            [hidden]="subCategory.dependency && categoryService.filterArray?.length < 1"
+            (click)="viewDetail(subCategory)">
+      {{ subCategory.name || subCategory.displayName }}
+      <ion-badge item-end *ngIf="subCategory.isActive">{{ subCategory.activeChildCount }}</ion-badge>
+    </button>
+  </ion-list>
+</ion-content>
+<ion-footer *ngIf="category.isActive">
+  <ion-toolbar color="primary">
+    <button ion-button clear full icon-right
+            color="white"
+            *ngIf="title"
+            (click)="viewSummary()">
+      Next
+      <ion-icon name="arrow-forward"></ion-icon>
+    </button>
+    <button ion-button clear full icon-right
+            color="white"
+            *ngIf="!title"
+            (click)="applyFilters()">
+      Apply Filters
+      <ion-badge margin-left class="text-blue bg-white">{{ filterService.filter?.activeChildCount }}</ion-badge>
+    </button>
+  </ion-toolbar>
+</ion-footer>

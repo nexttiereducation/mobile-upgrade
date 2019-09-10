@@ -1,0 +1,32 @@
+filter {
+  .label-ios {
+    margin-left: 16px;
+  }
+  .item-ios {
+    padding-left: 0px;
+  }
+}
+
+ion-app.platform-ios {
+  filter {
+    ion-header.header.header-md,
+    ion-header.header.header-md ion-navbar {
+      min-height: 65px !important;
+      height: 65px !important;
+    }
+    ion-header.header.header-md ion-navbar {
+      padding-top: 24px;
+      + ion-content > .scroll-content {
+        margin-top: 65px;
+      }
+    }
+  }
+}
+
+ion-app:not(.platform-ios) {
+  filter {
+    ion-content > .scroll-content {
+      margin-top: 45px;
+    }
+  }
+}

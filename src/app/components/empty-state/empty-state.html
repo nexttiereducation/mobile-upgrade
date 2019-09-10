@@ -1,0 +1,5 @@
+<ng-template [ngIf]="emptyState">
+  <div class="emptyStateTitle text-blue">{{ emptyState.title }}</div>
+  <img [src]="imageUrl" padding-vertical />
+  <div class="italic body">{{ emptyState.body }}</div>
+</ng-template>

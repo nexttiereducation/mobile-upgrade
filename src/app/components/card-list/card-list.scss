@@ -1,0 +1,106 @@
+.cardStyle {
+  height: auto;
+  margin: 8px 8px 0;
+  max-width: calc(100% - 16px) !important;
+  min-width: calc(100% - 16px) !important;
+  width: calc(100% - 16px) !important;
+}
+
+[card-list] {
+  ion-card.card-md {
+    @extend .cardStyle;
+
+    button[small] {
+      padding: 0 0.6em;
+
+      ion-icon {
+        font-size: 24px;
+        padding-right: 4px;
+      }
+    }
+
+    >ion-item {
+      padding-left: 9px;
+
+      ion-avatar[item-left] {
+        margin-right: 13px;
+      }
+    }
+  }
+}
+
+@keyframes gradients {
+  0% {
+    background-position: 0 0;
+  }
+
+  100% {
+    background-position: 100% 0;
+  }
+}
+
+@mixin gradientAnimation($bgColor) {
+  animation-duration: 7.5s;
+  animation-iteration-count: infinite;
+  animation-name: gradients;
+  animation-timing-function: linear;
+  background-position: 0 0;
+  background-size: 600%;
+  position: relative;
+
+  &::before {
+    background-color: transparentize($bgColor, 0.5);
+    content: '';
+    display: block;
+    height: 100%;
+    position: absolute;
+    width: 100%;
+    z-index: 0;
+  }
+}
+
+@mixin greyGradient($baseColor, $gradientColor) {
+  @include gradientAnimation($baseColor);
+  background-image: linear-gradient(to right,
+      transparentize($gradientColor, 1),
+      transparentize($gradientColor, 1) 20%,
+      transparentize($gradientColor, 0.5) 35%, $gradientColor 50%,
+      transparentize($gradientColor, 0.5) 65%,
+      transparentize($gradientColor, 1) 80%);
+}
+
+.grey-gradient {
+  @include greyGradient($grayLighter, $gray);
+}
+
+.darker-grey-gradient {
+  @include greyGradient($gray, $steel);
+}
+
+ion-card.placeholder {
+  @extend .cardStyle;
+
+  .label {
+    div {
+      @extend .grey-gradient;
+
+      &:nth-child(1) {
+        height: 18px;
+        margin-bottom: 8px;
+      }
+
+      &:nth-child(2) {
+        height: 10px;
+      }
+    }
+  }
+
+  ion-avatar {
+    border-radius: 50%;
+    @extend .grey-gradient;
+
+    &::before {
+      border-radius: 50%;
+    }
+  }
+}

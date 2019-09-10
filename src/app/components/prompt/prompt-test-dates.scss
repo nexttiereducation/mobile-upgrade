@@ -1,0 +1,22 @@
+prompt-test-dates {
+  display: block;
+  height: 100%;
+  > form {
+    display: block;
+    height: calc(100% - 45px);
+    overflow-y: auto;
+  }
+  ion-footer > ion-toolbar {
+    padding: 1px;
+    &.valid {
+      .toolbar-background.toolbar-background-md {
+        background: $green;
+      }
+    }
+    &.invalid {
+      .toolbar-background.toolbar-background-md {
+        background: $orange;
+      }
+    }
+  }
+}

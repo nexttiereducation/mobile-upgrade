@@ -1,0 +1,18 @@
+survey-phsp-table {
+  ion-checkbox {
+    &.checkbox-md .checkbox-icon {
+        border: 2px solid $blue;
+      &.checkbox-checked {
+        background-color: $blue;
+      }
+      .checkbox-inner {
+        border-color: white;
+      }
+    }
+  }
+  .search-results {
+    max-height: 250px;
+    overflow-x: hidden;
+    overflow-y: scroll;
+  }
+}

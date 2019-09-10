@@ -1,0 +1,12 @@
+tasks {
+  ion-title {
+    ion-select {
+      max-width: unset;
+      width: auto;
+      justify-content: center;
+      .select-text {
+        flex: 0 0 auto;
+      }
+    }
+  }
+}

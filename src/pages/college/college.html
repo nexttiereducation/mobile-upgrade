@@ -1,0 +1,63 @@
+<ion-header mode="ios">
+  <ion-navbar mode="ios">
+    <ion-title class="avatar-title"
+               mode="ios"
+               *ngIf="college && college.name">
+      <ion-avatar class="avatar-shadow"
+                  item-left>
+        <img [src]="college?.photo_url" />
+      </ion-avatar>
+      <div class="avatar-title-text"
+           text-left
+           *ngIf="college">
+        <div class="truncate body">{{ college.name }}</div>
+        <div class="truncate subhead"
+             *ngIf="!isRecd">
+          <ion-icon name="pin"></ion-icon>
+          <span>
+            {{ college.city?.length && college.state?.length
+                ? college.city + ', ' + college.state
+                : '&nbsp;' }}
+          </span>
+        </div>
+        <div class="truncate subhead"
+             *ngIf="isRecd && recommender"
+             style="display: flex; flex-direction: row; align-items: center; justify-content: flex-start">
+          <span [style.line-height.px]="20">Rec'd by</span>
+          <img [src]="recommender?.profile_photo"
+               [style.height.px]="20" />
+          <span class="bold"
+                [style.line-height.px]="20">
+            {{recommender?.get_full_name}}
+          </span>
+        </div>
+      </div>
+    </ion-title>
+    <ion-buttons end>
+      <button clear
+              icon-only
+              ion-button
+              (click)="toggleSaved($event)"
+              [class.changing]="isChanging"
+              [color]="isSaved ? 'primary' : 'black'"
+              [disabled]="isChanging">
+        <ion-icon name="nt-saved"
+                  *ngIf="isSaved || isChanging"></ion-icon>
+        <ion-icon name="nt-save"
+                  *ngIf="!isSaved || isChanging"></ion-icon>
+      </button>
+    </ion-buttons>
+  </ion-navbar>
+</ion-header>
+<ion-content no-padding>
+  <ion-tabs class="college-tabs"
+            selectedIndex="selectedIndex"
+            tabsPlacement="bottom"
+            *ngIf="college?.details">
+    <ion-tab *ngFor="let tab of tabs"
+             [root]="tab.page"
+             [rootParams]="college"
+             [tabIcon]="tab.icon"></ion-tab>
+  </ion-tabs>
+  <ion-loading *ngIf="!college?.details"></ion-loading>
+</ion-content>

@@ -1,0 +1,16 @@
+survey-phsp-results {
+  display: block;
+  ion-card-header.card-header-md {
+    font-size: 11px;
+    letter-spacing: 0.5px;
+    padding: 8px 16px;
+    color: $steel;
+  }
+  ion-card.card-md {
+    .displayHeader {
+      line-height: 1.1;
+      margin-bottom: -4px;
+      font-size: 40px;
+    }
+  }
+}

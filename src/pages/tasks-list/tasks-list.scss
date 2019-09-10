@@ -1,0 +1,51 @@
+tasks-list {
+  ion-card.card-md {
+    margin: 5px 5px 0 5px;
+    width: calc(100% - 10px);
+    ion-item.item,
+    div.item-inner {
+      padding: 0 !important;
+    }
+    ion-label.label-md {
+      margin: 10px 0 10px 10px;
+    }
+    .body {
+      margin-bottom: 3px;
+    }
+    ion-list.list-md ion-item-options button.button {
+      margin: 0;
+      height: 100%;
+    }
+  }
+  ion-list.list-md ion-item-options button.button {
+    margin: 0;
+    height: 100%;
+  }
+  button[expandable] {
+    transition: background-color 0.25s ease-in-out;
+  }
+
+  @keyframes slidingAnimation {
+    0% {
+      transform: translate3d(0,0,0);
+      -webkit-transform: translate3d(0,0,0);
+    }
+
+    50% {
+      transform: translate3d(-140px,0,0);
+      -webkit-transform: translate3d(-140px,0,0);
+    }
+
+    100% {
+      transform: translate3d(0,0,0);
+      -webkit-transform: translate3d(0,0,0);
+    }
+  }
+
+  .itemSlidingAnimation {
+      -webkit-animation: slidingAnimation;
+      animation: slidingAnimation;
+      -webkit-animation-duration: 2000ms;
+      animation-duration: 2000ms;
+  }
+}

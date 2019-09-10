@@ -1,0 +1,73 @@
+college {
+  ion-header .avatar-shadow {
+    margin-right: 5px;
+  }
+
+  >ion-content>.scroll-content {
+    overflow: hidden;
+  }
+
+  .scroll-content .scroll-content {
+    padding-top: 0 !important;
+  }
+
+  button.changing {
+    transform: opacity display 500ms ease-in-out;
+
+    .button-inner {
+      position: relative;
+    }
+
+    &[disabled] {
+      opacity: 1 !important;
+    }
+
+    ion-icon {
+      &[name=nt-save]:before {
+        color: $blue50;
+      }
+
+      &[name=nt-saved] {
+        animation: pulseInOut 1s infinite linear;
+        position: absolute;
+        left: 0%;
+        right: 0%;
+        width: 100%;
+        text-align: center;
+
+        &:before {
+          color: $blue50;
+        }
+      }
+    }
+  }
+
+  .gray-sections ion-col.col {
+    >a:first-child:last-child {
+      // height: 132px;
+
+      .button-inner {
+        justify-content: space-between;
+        font-weight: 400;
+      }
+    }
+
+    // &:last-of-type img:first-child:last-child {
+    //   max-height: 80px;
+    // }
+  }
+}
+
+@keyframes pulseInOut {
+  0% {
+    opacity: 0;
+  }
+
+  50% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0;
+  }
+}

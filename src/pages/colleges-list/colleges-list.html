@@ -1,0 +1,183 @@
+<ion-header mode="ios">
+  <ion-navbar mode="ios">
+    <ion-title mode="ios"
+               tappable>
+      <div class="subhead text-grayDark50"
+           *ngIf="list?.name">Colleges</div> {{ list?.name || 'Colleges' }}
+    </ion-title>
+    <ion-buttons end
+                 messaging-button></ion-buttons>
+  </ion-navbar>
+  <ion-toolbar no-padding
+               *ngIf="list?.name !== 'Recommended'
+                      && list?.name !== 'Saved'
+                      && list?.name !== 'Matching'">
+    <ion-grid no-padding>
+      <ion-row align-items-start>
+        <ion-col>
+          <ion-searchbar debounce="1000"
+                         mode="ios"
+                         type="search"
+                         (ionClear)="clearSearch($event)"
+                         (ionInput)="onSearch($event)"
+                         (keyup.enter)="keyboard.close()"
+                         [(ngModel)]="searchTerm"></ion-searchbar>
+        </ion-col>
+        <ion-col col-auto>
+          <button class="filter-button"
+                  clear
+                  color="grayDark50"
+                  icon-only
+                  ion-button
+                  (click)="onFilterOpen($event)">
+            <ion-icon name="funnel"></ion-icon>
+          </button>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </ion-toolbar>
+</ion-header>
+<ion-content class="bg-grayLight">
+  <!-- <ng-template [ngIf]="(colleges$ | async)
+                       && (colleges$ | async)?.length
+                       && !(collegeService.isInitializing$ | async)"> -->
+  <ion-list approxItemHeight="245px"
+            buffer="5"
+            card-list
+            [virtualScroll]="colleges$ | async">
+    <ion-card virtualTrackBy="collegeService.getIdFromCollege"
+              *virtualItem="let college; let index = index">
+      <ion-item tappable
+                (click)="viewCollege(college)">
+        <ion-avatar class="avatar-shadow"
+                    item-left>
+          <img height="40"
+               useImg
+               width="40"
+               [src]="getLogo(college)" />
+        </ion-avatar>
+        <h3 class="truncate"> {{ college | collegeName }} </h3>
+        <div class="subhead"
+             *ngIf="getCollegeObj(college)?.city && getCollegeObj(college)?.state">
+          <ion-icon name="pin"></ion-icon> {{ getCollegeObj(college)?.city + ', ' + getCollegeObj(college)?.state }}
+        </div>
+      </ion-item>
+      <img alt="College Image"
+           cache="true"
+           class="img-block"
+           height="150"
+           tappable
+           (click)="viewCollege(college)"
+           [src]="college | collegeBgUrl"
+           [width]="platform.width()" />
+      <ion-grid no-padding>
+        <ion-row align-items-center
+                 justify-content-start
+                 nowrap>
+          <ion-col col-auto
+                   *ngIf="!isSaved(college)"
+                   [ngSwitch]="isSavingIndex === index">
+            <button class="lowercase"
+                    clear
+                    color="primary"
+                    icon-start
+                    ion-button
+                    small
+                    (click)="setSavingIndex(index); followCollege(college)"
+                    *ngSwitchCase="false">
+              <ion-icon name="nt-save"></ion-icon>
+              <span>Save</span>
+            </button>
+            <button class="lowercase"
+                    clear
+                    color="primary"
+                    icon-start
+                    ion-button
+                    small
+                    *ngSwitchCase="true">
+              <ion-icon name="nt-saving"></ion-icon>
+              <span>Saving...</span>
+            </button>
+          </ion-col>
+          <ion-col col-auto
+                   *ngIf="isSaved(college)">
+            <button class="lowercase"
+                    clear
+                    color="green"
+                    icon-start
+                    ion-button
+                    small
+                    (click)="unsaveCollege(college)">
+              <ion-icon name="nt-saved"></ion-icon>
+              <span>Saved</span>
+            </button>
+          </ion-col>
+          <ion-col col-auto
+                   *ngIf="list?.name === 'Recommended' && user.isStudent">
+            <button class="lowercase"
+                    clear
+                    color="primary"
+                    icon-start
+                    ion-button
+                    small
+                    (click)="removeRec(college)">
+              <ion-icon name="nt-unsave"></ion-icon>
+              <span>Remove</span>
+            </button>
+          </ion-col>
+          <ion-col col-auto>
+            <button class="lowercase"
+                    clear
+                    color="primary"
+                    icon-start
+                    ion-button
+                    small
+                    *ngIf="(connectionService.all$ | async)?.length"
+                    (click)="openSendModal(college)">
+              <ion-icon name="send"></ion-icon>
+              <span>Send</span>
+            </button>
+          </ion-col>
+          <ion-col class="chip-container"
+                   *ngIf="list?.name === 'Recommended' && college?.recommender">
+            <ion-chip class="truncate recommender"
+                      color="green">
+              <ion-label>{{ college?.recommender.get_full_name }}</ion-label>
+            </ion-chip>
+          </ion-col>
+        </ion-row>
+      </ion-grid>
+    </ion-card>
+  </ion-list>
+  <ion-infinite-scroll threshold="20%"
+                       (ionInfinite)="infiniteScrollLoad($event)">
+    <ion-infinite-scroll-content loadingSpinner="bubbles"
+                                 loadingText="Loading...">
+    </ion-infinite-scroll-content>
+  </ion-infinite-scroll>
+  <!-- </ng-template> -->
+  <ng-template [ngIf]="(colleges$ | async)
+                       && !(colleges$ | async).length
+                       && !(collegeService.isInitializing$ | async)">
+    <empty-state *ngIf="emptyState"
+                 [emptyState]="emptyState"></empty-state>
+  </ng-template>
+  <ng-template [ngIf]="!(colleges$ | async)
+                       && (collegeService.isInitializing$ | async)">
+    <ion-list>
+      <ion-card class="placeholder"
+                *ngFor="let placeholder of placeholders">
+        <ion-item>
+          <ion-avatar class="grey-gradient"
+                      item-left></ion-avatar>
+          <div class="grey-gradient"></div>
+          <div class="grey-gradient"></div>
+        </ion-item>
+        <div class="darker-grey-gradient img-block"></div>
+      </ion-card>
+    </ion-list>
+  </ng-template>
+</ion-content>
+<ion-footer>
+  <div list-tabs></div>
+</ion-footer>

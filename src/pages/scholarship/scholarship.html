@@ -1,0 +1,528 @@
+<ion-header mode="ios">
+  <ion-navbar mode="ios">
+    <ion-title class="body text-white truncate"
+               mode="ios"
+               text-left
+               [hidden]="!scholarship"> {{ scholarship?.name }} <div class="subhead truncate">
+        <ng-template [ngIf]="scholarship?.award_amount">
+          <span class="bold text-green">{{ scholarship?.award_amount }}</span>
+          <span>&thinsp;|&thinsp;</span>
+        </ng-template>
+        <span *ngIf="scholarship?.sponsor?.name">{{ scholarship?.sponsor?.name }}</span>
+      </div>
+    </ion-title>
+    <ion-buttons end
+                 *ngIf="!recommendation">
+      <button clear
+              icon-only
+              ion-button
+              (click)="toggleSaved($event)"
+              [color]="scholarship?.saved ? 'primary' : 'black'">
+        <ion-icon name="nt-saved"
+                  *ngIf="scholarship?.saved"></ion-icon>
+        <ion-icon name="nt-save"
+                  *ngIf="!scholarship?.saved"></ion-icon>
+      </button>
+    </ion-buttons>
+  </ion-navbar>
+  <ion-toolbar color="white"
+               no-padding
+               *ngIf="recommendation">
+    <ion-title class="avatar-title not-centered"
+               mode="ios">
+      <ion-avatar item-left="">
+        <img class="avatar-shadow"
+             [src]="recommendation.recommender?.profile_photo">
+      </ion-avatar>
+      <div class="avatar-title-text"
+           text-left>
+        <div class="tinyText text-grayDark50">Recommended by</div>
+        <div class="body">{{ recommendation.recommender?.get_full_name }}</div>
+      </div>
+    </ion-title>
+    <ion-buttons end="">
+      <button clear
+              icon-only
+              ion-button
+              (click)="toggleSaved($event)"
+              [color]="scholarship?.saved ? 'primary' : 'black'">
+        <ion-icon name="nt-saved"
+                  *ngIf="scholarship?.saved"></ion-icon>
+        <ion-icon name="nt-save"
+                  *ngIf="!scholarship?.saved"></ion-icon>
+      </button>
+      <button clear
+              icon-only
+              ion-button
+              (click)="removeRecommendation($event)"
+              [hidden]="scholarship?.saved">
+        <ion-icon name="nt-unsave"></ion-icon>
+      </button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+<ion-content>
+  <div class="gray-sections"
+       *ngIf="scholarship">
+    <ng-template [ngIf]="scholarship.criteria_details">
+      <div>Criteria</div>
+      <div class="body paragraph spaced"
+           padding>{{ scholarship.criteria_details }}</div>
+    </ng-template>
+    <ng-template [ngIf]="scholarship.award_amount || scholarship.deadline_details">
+      <div>Overview</div>
+      <ion-grid>
+        <ion-row no-padding="">
+          <ion-col *ngIf="scholarship.award_amount">
+            <div class="tinyHeader text-green">Award Amount</div>
+            <div class="displayTitle text-green"
+                 text-center>{{ scholarship.award_amount }}</div>
+            <div class="tinyText italic"
+                 text-center>{{ scholarship.award_count }}</div>
+          </ion-col>
+          <ion-col *ngIf="scholarship.deadline_details">
+            <div class="tinyHeader">Application Deadline</div>
+            <ng-template let-deadline
+                         ngFor
+                         [ngForOf]="scholarship.deadlines_formatted">
+              <div class="displayTitle text-blue"
+                   text-center>{{ deadline.date }}</div>
+              <div class="tinyText italic"
+                   text-center
+                   *ngIf="scholarship.deadlines_formatted.length">{{ 'due in ' + deadline.distance }}</div>
+            </ng-template>
+          </ion-col>
+        </ion-row>
+        <ion-row *ngIf="scholarship.sponsor?.name">
+          <ion-col>
+            <div class="tinyHeader text-black">Sponsor</div>
+            <div class="displayTitle flex align-center"
+                 padding-horizontal
+                 text-center>{{ scholarship.sponsor.name }}</div>
+          </ion-col>
+        </ion-row>
+      </ion-grid>
+    </ng-template>
+    <ng-template [ngIf]="scholarship.avail_to_detail
+                         || scholarship.associated_college
+                         || scholarship.associated_highschool
+                         || scholarship.num_apps
+                         || scholarship.award_type_detail
+                         || scholarship.award_coverage
+                         || scholarship.award_schedule
+                         || scholarship.renewable
+                         || scholarship.repay_required
+                         || scholarship.repay_detail
+                         || scholarship.awarded_annually !== null
+                         || scholarship.unlimited_awards !== null">
+      <div style="height:0; padding:0">&nbsp;</div>
+      <ion-list class="white-borders detail-list no-min-height"
+                no-margin>
+        <ion-item class="bg-grayLightest-1"
+                  *ngIf="scholarship.avail_to_detail">
+          <ion-label>Eligibility</ion-label>
+          <div item-content="">{{ scholarship.avail_to_detail }}</div>
+        </ion-item>
+        <ion-item class="bg-grayLightest-1"
+                  *ngIf="scholarship.associated_college">
+          <ion-label>Associated college</ion-label>
+          <div item-content="">{{ scholarship.associated_college }}</div>
+        </ion-item>
+        <ion-item class="bg-grayLightest-1"
+                  *ngIf="scholarship.associated_highschool">
+          <ion-label>Associated high school</ion-label>
+          <div item-content="">{{ scholarship.associated_highschool }}</div>
+        </ion-item>
+        <ion-item class="bg-grayLightest-1"
+                  *ngIf="scholarship.num_apps">
+          <ion-label>Applicants</ion-label>
+          <div item-content="">{{ scholarship.num_apps | number:'1.0-0' }} / year</div>
+        </ion-item>
+        <ion-item class="bg-grayLightest-1"
+                  *ngIf="scholarship.award_type_detail">
+          <ion-label>Award details</ion-label>
+          <div item-content="">{{ scholarship.award_type_detail }}</div>
+        </ion-item>
+        <ion-item class="bg-grayLightest-1"
+                  *ngIf="scholarship.award_coverage && scholarship.award_amount &&
+                         (scholarship.award_coverage !== scholarship.award_amount)">
+          <ion-label>Award coverage</ion-label>
+          <div item-content="">{{ scholarship.award_coverage }}</div>
+        </ion-item>
+        <ion-item class="bg-grayLightest-1"
+                  *ngIf="scholarship.award_schedule">
+          <ion-label>Award schedule</ion-label>
+          <div item-content="">{{ scholarship.award_schedule }}</div>
+        </ion-item>
+        <!-- 1. Renewable
+     2. Separate app required
+     3. Unlimited awards available -->
+        <ion-item class="bg-grayLightest-1"
+                  *ngIf="scholarship.renewable">
+          <span class="body">Renewable</span>
+          <ion-icon class="text-steel50"
+                    item-end
+                    name="information-circle"
+                    *ngIf="scholarship.renewable && scholarship.renew_details?.length"
+                    (click)="showMoreInfo(scholarship.renew_details)"></ion-icon>
+          <ion-icon color="primary"
+                    item-end
+                    name="checkmark">
+          </ion-icon>
+        </ion-item>
+        <ion-item class="bg-grayLightest-1"
+                  *ngIf="scholarship.repay_required">
+          <span class="body">Repayment required</span>
+          <ion-icon class="text-steel50"
+                    item-end
+                    name="information-circle"
+                    *ngIf="scholarship.repay_detail"
+                    (click)="showMoreInfo(scholarship.repay_detail)"></ion-icon>
+          <ion-icon color="primary"
+                    item-end
+                    name="checkmark"></ion-icon>
+        </ion-item>
+        <ion-item class="bg-grayLightest-1"
+                  *ngIf="scholarship.school_specific">
+          <span class="body">School-specific</span>
+          <ion-icon color="primary"
+                    item-end
+                    name="checkmark">
+          </ion-icon>
+        </ion-item>
+        <ion-item class="bg-grayLightest-1"
+                  *ngIf="scholarship.separate_app_required">
+          <span class="body">Separate app required</span>
+          <ion-icon color="primary"
+                    item-end
+                    name="checkmark">
+          </ion-icon>
+        </ion-item>
+        <ion-item class="bg-grayLightest-1"
+                  *ngIf="scholarship.unlimited_awards">
+          <span class="body">Unlimited awards available</span>
+          <ion-icon color="primary"
+                    item-end
+                    name="checkmark">
+          </ion-icon>
+        </ion-item>
+      </ion-list>
+    </ng-template>
+    <!-- <ion-row *ngIf="scholarship.avg_awards &&
+      !(scholarship.min_awards && scholarship.min_awards &&
+        scholarship.min_awards === scholarship.max_awards)">
+    <ion-col>Average # awarded</ion-col>
+    <ion-col>{{scholarship.avg_awards}} / year</ion-col>
+  </ion-row>
+  <ion-row *ngIf="scholarship.min_awards || scholarship.max_awards">
+    <ion-col [ngSwitch]="hasRange('awards', true)">
+    <ng-template [ngSwitchCase]="isTrue"># Awarded</ng-template>
+    <ng-template ngSwitchDefault>{{scholarship.min_awards ? 'Min # awarded' : 'Max # awarded'}}</ng-template>
+    </ion-col>
+    <ion-col>
+    <span *ngIf="scholarship.min_awards">{{scholarship.min_awards}}<span *ngIf="!scholarship.max_awards">&nbsp;/ year</span></span>
+    <ng-template [ngIf]="scholarship.max_awards && scholarship.max_awards !== scholarship.min_awards">
+    <span *ngIf="hasRange('awards', true)">&nbsp;-&nbsp;</span>
+    <span *ngIf="scholarship.max_awards">{{scholarship.max_awards}} / year</span>
+    </ng-template>
+    </ion-col>
+  </ion-row> -->
+    <ng-template [ngIf]="scholarship.enrollment_level?.length
+                         || scholarship.criteria?.min_ged
+                         || scholarship.criteria?.max_ged
+                         || scholarship.criteria?.min_class_rank
+                         || scholarship.criteria?.max_class_rank
+                         || scholarship.criteria?.min_gpa
+                         || scholarship.criteria?.max_gpa
+                         || scholarship.criteria?.min_act
+                         || scholarship.criteria?.max_act
+                         || scholarship.criteria?.min_sat_composite
+                         || scholarship.criteria?.max_sat_composite
+                         || scholarship.criteria?.min_sat_verbal
+                         || scholarship.criteria?.min_sat_math
+                         || scholarship.criteria?.min_sat_writing
+                         || scholarship.criteria?.min_toefl
+                         || scholarship.min_age
+                         || scholarship.max_age
+                         || scholarship.gender
+                         || scholarship.citizenship?.length
+                         || scholarship.ethnicity?.length
+                         || scholarship.race?.length
+                         || scholarship.marital_status?.length
+                         || scholarship.military_aff?.length
+                         || scholarship.religion?.length">
+      <div>Requirements</div>
+      <div class="bg-grayLightest-1 chip-list"
+           padding
+           text-left>
+        <ng-template [ngIf]="scholarship.enrollment_level?.length">
+          <div class="tinyHeader">Grade level</div>
+          <div class="chips">
+            <ion-chip color="primary"
+                      *ngFor="let level of scholarship.enrollment_level">
+              <ion-label>{{ level }}</ion-label>
+            </ion-chip>
+          </div>
+        </ng-template>
+        <ng-template [ngIf]="scholarship.criteria?.min_ged || scholarship.criteria?.max_ged">
+          <div class="tinyHeader"
+               [ngSwitch]="hasRange('ged')">
+            <ng-template [ngSwitchCase]="isTrue">GED</ng-template>
+            <ng-template ngSwitchDefault="">{{ scholarship.criteria?.min_ged ? 'Minimum GED' : 'Maximum GED' }}
+            </ng-template>
+          </div>
+          <div class="chips">
+            <ion-chip color="primary">
+              <ion-label>
+                <span *ngIf="scholarship.criteria?.min_ged">{{ scholarship.criteria?.min_ged }}</span>
+                <span *ngIf="hasRange('ged')">&nbsp;-&nbsp;</span>
+                <span *ngIf="scholarship.criteria?.max_ged">{{ scholarship.criteria?.max_ged }}</span>
+              </ion-label>
+            </ion-chip>
+          </div>
+        </ng-template>
+        <ng-template [ngIf]="scholarship.criteria?.min_class_rank || scholarship.criteria?.max_class_rank">
+          <div class="tinyHeader"
+               [ngSwitch]="hasRange('class_rank')">
+            <ng-template [ngSwitchCase]="isTrue">Class Rank</ng-template>
+            <ng-template ngSwitchDefault="">
+              {{ scholarship.criteria?.min_class_rank ? 'Class Rank Minimum' : 'Class Rank Maximum' }}</ng-template>
+          </div>
+          <div class="chips">
+            <ion-chip color="primary">
+              <ion-label>
+                <span *ngIf="scholarship.criteria?.min_class_rank">{{ scholarship.criteria?.min_class_rank }}</span>
+                <span *ngIf="hasRange('class_rank')">&nbsp;-&nbsp;</span>
+                <span *ngIf="scholarship.criteria?.max_class_rank">{{ scholarship.criteria?.max_class_rank }}</span>
+              </ion-label>
+            </ion-chip>
+          </div>
+        </ng-template>
+        <ng-template [ngIf]="scholarship.criteria?.min_gpa || scholarship.criteria?.max_gpa">
+          <div class="tinyHeader"
+               [ngSwitch]="hasRange('gpa')">
+            <ng-template [ngSwitchCase]="isTrue">GPA</ng-template>
+            <ng-template ngSwitchDefault="">{{ scholarship.criteria?.min_gpa ? 'Minimum GPA' : 'Maximum GPA' }}
+            </ng-template>
+          </div>
+          <div class="chips">
+            <ion-chip color="primary">
+              <ion-label>
+                <span *ngIf="scholarship.criteria?.min_gpa">{{ scholarship.criteria?.min_gpa | number: '1.2' }}</span>
+                <span *ngIf="hasRange('gpa')">&nbsp;-&nbsp;</span>
+                <span *ngIf="scholarship.criteria?.max_gpa">{{ scholarship.criteria?.max_gpa | number: '1.2' }}</span>
+              </ion-label>
+            </ion-chip>
+          </div>
+        </ng-template>
+        <ng-template [ngIf]="scholarship.criteria?.min_act || scholarship.criteria?.max_act">
+          <div class="tinyHeader"
+               [ngSwitch]="hasRange('act')">
+            <ng-template [ngSwitchCase]="isTrue">ACT</ng-template>
+            <ng-template ngSwitchDefault="">{{ scholarship.criteria?.min_act ? 'Minimum ACT' : 'Maximum ACT' }}
+            </ng-template>
+          </div>
+          <div class="chips">
+            <ion-chip color="primary">
+              <ion-label>
+                <span *ngIf="scholarship.criteria?.min_act">{{ scholarship.criteria?.min_act }}</span>
+                <span *ngIf="hasRange('act')">&nbsp;-&nbsp;</span>
+                <span *ngIf="scholarship.criteria?.max_act">{{ scholarship.criteria?.max_act }}</span>
+              </ion-label>
+            </ion-chip>
+          </div>
+        </ng-template>
+        <ng-template [ngIf]="scholarship.criteria?.min_sat_composite || scholarship.criteria?.max_sat_composite">
+          <div class="tinyHeader"
+               [ngSwitch]="hasRange('sat_composite')">
+            <ng-template [ngSwitchCase]="isTrue">SAT</ng-template>
+            <ng-template ngSwitchDefault="">
+              {{ scholarship.criteria?.min_sat_composite ? 'Minimum SAT' : 'Maximum SAT' }}</ng-template>
+          </div>
+          <div class="chips">
+            <ion-chip color="primary">
+              <ion-label>
+                <span
+                      *ngIf="scholarship.criteria?.min_sat_composite">{{ scholarship.criteria?.min_sat_composite }}</span>
+                <span *ngIf="hasRange('sat_composite')">&nbsp;-&nbsp;</span>
+                <span
+                      *ngIf="scholarship.criteria?.max_sat_composite">{{ scholarship.criteria?.max_sat_composite }}</span>
+              </ion-label>
+            </ion-chip>
+          </div>
+        </ng-template>
+        <ng-template [ngIf]="scholarship.criteria?.min_sat_verbal">
+          <div class="tinyHeader">Minimum SAT verbal</div>
+          <div class="chips">
+            <ion-chip color="primary">
+              <ion-label>{{ scholarship.criteria?.min_sat_verbal }}</ion-label>
+            </ion-chip>
+          </div>
+        </ng-template>
+        <ng-template [ngIf]="scholarship.criteria?.min_sat_math">
+          <div class="tinyHeader">Minimum SAT math</div>
+          <div class="chips">
+            <ion-chip color="primary">
+              <ion-label>{{ scholarship.criteria?.min_sat_math }}</ion-label>
+            </ion-chip>
+          </div>
+        </ng-template>
+        <ng-template [ngIf]="scholarship.criteria?.min_sat_writing">
+          <div class="tinyHeader">Minimum SAT writing</div>
+          <div class="chips">
+            <ion-chip color="primary">
+              <ion-label>{{ scholarship.criteria?.min_sat_writing }}</ion-label>
+            </ion-chip>
+          </div>
+        </ng-template>
+        <ng-template [ngIf]="scholarship.criteria?.min_toefl">
+          <div class="tinyHeader">Minimum TOEFL <span class="tinyText">(Test of English as a Foreign Language)</span>
+          </div>
+          <div class="chips">
+            <ion-chip color="primary">
+              <ion-label>{{ scholarship.criteria?.min_toefl }}</ion-label>
+            </ion-chip>
+          </div>
+        </ng-template>
+        <ng-template [ngIf]="scholarship.min_age">
+          <div class="tinyHeader">Minimum age</div>
+          <div class="chips">
+            <ion-chip color="primary">
+              <ion-label>{{ scholarship.min_age }}</ion-label>
+            </ion-chip>
+          </div>
+        </ng-template>
+        <ng-template [ngIf]="scholarship.max_age">
+          <div class="tinyHeader">Maximum age</div>
+          <div class="chips">
+            <ion-chip color="primary">
+              <ion-label>{{ scholarship.max_age }}</ion-label>
+            </ion-chip>
+          </div>
+        </ng-template>
+        <ng-template [ngIf]="scholarship.gender">
+          <div class="tinyHeader">Gender</div>
+          <div class="chips">
+            <ion-chip color="primary">
+              <ion-label>{{ scholarship.gender }}</ion-label>
+            </ion-chip>
+          </div>
+        </ng-template>
+        <ng-template [ngIf]="scholarship.citizenship?.length">
+          <div class="tinyHeader">Citizenship</div>
+          <div class="chips">
+            <ion-chip color="primary"
+                      *ngFor="let citizenship of scholarship.citizenship">
+              <ion-label>{{ citizenship }}</ion-label>
+            </ion-chip>
+          </div>
+        </ng-template>
+        <ng-template [ngIf]="scholarship.ethnicity?.length">
+          <div class="tinyHeader">Ethnicity</div>
+          <div class="chips">
+            <ion-chip color="primary"
+                      *ngFor="let ethnicity of scholarship.ethnicity">
+              <ion-label>{{ ethnicity }}</ion-label>
+            </ion-chip>
+          </div>
+        </ng-template>
+        <ng-template [ngIf]="scholarship.race?.length">
+          <div class="tinyHeader">Race</div>
+          <div class="chips">
+            <ion-chip color="primary"
+                      *ngFor="let race of scholarship.race">
+              <ion-label>{{ race }}</ion-label>
+            </ion-chip>
+          </div>
+        </ng-template>
+        <ng-template [ngIf]="scholarship.marital_status?.length">
+          <div class="tinyHeader">Marital status</div>
+          <div class="chips">
+            <ion-chip color="primary"
+                      *ngFor="let marital_status of scholarship.marital_status">
+              <ion-label>{{ marital_status }}</ion-label>
+            </ion-chip>
+          </div>
+        </ng-template>
+        <ng-template [ngIf]="scholarship.military_aff?.length">
+          <div class="tinyHeader">Military Affiliation</div>
+          <div class="chips">
+            <ion-chip color="primary"
+                      *ngFor="let military_aff of scholarship.military_aff">
+              <ion-label>{{ military_aff }}</ion-label>
+            </ion-chip>
+          </div>
+        </ng-template>
+        <ng-template [ngIf]="scholarship.religion?.length">
+          <div class="tinyHeader">Religion</div>
+          <div class="chips">
+            <ion-chip color="primary"
+                      *ngFor="let religion of scholarship.religion">
+              <ion-label>{{ religion }}</ion-label>
+            </ion-chip>
+          </div>
+        </ng-template>
+      </div>
+    </ng-template>
+    <ng-template [ngIf]="scholarship.contact?.name
+                         || scholarship.contact?.title
+                         || scholarship.contact?.email
+                         || scholarship.contact?.phone">
+      <div>Contact Information</div>
+      <ion-grid>
+        <ion-row *ngIf="scholarship.contact?.name || scholarship.contact?.title">
+          <ion-col class="center-center">
+            <div class="displayTitle"
+                 style="padding-bottom: 5px"
+                 text-center
+                 *ngIf="scholarship.contact?.name">{{ scholarship.contact?.name }}</div>
+            <div text-center
+                 *ngIf="scholarship.contact?.title"
+                 [class.body]="scholarship.contact?.name"
+                 [class.displayTitle]="!scholarship.contact?.name">{{ scholarship.contact?.title }}</div>
+          </ion-col>
+        </ion-row>
+        <ion-row *ngIf="scholarship.contact?.email || scholarship.contact?.phone">
+          <ion-col no-padding
+                   *ngIf="scholarship.contact?.email"
+                   [attr.col-6]="(scholarship.contact?.email && scholarship.contact?.phone) ? true : null">
+            <a class="external-link external-link-email"
+               clear
+               full
+               ion-button
+               no-margin
+               [href]="'mailto:' + scholarship.contact?.email">
+              <div class="tinyHeader">Email</div>
+              <img src="assets/image/contact/website.svg">
+              <div class="body not-bold truncate fit">{{ scholarship.contact?.email }}</div>
+            </a>
+          </ion-col>
+          <ion-col no-padding
+                   *ngIf="scholarship.contact?.phone"
+                   [attr.col-6]="(scholarship.contact?.email && scholarship.contact?.phone) ? true : null">
+            <a class="external-link external-link-phone"
+               clear
+               full
+               ion-button
+               no-margin
+               [href]="'tel:' + scholarship.contact?.phone">
+              <div class="tinyHeader">Phone</div>
+              <img src="assets/image/contact/phone.svg">
+              <div class="body not-bold">{{ scholarship.contact?.phone | phone }}</div>
+            </a>
+          </ion-col>
+        </ion-row>
+      </ion-grid>
+    </ng-template>
+  </div>
+  <loading *ngIf="!scholarship"></loading>
+</ion-content>
+<ion-footer>
+  <ion-toolbar color="primary">
+    <button clear
+            color="white"
+            full
+            ion-button
+            (click)="linkService.open(scholarship.application_url)">View Application</button>
+  </ion-toolbar>
+</ion-footer>

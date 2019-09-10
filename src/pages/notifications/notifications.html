@@ -1,0 +1,60 @@
+<ion-header mode="ios">
+  <ion-navbar hideBackButton
+              mode="ios">
+    <ion-buttons start>
+      <button clear
+              icon-only
+              ion-button
+              (click)="notificationService.markAllRead()">
+        <ion-icon name="checkmark-circle-outline"></ion-icon>
+      </button>
+    </ion-buttons>
+    <ion-title mode="ios">Notifications</ion-title>
+    <ion-buttons end>
+      <button clear
+              icon-only
+              ion-button
+              (click)="close()">
+        <ion-icon name="ios-arrow-forward"></ion-icon>
+      </button>
+    </ion-buttons>
+  </ion-navbar>
+</ion-header>
+<ion-content class="bg-grayLightest">
+  <ion-list *ngIf="(notificationService.all$ | async)?.length">
+    <ion-item-sliding *ngFor="let notification of (notificationService.all$ | async)"
+                      #item>
+      <button ion-item
+              large
+              (click)="view(notification, item)">
+        <div class="tinyText text-steel"
+             *ngIf="notification.created_on"
+             [style.margin-bottom.px]="4"> {{notification.created_on | date:'MMM dd yyyy • h:mma'}} </div>
+        <p [class.bold]="notification.read === false"
+           [style.white-space]="'normal'"> {{notification.body}} </p>
+      </button>
+      <ion-item-options side="left"
+                        *ngIf="!notification.read">
+        <button color="primary"
+                expandable
+                ion-button
+                (click)="markRead(notification, item)">
+          <ion-icon name="checkmark"></ion-icon> Mark as Read
+        </button>
+      </ion-item-options>
+      <ion-item-options side="right">
+        <button color="red"
+                expandable
+                ion-button
+                (click)="delete(notification, item)">
+          <ion-icon name="close"></ion-icon> Delete
+        </button>
+      </ion-item-options>
+    </ion-item-sliding>
+  </ion-list>
+  <empty-state *ngIf="(notificationService.all$ | async)
+                      && !(notificationService.all$ | async).length"
+               [emptyState]="emptyState"></empty-state>
+  <loading *ngIf="!(notificationService.all$ | async)
+                  && (notificationService.isInitializing$ | async)"></loading>
+</ion-content>

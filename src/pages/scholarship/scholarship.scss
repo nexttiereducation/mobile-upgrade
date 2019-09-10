@@ -1,0 +1,10 @@
+scholarship {
+  ion-col.col {
+    &:NOT(.center-center) {
+      justify-content: space-between !important;
+    }
+    &:NOT([no-padding]) {
+      padding: 10px 5px 15px;
+    }
+  }
+}

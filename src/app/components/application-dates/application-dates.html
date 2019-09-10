@@ -1,0 +1,98 @@
+<ion-header mode="ios">
+  <ion-toolbar mode="ios">
+    <ion-buttons start>
+      <button ion-button icon-only color="black" (click)="closeModal()">
+        <ion-icon name="ios-arrow-up"></ion-icon>
+      </button>
+    </ion-buttons>
+    <ion-title mode="ios" class="avatar-title" *ngIf="college && college.name">
+      <ion-avatar item-left>
+        <img class="avatar-shadow" [src]="college?.photo_url">
+      </ion-avatar>
+      <div class="avatar-title-text" text-left>
+        <div class="truncate body">{{ college?.name }}</div>
+        <div class="truncate subhead">
+          <ion-icon name="pin"></ion-icon>
+          <span class="subhead">{{ college?.city + ', ' + college?.state }}</span>
+        </div>
+      </div>
+    </ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ng-template [ngIf]="applicationDates">
+    <ng-template [ngIf]="(user.isSenior && applicationDates?.length) ||
+                         (!user.isSenior &&
+                          (applicationDates?.length ||
+                           (college.is_form || college.is_account || college.details.groups.length)))">
+      <div class="topbar bold" margin-top padding-horizontal>How are you applying?</div>
+      <ng-template [ngIf]="applicationDates?.length">
+        <div padding class="medium">Application Deadline</div>
+        <ion-list radio-group [(ngModel)]="selectedDate" no-lines>
+          <ion-item *ngFor="let date of applicationDates">
+            <ion-label>
+              <div class="application-date-button text-white"
+                  [ngClass]="selectedDate === date ? 'bg-blue' : 'bg-steel50'">
+                <span class="button-caption"> {{ date.deadline | moment:'MMM' }} </span>
+                <span class="button-title"> {{ date.deadline | moment:'DD' }} </span>
+              </div>
+              <div class="application-date-type text-black">{{ date.application_type }} </div>
+            </ion-label>
+            <ion-radio [value]="date" item-end></ion-radio>
+          </ion-item>
+        </ion-list>
+      </ng-template>
+      <ng-template [ngIf]="college.is_form || college.is_account || college.details.groups.length">
+        <div padding class="medium">Application Type</div>
+        <ion-list radio-group no-lines>
+          <ion-item *ngIf="college.is_form">
+            <ion-radio item-left
+                      value="F"
+                      (ionSelect)="applicationMethodChange($event)"></ion-radio>
+            <ion-label class="text-black">{{ college.name }}'s Application</ion-label>
+          </ion-item>
+          <ion-item *ngIf="college.is_account">
+            <ion-radio item-left
+                      value="A"
+                      (ionSelect)="applicationMethodChange($event)"></ion-radio>
+            <ion-label class="text-black">{{ college.name }}'s Application</ion-label>
+          </ion-item>
+          <ion-item *ngFor="let group of college.details.groups">
+            <ion-radio item-left
+                      [value]="group.id"
+                      (ionSelect)="applicationMethodChange($event)"></ion-radio>
+            <ion-label class="text-black">{{ group.name }}</ion-label>
+          </ion-item>
+        </ion-list>
+      </ng-template>
+    </ng-template>
+    <ng-template [ngIf]="user.isSenior && !applicationDates?.length">
+      <div class="flex fill column center center" padding>
+        <div class="surveyQuestion" padding text-center>All deadlines for {{ college.name }} have passed.</div>
+        <div text-center>Please select a different college.</div>
+      </div>
+    </ng-template>
+  </ng-template>
+  <ng-template [ngIf]="!applicationDates">
+    <loading></loading>
+  </ng-template>
+</ion-content>
+
+<ion-footer *ngIf="(selectedDate && applicationMethod) || !applicationDates?.length">
+  <ion-toolbar [color]="(user.isSenior && selectedDate && applicationMethod) || !user.isSenior ? 'green' : 'primary'">
+    <button ion-button full clear
+            color="white"
+            *ngIf="(user.isSenior && selectedDate && applicationMethod) || !user.isSenior"
+            [disabled]="isSaving"
+            (click)="save()">
+      {{ isSaving ? 'Saving' : (selectedDate && applicationMethod) ? 'Save' : 'Skip for now' }}
+    </button>
+    <button ion-button full clear
+            color="white"
+            *ngIf="user.isSenior && !applicationDates?.length"
+            (click)="closeNoDeadlines()">
+      Close
+    </button>
+  </ion-toolbar>
+</ion-footer>

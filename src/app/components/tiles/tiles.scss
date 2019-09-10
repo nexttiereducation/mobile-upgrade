@@ -1,0 +1,120 @@
+@keyframes pulseOut {
+  0% {
+    box-shadow: 0px 0px 0px 0px transparentize($green, 0.5);
+  }
+
+  100% {
+    box-shadow: 0px 0px 0px 7.5px transparentize($green, 1);
+  }
+}
+
+[tiles] {
+  padding: 2px !important;
+
+  >ion-row.row {
+    padding: 0 2px;
+
+    >ion-col.col {
+      padding: 2px !important;
+    }
+  }
+
+  ion-card,
+  ion-card-content {
+    height: 124px;
+  }
+
+  ion-card {
+    margin: 2px !important;
+    width: calc(100% - 4px) !important;
+    padding: 0 !important;
+
+    >ion-list {
+      margin: 0 !important;
+    }
+
+    ion-card-content {
+      padding: 0 !important;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    ion-item-sliding>ion-item.item-md,
+    ion-item-sliding>ion-item.item-md.item-block .item-inner {
+      border-width: 0px !important;
+      padding: 0;
+    }
+
+    ion-item-options,
+    ion-item-options button {
+      height: 125px !important;
+    }
+
+    img {
+      max-height: 85px;
+      max-width: 85px;
+    }
+
+    .tile-badge {
+      position: absolute;
+      top: 5px;
+      right: 5px;
+      padding: 0 !important;
+      width: 25px;
+      height: 25px;
+      border-radius: 50%;
+      line-height: 24px;
+      font-size: 14px;
+      animation: pulseOut 1.5s infinite ease-out;
+    }
+
+    .label,
+    ion-label {
+      margin: 0 !important;
+    }
+  }
+
+  .tile .tile-button {
+    margin: 0;
+    height: 124px;
+    padding: 0;
+    width: 100%;
+
+    .button-inner {
+      flex-direction: column;
+    }
+
+    .tile-label {
+      font-size: 14px;
+      text-transform: none;
+      font-weight: 400;
+      line-height: 16px;
+      text-overflow: ellipsis;
+      overflow: hidden;
+      white-space: nowrap;
+      max-width: 90%;
+    }
+  }
+
+  $clipboardSize: 77.5px;
+
+  .tile-avatar-wrapper {
+    width: $clipboardSize;
+    height: $clipboardSize;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 7.5px;
+    align-items: center;
+    justify-items: center;
+
+    img {
+      width: $clipboardSize;
+      height: $clipboardSize;
+      object-fit: contain;
+    }
+
+  }
+}

@@ -1,0 +1,98 @@
+<ion-content>
+  <div class="gray-sections"
+       *ngIf="college">
+    <ng-template [ngIf]="(latitude && longitude) || details?.major_city ||
+                         details?.airport_distance || details?.public_transit">
+      <div>Location</div>
+      <div>
+        <div class="map-wrapper">
+          <div class="map-canvas"
+               id="map_canvas"
+               [@mapState]="(mapReady$ | async) ? 'ready' : 'loading'"></div>
+        </div>
+        <!-- <agm-map *ngIf="latitude && longitude"
+                 [latitude]="latitude"
+                 [longitude]="longitude">
+          <agm-marker [latitude]="latitude"
+                      [longitude]="longitude"></agm-marker>
+        </agm-map> -->
+        <ion-grid *ngIf="details?.major_city || details?.airport_distance || details?.public_transit">
+          <ion-row justify-content-start>
+            <ion-col text-center
+                     *ngIf="details?.major_city">
+              <div class="tinyHeader">Nearest Major City</div>
+              <img src="assets/image/college/setting_city.svg">
+              <div class="body">{{ details?.major_city }}</div>
+            </ion-col>
+            <ion-col text-center
+                     *ngIf="details?.airport_distance">
+              <div class="tinyHeader">Nearest Major Airport</div>
+              <img src="assets/image/college/detail_airport.svg">
+              <div class="body">{{ details?.airport_distance + ' miles' }}</div>
+            </ion-col>
+            <ion-col text-center
+                     *ngIf="details?.public_transit">
+              <div class="tinyHeader">Public Transit</div>
+              <img src="assets/image/college/detail_public-transportation.svg">
+              <div class="body">Available</div>
+            </ion-col>
+          </ion-row>
+        </ion-grid>
+      </div>
+    </ng-template>
+    <ng-template [ngIf]="fraternityChart || sororityChart">
+      <div>Greek Life</div>
+      <ion-grid no-padding>
+        <ion-row align-items-center
+                 justify-content-center>
+          <ion-col *ngIf="fraternityChart">
+            <pie-chart label="Join Fraternities"
+                       [series]="fraternityChart"></pie-chart>
+          </ion-col>
+          <ion-col *ngIf="sororityChart">
+            <pie-chart label="Join Sororities"
+                       [series]="sororityChart"></pie-chart>
+          </ion-col>
+        </ion-row>
+      </ion-grid>
+    </ng-template>
+    <ng-template [ngIf]="outOfStateChart || liveOnCampusChart || workOnCampusChart">
+      <div>Student Life</div>
+      <ion-grid no-padding>
+        <ion-row align-items-center
+                 justify-content-center>
+          <ion-col *ngIf="outOfStateChart">
+            <pie-chart label="Out-of-State"
+                       tinyHeader="Freshmen"
+                       [series]="outOfStateChart"></pie-chart>
+          </ion-col>
+          <ion-col *ngIf="liveOnCampusChart">
+            <pie-chart label="Live on Campus"
+                       tinyHeader="Freshmen"
+                       [series]="liveOnCampusChart"></pie-chart>
+          </ion-col>
+          <ion-col *ngIf="workOnCampusChart">
+            <pie-chart label="Work on Campus"
+                       tinyHeader="Freshmen"
+                       [series]="workOnCampusChart"></pie-chart>
+          </ion-col>
+        </ion-row>
+      </ion-grid>
+    </ng-template>
+    <ng-template [ngIf]="details?.team_nickname || details?.athletic_conference">
+      <div>Athletics</div>
+      <ion-grid>
+        <ion-row align-items-center>
+          <ion-col *ngIf="details?.team_nickname">
+            <div class="body"
+                 text-center>{{ details?.team_nickname }}</div>
+          </ion-col>
+          <ion-col *ngIf="details?.athletic_conference">
+            <div class="body"
+                 text-center>{{ details?.athletic_conference }}</div>
+          </ion-col>
+        </ion-row>
+      </ion-grid>
+    </ng-template>
+  </div>
+</ion-content>

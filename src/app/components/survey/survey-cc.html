@@ -1,0 +1,119 @@
+<ion-slides #ccSlider [initialSlide]="studentAnswers.page" *ngIf="!isSurveyComplete && isLoaded">
+  <ion-slide>
+    <div padding text-center>
+      <div class="surveyQuestion">Which of these subject areas do&nbsp;you&nbsp;like?</div>
+      <div class="subhead">Check all that apply.</div>
+    </div>
+    <ion-scroll scrollY="true">
+      <ion-list [hidden]="!studentAnswers.subjects">
+        <ion-item *ngFor="let subject of studentAnswers.subjects">
+          <ion-label text-wrap>{{ subject.name }}</ion-label>
+          <ion-checkbox [(ngModel)]="subject.selected"></ion-checkbox>
+        </ion-item>
+      </ion-list>
+      <div [hidden]="studentAnswers.subjects">
+        <loading></loading>
+      </div>
+    </ion-scroll>
+    <ion-grid>
+      <ion-row>
+        <ion-col>
+          <button ion-button block color="orange"
+                  [disabled]="!areSubjectsSelected"
+                  (click)="saveSubjects()">Continue</button>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </ion-slide>
+  <ng-template ngFor let-cluster [ngForOf]="questions.clusters" let-clusterIndex="index">
+    <ion-slide>
+      <div padding text-center>
+        <div class="surveyQuestion">Which of these activities do&nbsp;you&nbsp;like?</div>
+        <div class="subhead">Check any/all that apply.</div>
+      </div>
+      <ion-scroll scrollY="true">
+        <ion-list>
+          <ion-item *ngFor="let activity of cluster.activities">
+            <ion-label text-wrap>{{ activity }}</ion-label>
+            <ion-checkbox [(ngModel)]="answers[cluster.cluster_code]['activities'][activity]">
+            </ion-checkbox>
+          </ion-item>
+        </ion-list>
+      </ion-scroll>
+      <ion-grid>
+        <ion-row>
+          <ion-col>
+            <button ion-button block outline
+                    color="orange"
+                    (click)="saveItems(cluster.cluster_code, 'activities', false, true)">Back</button>
+          </ion-col>
+          <ion-col>
+            <button ion-button block
+                    color="orange"
+                    (click)="saveItems(cluster.cluster_code, 'activities')">Continue</button>
+          </ion-col>
+        </ion-row>
+      </ion-grid>
+    </ion-slide>
+    <ion-slide>
+      <div padding text-center>
+        <div class="surveyQuestion">Which of these personal qualities describe&nbsp;you?</div>
+        <div class="subhead">Check any/all that apply.</div>
+      </div>
+      <ion-scroll scrollY="true">
+        <ion-list>
+          <ion-item *ngFor="let quality of cluster.personal_qualities">
+            <ion-label text-wrap>{{ quality }}</ion-label>
+            <ion-checkbox [(ngModel)]="answers[cluster.cluster_code]['personal_qualities'][quality]">
+            </ion-checkbox>
+          </ion-item>
+        </ion-list>
+      </ion-scroll>
+      <ion-grid>
+        <ion-row>
+          <ion-col>
+            <button ion-button block outline
+                    color="orange"
+                    (click)="saveItems(cluster.cluster_code, 'personal_qualities', false, true)">Back</button>
+          </ion-col>
+          <ion-col>
+            <button ion-button block
+                    color="orange"
+                    *ngIf="clusterIndex < (questions.clusters.length - 1)"
+                    (click)="saveItems(cluster.cluster_code, 'personal_qualities')">Continue</button>
+            <button ion-button block
+                    color="orange"
+                    *ngIf="clusterIndex === (questions.clusters.length - 1)"
+                    (click)="saveItems(cluster.cluster_code, 'personal_qualities', true)">Submit</button>
+          </ion-col>
+        </ion-row>
+      </ion-grid>
+    </ion-slide>
+  </ng-template>
+</ion-slides>
+<div *ngIf="isSurveyComplete && isLoaded" padding>
+  <div class="subhead" text-center>Your answers were submitted successfully.</div>
+  <p class="emptyStateTitle bold" text-center>We think you'll enjoy careers in the following Career&nbsp;Clusters:</p>
+  <ion-grid>
+    <ng-template ngFor let-cluster [ngForOf]="suggestedClusters">
+      <ion-row align-items-center>
+        <ion-col col-auto>
+          <div [style.background-color]="careerClusters[cluster.title].color" class="avatar-shadow career-avatar" padding-8>
+            <ion-icon name="briefcase" class="text-white"></ion-icon>
+          </div>
+        </ion-col>
+        <ion-col class="topbar action" [style.color]="careerClusters[cluster.title].color">
+          {{ cluster.title }}
+        </ion-col>
+      </ion-row>
+      <ion-row>
+        <ion-col class="body spaced" margin-bottom>
+          {{ careerClusters[cluster.title].description }}
+        </ion-col>
+      </ion-row>
+    </ng-template>
+  </ion-grid>
+</div>
+<div *ngIf="!isLoaded">
+  <loading></loading>
+</div>

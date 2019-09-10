@@ -1,0 +1,56 @@
+filter-checklist {
+  .alpha-scroll {
+    background-color: transparentize($white, 0.5);
+    position: fixed;
+    top: 70px;
+    right: 0;
+    z-index: 101;
+    display: flex;
+    flex-direction: column;
+    margin: 0;
+    align-items: stretch;
+    justify-content: center;
+    height: calc(100% - 95px);
+    transition: height 0.5s ease-in-out;
+    &.footer-showing {
+      height: calc(100% - 147px);
+    }
+    a {
+      padding: 0 8px;
+      margin: 0;
+      height: auto;
+      flex: 0 1 3em;
+      z-index: 102;
+    }
+  }
+  ion-list.options ion-item {
+    transition: background-color 293ms ease-in-out 66ms;
+    .button-effect {
+      background-color: $blue50;
+    }
+  }
+  .checkbox-md .checkbox-icon {
+    &.checkbox-checked .checkbox-inner {
+      opacity: 1;
+      transform: rotate(45deg) scale(1);
+    }
+    &:NOT(.checkbox-checked) .checkbox-inner {
+      opacity: 0;
+      transform: rotate(45deg) scale(0.25);
+    }
+    .checkbox-inner {
+      transition: transform 193ms ease-in-out 66ms,
+                  opacity 193ms ease-in-out 66ms;
+    }
+  }
+}
+
+ion-app.platform-ios {
+  filter-checklist .alpha-scroll {
+    top: 80px;
+    height: calc(100% - 90px);
+    &.footer-showing {
+      height: calc(100% - 150px);
+    }
+  }
+}

@@ -1,0 +1,136 @@
+<ion-card>
+  <ion-card-header>Email</ion-card-header>
+  <ion-list>
+    <ion-item>
+      <ion-label floating>Email</ion-label>
+      <ion-input name="emailAddress"
+                 type="email"
+                 (ionBlur)="updateEmail(false)"
+                 (keyup.enter)="updateEmail(false)"
+                 [formControl]="primaryEmailControl"
+                 [pattern]="emailRegex"
+                 [readonly]="!canEdit"></ion-input>
+      <div *ngIf="primaryEmailControl?.invalid"> Please enter a valid email address </div>
+    </ion-item>
+    <ion-item>
+      <ion-label floating>Alternate Email</ion-label>
+      <ion-input name="emailAddress"
+                 type="email"
+                 (ionBlur)="updateEmail(true)"
+                 (keyup.enter)="updateEmail(true)"
+                 [formControl]="alternateEmailControl"
+                 [pattern]="emailRegex"></ion-input>
+      <div *ngIf="alternateEmailControl?.invalid"> Please enter a valid email address </div>
+    </ion-item>
+    <!-- <div fxFlex
+          fxLayout="column"
+          fxLayoutAlign="start stretch">
+      <div class="hint-text">Phone number</div>
+      <international-phone-number defaultCountry="us"
+                                  name="phoneNumber"
+                                  placeholder="Enter phone number"
+                                  #phoneNumber="ngModel"
+                                  [maxlength]="20"
+                                  [(ngModel)]="currentUser.phone_number">
+      </international-phone-number>
+    </div> -->
+  </ion-list>
+</ion-card>
+<ion-card>
+  <ion-card-header>Phone</ion-card-header>
+  <ion-grid no-padding>
+    <ion-row>
+      <ion-col>
+        <ion-item>
+          <ion-label floating>Phone number</ion-label>
+          <ion-input name="phoneNumber"
+                     type="tel"
+                     (ionBlur)="setPhone(currentUser.phone_number, false)"
+                     (keyup.enter)="updatePhone(true)"
+                     [formControl]="phoneControl"></ion-input>
+          <div *ngIf="phoneControl?.invalid"> Please enter a valid phone number </div>
+        </ion-item>
+      </ion-col>
+      <ion-col>
+        <ion-item>
+          <ion-label floating>Phone type</ion-label>
+          <ion-select name="phoneType"
+                      placeholder="Phone type"
+                      (ionChange)="updatePhone(true)"
+                      [(ngModel)]="currentUser.phone_type">
+            <ion-option value="MP">Mobile</ion-option>
+            <ion-option value="HP">Home</ion-option>
+          </ion-select>
+        </ion-item>
+      </ion-col>
+    </ion-row>
+    <!--  <div fxFlex
+          fxLayout="column"
+          fxLayoutAlign="start stretch">
+      <div class="hint-text">Phone number</div>
+      <international-phone-number defaultCountry="us"
+                                  name="altPhoneNumber"
+                                  placeholder="Enter phone number"
+                                  #altPhoneNumber="ngModel"
+                                  [maxlength]="20"
+                                  [(ngModel)]="currentUser.alternate_contact_information.phone_number">
+      </international-phone-number>
+    </div>-->
+    <!-- <ion-row>
+      <ion-col>
+        <ion-item>
+          <ion-label floating>Alt. phone number</ion-label>
+          <ion-input name="altPhoneNumber"
+                     type="tel"
+                     (ionBlur)="updatePhone(true)"
+                     (keyup.enter)="updatePhone(true)"
+                     [formControl]="altPhoneControl"></ion-input>
+          <div *ngIf="altPhoneControl?.invalid"> Please enter a valid phone number </div>
+        </ion-item>
+      </ion-col>
+      <ion-col>
+        <ion-item>
+          <ion-label floating>Alt. Phone type</ion-label>
+          <ion-select name="altPhoneType"
+                      okText="Save"
+                      (ionChange)="setPhone(currentUser.alternate_contact_information.phone_number, true)"
+                      [(ngModel)]="currentUser.alternate_contact_information.phone_type">
+            <ion-option value="MP">Mobile</ion-option>
+            <ion-option value="HP">Home</ion-option>
+          </ion-select>
+        </ion-item>
+      </ion-col>
+    </ion-row> -->
+    <ion-row>
+      <ion-col>
+        <ion-item>
+          <ion-label>Allow SMS</ion-label>
+          <ion-toggle color="primary"
+                      (change)="updateNotificationSettings()"
+                      [disabled]="!currentUser.phone_number"
+                      [(ngModel)]="currentUser.notification_settings?.sms.isEnabled">
+          </ion-toggle>
+        </ion-item>
+      </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col>
+        <div class="mat-caption mat-font-medium"
+             *ngIf="currentUser.notification_settings?.sms.isEnabled
+                          && currentUser.phone_number?.length"> Check your phone for a text message with the
+          verification code. </div>
+        <div *ngIf="showVerificationForm">
+          <ion-label floating>Verification code</ion-label>
+          <ion-input placeholder="12345"
+                     type="number"
+                     [(ngModel)]="verificationCode"></ion-input>
+          <button color="primary"
+                  ion-button
+                  matSuffix
+                  [disabled]="!verificationCode"
+                  (click)="verifyPhone()">Verify</button>
+        </div>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+</ion-card>

@@ -1,0 +1,18 @@
+<ng-template [ngIf]="answers">
+  <div padding>
+    <div class="subhead" *ngIf="!taskIsComplete" text-center margin-bottom>Here are your answers! Make sure they're correct before hitting submit.</div>
+    <div class="displayHeader not-bold">You plan to <span class="bold">{{ answerProperties[answers.plan].title }}.</span></div>
+  </div>
+  <ng-template ngFor let-property [ngForOf]="answerProperties[answers.plan] | keyValue">
+    <ion-card *ngIf="property.key !== 'title'">
+      <ion-card-header>{{ property.value | uppercase }}</ion-card-header>
+      <ion-card-content>{{ branchDisplay || answers[property.key] }}</ion-card-content>
+    </ion-card>
+  </ng-template>
+  <ng-template [ngIf]="answers.start_date">
+    <ion-card>
+      <ion-card-header>START DATE</ion-card-header>
+      <ion-card-content>{{ answers.start_date | date:'MMM dd, yyyy' }}</ion-card-content>
+    </ion-card>
+  </ng-template>
+</ng-template>

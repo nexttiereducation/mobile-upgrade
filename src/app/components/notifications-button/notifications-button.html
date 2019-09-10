@@ -1,0 +1,10 @@
+<button clear
+        color="black"
+        icon-only
+        ion-button
+        mode="md"
+        (click)="goToNotifications()">
+  <ion-icon name="notifications"></ion-icon>
+  <ion-badge item-end
+             *ngIf="notificationProvider.unreadCount > 0"> {{ notificationProvider.unreadCount }} </ion-badge>
+</button>

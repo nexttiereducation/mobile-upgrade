@@ -1,0 +1,121 @@
+<ion-content class="external-page">
+  <div class="logo-wrapper"
+       text-center>
+    <img class="stacked-logo"
+         src="assets/image/logo/stacked.svg"
+         [@keyboardState]="(keyboardShowing | async) ? 'open' : 'closed'">
+  </div>
+  <div class="landing-content bg-blue"
+       text-center
+       [class.no-padding]="(keyboardShowing | async)">
+    <div class="text-white staging-build"
+         padding-10
+         *ngIf="environmentService.isLocal">STAGING BUILD</div>
+    <form class="bg-blue"
+          margin-top
+          [formGroup]="loginForm"
+          (ngSubmit)="login()">
+      <ion-list margin-top
+                no-lines>
+        <div class="validation-error"
+             text-left
+             *ngIf="invalid['email']">Please enter a valid email address</div>
+        <ion-item class="bg-white10 border-white50"
+                  margin-bottom
+                  [class.border-white-bold]="email?.length">
+          <ion-label [class.bg-red]="invalid['email']"
+                     [color]="email?.length ? 'white' : 'white50'">
+            <ion-icon class="form-icon"
+                      name="mail"></ion-icon>
+          </ion-label>
+          <ion-input formControlName="email"
+                     placeholder="Email*"
+                     required
+                     type="email"
+                     (ionBlur)="validate('email')"
+                     (ionChange)="checkValidate('email')"
+                     (ionFocus)="setIsInitialEntry('email')"
+                     [(ngModel)]="email"></ion-input>
+          <div class="validation-error"
+               text-left
+               *ngIf="invalid['password']">Password must be at least 8 characters</div>
+        </ion-item>
+        <ion-item class="bg-white10 border-white50"
+                  no-margin
+                  [class.border-white-bold]="password?.length">
+          <ion-label [class.bg-red]="invalid['password']"
+                     [color]="password?.length ? 'white' : 'white50'">
+            <ion-icon class="form-icon"
+                      name="lock"></ion-icon>
+          </ion-label>
+          <ion-input formControlName="password"
+                     placeholder="Password*"
+                     required
+                     type="password"
+                     (ionBlur)="validate('password')"
+                     (ionChange)="checkValidate('password')"
+                     (ionFocus)="setIsInitialEntry('password')"
+                     [(ngModel)]="password"></ion-input>
+        </ion-item>
+        <div text-right>
+          <button class="secret-submit"
+                  ion-button
+                  small
+                  type="submit"
+                  [disabled]="loginForm.invalid">Submit form</button>
+          <button class="forgot-password no-caps not-bold"
+                  clear
+                  color="white"
+                  ion-button
+                  small
+                  type="button"
+                  (click)="goToForgotPassword()">Forgot password?</button>
+        </div>
+      </ion-list>
+    </form>
+    <ion-grid>
+      <ion-row>
+        <ion-col>
+          <button class="no-caps"
+                  color="white"
+                  full
+                  ion-button
+                  large
+                  type="button"
+                  (click)="login()"
+                  [disabled]="loginForm.invalid">
+            <span class="text-blue bold"> {{ loggingIn ? "Logging in..." : "Let's go!" }} </span>
+          </button>
+        </ion-col>
+      </ion-row>
+      <ion-row>
+        <ion-col>
+          <button class="no-caps"
+                  color="white"
+                  ion-button
+                  large
+                  no-margin
+                  outline
+                  type="button"
+                  (click)="showRegisterAlert()"
+                  [style.width.%]="100">
+            <span class="bold">Register</span>
+          </button>
+        </ion-col>
+        <ion-col>
+          <button class="no-caps"
+                  color="white"
+                  ion-button
+                  large
+                  no-margin
+                  outline
+                  type="button"
+                  (click)="loginWithClever()"
+                  [style.width.%]="100">
+            <span class="not-bold">Log in with</span>&nbsp;<span class="bold">Clever</span>
+          </button>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </div>
+</ion-content>

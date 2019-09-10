@@ -1,0 +1,16 @@
+<!-- <ion-menu id="notifications"
+          [content]="nteContent"
+          [enabled]="user?.id">
+  <notifications></notifications>
+</ion-menu> -->
+
+<ion-nav #nteContent
+         [class.hideParentTabs]="!showTabs"
+         [root]="rootPage"></ion-nav>
+<!--          [ngClass]="deviceModel" -->
+<!-- <ion-menu id="messaging"
+          side="right"
+          [content]="nteContent"
+          [enabled]="user?.id">
+  <messaging></messaging>
+</ion-menu> -->

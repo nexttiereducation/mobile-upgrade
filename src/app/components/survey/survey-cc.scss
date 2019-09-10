@@ -1,0 +1,46 @@
+survey-cc {
+  ion-slide.swiper-slide {
+    align-items: flex-start;
+  }
+  .slide-zoom {
+    height: 100%;
+    text-align: center;
+    display: flex;
+    width: 100%;
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: space-between;
+  }
+  ion-slides,
+  ion-slide {
+    width: 100%;
+    max-width: 100%;
+  }
+  ion-list {
+    ion-item.item-md {
+      background-color: transparent;
+    }
+    ~ [ion-button].button-block {
+      width: calc(100% - 16px);
+      margin: 0 8px 16px;
+    }
+  }
+  ion-scroll {
+    flex: 1 1 auto;
+    box-shadow: black 0px 0px 8px -2px inset;
+  }
+  .career-avatar {
+    height: 33px;
+    width: 33px;
+    text-align: center;
+  }
+  > div:first-child:last-child > ion-grid ion-row:nth-child(odd) {
+    margin: 0 -20px;
+    background-color: $grayLightest-1;
+    padding: 4px 8px;
+    ion-col.topbar.action {
+      font-weight: 700;
+      padding-left: 2.5px;
+    }
+  }
+}

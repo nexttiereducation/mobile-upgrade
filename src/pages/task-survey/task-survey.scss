@@ -1,0 +1,23 @@
+task-survey {
+  > ion-content > .scroll-content > * {
+    max-width: 100%;
+  }
+  ion-item.item-md {
+    ion-checkbox.checkbox-md {
+      margin-right: 16px !important;
+    }
+  }
+  ion-input[required].ng-valid {
+    border-bottom: 2px solid #32db64;
+  }
+  ion-item {
+    &.item-input .input-wrapper {
+      overflow: visible;
+      max-width: 100%;
+    }
+    ion-input[required] {
+      margin-right: -8px;
+      padding-right: 8px;
+    }
+  }
+}

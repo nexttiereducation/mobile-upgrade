@@ -1,0 +1,43 @@
+high-school {
+  ion-searchbar.searchbar-md {
+    &.register {
+      &.searchbar-has-value .searchbar-input {
+        -webkit-text-fill-color: $white !important;
+      }
+      .searchbar-clear-icon,
+      .searchbar-search-icon {
+        -webkit-filter: brightness(5);
+        filter: brightness(5);
+        opacity: 0.5;
+      }
+      .searchbar-input {
+        background-color: transparent !important;
+        box-shadow: none !important;
+        color: white !important;
+        -webkit-box-shadow: none !important;
+        -webkit-text-fill-color: $white50;
+        padding-right: 0px;
+      }
+    }
+  }
+  ion-item,
+  ion-col {
+    div.body {
+      line-height: 1.2;
+      &.bold {
+        margin-bottom: 5px;
+      }
+    }
+  }
+  img.school {
+    width: 50px;
+    height: auto;
+    margin-left: 8px;
+  }
+  ion-card {
+    height: 98px;
+    ion-row {
+      height: 100%;
+    }
+  }
+}

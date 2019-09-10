@@ -1,0 +1,119 @@
+<ion-header mode="ios">
+  <ion-navbar mode="ios">
+    <ion-title mode="ios"
+               tappable
+               (click)="scrollToTop()">
+      <div class="subhead text-grayDark50"> {{ impersonatedStudent ? impersonatedStudent.full_name : 'Tasks' }} </div>
+      {{ isSearchAll ? listName : ((listName + ' Tasks') || 'Tasks') }}
+    </ion-title>
+    <ion-buttons end
+                 messaging-button></ion-buttons>
+  </ion-navbar>
+  <ion-toolbar class="collapse-expand"
+               no-padding
+               *ngIf="(taskService.userTaskTrackers | async)?.length > 0">
+    <ion-grid no-padding>
+      <ion-row align-items-start>
+        <ion-col>
+          <ion-searchbar debounce="1000"
+                         mode="ios"
+                         type="search"
+                         (ionClear)="clearSearch($event)"
+                         (ionInput)="search($event)"
+                         (keyup.enter)="keyboard.close()"
+                         [(ngModel)]="searchTerm"></ion-searchbar>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </ion-toolbar>
+</ion-header>
+<ion-content class="bg-grayLight">
+  <ng-template [ngIf]="!((taskService.userTaskTrackers | async)?.length)
+                       && !taskService.fetchingTasks">
+    <empty-state *ngIf="hasSearchTerm"
+                 [emptyState]="searchEmptyState"></empty-state>
+    <empty-state *ngIf="!hasSearchTerm && emptyState"
+                 [emptyState]="emptyState"></empty-state>
+  </ng-template>
+  <loading *ngIf="taskService.initializingTasks"></loading>
+  <div [hidden]="(taskService.userTaskTrackers | async)?.length === 0
+                 && !taskService.fetchingTasks">
+    <ion-list card-list
+              no-lines>
+      <ion-card *ngFor="let taskTracker of (taskService.userTaskTrackers | async); first as isFirst">
+        <ion-item-sliding (animationCompleted)="setViewedTasksListPage()"
+                          [animateItemSliding]="isFirst && user.showTaskAnimation"
+                          (ionSwipe)="checkSwiper($event, taskTracker)">
+          <ion-item-options side="left"
+                            *ngIf="!impersonatedStudent">
+            <button expandable
+                    icon-only
+                    ion-button
+                    (click)="taskUpdated($event, taskTracker)"
+                    [color]="(taskTracker.isSurveyTask || taskTracker.prompt)
+                             ? 'orange' : 'green'">
+              <ion-icon md-name="(taskTracker.isSurveyTask || taskTracker.prompt)
+                                 ? 'more_horiz' : 'check'">
+                {{ (taskTracker.isSurveyTask || taskTracker.prompt) ? 'more_horiz' : 'check' }} </ion-icon>
+            </button>
+          </ion-item-options>
+          <ion-item tappable
+                    (click)="openTaskDetail(taskTracker)">
+            <ion-card-content no-padding>
+              <ion-item>
+                <div class="body truncate">{{ taskTracker.task.name }}</div>
+                <div class="subhead">
+                  <ion-icon name="calendar"></ion-icon> Due by
+                  {{ (taskTracker.dueDate || taskTracker.task.get_deadline) | date }}
+                </div>
+                <ion-avatar item-end>
+                  <img [class.avatar-shadow]="taskTracker.task.task_type == 'CS'"
+                       [class.bg-white]="list.iconUrl"
+                       [src]="isSearchAll
+                              ? (taskTracker.iconUrl || collegeImgUrls[taskTracker.institution])
+                              : iconUrl">
+                </ion-avatar>
+              </ion-item>
+            </ion-card-content>
+          </ion-item>
+          <ion-item-options class="bg-blue"
+                            side="right">
+            <button clear
+                    color="white"
+                    ion-button
+                    *ngIf="(connectionService.all$ | async)?.length"
+                    (click)="openSendModal(taskTracker)">
+              <ion-icon name="send"></ion-icon>
+              <span class="no-caps">Send</span>
+            </button>
+            <button clear
+                    color="white"
+                    ion-button
+                    (click)="openTaskDetail(taskTracker, null, 'attach')">
+              <ion-icon name="attach"></ion-icon>
+              <span class="no-caps">Files</span>
+            </button>
+            <button clear
+                    color="white"
+                    ion-button
+                    (click)="openTaskDetail(taskTracker, null, 'notes')">
+              <ion-icon md-name="chat_bubble">chat_bubble</ion-icon>
+              <span class="no-caps">Notes</span>
+            </button>
+          </ion-item-options>
+        </ion-item-sliding>
+      </ion-card>
+    </ion-list>
+  </div>
+  <ng-container *ngIf="(taskService.userTaskTrackers | async)?.length > 0">
+    <ion-infinite-scroll threshold="20%"
+                         (ionInfinite)="infiniteScrollLoad($event)">
+      <ion-infinite-scroll-content loadingSpinner="bubbles"
+                                   loadingText="Loading...">
+      </ion-infinite-scroll-content>
+    </ion-infinite-scroll>
+  </ng-container>
+</ion-content>
+<ion-footer>
+  <div list-tabs></div>
+</ion-footer>

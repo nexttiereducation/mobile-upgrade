@@ -1,0 +1,8 @@
+<div *ngIf="tinyHeader" class="tinyHeader" [ngClass]="'text-' + labelColor">{{ tinyHeader }}</div>
+<nvd3 #pieChart
+      config="newConfig"
+      [data]="newData"
+      [ngClass]="'label-' + labelColor"
+      [options]="newOptions"></nvd3>
+<div *ngIf="label" [ngClass]="subLabel ? 'body bold uppercase text-' + labelColor : 'body'" text-center>{{ label }}</div>
+<div *ngIf="subLabel" class="subhead">{{ subLabel }}</div>

@@ -1,0 +1,15 @@
+ion-tabs.app-tabs {
+  > .tabbar {
+    .tab-button ion-badge.tab-badge.badge {
+      position: absolute;
+      right: calc(50% - 5px);
+      bottom: -5px;
+      top: auto;
+      height: 10px;
+      width: 10px;
+      padding: 1px !important;
+      color: $green;
+      background-color: $green;
+    }
+  }
+}

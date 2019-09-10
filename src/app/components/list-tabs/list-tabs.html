@@ -1,0 +1,36 @@
+<button ngClass="{'tab-button has-title has-icon disable-hover': true}"
+        clear
+        color="black"
+        ion-button
+        (click)="navCtrl.parent.select(0);navCtrl.pop()">
+  <ion-icon [class.tab-button-icon]="true"
+            name="nt-tasks"></ion-icon>
+  <ion-label [class.tab-button-text]="true">Tasks</ion-label>
+</button>
+<button ngClass="{'tab-button has-title has-icon disable-hover': true}"
+        clear
+        color="black"
+        ion-button
+        (click)="navCtrl.parent.select(1);navCtrl.pop()">
+  <ion-icon [class.tab-button-icon]="true"
+            name="nt-colleges"></ion-icon>
+  <ion-label [class.tab-button-text]="true">Colleges</ion-label>
+</button>
+<button ngClass="{'tab-button has-title has-icon disable-hover': true}"
+        clear
+        color="black"
+        ion-button
+        (click)="navCtrl.parent.select(2);navCtrl.pop()">
+  <ion-icon [class.tab-button-icon]="true"
+            name="nt-scholarships"></ion-icon>
+  <ion-label [class.tab-button-text]="true">Scholarships</ion-label>
+</button>
+<button ngClass="{'tab-button has-title has-icon disable-hover': true}"
+        clear
+        color="black"
+        ion-button
+        (click)="navCtrl.parent.select(3);navCtrl.pop()">
+  <ion-icon [class.tab-button-icon]="true"
+            name="nt-profile"></ion-icon>
+  <ion-label [class.tab-button-text]="true">Profile</ion-label>
+</button>

@@ -1,0 +1,49 @@
+list-tile-create {
+  ion-chip ion-label.label-md {
+    display: flex;
+    flex-direction: row;
+
+    .tinyText+span {
+      margin-left: 7.5px;
+    }
+  }
+
+  filter ion-content .scroll-content,
+  ion-content .scroll-content {
+    margin-top: 65px;
+  }
+
+  .selections-complete .scroll-content {
+    margin-bottom: 50px;
+  }
+
+  .pick-an-image ion-col {
+    min-height: 120px;
+
+    .image-button img {
+      max-width: calc(100% - 20px);
+    }
+
+    button {
+      height: 100%;
+
+      .button-inner::before {
+        position: absolute;
+        border-radius: 50%;
+        background-color: transparent;
+        content: '';
+        height: 100%;
+        width: 100%;
+        z-index: -1;
+        transition: background-color 0.5s ease-in-out;
+      }
+
+      &.selected {
+        .button-inner {
+          background-color: transparentize($steel, 0.9);
+          border-radius: 50%;
+        }
+      }
+    }
+  }
+}

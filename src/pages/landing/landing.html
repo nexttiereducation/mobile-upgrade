@@ -1,0 +1,28 @@
+<ion-content class="external-page">
+  <div class="backsplash">
+    <div class="bg-image"></div>
+  </div>
+  <div class="landing-content bg-blue"
+       text-center>
+    <img class="stacked-logo"
+         src="assets/image/logo/stacked.svg">
+    <div class="text-white staging-build"
+         padding-10
+         *ngIf="environmentService.isLocal">STAGING BUILD</div>
+  </div>
+</ion-content>
+<ion-footer class="no-border bg-blue"
+            padding-10>
+  <button color="white"
+          full
+          ion-button
+          large
+          (click)="goToRegistration()"> Create an account </button>
+  <button clear
+          color="white"
+          full
+          ion-button
+          large
+          (click)="goToLogin()">
+    <span class="not-bold">Already have an account?</span>&nbsp;Log in </button>
+</ion-footer>

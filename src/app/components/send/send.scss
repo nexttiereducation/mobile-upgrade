@@ -1,0 +1,123 @@
+.avatar {
+  border-radius: 50%;
+  height: 75px;
+  width: 75px;
+  min-width: 75px;
+  line-height: 75px;
+
+  +.body {
+    margin-top: 8px;
+  }
+}
+
+send {
+  >ion-header {
+    max-height: 45px !important;
+
+    >ion-toolbar {
+      padding: 0px !important;
+      min-height: 45px !important;
+    }
+  }
+
+  ion-content>div.scroll-content {
+    margin-top: 45px !important;
+    overflow: hidden;
+  }
+
+  ion-item.item-md>ion-avatar[item-left] {
+    margin-right: 10px;
+  }
+
+  .icon-avatar {
+    @extend .avatar;
+    color: $steel50;
+    font-size: 90px;
+    text-indent: -7.5px;
+  }
+
+  .img-avatar {
+    @extend .avatar;
+    box-shadow: rgba(141, 141, 143, 0.5) 0.5px 1px 2px 1px;
+  }
+
+  .connections {
+    height: 130px;
+
+    ion-col {
+      padding-top: 3px !important;
+      min-width: 27.5%;
+    }
+  }
+
+  ion-item.item-block {
+    min-height: 29px !important;
+  }
+
+  ion-icon.selected-check.icon {
+    position: absolute;
+    color: $white;
+    z-index: 99;
+    font-size: 75px;
+    line-height: 75px;
+    text-align: center;
+    left: 0;
+    right: 0;
+    opacity: 0;
+    transition: top bottom opacity 0.25s ease-in;
+
+    &::before {
+      font-size: 10px;
+      transition: font-size 0.25s ease-in;
+    }
+
+    &::after {
+      transition: background-color 0.25s ease-in;
+      background-color: transparent;
+      position: absolute;
+      left: 0;
+      top: -1.75px;
+      margin-left: calc(50% - 37.5px);
+      height: 76px;
+      width: 76px;
+      z-index: -1;
+      border-radius: 50%;
+      content: '';
+    }
+
+    &.checked {
+      top: 5px;
+      bottom: 0;
+      opacity: 1;
+
+      &::before {
+        font-size: 75px;
+      }
+
+      &::after {
+        background-color: rgba(16, 68, 106, 0.51);
+      }
+    }
+  }
+
+  ion-scroll+form ion-item {
+    min-height: 29px;
+
+    .item-inner {
+      border-bottom: none !important;
+      border-radius: 30px;
+      background-color: $grayLighter50;
+      padding: 0 15px;
+      max-height: 29px;
+
+      input.text-input {
+        font-size: 14px;
+        margin: 5px 0;
+      }
+    }
+  }
+
+  ion-item.item-input {
+    padding-top: 4px !important;
+  }
+}

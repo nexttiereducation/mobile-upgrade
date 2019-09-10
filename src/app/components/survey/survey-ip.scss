@@ -1,0 +1,10 @@
+survey-ip {
+  min-height: 100%;
+  display: block;
+  ion-slide.swiper-slide {
+    align-items: flex-start;
+  }
+  .question-container ion-row {
+    min-height: 70px;
+  }
+}

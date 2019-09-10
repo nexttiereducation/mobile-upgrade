@@ -1,0 +1,51 @@
+<ion-header mode="ios">
+  <ion-navbar mode="ios">
+    <ion-buttons notifications-button
+                 start></ion-buttons>
+    <ion-title mode="ios">Profile</ion-title>
+    <ion-buttons end
+                 messaging-button></ion-buttons>
+  </ion-navbar>
+</ion-header>
+<ion-content class="bg-blue">
+  <ion-grid>
+    <ion-row>
+      <ion-col text-center>
+        <img class="avatar-shadow img-container"
+             [src]="profilePhoto || 'assets/image/contact/avatar.svg'">
+      </ion-col>
+    </ion-row>
+    <ion-row *ngIf="user">
+      <ion-col class="text-white70"
+               text-center>
+        <div class="displayTitle bold text-white">{{ user.first_name + ' ' + user.last_name }}</div>
+        <div class="email">{{ user.email }}</div>
+        <div>{{ user.graduation_year ? 'Class of ' + user.graduation_year : user.stakeholder_type }}</div>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+  <ng-container *ngIf="userOverview">
+    <notification-settings [userOverview]="userOverview"></notification-settings>
+    <general-settings [currentUser]="userOverview"></general-settings>
+    <contact-settings [currentUser]="userOverview"></contact-settings>
+    <password-settings [currentUser]="userOverview"></password-settings>
+  </ng-container>
+</ion-content>
+<ion-footer>
+  <button class="no-caps"
+          color="white"
+          icon-right
+          ion-button
+          margin
+          outline
+          (click)="logout()"
+          style="width: calc( 100% - 32px )"> Log out <ion-icon name="exit"></ion-icon>
+  </button>
+  <!-- <button clear
+          color="white"
+          full
+          icon-right
+          ion-button
+          (click)="linkService.open(externalProfileUrl)"> Access full profile <ion-icon name="open"></ion-icon>
+  </button> -->
+</ion-footer>

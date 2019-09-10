@@ -1,0 +1,26 @@
+profile {
+  .img-container {
+    height: 100px;
+    width: 100px;
+    display: inline-block;
+    border: 9px solid $blueMedium;
+    border-radius: 50%;
+  }
+  .email {
+    padding: 2px 0 4px 0;
+  }
+  .profile-copy {
+    $copyHeight: calc(100% - 242px);
+    min-height: $copyHeight;
+    max-height: $copyHeight;
+    height: $copyHeight;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    img {
+      max-height: 100px;
+      width: auto;
+    }
+  }
+}

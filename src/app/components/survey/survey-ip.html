@@ -1,0 +1,58 @@
+<ng-template [ngIf]="!currentSurvey.results.length">
+  <progress-bar [progress]="surveyIpProvider.surveyProgress"></progress-bar>
+  <div padding-top text-center>How do you feel about this activity?</div>
+  <ion-slides #ipSlider options="sliderOptions"
+              [initialSlide]="surveyIpProvider.page"
+              (ionSlideDidChange)="slideChanged()"
+              (ionSlideNextEnd)="isSliding = false">
+    <ion-slide *ngFor="let question of surveyIpProvider.pagedQuestions; let slideIndex = index">
+      <ion-grid class="question-container">
+        <ion-row justify-content-center align-items-center>
+          <ion-col class="surveyQuestion" text-center>{{ question.text }}</ion-col>
+        </ion-row>
+      </ion-grid>
+      <ion-list radio-group [(ngModel)]="question.answer">
+        <ion-item *ngFor="let option of currentSurvey.questions.answer_options.answer_option">
+          <ion-label>{{ option.text }}</ion-label>
+          <ion-radio [value]="option.value" (ionSelect)="surveyIpProvider.saveAnswers($event);continue(400)"></ion-radio>
+        </ion-item>
+      </ion-list>
+      <ion-grid>
+        <ion-row>
+          <ion-col text-left>
+            <button ion-button icon-only clear
+                    *ngIf="slideIndex !== 0"
+                    (click)="back()">
+              <ion-icon name="arrow-back"></ion-icon>
+            </button>
+          </ion-col>
+          <ion-col text-right>
+            <button ion-button icon-only clear
+                    *ngIf="surveyIpProvider.pagedQuestions[slideIndex + 1] && question.answer"
+                    (click)="continue()">
+              <ion-icon name="arrow-forward"></ion-icon>
+            </button>
+          </ion-col>
+        </ion-row>
+      </ion-grid>
+    </ion-slide>
+  </ion-slides>
+  <ion-footer class="no-border" *ngIf="surveyIpProvider.surveyProgress == 100" padding-10>
+    <button ion-button block color="orange" (click)="finish($event)">Submit Survey</button>
+  </ion-footer>
+</ng-template>
+<div *ngIf="(currentSurvey.results && currentSurvey.results.length)
+             && user.interest_profiler_result && user.interest_profiler_result.length" padding>
+  <div class="subhead" text-center>Your answers were submitted successfully.<br>Here are your results!</div>
+  <ion-grid>
+    <ion-row justify-content-center align-items-center nowrap>
+      <ion-col *ngFor="let result of user.interest_profiler_result; let i = index"
+               [ngClass]="i < 3 ? 'bold text-green' : 'not-bold text-steel50'"
+               class="displayHeader">{{ result.area[0] }}</ion-col>
+    </ion-row>
+  </ion-grid>
+  <ng-template ngFor let-result [ngForOf]="user.interest_profiler_result" let-i="index">
+    <h6 class="bold" [ngClass]="i > 2 ? 'text-steel50 italic' : ''">{{ result.area }}</h6>
+    <div class="body spaced" [ngClass]="i > 2 ? 'text-steel50 italic' : ''">{{ areaDescriptions[result.area] }}</div>
+  </ng-template>
+</div>

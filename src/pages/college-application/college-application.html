@@ -1,0 +1,158 @@
+<ion-content>
+  <div class="gray-sections"
+       *ngIf="college">
+    <ng-template [ngIf]="college.details.application_fee || college.details.application_dates.length">
+      <div>Application Information</div>
+      <ion-grid>
+        <ion-row justify-content-start>
+          <ion-col *ngIf="college.details.application_fee"
+                   [attr.col-6]="college.details.application_dates.length">
+            <div class="tinyHeader">Application Fee</div>
+            <div class="displayHeader">{{ college.details.application_fee | currency:'USD':'symbol':'1.0-0' }}</div>
+          </ion-col>
+          <ion-col *ngIf="college.details.application_dates.length"
+                   [attr.col-6]="college.details.application_fee">
+            <ion-slides pager>
+              <ng-template ngFor
+                           let-app
+                           [ngForOf]="college.details.application_dates">
+                <ion-slide>
+                  <div class="tinyHeader">Application Deadline</div>
+                  <div class="displayHeader">{{ app.deadline | date:'shortDate' }}</div>
+                  <div class="body"
+                       margin-bottom>{{ app.application_type }}</div>
+                </ion-slide>
+              </ng-template>
+            </ion-slides>
+          </ion-col>
+        </ion-row>
+      </ion-grid>
+    </ng-template>
+    <ng-template [ngIf]="college.details.importance['very important']?.length > 0
+                         || college.details.importance.important?.length > 0
+                         || college.details.importance.considered?.length > 0
+                         || college.details.importance['not considered']?.length > 0">
+      <div>Application Importance</div>
+      <div class="importance-section">
+        <div padding
+             class="bg-green10"
+             *ngIf="college.details.importance['very important']?.length > 0">
+          <div text-left
+               class="tinyHeader text-green">Very Important</div>
+          <ul class="body spaced">
+            <li *ngFor="let item of college.details.importance['very important']">{{ item }}</li>
+          </ul>
+        </div>
+        <div padding
+             class="bg-green10"
+             *ngIf="college.details.importance.important.length > 0">
+          <div text-left
+               class="tinyHeader text-green">Important</div>
+          <ul class="body spaced">
+            <li *ngFor="let item of college.details.importance.important">{{ item }}</li>
+          </ul>
+        </div>
+        <div padding
+             class="bg-blue10"
+             *ngIf="college.details.importance.considered.length > 0">
+          <div text-left
+               class="tinyHeader text-blue">Considered</div>
+          <ul class="body spaced">
+            <li *ngFor="let item of college.details.importance.considered">{{ item }}</li>
+          </ul>
+        </div>
+        <div padding
+             class="bg-red10"
+             *ngIf="college.details.importance['not considered'].length > 0">
+          <div text-left
+               class="tinyHeader text-red">Not Considered</div>
+          <ul class="body spaced">
+            <li *ngFor="let item of college.details.importance['not considered']">{{ item }}</li>
+          </ul>
+        </div>
+      </div>
+    </ng-template>
+    <ng-template [ngIf]="college.details.scholarship_deadlines.length">
+      <div>Scholarship Information</div>
+      <ion-grid>
+        <ion-row justify-content-start>
+          <ion-col col-12>
+            <ion-slides pager
+                        *ngIf="college.details.scholarship_deadlines.length">
+              <ng-template ngFor
+                           let-deadline
+                           [ngForOf]="college.details.scholarship_deadlines">
+                <ion-slide>
+                  <div class="tinyHeader">Scholarship Deadline</div>
+                  <div class="displayHeader">{{ deadline | date:'shortDate' }}</div>
+                </ion-slide>
+              </ng-template>
+            </ion-slides>
+          </ion-col>
+        </ion-row>
+      </ion-grid>
+    </ng-template>
+    <ng-template [ngIf]="college.details.financial_aid_url || college.details.financial_aid_deadlines[0]">
+      <div>Financial Aid Information</div>
+      <ion-grid>
+        <ion-row justify-content-start>
+          <ion-col tappable
+                   text-center
+                   *ngIf="college.details.financial_aid_url"
+                   [attr.col-6]="college.details.financial_aid_deadlines.length ? true : null"
+                   (click)="linkService.open(college.details.financial_aid_url)">
+            <div class="tinyHeader">Financial Aid Website</div>
+            <img src="assets/image/contact/website.svg" />
+            <div class="body"
+                 [innerHTML]="college.details.financial_aid_url | link:{truncateOnly: true}"></div>
+          </ion-col>
+          <ion-col *ngIf="college.details.financial_aid_deadlines.length"
+                   [attr.col-6]="college.details.financial_aid_url ? true : null">
+            <ion-slides pager>
+              <ng-template ngFor
+                           let-deadline
+                           [ngForOf]="college.details.financial_aid_deadlines">
+                <ion-slide>
+                  <div class="tinyHeader">Financial Aid Deadline</div>
+                  <div class="displayHeader">{{ deadline | date:'shortDate' }}</div>
+                </ion-slide>
+              </ng-template>
+            </ion-slides>
+          </ion-col>
+        </ion-row>
+      </ion-grid>
+    </ng-template>
+    <ng-template [ngIf]="college.admissions_url || college.details.admissions_telephone">
+      <div>Admissions Information</div>
+      <ion-grid>
+        <ion-row justify-content-start>
+          <ion-col tappable
+                   text-center
+                   *ngIf="college.admissions_url"
+                   [attr.col-6]="college.details.admissions_telephone ? true : null"
+                   (click)="linkService.open(college.admissions_url)">
+            <div class="tinyHeader">Admissions Website</div>
+            <img src="assets/image/contact/website.svg" />
+            <div class="body"
+                 [innerHTML]="college.admissions_url | link:{truncateOnly: true}"></div>
+          </ion-col>
+          <ion-col tappable
+                   text-center
+                   *ngIf="college.details.admissions_telephone"
+                   [attr.col-6]="college.admissions_url ? true : null">
+            <a ion-button
+               full
+               clear
+               no-margin
+               class="external-link external-link-phone"
+               [href]="'tel:' + college.details.admissions_telephone">
+              <div class="tinyHeader">Admissions Phone</div>
+              <img src="assets/image/contact/phone.svg" />
+              <div class="body truncate fit">{{ college.details.admissions_telephone | phone }}</div>
+            </a>
+          </ion-col>
+        </ion-row>
+      </ion-grid>
+    </ng-template>
+  </div>
+</ion-content>

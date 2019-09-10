@@ -1,0 +1,84 @@
+pie-chart {
+  // LAYOUT
+  display: block;
+  text-align: center;
+  &[showLegend=true] nvd3 {
+    max-height: 90px;
+  }
+  &[size=large] {
+    nvd3 {
+      max-height: 150px;
+      .nv-pie-title {
+        font-size: 24px !important;
+      }
+    }
+    .tinyHeader {
+      margin-bottom: -7.5px;
+    }
+  }
+  &:not([showLegend=true]):not([size=large]) nvd3 {
+    max-height: 70px;
+  }
+  nvd3 {
+    display: block;
+    text-align: center;
+  }
+  svg.nvd3-svg {
+    overflow: visible !important;
+    margin: 0 auto;
+  }
+  // TYPOGRAPHY
+  svg.nvd3-svg text {
+    font-family: 'Roboto';
+  }
+  g.nv-label text {
+    font-size: 10px;
+    font-weight: 700;
+    stroke: white;
+    stroke-width: 0.1px;
+    letter-spacing: -0.5px;
+  }
+  text.nv-legend-text {
+    font-size: 11px;
+    transform: translateX(2.5px);
+  }
+  .nv-pie-title {
+    font-size: 14px !important;
+    font-weight: bold;
+  }
+
+  .nvd3.nv-pie path {
+    stroke-width: 0 !important;
+    fill-opacity: 1 !important;
+  }
+
+  // TITLE COLORS (value inside donut circle)
+  .label-blue .nvd3.nv-pie .nv-pie-title {
+    fill: $blue;
+  }
+  .label-green .nvd3.nv-pie .nv-pie-title {
+    fill: $green;
+  }
+  .label-steel .nvd3.nv-pie .nv-pie-title {
+    fill: $steel;
+  }
+  .label-red .nvd3.nv-pie .nv-pie-title {
+    fill: $red;
+  }
+  // LABEL COLORS (values outside each donut slice)
+  .nv-pieLabels g:nth-of-type(1) text {
+    fill: #3692cc !important;
+  }
+  .nv-pieLabels g:nth-of-type(2) text {
+    fill: #1b1464 !important;
+  }
+  .nv-pieLabels g:nth-of-type(3) text {
+    fill: #93278f !important;
+  }
+  .nv-pieLabels g:nth-of-type(4) text {
+    fill: #f7931e !important;
+  }
+  .nv-pieLabels g:nth-of-type(5) text {
+    fill: #22b573 !important;
+  }
+}

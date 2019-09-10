@@ -1,0 +1,83 @@
+application-dates {
+  ion-header {
+    .college-logo,
+    .college-title {
+      display: inline-block;
+    }
+    .college-logo img {
+      width: 36px !important;
+      height: 36px !important;
+      margin: 5px 0 5px 0;
+    }
+    .college-title {
+      padding-left: 10px;
+      max-width: calc(100% - 40px);
+    }
+    ion-toolbar.toolbar-md {
+      padding: 0 4px;
+      .toolbar-title.toolbar-title-md {
+        padding-left: 0px;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: center;
+      }
+    }
+  }
+  ion-list[radio-group] {
+    ion-label {
+      display: flex;
+      flex-direction: row;
+      font-size: 14px;
+      align-items: center;
+    }
+    // Application Deadline radio buttons
+    &:first-of-type{
+      ion-label {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        margin: 7.5px 8px 7.5px 0;
+      }
+      ion-radio.radio .radio-icon {
+        opacity: 0;
+      }
+    }
+    // Application Type radio buttons
+    &:last-of-type {
+      ion-item {
+        min-height: 40px !important;
+      }
+      ion-radio {
+        margin: 5px 14px 5px 4px !important;
+      }
+      ion-label.label-md {
+        margin: 5px 0 5px 0;
+        white-space: normal;
+      }
+    }
+  }
+  .application-date-button {
+    border-radius: 50%;
+    height: 50px;
+    width: 50px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin-right: 15px;
+    transition: background-color 0.25s ease-in-out;
+    > span {
+      display: block;
+      text-align: center;
+      line-height: 0.9;
+      &:first-child {
+        font-size: 12px;
+      }
+      &:last-child {
+        font-size: 20px;
+        font-weight: 500;
+      }
+    }
+  }
+}

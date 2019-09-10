@@ -1,0 +1,57 @@
+[list-tabs] {
+  >button[ion-button] {
+    min-height: 49px !important;
+    display: flex;
+    flex: 1;
+    padding: 0;
+    margin: 0;
+
+    .button-inner {
+      flex-direction: column;
+    }
+  }
+
+  ion-label {
+    font-weight: 400;
+    margin-top: 2px !important;
+    font-size: 1rem;
+    line-height: 1.1rem;
+    color: rgba($color: #000000, $alpha: 0.7)
+  }
+
+  &::before {
+    top: -2px;
+    bottom: auto;
+    background-position: left 0 top 0;
+    height: 2px;
+    left: 0;
+    position: absolute;
+    width: 100%;
+    background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAHBAMAAADzDtBxAAAAD1BMV…h/TXEAAAAaSURBVAjXYxCEAgY4UIICBmMogMsgFLtAAQCNSwXZKOdPxgAAAABJRU5ErkJggg==);
+    background-repeat: repeat-x;
+    content: "";
+  }
+}
+
+.activeTabButton {
+
+  ion-label,
+  ion-icon {
+    color: $blue;
+    transition: 0.4s transform ease-in-out;
+  }
+
+  ion-icon {
+    transform: translate3d(0, -2px, 0);
+  }
+
+  ion-label {
+    transform: scale3d(1.16667, 1.16667, 1);
+  }
+}
+
+tasks-list [list-tabs] button:nth-child(1),
+colleges-list [list-tabs] button:nth-child(2),
+scholarships-list [list-tabs] button:nth-child(3) {
+  @extend .activeTabButton;
+}

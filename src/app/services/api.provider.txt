@@ -1,0 +1,218 @@
+import { Injectable } from '@angular/core';
+import { Headers, Http } from '@angular/http';
+import { Storage } from '@ionic/storage';
+import { extend } from 'lodash';
+import { BehaviorSubject } from 'rxjs';
+import { Observable } from 'rxjs/Observable';
+import { Subject } from 'rxjs/Subject';
+
+import 'rxjs/add/operator/map';
+
+import { UrlService } from '@nte/services/url.service';
+
+@Injectable({ providedIn: 'root' })
+export class ApiService {
+  private _headers: BehaviorSubject<Headers> = new BehaviorSubject(null);
+  private _pathRoot: BehaviorSubject<string> = new BehaviorSubject(null);
+  private _requestOptions: BehaviorSubject<any> = new BehaviorSubject(null);
+  private _token: BehaviorSubject<string> = new BehaviorSubject<string>(null);
+  private _tokenPrefix: BehaviorSubject<string> = new BehaviorSubject(`Token `);
+
+  get headers() {
+    return this._headers.getValue();
+  }
+  get pathRoot() {
+    return this._pathRoot.getValue();
+  }
+  get requestOptions() {
+    return this._requestOptions.getValue();
+  }
+  get storedToken() {
+    return this.storage.get(`ls.authToken`);
+  }
+  get token() {
+    return this._token.getValue();
+  }
+  get tokenPrefix() {
+    return this._tokenPrefix.getValue();
+  }
+
+  set headers(headers: any) {
+    this._headers.next(headers);
+  }
+  set pathRoot(root: string) {
+    this._pathRoot.next(root);
+  }
+  set requestOptions(opts: any) {
+    this._requestOptions.next(opts);
+  }
+  set token(token: string) {
+    this._token.next(token);
+  }
+  set tokenPrefix(prefix: string) {
+    this._tokenPrefix.next(prefix);
+  }
+
+  constructor(private http: Http,
+    private storage: Storage,
+    private url: UrlService) {
+    this.pathRoot = this.url.getPathRoot();
+    this.setupHeaders();
+  }
+
+  public delete(path: string): Observable<any> {
+    return this.http.delete(this.getUrl(path), this.requestOptions);
+  }
+
+  public get(path: string, isAbsoluteUrl?: boolean): Observable<any> {
+    return this.http.get(this.getUrl(path, isAbsoluteUrl), this.requestOptions);
+  }
+
+  public getNoAcceptRequestHeader(path: string, isAbsoluteUrl?: boolean): Observable<any> {
+    this.requestOptions = {
+      headers: new Headers({
+        'AUTHORIZATION': `${this.tokenPrefix}${this.storedToken}`,
+        'Content-Type': `application/json`
+      })
+    };
+    return this.http.get(this.getUrl(path, isAbsoluteUrl), this.requestOptions);
+  }
+
+  public getNoHeaders(path: string, isAbsoluteUrl?: boolean): Observable<any> {
+    return this.http.get(this.getUrl(path, isAbsoluteUrl));
+  }
+
+  public getPaged<T>(path: string): Observable<T[]> {
+    const subject = new Subject<T[]>();
+    this.recursiveGet(this.getUrl(path), subject, Date.now());
+    return subject.asObservable();
+  }
+
+  public options(path: string): Observable<any> {
+    const reqOpts = extend(this.requestOptions, { method: `OPTIONS` });
+    return this.http.request(this.getUrl(path), reqOpts);
+  }
+
+  public optionsNoAuth(path: string): Observable<any> {
+    const reqOpts: any = { headers: this.requestOptions.headers };
+    reqOpts.headers.delete(`AUTHORIZATION`);
+    reqOpts.method = `OPTIONS`;
+    return this.http.request(this.getUrl(path), reqOpts);
+  }
+
+  public patch(path: string, data?: any): Observable<any> {
+    return this.http.patch(this.getUrl(path), JSON.stringify(data), this.requestOptions);
+  }
+
+  public patchFile(path: string, file: File) {
+    const options: any = {
+      headers: { AUTHORIZATION: `${this.tokenPrefix}${this.token}` }
+    };
+    const formFile = new FormData();
+    formFile.append(`file`, file);
+    formFile.append(`file_name`, file.name);
+    return this.http.patch(this.getUrl(path), formFile, options);
+  }
+
+  public post(path: string, data: any): Observable<any> {
+    return this.http.post(this.getUrl(path), JSON.stringify(data), this.requestOptions);
+  }
+
+  public postFile(path: string, file: File, author?: string, type?: string) {
+    const options: any = {
+      headers: { AUTHORIZATION: `${this.tokenPrefix}${this.token}` }
+    };
+    const formFile = new FormData();
+    formFile.append(`file`, file);
+    formFile.append(`file_name`, file.name);
+    if (author) {
+      formFile.append(`author`, author);
+    }
+    if (type) {
+      formFile.append(`file_type`, type);
+    }
+    return this.http.post(this.getUrl(path), formFile, options);
+  }
+
+  public postWithoutAuthorization(path: string, data: any): Observable<any> {
+    return this.http.post(
+      this.getUrl(path),
+      JSON.stringify(data),
+      {
+        headers: new Headers({
+          'Accept': `application/json`,
+          'Content-Type': `application/json`
+        })
+      }
+    );
+  }
+
+  public put(path: string, data: any): Observable<any> {
+    return this.http.put(
+      this.getUrl(path),
+      JSON.stringify(data),
+      this.requestOptions
+    );
+  }
+
+  public setToken(token: string) {
+    this.token = token;
+  }
+
+  public setupHeaders(token?: string) {
+    return this.getHeaders(token)
+      .then((headers: any) => {
+        this.headers = new Headers(headers);
+        this.requestOptions = { headers: this.headers };
+        return;
+      })
+      .catch(err => console.error(err));
+  }
+
+  private getHeaders(token?: string): Promise<Headers> {
+    const headers = new Headers({
+      'Accept': `application/json`,
+      'Content-Type': `application/json`
+    });
+    if (token) {
+      return new Promise((resolve, _reject) => {
+        headers.append(`AUTHORIZATION`, `${this.tokenPrefix}${token}`);
+        if (!this.token) {
+          this.setToken(token);
+        }
+        resolve(headers);
+      });
+    } else if (this.storedToken) {
+      return this.storedToken.then(
+        val => {
+          if (val && val.length) {
+            headers.append(`AUTHORIZATION`, `${this.tokenPrefix}${val}`);
+          }
+          return headers;
+        },
+        err => {
+          console.error(err);
+          return headers;
+        }
+      );
+    }
+  }
+
+  private getUrl(path: string, isAbsoluteUrl: boolean = false) {
+    return isAbsoluteUrl ? path : this.pathRoot + path;
+  }
+
+  private recursiveGet(url: string, subject: Subject<any>, start: number): void {
+    this.http.get(url, this.requestOptions)
+      .subscribe((response: any) => {
+        const data = response.json();
+        subject.next(data.results);
+        if (data.next) {
+          this.recursiveGet(data.next, subject, start);
+        } else {
+          subject.complete();
+          subject.unsubscribe();
+        }
+      });
+  }
+}

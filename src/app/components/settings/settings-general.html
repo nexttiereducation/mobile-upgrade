@@ -1,0 +1,100 @@
+<ion-card>
+  <ion-card-header>Account</ion-card-header>
+  <ion-list>
+    <ion-item>
+      <ion-label floating>First name</ion-label>
+      <ion-input name="first_name"
+                 type="text"
+                 [formControl]="firstNameControl"
+                 [readonly]="!canEdit"
+                 [style.padding-left.px]="6"></ion-input>
+    </ion-item>
+    <ion-item>
+      <ion-label floating>Last name</ion-label>
+      <ion-input name="last_name"
+                 type="text"
+                 [formControl]="lastNameControl"
+                 [readonly]="!canEdit"
+                 [style.padding-left.px]="6"></ion-input>
+    </ion-item>
+  </ion-list>
+</ion-card>
+<ion-card *ngIf="canDelete">
+  <ion-card-content>
+    <button color="primary"
+            ion-button
+            *ngIf="!wantsToDelete"
+            (click)="wantsToDelete = !wantsToDelete">Delete account</button>
+    <ng-container *ngIf="wantsToDelete">
+      <div class="surveyQuestion">Delete account</div>
+      <div class="body"
+           margin-vertical> By deleting your account, all of your personal data will be lost, and your account will be
+        permanently closed. </div>
+      <div class="bold">
+        <ion-icon color="warn"
+                  name="warning"></ion-icon>
+        <span>Are you sure you want to delete your account?</span>
+      </div>
+      <div fxLayout="row"
+           fxLayoutAlign="end center"
+           fxLayoutGap="8px">
+        <button class="no-caps"
+                ion-button
+                outline
+                (click)="wantsToDelete = !wantsToDelete">
+          <span>No, nevermind</span>
+          <ion-icon name="mood"></ion-icon>
+        </button>
+        <button class="no-caps"
+                color="warn"
+                ion-button
+                (click)="deleteAccount()">Yes, delete my account</button>
+      </div>
+    </ng-container>
+  </ion-card-content>
+</ion-card>
+<!-- <div fxLayout="column"
+           fxLayoutGap="8px">
+        <div class="mat-font-medium">Profile picture</div>
+        <div fxLayout="row"
+             fxLayoutGap="8px"
+             fxLayoutAlign="start center">
+          <ion-icon class="mat-72 text-blue-light notranslate"
+                    *ngIf="!currentUser.profile_photo_url">account_circle</ion-icon>
+          <ion-avatar size="medium"
+                      *ngIf="currentUser.profile_photo_url">
+            <img [src]="currentUser.profile_photo_url" />
+          </ion-avatar>
+          <ng-template [ngIf]="!attachingFile">
+            <div ng2FileDrop
+                 (fileOver)="fileHover = $event"
+                 (onFileDrop)="fileSelected($event)"
+                 [class.file-upload-hover]="fileHover"
+                 [uploader]="uploader">
+              <button ion-button
+                      (click)="profilePicker.click()"
+                      [color]="fileHover ? 'accent' : 'primary'">
+                {{currentUser.profile_photo_url ? 'Change' : 'Upload'}} </button>
+              <input id="profilePicker"
+                     name="profilePicker"
+                     ng2FileSelect
+                     type="file"
+                     #profilePicker
+                     (change)="fileSelected($event)"
+                     [uploader]="uploader" />
+            </div>
+            <button color="primary"
+                    ion-button
+                    *ngIf="currentUser.profile_photo_url"
+                    (click)="removeProfilePicture()">Remove</button>
+          </ng-template>
+          <div class="mat-padding"
+               fxLayout="row"
+               fxLayoutAlign="center center"
+               fxLayoutGap="8px"
+               *ngIf="attachingFile">
+            <ion-spinner diameter="30"
+                         strokeWidth="3"></ion-spinner>
+          </div>
+        </div>
+      </div> -->
