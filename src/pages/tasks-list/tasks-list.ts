@@ -10,7 +10,7 @@ import {
   NavController,
   NavParams,
   ToastController
-} from 'ionic-angular';
+} from '@ionic/angular';
 import { Subscription } from 'rxjs/Subscription';
 
 import { SendComponent } from '@nte/components/send/send';

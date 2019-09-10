@@ -8,7 +8,7 @@ import {
   NavController,
   NavParams,
   ToastController
-} from 'ionic-angular';
+} from '@ionic/angular';
 
 import { SendComponent } from '@nte/components/send/send';
 import { COLLEGE_NON_PROFIT_QUERY } from '@nte/constants/college.constants';

@@ -2,7 +2,7 @@ import { animate, Component, state, style, transition, trigger, ViewChild } from
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { EmailComposer } from '@ionic-native/email-composer';
 import { Storage } from '@ionic/storage';
-import { AlertController, Content, IonicPage, NavController, Platform } from 'ionic-angular';
+import { AlertController, Content, IonicPage, NavController, Platform } from '@ionic/angular';
 import { Subject } from 'rxjs';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 
@@ -188,8 +188,8 @@ export class LoginPage {
         `Dismiss`
       ],
       message: registerMessage.message,
-      subTitle: registerMessage.subTitle,
-      title: registerMessage.title
+      subHeader: registerMessage.subTitle,
+      header: registerMessage.title
     });
     regAlert.present();
   }

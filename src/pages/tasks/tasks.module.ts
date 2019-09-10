@@ -1,5 +1,5 @@
 import { NgModule } from '@angular/core';
-import { IonicPageModule } from 'ionic-angular';
+import { IonicPageModule } from '@ionic/angular';
 import { MaterialIconsModule } from 'ionic2-material-icons';
 
 import { ComponentsModule } from '@nte/components/components.module';

@@ -1,5 +1,5 @@
 import { Component, ViewChild } from '@angular/core';
-import { Content, Events, IonicPage, NavController, NavParams } from 'ionic-angular';
+import { Content, Events, IonicPage, NavController, NavParams } from '@ionic/angular';
 import { Subscription } from 'rxjs/Subscription';
 
 import { ALPHA_CATEGORIES } from '@nte/constants/filter.constants';

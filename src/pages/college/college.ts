@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { IonicPage, ModalController, NavParams, ToastController } from 'ionic-angular';
+import { IonicPage, ModalController, NavParams, ToastController } from '@ionic/angular';
 
 import { ApplicationDatesComponent } from '@nte/components/application-dates/application-dates';
 import { ICollegeRecommendation } from '@nte/models/college-recommendation.interface';

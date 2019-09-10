@@ -1,5 +1,5 @@
 <ion-header mode="ios">
-  <ion-navbar mode="ios">
+  <ion-toolbar mode="ios">
     <ion-title class="body text-white truncate"
                mode="ios"
                text-left
@@ -11,20 +11,19 @@
         <span *ngIf="scholarship?.sponsor?.name">{{ scholarship?.sponsor?.name }}</span>
       </div>
     </ion-title>
-    <ion-buttons end
+    <ion-buttons slot="primary"
                  *ngIf="!recommendation">
-      <button clear
-              icon-only
-              ion-button
-              (click)="toggleSaved($event)"
-              [color]="scholarship?.saved ? 'primary' : 'black'">
+      <ion-button fill="clear"
+                  icon-only
+                  (click)="toggleSaved($event)"
+                  [color]="scholarship?.saved ? 'primary' : 'black'">
         <ion-icon name="nt-saved"
                   *ngIf="scholarship?.saved"></ion-icon>
         <ion-icon name="nt-save"
                   *ngIf="!scholarship?.saved"></ion-icon>
-      </button>
+      </ion-button>
     </ion-buttons>
-  </ion-navbar>
+  </ion-toolbar>
   <ion-toolbar color="white"
                no-padding
                *ngIf="recommendation">
@@ -40,24 +39,22 @@
         <div class="body">{{ recommendation.recommender?.get_full_name }}</div>
       </div>
     </ion-title>
-    <ion-buttons end="">
-      <button clear
-              icon-only
-              ion-button
-              (click)="toggleSaved($event)"
-              [color]="scholarship?.saved ? 'primary' : 'black'">
+    <ion-buttons slot="primary"="">
+      <ion-button fill="clear"
+                  icon-only
+                  (click)="toggleSaved($event)"
+                  [color]="scholarship?.saved ? 'primary' : 'black'">
         <ion-icon name="nt-saved"
                   *ngIf="scholarship?.saved"></ion-icon>
         <ion-icon name="nt-save"
                   *ngIf="!scholarship?.saved"></ion-icon>
-      </button>
-      <button clear
-              icon-only
-              ion-button
-              (click)="removeRecommendation($event)"
-              [hidden]="scholarship?.saved">
+      </ion-button>
+      <ion-button fill="clear"
+                  icon-only
+                  (click)="removeRecommendation($event)"
+                  [hidden]="scholarship?.saved">
         <ion-icon name="nt-unsave"></ion-icon>
-      </button>
+      </ion-button>
     </ion-buttons>
   </ion-toolbar>
 </ion-header>
@@ -200,7 +197,7 @@
         </ion-item>
         <ion-item class="bg-grayLightest-1"
                   *ngIf="scholarship.unlimited_awards">
-          <span class="body">Unlimited awards available</span>
+          <ion-label class="body">Unlimited awards available</ion-label>
           <ion-icon color="primary"
                     item-end
                     name="checkmark">
@@ -486,30 +483,28 @@
           <ion-col no-padding
                    *ngIf="scholarship.contact?.email"
                    [attr.col-6]="(scholarship.contact?.email && scholarship.contact?.phone) ? true : null">
-            <a class="external-link external-link-email"
-               clear
-               full
-               ion-button
-               no-margin
-               [href]="'mailto:' + scholarship.contact?.email">
+            <ion-button class="external-link external-link-email"
+                        fill="clear"
+                        expand="full"
+                        no-margin
+                        [href]="'mailto:' + scholarship.contact?.email">
               <div class="tinyHeader">Email</div>
               <img src="assets/image/contact/website.svg">
               <div class="body not-bold truncate fit">{{ scholarship.contact?.email }}</div>
-            </a>
+            </ion-button>
           </ion-col>
           <ion-col no-padding
                    *ngIf="scholarship.contact?.phone"
                    [attr.col-6]="(scholarship.contact?.email && scholarship.contact?.phone) ? true : null">
-            <a class="external-link external-link-phone"
-               clear
-               full
-               ion-button
-               no-margin
-               [href]="'tel:' + scholarship.contact?.phone">
+            <ion-button class="external-link external-link-phone"
+                        fill="clear"
+                        expand="full"
+                        no-margin
+                        [href]="'tel:' + scholarship.contact?.phone">
               <div class="tinyHeader">Phone</div>
               <img src="assets/image/contact/phone.svg">
               <div class="body not-bold">{{ scholarship.contact?.phone | phone }}</div>
-            </a>
+            </ion-button>
           </ion-col>
         </ion-row>
       </ion-grid>
@@ -519,10 +514,9 @@
 </ion-content>
 <ion-footer>
   <ion-toolbar color="primary">
-    <button clear
-            color="white"
-            full
-            ion-button
-            (click)="linkService.open(scholarship.application_url)">View Application</button>
+    <ion-button fill="clear"
+                color="white"
+                expand="full"
+                (click)="linkService.open(scholarship.application_url)">View Application </ion-button>
   </ion-toolbar>
 </ion-footer>

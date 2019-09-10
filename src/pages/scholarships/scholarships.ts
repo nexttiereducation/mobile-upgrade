@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { IonicPage, ItemSliding, NavController, NavParams, ToastController } from 'ionic-angular';
+import { IonicPage, ItemSliding, NavController, NavParams, ToastController } from '@ionic/angular';
 import { Subscription } from 'rxjs/Subscription';
 
 import { SCHOLARSHIP_TILES } from '@nte/constants/scholarship.constants';

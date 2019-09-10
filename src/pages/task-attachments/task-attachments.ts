@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { File } from '@ionic-native/file';
-import { Events, IonicPage, NavController, NavParams, ToastController } from 'ionic-angular';
+import { Events, IonicPage, NavController, NavParams, ToastController } from '@ionic/angular';
 
 import { IEmptyState } from '@nte/models/empty-state';
 import { LinkService } from '@nte/services/link.service';

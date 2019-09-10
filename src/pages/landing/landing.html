@@ -13,16 +13,14 @@
 </ion-content>
 <ion-footer class="no-border bg-blue"
             padding-10>
-  <button color="white"
-          full
-          ion-button
-          large
-          (click)="goToRegistration()"> Create an account </button>
-  <button clear
-          color="white"
-          full
-          ion-button
-          large
-          (click)="goToLogin()">
-    <span class="not-bold">Already have an account?</span>&nbsp;Log in </button>
+  <ion-button color="white"
+              expand="full"
+              size="large"
+              (click)="goToRegistration()"> Create an account </ion-button>
+  <ion-button fill="clear"
+              color="white"
+              expand="full"
+              size="large"
+              (click)="goToLogin()">
+    <span class="not-bold">Already have an account?</span>&nbsp;Log in </ion-button>
 </ion-footer>

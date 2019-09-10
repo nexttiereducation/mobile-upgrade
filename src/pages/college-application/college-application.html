@@ -76,7 +76,7 @@
       <div>Scholarship Information</div>
       <ion-grid>
         <ion-row justify-content-start>
-          <ion-col col-12>
+          <ion-col size="12">
             <ion-slides pager
                         *ngIf="college.details.scholarship_deadlines.length">
               <ng-template ngFor
@@ -140,16 +140,15 @@
                    text-center
                    *ngIf="college.details.admissions_telephone"
                    [attr.col-6]="college.admissions_url ? true : null">
-            <a ion-button
-               full
-               clear
-               no-margin
-               class="external-link external-link-phone"
-               [href]="'tel:' + college.details.admissions_telephone">
+            <ion-button expand="full"
+                        fill="clear"
+                        no-margin
+                        class="external-link external-link-phone"
+                        [href]="'tel:' + college.details.admissions_telephone">
               <div class="tinyHeader">Admissions Phone</div>
               <img src="assets/image/contact/phone.svg" />
               <div class="body truncate fit">{{ college.details.admissions_telephone | phone }}</div>
-            </a>
+            </ion-button>
           </ion-col>
         </ion-row>
       </ion-grid>

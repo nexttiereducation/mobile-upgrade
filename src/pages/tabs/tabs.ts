@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { NativeStorage } from '@ionic-native/native-storage';
 import { StatusBar } from '@ionic-native/status-bar';
 import { FCMNG, NotificationData } from 'fcm-ng';
-import { App, IonicPage, NavController, Platform, ToastController } from 'ionic-angular';
+import { App, IonicPage, NavController, Platform, ToastController } from '@ionic/angular';
 import { takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs/Subject';
 

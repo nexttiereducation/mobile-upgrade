@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { IonicPage, ModalController, NavController } from 'ionic-angular';
+import { IonicPage, ModalController, NavController } from '@ionic/angular';
 import { Subject } from 'rxjs/Subject';
 
 import { ApplicationDatesComponent } from '@nte/components/application-dates/application-dates';

@@ -1,6 +1,6 @@
 import { Component, ViewChild } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
-import { Content, Events, IonicPage, ModalController, NavController, NavParams, ToastController } from 'ionic-angular';
+import { Content, Events, IonicPage, ModalController, NavController, NavParams, ToastController } from '@ionic/angular';
 
 import { PromptComponent } from '@nte/components/prompt/prompt';
 import { TASK_NOTES_EMPTY_STATE, TASK_STATUSES, TaskStatus } from '@nte/constants/task.constants';

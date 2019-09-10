@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { IonicPage, NavController } from 'ionic-angular';
+import { IonicPage, NavController } from '@ionic/angular';
 
 import { EnvironmentService } from '@nte/services/environment.service';
 import { MixpanelService } from '@nte/services/mixpanel.service';

@@ -1,14 +1,14 @@
 <ion-header mode="ios">
-  <ion-navbar mode="ios">
+  <ion-toolbar mode="ios">
     <ion-title mode="ios"
                tappable
                (click)="scrollToTop()">
       <div class="subhead text-grayDark50"> {{ impersonatedStudent ? impersonatedStudent.full_name : 'Tasks' }} </div>
       {{ isSearchAll ? listName : ((listName + ' Tasks') || 'Tasks') }}
     </ion-title>
-    <ion-buttons end
+    <ion-buttons slot="primary"
                  messaging-button></ion-buttons>
-  </ion-navbar>
+  </ion-toolbar>
   <ion-toolbar class="collapse-expand"
                no-padding
                *ngIf="(taskService.userTaskTrackers | async)?.length > 0">
@@ -44,28 +44,30 @@
         <ion-item-sliding (animationCompleted)="setViewedTasksListPage()"
                           [animateItemSliding]="isFirst && user.showTaskAnimation"
                           (ionSwipe)="checkSwiper($event, taskTracker)">
-          <ion-item-options side="left"
+          <ion-item-options side="start"
                             *ngIf="!impersonatedStudent">
-            <button expandable
-                    icon-only
-                    ion-button
-                    (click)="taskUpdated($event, taskTracker)"
-                    [color]="(taskTracker.isSurveyTask || taskTracker.prompt)
+            <ion-button expandable
+                        icon-only
+                        (click)="taskUpdated($event, taskTracker)"
+                        [color]="(taskTracker.isSurveyTask || taskTracker.prompt)
                              ? 'orange' : 'green'">
               <ion-icon md-name="(taskTracker.isSurveyTask || taskTracker.prompt)
                                  ? 'more_horiz' : 'check'">
                 {{ (taskTracker.isSurveyTask || taskTracker.prompt) ? 'more_horiz' : 'check' }} </ion-icon>
-            </button>
+            </ion-button>
           </ion-item-options>
           <ion-item tappable
                     (click)="openTaskDetail(taskTracker)">
+            <ion-label></ion-label>
             <ion-card-content no-padding>
               <ion-item>
-                <div class="body truncate">{{ taskTracker.task.name }}</div>
-                <div class="subhead">
-                  <ion-icon name="calendar"></ion-icon> Due by
-                  {{ (taskTracker.dueDate || taskTracker.task.get_deadline) | date }}
-                </div>
+                <ion-label>
+                  <div class="body truncate">{{ taskTracker.task.name }}</div>
+                  <div class="subhead">
+                    <ion-icon name="calendar"></ion-icon> Due by
+                    {{ (taskTracker.dueDate || taskTracker.task.get_deadline) | date }}
+                  </div>
+                </ion-label>
                 <ion-avatar item-end>
                   <img [class.avatar-shadow]="taskTracker.task.task_type == 'CS'"
                        [class.bg-white]="list.iconUrl"
@@ -77,29 +79,26 @@
             </ion-card-content>
           </ion-item>
           <ion-item-options class="bg-blue"
-                            side="right">
-            <button clear
-                    color="white"
-                    ion-button
-                    *ngIf="(connectionService.all$ | async)?.length"
-                    (click)="openSendModal(taskTracker)">
+                            side="end">
+            <ion-button fill="clear"
+                        color="white"
+                        *ngIf="(connectionService.all$ | async)?.length"
+                        (click)="openSendModal(taskTracker)">
               <ion-icon name="send"></ion-icon>
               <span class="no-caps">Send</span>
-            </button>
-            <button clear
-                    color="white"
-                    ion-button
-                    (click)="openTaskDetail(taskTracker, null, 'attach')">
+            </ion-button>
+            <ion-button fill="clear"
+                        color="white"
+                        (click)="openTaskDetail(taskTracker, null, 'attach')">
               <ion-icon name="attach"></ion-icon>
               <span class="no-caps">Files</span>
-            </button>
-            <button clear
-                    color="white"
-                    ion-button
-                    (click)="openTaskDetail(taskTracker, null, 'notes')">
+            </ion-button>
+            <ion-button fill="clear"
+                        color="white"
+                        (click)="openTaskDetail(taskTracker, null, 'notes')">
               <ion-icon md-name="chat_bubble">chat_bubble</ion-icon>
               <span class="no-caps">Notes</span>
-            </button>
+            </ion-button>
           </ion-item-options>
         </ion-item-sliding>
       </ion-card>

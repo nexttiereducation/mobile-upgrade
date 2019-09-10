@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { Events, IonicPage, NavController, NavParams } from 'ionic-angular';
+import { Events, IonicPage, NavController, NavParams } from '@ionic/angular';
 import { Subscription } from 'rxjs/Subscription';
 
 import { ALPHA_CATEGORIES } from '@nte/constants/filter.constants';

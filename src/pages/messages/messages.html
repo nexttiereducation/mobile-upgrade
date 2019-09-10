@@ -6,18 +6,17 @@
   </ion-navbar>
 </ion-header> -->
 <ion-header mode="ios">
-  <ion-navbar hideBackButton
-              mode="ios"
-              [color]="toolbarColor"
-              [ngSwitch]="messageType">
-    <ion-buttons start>
-      <button clear
-              icon-only
-              ion-button
-              (click)="back()"
-              [color]="messageType === 'message' ? 'black' : 'white'">
+  <ion-toolbar hideBackButton
+               mode="ios"
+               [color]="toolbarColor"
+               [ngSwitch]="messageType">
+    <ion-buttons slot="secondary">
+      <ion-button fill="clear"
+                  icon-only
+                  (click)="back()"
+                  [color]="messageType === 'message' ? 'black' : 'white'">
         <ion-icon name="ios-arrow-back"></ion-icon>
-      </button>
+      </ion-button>
     </ion-buttons>
     <ion-title mode="ios"
                *ngSwitchCase="'note'">
@@ -27,7 +26,7 @@
                *ngSwitchCase="'message'">
       <div class="subhead text-grayDark50">Messaging</div> {{ subtitle }}
     </ion-title>
-  </ion-navbar>
+  </ion-toolbar>
 </ion-header>
 <!-- <ion-content>
   Sup
@@ -61,7 +60,7 @@
                                        || isNewAuthor(message, i)
                                        || isNewDate(message, i)">
             <ion-col class="avatar-col"
-                     col-auto
+                     size="auto"
                      no-padding
                      *ngIf="message && user?.id !== message.author?.id">
               <ion-avatar class="avatar-shadow"
@@ -84,7 +83,9 @@
                               || isNewDate(message, i))"> {{ user?.id !== message.author?.id
                    ? (message.author?.full_name || (message.author?.first_name + ' ' + message.author?.last_name))
                    : 'Me' }} </div>
-              <div class="body block paragraph"
+              <div class="body expand="
+                   block"
+                   paragraph"
                    [attr.margin-top]="messageType === 'note'
                                       && user?.id === message.author?.id
                                       && (isFirst
@@ -96,23 +97,22 @@
                    [ngClass]="(user?.id === message.author?.id) ? 'bg-blue text-white' : 'bg-grayMedium'">
                 <div class="note"
                      *ngIf="!message.linkOnly">{{ message.note || message.body }}</div>
-                <ion-chip class="truncate fit"
-                          color="green"
-                          icon-start
-                          ion-button
-                          no-padding
-                          small
-                          tappable
-                          *ngIf="message.attachment"
-                          (click)="openAttachment(message.attachment)">
+                <ion-button class="truncate fit"
+                            color="green"
+                            slot="start"
+                            no-padding
+                            size="small"
+                            tappable
+                            *ngIf="message.attachment"
+                            (click)="openAttachment(message.attachment)">
                   <ion-icon color="white"
                             [name]="'nt-' + message.attachment?.page"></ion-icon>
                   <ion-label class="no-caps">{{ message.attachment?.name }}</ion-label>
-                </ion-chip>
+                </ion-button>
               </div>
             </ion-col>
             <ion-col class="avatar-col"
-                     col-auto
+                     size="auto"
                      no-padding
                      *ngIf="message && user?.id === message.author?.id">
               <ion-avatar class="avatar-shadow"
@@ -134,12 +134,16 @@
                justify-content-end
                *ngIf="messageService.sending$ | async">
         <ion-col class="message-col">
-          <div class="body block paragraph from-me bg-blue-50">
+          <div class="body expand="
+               block"
+               paragraph
+               from-me
+               bg-blue-50">
             <ion-loading></ion-loading>
           </div>
         </ion-col>
         <ion-col class="avatar-col"
-                 col-auto
+                 size="auto"
                  no-padding></ion-col>
       </ion-row>
     </ion-grid>
@@ -164,16 +168,15 @@
              [disabled]="!(messages$ | async)"
              [placeholder]="inputPlaceholder"
              [(ngModel)]="newMessage" />
-      <button clear
-              color="primary"
-              icon-only
-              ion-button
-              item-end
-              type="submit"
-              (click)="send(newMessage)"
-              [disabled]="!newMessage">
+      <ion-button fill="clear"
+                  color="primary"
+                  icon-only
+                  item-end
+                  type="submit"
+                  (click)="send(newMessage)"
+                  [disabled]="!newMessage">
         <ion-icon name="send"></ion-icon>
-      </button>
+      </ion-button>
       <!-- </div> -->
     </ion-item>
   </ion-toolbar>

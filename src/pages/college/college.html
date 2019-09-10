@@ -1,5 +1,5 @@
 <ion-header mode="ios">
-  <ion-navbar mode="ios">
+  <ion-toolbar mode="ios">
     <ion-title class="avatar-title"
                mode="ios"
                *ngIf="college && college.name">
@@ -14,11 +14,9 @@
         <div class="truncate subhead"
              *ngIf="!isRecd">
           <ion-icon name="pin"></ion-icon>
-          <span>
-            {{ college.city?.length && college.state?.length
+          <span> {{ college.city?.length && college.state?.length
                 ? college.city + ', ' + college.state
-                : '&nbsp;' }}
-          </span>
+                : '&nbsp;' }} </span>
         </div>
         <div class="truncate subhead"
              *ngIf="isRecd && recommender"
@@ -27,27 +25,24 @@
           <img [src]="recommender?.profile_photo"
                [style.height.px]="20" />
           <span class="bold"
-                [style.line-height.px]="20">
-            {{recommender?.get_full_name}}
-          </span>
+                [style.line-height.px]="20"> {{recommender?.get_full_name}} </span>
         </div>
       </div>
     </ion-title>
-    <ion-buttons end>
-      <button clear
-              icon-only
-              ion-button
-              (click)="toggleSaved($event)"
-              [class.changing]="isChanging"
-              [color]="isSaved ? 'primary' : 'black'"
-              [disabled]="isChanging">
+    <ion-buttons slot="primary">
+      <ion-button fill="clear"
+                  icon-only
+                  (click)="toggleSaved($event)"
+                  [class.changing]="isChanging"
+                  [color]="isSaved ? 'primary' : 'black'"
+                  [disabled]="isChanging">
         <ion-icon name="nt-saved"
                   *ngIf="isSaved || isChanging"></ion-icon>
         <ion-icon name="nt-save"
                   *ngIf="!isSaved || isChanging"></ion-icon>
-      </button>
+      </ion-button>
     </ion-buttons>
-  </ion-navbar>
+  </ion-toolbar>
 </ion-header>
 <ion-content no-padding>
   <ion-tabs class="college-tabs"

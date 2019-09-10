@@ -1,6 +1,8 @@
-<div padding *ngIf="isPrompt">
-   <div padding-bottom>Search for your high school by name or ZIP code.</div>
-   <div class="tinyText bold">If no matches are found, email <a class="external-link external-link-email" href="mailto:info@nexttiereducation.com">info@nexttiereducation.com</a> for assistance.</div>
+<div padding
+     *ngIf="isPrompt">
+  <div padding-bottom>Search for your high school by name or ZIP code.</div>
+  <div class="tinyText bold">If no matches are found, email <a class="external-link external-link-email"
+       href="mailto:info@nexttiereducation.com">info@nexttiereducation.com</a> for assistance.</div>
 </div>
 <div class="search-container"
      *ngIf="!selectedHighSchool">
@@ -16,35 +18,42 @@
     <ion-item tappable
               *ngFor="let school of highSchools"
               (click)="selectSchool(school)">
-      <div class="body bold">{{ school.name | titlecase }}</div>
-      <div class="body">{{ (school.city | titlecase) + ', ' + school.state + ' ' + school.zipcode }}</div>
+      <ion-label>
+        <div class="body bold">{{ school.name | titlecase }}</div>
+        <div class="body">{{ (school.city | titlecase) + ', ' + school.state + ' ' + school.zipcode }}</div>
+      </ion-label>
     </ion-item>
   </ion-list>
 </div>
 <ng-template [ngIf]="selectedHighSchool">
   <ion-card>
     <ion-row align-items-center>
-      <ion-col col-auto>
-        <img class="school" src="assets/image/college/tile_all.svg"/>
+      <ion-col size="auto">
+        <img class="school"
+             src="assets/image/college/tile_all.svg" />
       </ion-col>
       <ion-col>
         <div class="body bold">{{ selectedHighSchool.name | titlecase }}</div>
-        <div class="body">{{ (selectedHighSchool.city | titlecase) + ', ' + selectedHighSchool.state + ' ' + selectedHighSchool.zipcode }}</div>
+        <div class="body">
+          {{ (selectedHighSchool.city | titlecase) + ', ' + selectedHighSchool.state + ' ' + selectedHighSchool.zipcode }}
+        </div>
       </ion-col>
-      <ion-col col-auto>
-        <button ion-button icon-only clear
-                color="primary"
-                (click)="deselectHighSchool()">
+      <ion-col size="auto">
+        <ion-button icon-only
+                    fill="clear"
+                    color="primary"
+                    (click)="deselectHighSchool()">
           <ion-icon name="close"></ion-icon>
-        </button>
+        </ion-button>
       </ion-col>
     </ion-row>
   </ion-card>
   <ion-footer *ngIf="!isNewUser">
     <ion-toolbar color="green">
-      <button ion-button full clear
-              color="white"
-              (click)="saveHighSchool()">Save</button>
+      <ion-button expand="full"
+                  clear
+                  color="white"
+                  (click)="saveHighSchool()">Save</ion-button>
     </ion-toolbar>
   </ion-footer>
 </ng-template>

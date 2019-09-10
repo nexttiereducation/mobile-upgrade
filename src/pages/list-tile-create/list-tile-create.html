@@ -1,25 +1,20 @@
 <ion-header mode="ios">
-  <ion-navbar mode="ios">
-    <ion-buttons start>
-      <button clear
-              color="black"
-              icon-only
-              ion-button
-              (click)="back()">
+  <ion-toolbar mode="ios">
+    <ion-buttons slot="secondary">
+      <ion-button fill="clear"
+                  color="black"
+                  icon-only
+                  (click)="back()">
         <ion-icon name="funnel"></ion-icon>
-      </button>
+      </ion-button>
     </ion-buttons>
-    <ion-title mode="ios">
-      Create your own list!
-    </ion-title>
-  </ion-navbar>
+    <ion-title mode="ios"> Create your own list! </ion-title>
+  </ion-toolbar>
 </ion-header>
-
 <!-- <filter [filter]="filterOptions"
         [hidden]="showSummary || !filterOptions"
         [listType]="page"
         [title]="'Create your own list!'"></filter> -->
-
 <ion-content [class.selections-complete]="selectionsMade">
   <div padding
        *ngIf="list?.filters">
@@ -36,12 +31,11 @@
             <span class="tinyText">{{ filter.displayName }}</span>
             <span class="bold">{{ value.displayValue || value.id }}</span>
           </ion-label>
-          <button clear
-                  color="white"
-                  ion-button
-                  (click)="removeFilter(filter, filterIndex, valueIndex)">
+          <ion-button fill="clear"
+                      color="white"
+                      (click)="removeFilter(filter, filterIndex, valueIndex)">
             <ion-icon name="close"></ion-icon>
-          </button>
+          </ion-button>
         </ion-chip>
       </ng-template>
     </ng-template>
@@ -49,9 +43,9 @@
   </div>
   <hr>
   <div padding>
-    <h6>List Name</h6>
     <ion-item margin-bottom
               no-padding>
+      <ion-label>List Name</ion-label>
       <ion-input maxlength="15"
                  placeholder="Name your list"
                  type="text"
@@ -63,36 +57,34 @@
     <h6>Pick an Image</h6>
     <ion-grid class="pick-an-image"
               no-padding
-              radio-group
               [(ngModel)]="list.image">
-      <ion-row>
-        <ng-template let-image
-                     ngFor
-                     [ngForOf]="images">
-          <ion-col col-4
-                   text-center>
-            <button class="image-button"
-                    clear
-                    full
-                    icon-only
-                    ion-button
-                    (click)="list.image = image"
-                    [class.selected]="list.image === image">
-              <img [src]="image">
-            </button>
-          </ion-col>
-        </ng-template>
-      </ion-row>
+      <ion-radio-group>
+        <ion-row>
+          <ng-template let-image
+                       ngFor
+                       [ngForOf]="images">
+            <ion-col size="4"
+                     text-center>
+              <ion-button class="image-button"
+                          fill="clear"
+                          expand="full"
+                          icon-only
+                          (click)="list.image = image"
+                          [class.selected]="list.image === image">
+                <img [src]="image">
+              </ion-button>
+            </ion-col>
+          </ng-template>
+        </ion-row>
+      </ion-radio-group>
     </ion-grid>
   </div>
 </ion-content>
-
 <ion-footer *ngIf="selectionsMade">
   <ion-toolbar color="primary">
-    <button clear
-            color="white"
-            full
-            ion-button
-            (click)="saveList()">Save your list</button>
+    <ion-button fill="clear"
+                color="white"
+                expand="full"
+                (click)="saveList()">Save your list</ion-button>
   </ion-toolbar>
 </ion-footer>

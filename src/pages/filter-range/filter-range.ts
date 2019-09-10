@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { Events, IonicPage, NavController, NavParams } from 'ionic-angular';
+import { Events, IonicPage, NavController, NavParams } from '@ionic/angular';
 import { isObject } from 'lodash';
 
 import { Category } from '@nte/models/category.model';

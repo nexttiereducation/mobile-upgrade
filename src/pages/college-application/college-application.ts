@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { IonicPage, NavController, NavParams, Platform } from 'ionic-angular';
+import { IonicPage, NavController, NavParams, Platform } from '@ionic/angular';
 import { join, padStart, split } from 'lodash';
 
 import { CollegeService } from '@nte/services/college.service';

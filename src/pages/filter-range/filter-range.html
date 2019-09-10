@@ -1,32 +1,35 @@
 <ion-header mode="ios">
-  <ion-navbar hideBackButton mode="ios">
-    <ion-buttons start>
-      <button ion-button icon-only clear (click)="back()">
+  <ion-toolbar hideBackButton
+               mode="ios">
+    <ion-buttons slot="secondary">
+      <ion-button icon-only
+                  fill="clear"
+                  (click)="back()">
         <ion-icon name="ios-arrow-back"></ion-icon>
-      </button>
+      </ion-button>
     </ion-buttons>
     <ion-title mode="ios">
-      <div class="subhead">{{ title }}</div>
-      {{ category?.name }}
+      <div class="subhead">{{ title }}</div> {{ category?.name }}
     </ion-title>
-    <ion-buttons end>
-      <button ion-button
-              [color]="category?.isActive ? 'primary' : 'steel'"
-              [disabled]="!category?.isActive"
-              (click)="clear()">Clear</button>
+    <ion-buttons slot="primary">
+      <ion-button [color]="category?.isActive ? 'primary' : 'steel'"
+                  [disabled]="!category?.isActive"
+                  (click)="clear()">Clear</ion-button>
     </ion-buttons>
-  </ion-navbar>
+  </ion-toolbar>
 </ion-header>
 <ion-content>
   <ion-list>
-    <ion-item text-center no-padding
+    <ion-item text-center
+              no-padding
               [class.bg-blue10]="category?.selectedItems[0]?.id"
               [class.text-blue]="category?.selectedItems[0]?.id"
               [class.text-steel50]="!category?.isActive">
       <ng-template [ngIf]="category?.config.prefix">{{ category?.config.prefix }}</ng-template>
       {{ selectedValueDisplay | number }}
     </ion-item>
-    <ion-item no-lines class="range-values text-steel50">
+    <ion-item no-lines
+              class="range-values text-steel50">
       <span item-start>
         <ng-template [ngIf]="category?.config.prefix">{{ category?.config.prefix }}</ng-template>
         {{ (category?.config.min | number) || 0 }}
@@ -49,19 +52,19 @@
 </ion-content>
 <ion-footer *ngIf="category?.isActive || filterService.filter?.activeChildCount">
   <ion-toolbar color="primary">
-    <button ion-button clear full icon-right
-            color="white"
-            *ngIf="filterService.isCyol"
-            (click)="viewSummary()">
-      Next
-      <ion-icon name="arrow-forward"></ion-icon>
-    </button>
-    <button ion-button clear full
-            color="white"
-            *ngIf="!filterService.isCyol"
-            (click)="applyFilters()">
-      Apply Filters
-      <ion-badge margin-left class="text-blue bg-white">{{ filterService.filter?.activeChildCount }}</ion-badge>
-    </button>
+    <ion-button fill="clear"
+                expand="full"
+                slot="end"
+                color="white"
+                *ngIf="filterService.isCyol"
+                (click)="viewSummary()"> Next <ion-icon name="arrow-forward"></ion-icon>
+    </ion-button>
+    <ion-button fill="clear"
+                expand="full"
+                color="white"
+                *ngIf="!filterService.isCyol"
+                (click)="applyFilters()"> Apply Filters <ion-badge margin-left
+                 class="text-blue bg-white">{{ filterService.filter?.activeChildCount }}</ion-badge>
+    </ion-button>
   </ion-toolbar>
 </ion-footer>

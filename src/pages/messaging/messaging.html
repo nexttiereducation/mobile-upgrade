@@ -1,16 +1,15 @@
 <ion-header mode="ios">
-  <ion-navbar hideBackButton
-              mode="ios">
-    <ion-buttons start>
-      <button clear
-              icon-only
-              ion-button
-              (click)="back()">
+  <ion-toolbar hideBackButton
+               mode="ios">
+    <ion-buttons slot="secondary">
+      <ion-button fill="clear"
+                  icon-only
+                  (click)="back()">
         <ion-icon name="ios-arrow-back"></ion-icon>
-      </button>
+      </ion-button>
     </ion-buttons>
     <ion-title mode="ios">Messaging</ion-title>
-  </ion-navbar>
+  </ion-toolbar>
 </ion-header>
 <ion-content class="bg-grayLightest">
   <ion-item-group class="bordered-list hover-list mat-font-default"
@@ -20,24 +19,22 @@
       <ion-item class="mat-font-default"
                 *ngFor="let invite of (connectionService.invites$ | async)?.received">
         <div class="body"> {{invite.stakeholder.first_name + ' ' + invite.stakeholder.last_name}} </div>
-        <button clear
-                icon-only
-                ion-button
-                item-end
-                style="font-size:1.4rem;margin-right:16px"
-                (click)="declineInvite(invite)">
+        <ion-button fill="clear"
+                    icon-only
+                    item-end
+                    style="font-size:1.4rem;margin-right:16px"
+                    (click)="declineInvite(invite)">
           <ion-icon class="text-red"
                     name="close-circle"></ion-icon>
-        </button>
-        <button clear
-                icon-only
-                ion-button
-                item-end
-                style="font-size:1.4rem"
-                (click)="acceptInvite(invite)">
+        </ion-button>
+        <ion-button fill="clear"
+                    icon-only
+                    item-end
+                    style="font-size:1.4rem"
+                    (click)="acceptInvite(invite)">
           <ion-icon color="green"
                     name="checkmark-circle"></ion-icon>
-        </button>
+        </ion-button>
       </ion-item>
     </ng-template>
     <ng-template [ngIf]="(connectionService.invites$ | async)?.sent?.length > 0">
@@ -45,24 +42,22 @@
       <ion-item class="mat-font-default"
                 *ngFor="let invite of (connectionService.invites$ | async)?.sent">
         <div class="body">{{invite.invite_email}}</div>
-        <button clear
-                icon-only
-                ion-button
-                item-end
-                (click)="cancelInvite(invite)">
+        <ion-button fill="clear"
+                    icon-only
+                    item-end
+                    (click)="cancelInvite(invite)">
           <ion-icon class="text-red"
                     name="close"></ion-icon>
-        </button>
+        </ion-button>
       </ion-item>
     </ng-template>
   </ion-item-group>
   <ion-item-group *ngIf="(connectionService.all$ | async)?.length
                          || (messageService.unreadMessages$ | async)?.length">
     <ion-item-divider> Team Members </ion-item-divider>
-    <button ion-item
-            large
-            *ngFor="let connection of (connectionService.all$ | async)"
-            (click)="selectTeamMember(connection)">
+    <ion-item size="large"
+              *ngFor="let connection of (connectionService.all$ | async)"
+              (click)="selectTeamMember(connection)">
       <ion-avatar item-left>
         <img [src]="getPhoto(connection)">
       </ion-avatar>
@@ -72,7 +67,7 @@
         <ion-badge color="green"
                    *ngIf="messageSummary[connection?.id] > 0">{{ messageSummary[connection?.id] }}</ion-badge>
       </ion-label>
-    </button>
+    </ion-item>
   </ion-item-group>
   <empty-state *ngIf="(connectionService.all$ | async)
                       && !(connectionService.all$ | async).length"

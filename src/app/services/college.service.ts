@@ -299,8 +299,8 @@ export class CollegeService extends ListService {
         () => {
           const alert = this.alertCtrl.create({
             buttons: [`Dismiss`],
-            subTitle: `An error has occurred. Please try again.`,
-            title: `Error`
+            subHeader: `An error has occurred. Please try again.`,
+            header: `Error`
           });
           alert.present();
         }
@@ -412,8 +412,8 @@ export class CollegeService extends ListService {
           console.error(err);
           const alert = this.alertCtrl.create({
             buttons: [`Dismiss`],
-            subTitle: `An error has occurred. Please try again.`,
-            title: `Error`
+            subHeader: `An error has occurred. Please try again.`,
+            header: `Error`
           });
           alert.present();
           this.isInitializing = false;
@@ -693,8 +693,8 @@ export class CollegeService extends ListService {
           console.error(err);
           const alert = this.alertCtrl.create({
             buttons: [`Dismiss`],
-            subTitle: `An error has occurred. Please try again.`,
-            title: `Error`
+            subHeader: `An error has occurred. Please try again.`,
+            header: `Error`
           });
           alert.present();
           this.isInitializing = false;

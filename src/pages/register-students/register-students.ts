@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { IonicPage, NavController } from 'ionic-angular';
+import { IonicPage, NavController } from '@ionic/angular';
 
 import { emailRegex } from '@nte/constants/stakeholder.constants';
 import { ConnectionService } from '@nte/services/connection.service';

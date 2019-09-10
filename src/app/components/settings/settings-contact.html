@@ -2,7 +2,7 @@
   <ion-card-header>Email</ion-card-header>
   <ion-list>
     <ion-item>
-      <ion-label floating>Email</ion-label>
+      <ion-label position="floating">Email</ion-label>
       <ion-input name="emailAddress"
                  type="email"
                  (ionBlur)="updateEmail(false)"
@@ -13,7 +13,7 @@
       <div *ngIf="primaryEmailControl?.invalid"> Please enter a valid email address </div>
     </ion-item>
     <ion-item>
-      <ion-label floating>Alternate Email</ion-label>
+      <ion-label position="floating">Alternate Email</ion-label>
       <ion-input name="emailAddress"
                  type="email"
                  (ionBlur)="updateEmail(true)"
@@ -42,7 +42,7 @@
     <ion-row>
       <ion-col>
         <ion-item>
-          <ion-label floating>Phone number</ion-label>
+          <ion-label position="floating">Phone number</ion-label>
           <ion-input name="phoneNumber"
                      type="tel"
                      (ionBlur)="setPhone(currentUser.phone_number, false)"
@@ -53,13 +53,13 @@
       </ion-col>
       <ion-col>
         <ion-item>
-          <ion-label floating>Phone type</ion-label>
+          <ion-label position="floating">Phone type</ion-label>
           <ion-select name="phoneType"
                       placeholder="Phone type"
                       (ionChange)="updatePhone(true)"
                       [(ngModel)]="currentUser.phone_type">
-            <ion-option value="MP">Mobile</ion-option>
-            <ion-option value="HP">Home</ion-option>
+            <ion-select-option value="MP">Mobile</ion-select-option>
+            <ion-select-option value="HP">Home</ion-select-option>
           </ion-select>
         </ion-item>
       </ion-col>
@@ -120,15 +120,15 @@
                           && currentUser.phone_number?.length"> Check your phone for a text message with the
           verification code. </div>
         <div *ngIf="showVerificationForm">
-          <ion-label floating>Verification code</ion-label>
+          <ion-label position="floating">Verification code</ion-label>
           <ion-input placeholder="12345"
                      type="number"
                      [(ngModel)]="verificationCode"></ion-input>
-          <button color="primary"
-                  ion-button
+          <ion-button color="primary"
+                 
                   matSuffix
                   [disabled]="!verificationCode"
-                  (click)="verifyPhone()">Verify</button>
+                  (click)="verifyPhone()">Verify</ion-button>
         </div>
       </ion-col>
     </ion-row>

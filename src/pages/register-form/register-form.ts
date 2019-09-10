@@ -1,6 +1,6 @@
 import { Component, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { Content, IonicPage, NavController, Platform, ToastController } from 'ionic-angular';
+import { Content, IonicPage, NavController, Platform, ToastController } from '@ionic/angular';
 import { escapeRegExp } from 'lodash';
 import { Subscription } from 'rxjs/Subscription';
 

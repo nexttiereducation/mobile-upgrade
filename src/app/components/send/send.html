@@ -1,18 +1,18 @@
 <ion-header mode="ios">
   <ion-toolbar mode="ios">
-    <ion-buttons start>
-      <button clear
-              color="black"
-              icon-only
-              ion-button
-              (click)="closeShareModal()">
+    <ion-buttons slot="secondary">
+      <ion-button fill="clear"
+                  color="black"
+                  icon-only
+                  (click)="closeShareModal()">
         <ion-icon name="close"></ion-icon>
-      </button>
+      </ion-button>
     </ion-buttons>
     <ion-title mode="ios"> Send {{ itemType }} </ion-title>
   </ion-toolbar>
 </ion-header>
-<ion-content fullscreen="false"
+<ion-content expand="full"
+             screen="false"
              [ngSwitch]="itemType">
   <!-- SCHOLARSHIP -->
   <ion-item no-lines
@@ -37,7 +37,7 @@
       <img class="avatar-shadow"
            [src]="item.photo_url || item.institution.photo_url">
     </ion-avatar>
-    <div class="body truncate"> {{ item.name || item.institution_name || item.institution.name }} </div>
+    <ion-label class="body truncate"> {{ item.name || item.institution_name || item.institution.name }} </ion-label>
     <p>
       <ion-icon class="subhead"
                 name="pin"></ion-icon>
@@ -102,22 +102,20 @@
 </ion-content>
 <ion-footer>
   <ion-toolbar [color]="(isSent || isSending) ? 'green' : (selectedConnections.size ? 'primary' : 'white')">
-    <button class="bold"
-            clear
-            color="white"
-            full
-            ion-button
-            type="submit"
-            *ngIf="selectedConnections.size"
-            (click)="send()"
-            [disabled]="isSending"> {{ isSent ? 'Sent!' : (isSending ? 'Sending...' : 'Send') }} </button>
-    <button class="bold"
-            clear
-            color="primary"
-            full
-            ion-button
-            type="button"
-            *ngIf="!selectedConnections.size"
-            (click)="closeShareModal()"> Cancel </button>
+    <ion-button class="bold"
+                fill="clear"
+                color="white"
+                expand="full"
+                type="submit"
+                *ngIf="selectedConnections.size"
+                (click)="send()"
+                [disabled]="isSending"> {{ isSent ? 'Sent!' : (isSending ? 'Sending...' : 'Send') }} </ion-button>
+    <ion-button class="bold"
+                fill="clear"
+                color="primary"
+                expand="full"
+                type="button"
+                *ngIf="!selectedConnections.size"
+                (click)="closeShareModal()"> Cancel </ion-button>
   </ion-toolbar>
 </ion-footer>

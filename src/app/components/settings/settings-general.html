@@ -2,7 +2,7 @@
   <ion-card-header>Account</ion-card-header>
   <ion-list>
     <ion-item>
-      <ion-label floating>First name</ion-label>
+      <ion-label position="floating">First name</ion-label>
       <ion-input name="first_name"
                  type="text"
                  [formControl]="firstNameControl"
@@ -10,7 +10,7 @@
                  [style.padding-left.px]="6"></ion-input>
     </ion-item>
     <ion-item>
-      <ion-label floating>Last name</ion-label>
+      <ion-label position="floating">Last name</ion-label>
       <ion-input name="last_name"
                  type="text"
                  [formControl]="lastNameControl"
@@ -21,10 +21,9 @@
 </ion-card>
 <ion-card *ngIf="canDelete">
   <ion-card-content>
-    <button color="primary"
-            ion-button
-            *ngIf="!wantsToDelete"
-            (click)="wantsToDelete = !wantsToDelete">Delete account</button>
+    <ion-button color="primary"
+                *ngIf="!wantsToDelete"
+                (click)="wantsToDelete = !wantsToDelete">Delete account</ion-button>
     <ng-container *ngIf="wantsToDelete">
       <div class="surveyQuestion">Delete account</div>
       <div class="body"
@@ -38,17 +37,15 @@
       <div fxLayout="row"
            fxLayoutAlign="end center"
            fxLayoutGap="8px">
-        <button class="no-caps"
-                ion-button
-                outline
-                (click)="wantsToDelete = !wantsToDelete">
+        <ion-button class="no-caps"
+                    fill="outline"
+                    (click)="wantsToDelete = !wantsToDelete">
           <span>No, nevermind</span>
           <ion-icon name="mood"></ion-icon>
-        </button>
-        <button class="no-caps"
-                color="warn"
-                ion-button
-                (click)="deleteAccount()">Yes, delete my account</button>
+        </ion-button>
+        <ion-button class="no-caps"
+                    color="warn"
+                    (click)="deleteAccount()">Yes, delete my account</ion-button>
       </div>
     </ng-container>
   </ion-card-content>

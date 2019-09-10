@@ -1,6 +1,6 @@
 import { Component, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { Content, IonicPage, NavController, NavParams, ToastController } from 'ionic-angular';
+import { Content, IonicPage, NavController, NavParams, ToastController } from '@ionic/angular';
 
 import { MixpanelService } from '@nte/services/mixpanel.service';
 import { StakeholderService } from '@nte/services/stakeholder.service';

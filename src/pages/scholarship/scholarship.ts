@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { AlertController, IonicPage, NavController, NavParams, ToastController } from 'ionic-angular';
+import { AlertController, IonicPage, NavController, NavParams, ToastController } from '@ionic/angular';
 
 import { IRecommendedScholarship, ISavedScholarship, IScholarship } from '@nte/models/scholarship.interface';
 import { LinkService } from '@nte/services/link.service';
@@ -147,8 +147,8 @@ export class ScholarshipPage {
   public showMoreInfo(detail: string) {
     const alert = this.alertCtrl.create({
       buttons: [`OK`],
-      subTitle: detail,
-      title: ``
+      subHeader: detail,
+      header: ``
     });
     alert.present();
   }

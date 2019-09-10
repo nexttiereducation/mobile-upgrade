@@ -1,8 +1,8 @@
 <ion-header mode="ios">
-  <ion-navbar mode="ios"
+  <ion-toolbar mode="ios"
               [attr.no-padding]="showParentHeader && user.students.length > 1 ? true : null">
     <ion-buttons notifications-button
-                 start></ion-buttons>
+                 slot="secondary"></ion-buttons>
     <ion-title mode="ios">
       <ng-template [ngIf]="!showParentHeader">Tasks</ng-template>
       <ng-template [ngIf]="showParentHeader">
@@ -13,15 +13,15 @@
           <ion-select [selectedText]="getDisplayText(activeStudent)"
                       [selectOptions]="{title: 'Select Student'}"
                       [(ngModel)]="activeStudent">
-            <ion-option *ngFor="let student of user.students"
-                        [value]="student">{{ student.full_name }}</ion-option>
+            <ion-select-option *ngFor="let student of user.students"
+                        [value]="student">{{ student.full_name }}</ion-select-option>
           </ion-select>
         </ng-template>
       </ng-template>
     </ion-title>
-    <ion-buttons end
+    <ion-buttons slot="primary"
                  messaging-button></ion-buttons>
-  </ion-navbar>
+  </ion-toolbar>
 </ion-header>
 
 <ion-content class="bg-grayLight">
@@ -39,29 +39,29 @@
                [attr.col-8]="tile.colSpan === 8 ? true : null"
                [hidden]="tile.phase && tile.phase !== user.phase">
         <ion-card class="tile">
-          <button class="tile-button"
+          <ion-button class="tile-button"
                   color="white"
-                  ion-button
+                 
                   (click)="goToTaskList(tile)">
             <img class="logo"
                  [src]="tile.iconUrl">
             <div class="tile-label">{{ tile.name }}</div>
-          </button>
+          </ion-button>
         </ion-card>
       </ion-col>
       <ion-col class="school-tile"
-               col-6
+               size="6"
                *ngFor="let school of collegeTrackers">
         <ion-card class="tile">
-          <button class="tile-button"
+          <ion-button class="tile-button"
                   color="white"
-                  ion-button
+                 
                   (click)="viewCollege(school)">
             <div class="tile-avatar-wrapper avatar-shadow">
               <img [src]="school.photo_url">
             </div>
             <div class="tile-label">{{ school | collegeName:true }}</div>
-          </button>
+          </ion-button>
         </ion-card>
       </ion-col>
     </ion-row>

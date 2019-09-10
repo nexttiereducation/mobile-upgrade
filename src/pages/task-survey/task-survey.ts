@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { Events, IonicPage, NavController, NavParams } from 'ionic-angular';
+import { Events, IonicPage, NavController, NavParams } from '@ionic/angular';
 
 import { TASK_STATUSES } from '@nte/constants/task.constants';
 import { MixpanelService } from '@nte/services/mixpanel.service';

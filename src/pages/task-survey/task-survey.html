@@ -1,10 +1,10 @@
 <ion-header mode="ios">
-  <ion-navbar mode="ios" [color]="taskStatus.color">
+  <ion-toolbar mode="ios" [color]="taskStatus.color">
     <ion-title mode="ios">
       <div class="subhead text-white50">{{ taskTracker.task.name }}</div>
       {{ taskTracker.status === 'C' ? 'Survey results' : 'Survey in progress...' }}
     </ion-title>
-  </ion-navbar>
+  </ion-toolbar>
 </ion-header>
 
 <ion-content>

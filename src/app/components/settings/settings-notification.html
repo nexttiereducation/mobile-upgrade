@@ -4,7 +4,9 @@
     <div class="italic"
          padding-horizontal>{{ extendedProfileCopy }}</div> -->
   <ion-item-group *ngFor="let section of sections; let last = last">
-    <ion-item-divider color="gray">{{section.title}}</ion-item-divider>
+    <ion-item-divider color="gray">
+      <ion-label>{{section.title}}</ion-label>
+    </ion-item-divider>
     <ion-item class="body"
               *ngFor="let field of section.fields">
       <ion-label>{{field.displayAs}}</ion-label>

@@ -194,7 +194,7 @@ export class LocationService {
       ],
       message:
         `Would you like to switch to the Location Settings page and do this manually?`,
-      title: `Failed to automatically set Location Mode to 'High Accuracy'`
+      header: `Failed to automatically set Location Mode to 'High Accuracy'`
     });
     alert.present();
   }

@@ -1,11 +1,11 @@
 <ion-header mode="ios">
-  <ion-navbar mode="ios">
+  <ion-toolbar mode="ios">
     <ion-buttons notifications-button
-                 start></ion-buttons>
+                 slot="secondary"></ion-buttons>
     <ion-title mode="ios">Profile</ion-title>
-    <ion-buttons end
+    <ion-buttons slot="primary"
                  messaging-button></ion-buttons>
-  </ion-navbar>
+  </ion-toolbar>
 </ion-header>
 <ion-content class="bg-blue">
   <ion-grid>
@@ -32,20 +32,16 @@
   </ng-container>
 </ion-content>
 <ion-footer>
-  <button class="no-caps"
-          color="white"
-          icon-right
+  <ion-button class="no-caps"
+              color="white"
+              slot="end"
+              margin
+              fill="outline"
+              (click)="logout()"
+              style="width: calc( 100% - 32px )"> Log out <ion-icon name="exit"></ion-icon>
+  </ion-button>
+  <!-- <button fill="clear" color="white" expand="full" slot="end"
           ion-button
-          margin
-          outline
-          (click)="logout()"
-          style="width: calc( 100% - 32px )"> Log out <ion-icon name="exit"></ion-icon>
-  </button>
-  <!-- <button clear
-          color="white"
-          full
-          icon-right
-          ion-button
-          (click)="linkService.open(externalProfileUrl)"> Access full profile <ion-icon name="open"></ion-icon>
+          (click)="linkService.open(externalProfileUrl)"> Access expand="full" profile <ion-icon name="open"></ion-icon>
   </button> -->
 </ion-footer>

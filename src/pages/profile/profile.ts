@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { App, IonicPage, NavController } from 'ionic-angular';
+import { App, IonicPage, NavController } from '@ionic/angular';
 import { Subject } from 'rxjs';
 
 import { NOTIFICATION_SETTING_SECTIONS } from '@nte/constants/settings-notification.constants';

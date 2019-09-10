@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { IonicPage, NavController } from 'ionic-angular';
+import { IonicPage, NavController } from '@ionic/angular';
 
 import { MESSAGES_EMPTY_STATE, MESSAGING_EMPTY_STATE } from '@nte/constants/messaging.constants';
 import { IConnection } from '@nte/interfaces/connection.interface';

@@ -1,11 +1,11 @@
 <ion-header mode="ios">
-  <ion-navbar mode="ios">
+  <ion-toolbar mode="ios">
     <ion-buttons notifications-button
-                 start></ion-buttons>
+                 slot="secondary"></ion-buttons>
     <ion-title mode="ios">Scholarships</ion-title>
-    <ion-buttons end
+    <ion-buttons slot="primary"
                  messaging-button></ion-buttons>
-  </ion-navbar>
+  </ion-toolbar>
 </ion-header>
 <ion-content class="bg-grayLight">
   <ion-grid no-padding
@@ -25,12 +25,11 @@
                   [class.recommended]="tile.name === 'Recommended' && recommendations > 0"
                   [ngClass]="tile.inverse ? 'bg-blue50' : 'bg-white'">
           <ng-template [ngIf]="tile.isLocked">
-            <button class="tile-button"
-                    ion-button
-                    text-center
-                    (click)="viewList(tile)"
-                    [class.text-white]="tile.inverse"
-                    [color]="tile.inverse ? 'blue50' : 'white'">
+            <ion-button class="tile-button"
+                        text-center
+                        (click)="viewList(tile)"
+                        [class.text-white]="tile.inverse"
+                        [color]="tile.inverse ? 'blue50' : 'white'">
               <ion-badge class="tile-badge"
                          color="green"
                          *ngIf="tile.name === 'Recommended'
@@ -38,37 +37,34 @@
                                 && !user.isParent"> {{ recommendations }} </ion-badge>
               <img [src]="tile.iconUrl">
               <div class="tile-label">{{ tile.name }}</div>
-            </button>
+            </ion-button>
           </ng-template>
           <ng-template [ngIf]="!tile.isLocked">
             <ion-list>
               <ion-item-sliding #slidingItem>
-                <ion-item-options side="left"
+                <ion-item-options side="start"
                                   *ngIf="tile.isCustom">
-                  <button class="lowercase"
-                          color="primary"
-                          ion-button
-                          (click)="editTile(tile, slidingItem)">
+                  <ion-button class="lowercase"
+                              color="primary"
+                              (click)="editTile(tile, slidingItem)">
                     <ion-icon name="create"></ion-icon> Edit
-                  </button>
+                  </ion-button>
                 </ion-item-options>
                 <ion-item>
-                  <button class="tile-button"
-                          color="white"
-                          ion-button
-                          text-center
-                          (click)="viewList(tile)">
+                  <ion-button class="tile-button"
+                              color="white"
+                              text-center
+                              (click)="viewList(tile)">
                     <img [src]="tile.iconUrl">
-                    <div class="tile-label">{{ tile.name }}</div>
-                  </button>
+                    <ion-label class="tile-label">{{ tile.name }}</ion-label>
+                  </ion-button>
                 </ion-item>
-                <ion-item-options side="right">
-                  <button class="lowercase"
-                          color="red"
-                          ion-button
-                          (click)="deleteTile(tile, slidingItem, i)">
+                <ion-item-options side="end">
+                  <ion-button class="lowercase"
+                              color="red"
+                              (click)="deleteTile(tile, slidingItem, i)">
                     <ion-icon name="close"></ion-icon> Delete
-                  </button>
+                  </ion-button>
                 </ion-item-options>
               </ion-item-sliding>
             </ion-list>

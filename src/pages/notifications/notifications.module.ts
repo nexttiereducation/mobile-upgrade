@@ -1,5 +1,5 @@
 import { NgModule } from '@angular/core';
-import { IonicPageModule } from 'ionic-angular';
+import { IonicPageModule } from '@ionic/angular';
 
 import { ComponentsModule } from '@nte/components/components.module';
 import { NotificationService } from '@nte/services/notification.service';

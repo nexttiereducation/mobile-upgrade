@@ -7,7 +7,7 @@ import {
   IonicPage,
   NavController,
   NavParams
-} from 'ionic-angular';
+} from '@ionic/angular';
 import { Observable } from 'rxjs';
 
 import { IEmptyState } from '@nte/models/empty-state';

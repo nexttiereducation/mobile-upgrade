@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { IonicPage, NavController, NavParams } from 'ionic-angular';
+import { IonicPage, NavController, NavParams } from '@ionic/angular';
 import { trimEnd } from 'lodash';
 
 import { COLLEGE_NON_PROFIT_QUERY, CREATE_LIST_IMAGES } from '@nte/constants/college.constants';

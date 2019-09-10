@@ -8,7 +8,7 @@ import {
   NavParams,
   Platform,
   ToastController
-} from 'ionic-angular';
+} from '@ionic/angular';
 import { isNumber } from 'lodash';
 import { Subscription } from 'rxjs/Subscription';
 

@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { Events, IonicPage, NavController, NavParams } from 'ionic-angular';
+import { Events, IonicPage, NavController, NavParams } from '@ionic/angular';
 import { replace, trimEnd } from 'lodash';
 
 import { SEARCH_EMPTY_STATES } from '@nte/constants/filter.constants';

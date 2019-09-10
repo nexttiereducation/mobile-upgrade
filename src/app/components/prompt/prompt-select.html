@@ -1,18 +1,21 @@
-<ion-list radio-group
-          *ngIf="prompt.options.choices"
+<ion-list *ngIf="prompt.options.choices"
           (ionChange)="onOptionChange($event)"
           [(ngModel)]="chosenOption[0]">
-  <ion-item *ngFor="let choice of prompt.options.choices">
-    <ion-radio [value]="choice.id" item-start></ion-radio>
-    <ion-label>{{ choice.value }}</ion-label>
-  </ion-item>
+  <ion-radio-group>
+    <ion-item *ngFor="let choice of prompt.options.choices">
+      <ion-radio slot="start"
+                 [value]="choice.id"
+                 item-start></ion-radio>
+      <ion-label>{{ choice.value }}</ion-label>
+    </ion-item>
+  </ion-radio-group>
 </ion-list>
-
 <ion-footer>
   <ion-toolbar color="green">
-    <button ion-button full clear
-            color="white"
-            [disabled]="!promptCompleted"
-            (click)="submitNewPrompt()">Save</button>
+    <ion-button expand="full"
+                fill="clear"
+                color="white"
+                [disabled]="!promptCompleted"
+                (click)="submitNewPrompt()">Save</ion-button>
   </ion-toolbar>
 </ion-footer>

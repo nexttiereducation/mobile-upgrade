@@ -306,8 +306,8 @@ export class TaskService {
         (err) => {
           const alert = this.alertCtrl.create({
             buttons: [`Dismiss`],
-            subTitle: `An error has occurred. Please try again. ${err}`,
-            title: `Error`
+            subHeader: `An error has occurred. Please try again. ${err}`,
+            header: `Error`
           });
           alert.present();
         }

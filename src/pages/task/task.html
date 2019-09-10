@@ -1,11 +1,11 @@
 <ion-header mode="ios">
-  <ion-navbar mode="ios"
-              [color]="taskStatus?.color">
+  <ion-toolbar mode="ios"
+               [color]="taskStatus?.color">
     <ion-title mode="ios">
       <div class="subhead text-white50"
            *ngIf="taskTracker?.task.name">{{ taskTracker?.task.name }}</div> Task Detail
     </ion-title>
-  </ion-navbar>
+  </ion-toolbar>
 </ion-header>
 <ion-content>
   <ng-template [ngIf]="taskTracker">
@@ -49,10 +49,9 @@
       </ion-grid>
       <div padding
            *ngIf="taskTracker.form_urls && taskTracker.form_urls[0]">
-        <button block
-                color="green"
-                ion-button
-                (click)="linkService.open(taskTracker.form_urls[0])">View Form</button>
+        <ion-button expand="block"
+                    color="green"
+                    (click)="linkService.open(taskTracker.form_urls[0])">View Form</ion-button>
       </div>
     </div>
   </ng-template>
@@ -61,41 +60,37 @@
 <ion-footer *ngIf="taskTracker && !prompt">
   <ion-toolbar *ngIf="taskStatus?.action && !isParent"
                [color]="taskStatus?.color">
-    <button clear
-            color="white"
-            full
-            ion-button
-            *ngIf="!taskTracker.isSurveyTask && !taskTracker.prompt"
-            (click)="updateStatus()">Complete task</button>
-    <button clear
-            color="white"
-            full
-            ion-button
-            *ngIf="(taskTracker.isSurveyTask && taskStatus.name === 'Not Started') || taskTracker.prompt"
-            (click)="updateStatus()">{{ taskStatus.action + ' ' + (taskTracker.isSurveyTask ? 'survey' : 'task') }}</button>
-    <button clear
-            color="white"
-            full
-            ion-button
-            *ngIf="taskTracker.isSurveyTask && taskStatus?.name === 'In Progress'"
-            (click)="goToSurvey()">Continue Survey</button>
+    <ion-button fill="clear"
+                color="white"
+                expand="full"
+                *ngIf="!taskTracker.isSurveyTask && !taskTracker.prompt"
+                (click)="updateStatus()">Complete task</ion-button>
+    <ion-button fill="clear"
+                color="white"
+                expand="full"
+                *ngIf="(taskTracker.isSurveyTask && taskStatus.name === 'Not Started') || taskTracker.prompt"
+                (click)="updateStatus()"> {{ taskStatus.action + ' ' + (taskTracker.isSurveyTask ? 'survey' : 'task') }}
+    </ion-button>
+    <ion-button fill="clear"
+                color="white"
+                expand="full"
+                *ngIf="taskTracker.isSurveyTask && taskStatus?.name === 'In Progress'"
+                (click)="goToSurvey()">Continue Survey</ion-button>
   </ion-toolbar>
   <ion-toolbar color="grayLightest">
-    <button clear
-            color="black"
-            icon-only
-            ion-button
-            (click)="goToAttachments()">
+    <ion-button fill="clear"
+                color="black"
+                icon-only
+                (click)="goToAttachments()">
       <ion-icon name="attach"></ion-icon>
       <div *ngIf="(taskTracker.templates && taskTracker.templates.length > 0) || taskTracker.attachment">1</div>
-    </button>
-    <button clear
-            color="black"
-            icon-only
-            ion-button
-            (click)="goToNotes()">
+    </ion-button>
+    <ion-button fill="clear"
+                color="black"
+                icon-only
+                (click)="goToNotes()">
       <ion-icon md-name="chat_bubble">chat_bubble</ion-icon>
       <div *ngIf="notesCount > 0">{{ notesCount }}</div>
-    </button>
+    </ion-button>
   </ion-toolbar>
 </ion-footer>

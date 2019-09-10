@@ -1,6 +1,6 @@
 import { animate, Component, state, style, transition, trigger } from '@angular/core';
 import { GoogleMap, GoogleMaps, GoogleMapsAnimation, GoogleMapsEvent } from '@ionic-native/google-maps';
-import { IonicPage, NavController, NavParams } from 'ionic-angular';
+import { IonicPage, NavController, NavParams } from '@ionic/angular';
 import { BehaviorSubject } from 'rxjs';
 
 import { DonutChart } from '@nte/models/donut-chart.model';

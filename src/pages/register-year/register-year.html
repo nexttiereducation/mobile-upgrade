@@ -1,58 +1,58 @@
 <ion-header mode="ios">
-  <ion-navbar mode="ios" color="primary">
+  <ion-toolbar mode="ios"
+               color="primary">
     <ion-title mode="ios">Create an account</ion-title>
-  </ion-navbar>
+  </ion-toolbar>
 </ion-header>
-
 <ion-content class="bg-blue external-page">
   <ion-grid>
-    <ion-row align-items-center justify-content-start>
-      <ion-col text-center margin-bottom padding-bottom>
-        <img class="nte-logo" src="assets/image/logo/circle.svg"/>
+    <ion-row align-items-center
+             justify-content-start>
+      <ion-col text-center
+               margin-bottom
+               padding-bottom>
+        <img class="nte-logo"
+             src="assets/image/logo/circle.svg" />
         <div class="blue-divider"></div>
         <div class="text-white bold external-header">Let's get started!</div>
-        <div class="text-white body spaced">
-          First things first, let us know which year you will<br>
-          graduate so we can better customize your experience
-        </div>
+        <div class="text-white body spaced"> First things first, let us know which year you will<br> graduate so we can
+          better customize your experience </div>
       </ion-col>
     </ion-row>
     <ng-template [ngIf]="graduationYearOptions && graduationYearOptions.length">
       <ion-row>
-        <ion-col col-6 *ngFor="let option of graduationYearOptions">
-          <button ion-button block large
-                  class="border-white-bold"
-                  color="white"
-                  [outline]="option !== stakeholderService.newUser.graduation"
-                  [ngClass]="{'text-blue bold': option === stakeholderService.newUser.graduation}"
-                  (click)="setGraduationYear(option)">
-            {{ option.year }}
-          </button>
+        <ion-col size="6"
+                 *ngFor="let option of graduationYearOptions">
+          <ion-button expand="block"
+                      size="large"
+                      class="border-white-bold"
+                      color="white"
+                      [outline]="option !== stakeholderService.newUser.graduation"
+                      [ngClass]="{'text-blue bold': option === stakeholderService.newUser.graduation}"
+                      (click)="setGraduationYear(option)"> {{ option.year }} </ion-button>
         </ion-col>
       </ion-row>
       <ion-row>
         <ion-col padding-top>
-          <button ion-button block large
-                  class="border-white-bold no-caps"
-                  color="white"
-                  margin-top
-                  [outline]="stakeholderService.newUser.stakeholder_type !== 'Parent'"
-                  [ngClass]="{'text-blue bold': stakeholderService.newUser.stakeholder_type === 'Parent'}"
-                  (click)="setGraduationYear(parentOption)">
-            I'm a parent
-          </button>
+          <ion-button expand="block"
+                      size="large"
+                      class="border-white-bold no-caps"
+                      color="white"
+                      margin-top
+                      [outline]="stakeholderService.newUser.stakeholder_type !== 'Parent'"
+                      [ngClass]="{'text-blue bold': stakeholderService.newUser.stakeholder_type === 'Parent'}"
+                      (click)="setGraduationYear(parentOption)"> I'm a parent </ion-button>
         </ion-col>
       </ion-row>
     </ng-template>
   </ion-grid>
 </ion-content>
-
-<ion-footer padding-10 class="no-border">
-  <button ion-button full large
-          color="white"
-          (click)="next()"
-          [disabled]="!(stakeholderService.newUser.graduation ||
-                      stakeholderService.newUser.stakeholder_type === 'Parent')">
-    Next
-  </button>
+<ion-footer padding-10
+            class="no-border">
+  <ion-button expand="full"
+              size="large"
+              color="white"
+              (click)="next()"
+              [disabled]="!(stakeholderService.newUser.graduation ||
+                      stakeholderService.newUser.stakeholder_type === 'Parent')"> Next </ion-button>
 </ion-footer>

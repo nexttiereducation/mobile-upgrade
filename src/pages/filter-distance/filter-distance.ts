@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { AlertController, Events, IonicPage, NavController, NavParams } from 'ionic-angular';
+import { AlertController, Events, IonicPage, NavController, NavParams } from '@ionic/angular';
 import { Subscription } from 'rxjs/Subscription';
 
 import { Category } from '@nte/models/category.model';
@@ -128,7 +128,7 @@ export class FilterDistancePage {
           placeholder: ``
         }
       ],
-      title: `Enter ZIP or City`
+      header: `Enter ZIP or City`
     });
     alert.present();
   }

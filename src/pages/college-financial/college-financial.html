@@ -42,7 +42,7 @@
       <div>Average Net Price</div>
       <ion-grid>
         <ion-row justify-content-center align-items-center>
-          <ion-col col-12 align-self-center>
+          <ion-col size="12" align-self-center>
             <div class="displayHeader">{{ college.net_price | currency:'USD':'symbol':'1.0-0' }}</div>
             </ion-col>
         </ion-row>
@@ -65,7 +65,7 @@
       <div>Average Student Debt upon Graduation</div>
       <ion-grid>
         <ion-row justify-content-center align-items-center>
-          <ion-col col-12><div class="displayHeader">{{ college.details.average_debt | currency:'USD':'symbol':'1.0-0' }}</div></ion-col>
+          <ion-col size="12"><div class="displayHeader">{{ college.details.average_debt | currency:'USD':'symbol':'1.0-0' }}</div></ion-col>
         </ion-row>
       </ion-grid>
     </ng-template>

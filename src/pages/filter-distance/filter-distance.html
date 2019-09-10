@@ -1,70 +1,76 @@
 <ion-header mode="ios">
-  <ion-navbar hideBackButton mode="ios">
-    <ion-buttons start>
-      <button ion-button icon-only clear (click)="back()">
+  <ion-toolbar hideBackButton
+               mode="ios">
+    <ion-buttons slot="secondary">
+      <ion-button icon-only
+                  fill="clear"
+                  (click)="back()">
         <ion-icon name="ios-arrow-back"></ion-icon>
-      </button>
+      </ion-button>
     </ion-buttons>
     <ion-title mode="ios">
-      <div class="subhead">{{ title }}</div>
-      {{ category.name }}
+      <div class="subhead">{{ title }}</div> {{ category.name }}
     </ion-title>
-    <ion-buttons end>
-      <button ion-button
-              [color]="category.isActive ? 'primary' : 'steel'"
-              [disabled]="!category.isActive"
-              (click)="clear()">Clear</button>
+    <ion-buttons slot="primary">
+      <ion-button [color]="category.isActive ? 'primary' : 'steel'"
+                  [disabled]="!category.isActive"
+                  (click)="clear()">Clear</ion-button>
     </ion-buttons>
-  </ion-navbar>
+  </ion-toolbar>
 </ion-header>
-
 <ion-content>
   <ion-list no-margin>
-    <ion-item text-center no-padding
+    <ion-item text-center
+              no-padding
               [class.bg-blue10]="location.distance"
-              [class.text-steel50]="!category.isActive">
-      Within <span [class.text-blue]="location.distance">{{ location.distance || '0' }}</span> miles of
-    </ion-item>
-    <ion-item no-lines class="range-values text-steel50">
+              [class.text-steel50]="!category.isActive"> Within <span
+            [class.text-blue]="location.distance">{{ location.distance || '0' }}</span> miles of </ion-item>
+    <ion-item no-lines
+              class="range-values text-steel50">
       <span item-start>5</span>
       <span item-end>100</span>
     </ion-item>
     <ion-range mode="ios"
-              min="5"
-              max="100"
-              debounce="250"
-              [(ngModel)]="location.distance"
-              (ionChange)="setFilter()">
+               min="5"
+               max="100"
+               debounce="250"
+               [(ngModel)]="location.distance"
+               (ionChange)="setFilter()">
     </ion-range>
   </ion-list>
-  <ion-list radio-group
-            [(ngModel)]="location.method">
-    <ion-item padding-left>
-      <ion-label>My current location</ion-label>
-      <ion-radio value="my" (ionSelect)="setFilter()" [disabled]="(location.isAuthorized | async) === false"></ion-radio>
-    </ion-item>
-    <ion-item padding-left>
-      <ion-label>{{ location.zipOrAddress || 'Another location' }}</ion-label>
-      <ion-radio value="other" (ionSelect)="showInputAlert()"></ion-radio>
-    </ion-item>
+  <ion-list [(ngModel)]="location.method">
+    <ion-radio-group>
+      <ion-item padding-left>
+        <ion-label>My current location</ion-label>
+        <ion-radio slot="start"
+                   value="my"
+                   (ionSelect)="setFilter()"
+                   [disabled]="(location.isAuthorized | async) === false"></ion-radio>
+      </ion-item>
+      <ion-item padding-left>
+        <ion-label>{{ location.zipOrAddress || 'Another location' }}</ion-label>
+        <ion-radio slot="start"
+                   value="other"
+                   (ionSelect)="showInputAlert()"></ion-radio>
+      </ion-item>
+    </ion-radio-group>
   </ion-list>
 </ion-content>
-
 <ion-footer *ngIf="(location.distance && location.method) || filterService.filter?.activeChildCount">
   <ion-toolbar color="primary">
-    <button ion-button clear full icon-right
-            color="white"
-            *ngIf="filterService.isCyol"
-            (click)="viewSummary()">
-      Next
-      <ion-icon name="arrow-forward"></ion-icon>
-    </button>
-    <button ion-button clear full
-            color="white"
-            *ngIf="!filterService.isCyol"
-            (click)="applyFilters()">
-      Apply Filters
-      <ion-badge margin-left class="text-blue bg-white">{{ filterService.filter?.activeChildCount }}</ion-badge>
-    </button>
+    <ion-button fill="clear"
+                expand="full"
+                slot="end"
+                color="white"
+                *ngIf="filterService.isCyol"
+                (click)="viewSummary()"> Next <ion-icon name="arrow-forward"></ion-icon>
+    </ion-button>
+    <ion-button fill="clear"
+                expand="full"
+                color="white"
+                *ngIf="!filterService.isCyol"
+                (click)="applyFilters()"> Apply Filters <ion-badge margin-left
+                 class="text-blue bg-white">{{ filterService.filter?.activeChildCount }}</ion-badge>
+    </ion-button>
   </ion-toolbar>
 </ion-footer>

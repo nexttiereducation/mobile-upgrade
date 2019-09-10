@@ -1,20 +1,23 @@
-<form #phspSurveyForm="ngForm" *ngIf="studentAnswers.page">
+<form #phspSurveyForm="ngForm"
+      *ngIf="studentAnswers.page">
   <div [class.height-100]="hideFormNavButtons">
     <ng-template [ngIf]="studentAnswers.page === 1">
-      <div class="surveyQuestion small">
-        What is your post high school plan?
-        <span [class.text-red]="plan.touched && plan.invalid">*</span>
+      <div class="surveyQuestion small"> What is your post high school plan? <span
+              [class.text-red]="plan.touched && plan.invalid">*</span>
       </div>
       <ion-list name="plan"
-                radio-group
                 required
                 (ionChange)="onPlanChanged(plan)"
                 [(ngModel)]="studentAnswers.plan"
                 #plan="ngModel">
-        <ion-item *ngFor="let plan of plans">
-          <ion-radio [value]="plan.value" item-start></ion-radio>
-          <ion-label>{{ plan.name }}</ion-label>
-        </ion-item>
+        <ion-radio-group>
+          <ion-item *ngFor="let plan of plans">
+            <ion-radio slot="start"
+                       [value]="plan.value"
+                       item-start></ion-radio>
+            <ion-label>{{ plan.name }}</ion-label>
+          </ion-item>
+        </ion-radio-group>
       </ion-list>
     </ng-template>
     <ng-template [ngIf]="!isShortSurvey">
@@ -26,11 +29,11 @@
             </survey-phsp-colleges>
           </ng-template>
           <ng-template [ngIf]="studentAnswers.page === 3">
-            <div class="surveyQuestion small">
-              Which college do you plan to attend?
-              <span [class.text-red]="college_attending_id.touched && college_attending_id.invalid">*</span>
+            <div class="surveyQuestion small"> Which college do you plan to attend? <span
+                    [class.text-red]="college_attending_id.touched && college_attending_id.invalid">*</span>
             </div>
             <ion-item class="no-label">
+              <ion-label></ion-label>
               <ion-select name="college_attending"
                           interface="popover"
                           placeholder="Select college"
@@ -38,17 +41,16 @@
                           [(ngModel)]="studentAnswers.college_attending_id"
                           (ionChange)="onCollegeAttendingChanged($event)"
                           #college_attending_id="ngModel">
-                <ion-option [value]="-1">To be decided</ion-option>
-                <ion-option *ngFor="let college of acceptedColleges" [value]="college.id">
-                  {{ college.name }}
-                </ion-option>
+                <ion-select-option [value]="-1">To be decided</ion-select-option>
+                <ion-select-option *ngFor="let college of acceptedColleges"
+                                   [value]="college.id"> {{ college.name }} </ion-select-option>
               </ion-select>
             </ion-item>
-            <div class="surveyQuestion small">
-              What is your intended major or field of study?
-              <span [class.text-red]="major.touched && major.invalid">*</span>
+            <div class="surveyQuestion small"> What is your intended major or field of study? <span
+                    [class.text-red]="major.touched && major.invalid">*</span>
             </div>
             <ion-item>
+              <ion-label></ion-label>
               <ion-input name="major"
                          placeholder="Intended major / field of study"
                          required
@@ -57,7 +59,8 @@
                          #major="ngModel"></ion-input>
             </ion-item>
             <ng-template [ngIf]="studentAnswers.college_attending_id && studentAnswers.college_attending_id !== -1">
-              <div class="surveyQuestion small">If any, how much financial aid are you receiving from this college?</div>
+              <div class="surveyQuestion small">If any, how much financial aid are you receiving from this college?
+              </div>
               <ion-item>
                 <span item-start>$</span>
                 <ion-input name="financial_aid"
@@ -69,12 +72,14 @@
                            #financial_aid="ngModel"></ion-input>
                 <span item-end>.00</span>
               </ion-item>
-              <div class="surveyQuestion small">
-                What is your intended start date?
-                <span [class.text-red]="start_date.touched && start_date.invalid">*</span>
+              <div class="surveyQuestion small"> What is your intended start date? <span
+                      [class.text-red]="start_date.touched && start_date.invalid">*</span>
               </div>
               <ion-item class="no-label">
-                <ion-icon name="calendar" color="primary" item-start></ion-icon>
+                <ion-label></ion-label>
+                <ion-icon name="calendar"
+                          color="primary"
+                          item-start></ion-icon>
                 <ion-datetime name="start_date"
                               displayFormat="MM/DD/YYYY"
                               pickerFormat="MMMM/DD/YYYY"
@@ -106,34 +111,38 @@
       <ng-template [ngIf]="!isUniversityPlan">
         <ng-template [ngIf]="studentAnswers.page === 2 && !taskTracker.isComplete">
           <ng-template [ngIf]="studentAnswers.plan === 'military'">
-            <div class="surveyQuestion small">
-              Which branch of the military do you plan to enter?
-              <span [class.text-red]="branch.touched && branch.invalid">*</span>
+            <div class="surveyQuestion small"> Which branch of the military do you plan to enter? <span
+                    [class.text-red]="branch.touched && branch.invalid">*</span>
             </div>
             <ion-list name="branch"
-                      radio-group
                       required
                       [(ngModel)]="studentAnswers.branch"
                       #branch="ngModel">
-              <ion-item *ngFor="let branch of militaryBranches">
-                <ion-radio item-start [value]="branch.value"></ion-radio>
-                <ion-label>{{ branch.name }}</ion-label>
-                <ion-avatar item-end>
-                  <img [src]="branch.logo" />
-                </ion-avatar>
-              </ion-item>
-              <ion-item style="height: 57px">
-                <ion-radio item-start value="To be determined"></ion-radio>
-                <ion-label>To be determined</ion-label>
-              </ion-item>
+              <ion-radio-group>
+                <ion-item *ngFor="let branch of militaryBranches">
+                  <ion-radio slot="start"
+                             item-start
+                             [value]="branch.value"></ion-radio>
+                  <ion-label>{{ branch.name }}</ion-label>
+                  <ion-avatar item-end>
+                    <img [src]="branch.logo" />
+                  </ion-avatar>
+                </ion-item>
+                <ion-item style="height: 57px">
+                  <ion-radio slot="start"
+                             item-start
+                             value="To be determined"></ion-radio>
+                  <ion-label>To be determined</ion-label>
+                </ion-item>
+              </ion-radio-group>
             </ion-list>
           </ng-template>
           <ng-template [ngIf]="studentAnswers.plan === 'workforce'">
-            <div class="surveyQuestion small">
-              Who will be your employer?
-              <span [class.text-red]="employer.touched && employer.invalid">*</span>
+            <div class="surveyQuestion small"> Who will be your employer? <span
+                    [class.text-red]="employer.touched && employer.invalid">*</span>
             </div>
             <ion-item>
+              <ion-label></ion-label>
               <ion-input name="employer"
                          placeholder="Employer"
                          required
@@ -143,11 +152,11 @@
             </ion-item>
           </ng-template>
           <ng-template [ngIf]="studentAnswers.plan === 'other'">
-            <div class="surveyQuestion small">
-              Please describe your post high school plan.
-              <span [class.text-red]="custom_plan.touched && custom_plan.invalid">*</span>
+            <div class="surveyQuestion small"> Please describe your post high school plan. <span
+                    [class.text-red]="custom_plan.touched && custom_plan.invalid">*</span>
             </div>
             <ion-item>
+              <ion-label></ion-label>
               <ion-textarea name="custom_plan"
                             placeholder="Take a year off, attend a college prep school, not graduating this year, not sure yet, etc..."
                             required
@@ -157,11 +166,11 @@
             </ion-item>
           </ng-template>
           <ng-template [ngIf]="studentAnswers.plan === 'trade'">
-            <div class="surveyQuestion small">
-              What school do you plan to attend?
-              <span [class.text-red]="trade_school.touched && trade_school.invalid">*</span>
+            <div class="surveyQuestion small"> What school do you plan to attend? <span
+                    [class.text-red]="trade_school.touched && trade_school.invalid">*</span>
             </div>
             <ion-item>
+              <ion-label></ion-label>
               <ion-input name="trade_school"
                          placeholder="Trade/vocational school"
                          required
@@ -169,11 +178,11 @@
                          [(ngModel)]="studentAnswers.trade_school"
                          #trade_school="ngModel"></ion-input>
             </ion-item>
-            <div class="surveyQuestion small">
-              What trade/vocational certification will you be pursuing?
-              <span [class.text-red]="certification.touched && certification.invalid">*</span>
+            <div class="surveyQuestion small"> What trade/vocational certification will you be pursuing? <span
+                    [class.text-red]="certification.touched && certification.invalid">*</span>
             </div>
             <ion-item>
+              <ion-label></ion-label>
               <ion-input name="certification"
                          placeholder="Trade/vocational certification"
                          required
@@ -183,12 +192,14 @@
             </ion-item>
           </ng-template>
           <ng-template [ngIf]="studentAnswers.plan !== 'other'">
-            <div class="surveyQuestion small">
-              What is your intended start date?
-              <span [class.text-red]="start_date.touched && start_date.invalid">*</span>
+            <div class="surveyQuestion small"> What is your intended start date? <span
+                    [class.text-red]="start_date.touched && start_date.invalid">*</span>
             </div>
             <ion-item class="no-label">
-              <ion-icon name="calendar" color="primary" item-start></ion-icon>
+              <ion-label></ion-label>
+              <ion-icon name="calendar"
+                        color="primary"
+                        item-start></ion-icon>
               <ion-datetime name="start_date"
                             displayFormat="MM/DD/YYYY"
                             pickerFormat="MMMM/DD/YYYY"
@@ -212,47 +223,41 @@
       </ng-template>
     </ng-template>
     <ng-template [ngIf]="isShortSurvey && (studentAnswers.page === 2 || taskTracker.isComplete)">
-      <div class="md-headline task-text md-margin">
-        You plan to <span class="md-font-bold text-green-brand">{{ planDescriptions[studentAnswers.plan] }}.</span>
+      <div class="md-headline task-text md-margin"> You plan to <span
+              class="md-font-bold text-green-brand">{{ planDescriptions[studentAnswers.plan] }}.</span>
       </div>
     </ng-template>
   </div>
-  <ion-grid padding-10 *ngIf="!hideFormNavButtons && !taskTracker.isComplete">
+  <ion-grid padding-10
+            *ngIf="!hideFormNavButtons && !taskTracker.isComplete">
     <ion-row>
       <ion-col *ngIf="studentAnswers.page > 1">
-        <button ion-button block clear
-                color="steel"
-                type="button"
-                (click)="previousPage()">
-          Back
-        </button>
+        <ion-button expand="block"
+                    fill="clear"
+                    color="steel"
+                    type="button"
+                    (click)="previousPage()"> Back </ion-button>
       </ion-col>
       <ion-col>
-        <button ion-button block
-                color="orange"
-                type="button"
-                *ngIf="!isLastQuestion && !isConfirmationPage && !isShortSurvey"
-                [disabled]="phspSurveyForm.form.invalid || isInvalid"
-                (click)="nextPage()">
-          Continue
-        </button>
-        <button ion-button block
-                color="orange"
-                type="button"
-                *ngIf="isLastQuestion && !isConfirmationPage"
-                [disabled]="phspSurveyForm.form.invalid || isInvalid"
-                (click)="viewConfirmation()">
-          Finish Survey
-        </button>
-        <button ion-button block
-                color="orange"
-                type="submit"
-                *ngIf="(studentAnswers.page === 1 && isShortSurvey) ||
+        <ion-button expand="block"
+                    color="orange"
+                    type="button"
+                    *ngIf="!isLastQuestion && !isConfirmationPage && !isShortSurvey"
+                    [disabled]="phspSurveyForm.form.invalid || isInvalid"
+                    (click)="nextPage()"> Continue </ion-button>
+        <ion-button expand="block"
+                    color="orange"
+                    type="button"
+                    *ngIf="isLastQuestion && !isConfirmationPage"
+                    [disabled]="phspSurveyForm.form.invalid || isInvalid"
+                    (click)="viewConfirmation()"> Finish Survey </ion-button>
+        <ion-button expand="block"
+                    color="orange"
+                    type="submit"
+                    *ngIf="(studentAnswers.page === 1 && isShortSurvey) ||
                        (isConfirmationPage && !isLastQuestion)"
-                [disabled]="phspSurveyForm.form.invalid || isInvalid"
-                (click)="surveyComplete()">
-          Submit
-        </button>
+                    [disabled]="phspSurveyForm.form.invalid || isInvalid"
+                    (click)="surveyComplete()"> Submit </ion-button>
       </ion-col>
     </ion-row>
   </ion-grid>

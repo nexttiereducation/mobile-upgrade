@@ -1,13 +1,13 @@
 <ion-header mode="ios">
-  <ion-navbar mode="ios">
+  <ion-toolbar mode="ios">
     <ion-title mode="ios"
                tappable>
       <div class="subhead text-grayDark50"
            *ngIf="list?.name">Colleges</div> {{ list?.name || 'Colleges' }}
     </ion-title>
-    <ion-buttons end
+    <ion-buttons slot="primary"
                  messaging-button></ion-buttons>
-  </ion-navbar>
+  </ion-toolbar>
   <ion-toolbar no-padding
                *ngIf="list?.name !== 'Recommended'
                       && list?.name !== 'Saved'
@@ -23,15 +23,14 @@
                          (keyup.enter)="keyboard.close()"
                          [(ngModel)]="searchTerm"></ion-searchbar>
         </ion-col>
-        <ion-col col-auto>
-          <button class="filter-button"
-                  clear
-                  color="grayDark50"
-                  icon-only
-                  ion-button
-                  (click)="onFilterOpen($event)">
+        <ion-col size="auto">
+          <ion-button class="filter-button"
+                      fill="clear"
+                      color="grayDark50"
+                      icon-only
+                      (click)="onFilterOpen($event)">
             <ion-icon name="funnel"></ion-icon>
-          </button>
+          </ion-button>
         </ion-col>
       </ion-row>
     </ion-grid>
@@ -74,69 +73,64 @@
         <ion-row align-items-center
                  justify-content-start
                  nowrap>
-          <ion-col col-auto
+          <ion-col size="auto"
                    *ngIf="!isSaved(college)"
                    [ngSwitch]="isSavingIndex === index">
-            <button class="lowercase"
-                    clear
-                    color="primary"
-                    icon-start
-                    ion-button
-                    small
-                    (click)="setSavingIndex(index); followCollege(college)"
-                    *ngSwitchCase="false">
+            <ion-button class="lowercase"
+                        fill="clear"
+                        color="primary"
+                        slot="start"
+                        size="small"
+                        (click)="setSavingIndex(index); followCollege(college)"
+                        *ngSwitchCase="false">
               <ion-icon name="nt-save"></ion-icon>
               <span>Save</span>
-            </button>
-            <button class="lowercase"
-                    clear
-                    color="primary"
-                    icon-start
-                    ion-button
-                    small
-                    *ngSwitchCase="true">
+            </ion-button>
+            <ion-button class="lowercase"
+                        fill="clear"
+                        color="primary"
+                        slot="start"
+                        size="small"
+                        *ngSwitchCase="true">
               <ion-icon name="nt-saving"></ion-icon>
               <span>Saving...</span>
-            </button>
+            </ion-button>
           </ion-col>
-          <ion-col col-auto
+          <ion-col size="auto"
                    *ngIf="isSaved(college)">
-            <button class="lowercase"
-                    clear
-                    color="green"
-                    icon-start
-                    ion-button
-                    small
-                    (click)="unsaveCollege(college)">
+            <ion-button class="lowercase"
+                        fill="clear"
+                        color="green"
+                        slot="start"
+                        size="small"
+                        (click)="unsaveCollege(college)">
               <ion-icon name="nt-saved"></ion-icon>
               <span>Saved</span>
-            </button>
+            </ion-button>
           </ion-col>
-          <ion-col col-auto
+          <ion-col size="auto"
                    *ngIf="list?.name === 'Recommended' && user.isStudent">
-            <button class="lowercase"
-                    clear
-                    color="primary"
-                    icon-start
-                    ion-button
-                    small
-                    (click)="removeRec(college)">
+            <ion-button class="lowercase"
+                        fill="clear"
+                        color="primary"
+                        slot="start"
+                        size="small"
+                        (click)="removeRec(college)">
               <ion-icon name="nt-unsave"></ion-icon>
               <span>Remove</span>
-            </button>
+            </ion-button>
           </ion-col>
-          <ion-col col-auto>
-            <button class="lowercase"
-                    clear
-                    color="primary"
-                    icon-start
-                    ion-button
-                    small
-                    *ngIf="(connectionService.all$ | async)?.length"
-                    (click)="openSendModal(college)">
+          <ion-col size="auto">
+            <ion-button class="lowercase"
+                        fill="clear"
+                        color="primary"
+                        slot="start"
+                        size="small"
+                        *ngIf="(connectionService.all$ | async)?.length"
+                        (click)="openSendModal(college)">
               <ion-icon name="send"></ion-icon>
               <span>Send</span>
-            </button>
+            </ion-button>
           </ion-col>
           <ion-col class="chip-container"
                    *ngIf="list?.name === 'Recommended' && college?.recommender">

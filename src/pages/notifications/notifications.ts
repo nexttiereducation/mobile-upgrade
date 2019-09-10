@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { IonicPage, ItemSliding, NavController } from 'ionic-angular';
+import { IonicPage, ItemSliding, NavController } from '@ionic/angular';
 
 import { COLLEGE_TILES } from '@nte/constants/college.constants';
 import { TASK_TILES } from '@nte/constants/task.constants';

@@ -1,5 +1,5 @@
 import { Component, ViewChild } from '@angular/core';
-import { Content, Events, IonicPage, NavController, NavParams } from 'ionic-angular';
+import { Content, Events, IonicPage, NavController, NavParams } from '@ionic/angular';
 
 import { ALPHABET } from '@nte/constants/filter.constants';
 import { Category } from '@nte/models/category.model';

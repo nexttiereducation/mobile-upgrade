@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { NativeStorage } from '@ionic-native/native-storage';
-import { IonicPage, ItemSliding, NavController, NavParams, ToastController } from 'ionic-angular';
+import { IonicPage, ItemSliding, NavController, NavParams, ToastController } from '@ionic/angular';
 import { indexOf, pullAll, words, zipObject } from 'lodash';
 import { Subscription } from 'rxjs/Subscription';
 

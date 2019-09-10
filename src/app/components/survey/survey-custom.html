@@ -1,17 +1,19 @@
-<form #customSurveyForm="ngForm" (ngSubmit)="finishSurvey()">
+<form #customSurveyForm="ngForm"
+      (ngSubmit)="finishSurvey()">
   <ion-list>
     <ion-item *ngFor="let question of data">
-      <ion-label class="surveyQuestion small" stacked>{{ question.text }}</ion-label>
+      <ion-label class="surveyQuestion small"
+                 position="stacked">{{ question.text }}</ion-label>
       <ion-input name="question-{{question.rank}}"
-                  [(ngModel)]="question.answer"
-                  required></ion-input>
+                 [(ngModel)]="question.answer"
+                 required></ion-input>
     </ion-item>
   </ion-list>
-  <ion-footer class="no-border" padding-10>
-    <button ion-button block color="orange"
-        [disabled]="customSurveyForm.form.invalid"
-        type="submit">
-      {{ taskTracker.isComplete ? 'Update Survey' : 'Finish Survey' }}
-    </button>
+  <ion-footer class="no-border"
+              padding-10>
+    <ion-button expand="block"
+                color="orange"
+                [disabled]="customSurveyForm.form.invalid"
+                type="submit"> {{ taskTracker.isComplete ? 'Update Survey' : 'Finish Survey' }} </ion-button>
   </ion-footer>
 </form>

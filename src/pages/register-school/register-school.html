@@ -1,20 +1,22 @@
 <ion-header mode="ios">
-  <ion-navbar mode="ios" color="primary">
+  <ion-toolbar mode="ios"
+               color="primary">
     <ion-title mode="ios">Create an account</ion-title>
-  </ion-navbar>
+  </ion-toolbar>
 </ion-header>
-
 <ion-content class="bg-blue external-page">
   <ion-grid>
-    <ion-row align-items-center justify-content-start>
-      <ion-col text-center margin-bottom padding-bottom>
-        <img class="nte-logo" src="assets/image/logo/circle.svg"/>
+    <ion-row align-items-center
+             justify-content-start>
+      <ion-col text-center
+               margin-bottom
+               padding-bottom>
+        <img class="nte-logo"
+             src="assets/image/logo/circle.svg" />
         <div class="blue-divider"></div>
         <div class="text-white bold external-header">Almost done!</div>
-        <div class="text-white body spaced">
-          Which high school do you attend? You can skip this
-          question for now, but don't forget to answer it later!
-        </div>
+        <div class="text-white body spaced"> Which high school do you attend? You can skip this question for now, but
+          don't forget to answer it later! </div>
       </ion-col>
     </ion-row>
     <ion-row>
@@ -24,19 +26,19 @@
       </ion-col>
     </ion-row>
   </ion-grid>
-  <button ion-button full large type="button"
-          color="white"
-          *ngIf="!selectedHighSchool"
-          (click)="skip()">
-    Skip for now
-  </button>
+  <ion-button expand="full"
+              size="large"
+              type="button"
+              color="white"
+              *ngIf="!selectedHighSchool"
+              (click)="skip()"> Skip for now </ion-button>
 </ion-content>
-
-<ion-footer padding-10 class="no-border">
-  <button ion-button full large type="button"
-          color="white"
-          *ngIf="selectedHighSchool"
-          (click)="saveSchool()">
-    Next
-  </button>
+<ion-footer padding-10
+            class="no-border">
+  <ion-button expand="full"
+              size="large"
+              type="button"
+              color="white"
+              *ngIf="selectedHighSchool"
+              (click)="saveSchool()"> Next </ion-button>
 </ion-footer>

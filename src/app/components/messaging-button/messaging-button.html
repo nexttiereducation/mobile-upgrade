@@ -1,12 +1,9 @@
-<button clear
-        color="black"
-        icon-only
-        ion-button
-        mode="md"
-        (click)="goToMessaging()">
+<ion-button fill="clear"
+            color="black"
+            icon-only
+            mode="md"
+            (click)="goToMessaging()">
   <ion-icon name="nt-messaging"></ion-icon>
   <ion-badge item-end
-             *ngIf="(messageProvider.unreadCount$ | async) > 0">
-    {{ messageProvider.unreadCount$ | async }}
-  </ion-badge>
-</button>
+             *ngIf="(messageProvider.unreadCount$ | async) > 0"> {{ messageProvider.unreadCount$ | async }} </ion-badge>
+</ion-button>

@@ -69,7 +69,7 @@ export class LocationAccuracyService {
 
   goToLocationSettingsConfirm() {
     const confirm = this.alertCtrl.create({
-      title: `Go to Settings?`,
+      header: `Go to Settings?`,
       message: `Failed to automatically set Location Mode to 'High Accuracy'.
         Would you like to switch to the Location Settings page and do this manually?`,
       buttons: [
