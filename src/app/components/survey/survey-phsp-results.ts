@@ -4,14 +4,17 @@ import { MILITARY_DISPLAY_VALUES, PLAN_PROPERTIES } from '@nte/constants/survey.
 
 @Component({
   selector: `survey-phsp-results`,
-  templateUrl: `survey-phsp-results.html`
+  templateUrl: `survey-phsp-results.html`,
+  styleUrls: [`survey-phsp-results.scss`]
 })
 export class SurveyPhspResultsComponent implements OnInit, OnChanges {
-  @Input() public answers: any;
-  @Input() public taskIsComplete: boolean;
+  @Input() answers: any;
+  @Input() taskIsComplete: boolean;
 
   public answerProperties = PLAN_PROPERTIES;
   public branchDisplay: string;
+
+  constructor() { }
 
   ngOnInit() {
     this.formatMilitary();

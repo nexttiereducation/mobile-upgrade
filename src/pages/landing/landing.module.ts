@@ -1,16 +1,27 @@
+import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
-import { IonicPageModule } from '@ionic/angular';
+import { FormsModule } from '@angular/forms';
+import { RouterModule, Routes } from '@angular/router';
+import { IonicModule } from '@ionic/angular';
+
 import { LandingPage } from './landing';
+
+const routes: Routes = [
+  {
+    path: 'landing',
+    component: LandingPage
+  }
+];
 
 @NgModule({
   declarations: [
     LandingPage
   ],
-  exports: [
-    LandingPage
-  ],
   imports: [
-    IonicPageModule.forChild(LandingPage)
+    CommonModule,
+    FormsModule,
+    IonicModule,
+    RouterModule.forChild(routes)
   ]
 })
-export class LandingPageModule {}
+export class LandingPageModule { }

@@ -1,9 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Events, ToastController } from '@ionic/angular';
 import { flatten, orderBy } from 'lodash';
-import { BehaviorSubject } from 'rxjs/BehaviorSubject';
-import { Observable } from 'rxjs/Observable';
-import { Subject } from 'rxjs/Subject';
+import { BehaviorSubject, Observable, Subject } from 'rxjs';
 
 import { IConnection } from '@nte/interfaces/connection.interface';
 import { GroupMessage } from '@nte/models/group-message.model';
@@ -17,7 +15,7 @@ import { StakeholderService } from '@nte/services/stakeholder.service';
 @Injectable({ providedIn: 'root' })
 export class MessageService extends ListService {
   public newMessage: string = null;
-  public show = false;
+  public show: boolean = false;
 
   private _filterMessaging: Subject<SelectedConnections> = new Subject<SelectedConnections>();
   private _messages: BehaviorSubject<Message[]> = new BehaviorSubject<Message[]>(null);
@@ -31,20 +29,8 @@ export class MessageService extends ListService {
     return this._filterMessaging.asObservable();
   }
 
-  get messages(): Message[] {
-    return this._messages.getValue();
-  }
-
-  get messages$(): Observable<Message[]> {
-    return this._messages.asObservable();
-  }
-
-  get selectedTeamMember(): IConnection {
-    return this._selectedTeamMember.getValue();
-  }
-
-  get selectedTeamMember$(): Observable<IConnection> {
-    return this._selectedTeamMember.asObservable();
+  set isSending(isSending: boolean) {
+    this._isSending.next(isSending);
   }
 
   get isSending(): boolean {
@@ -53,6 +39,35 @@ export class MessageService extends ListService {
 
   get isSending$(): Observable<boolean> {
     return this._isSending.asObservable();
+  }
+
+  set messages(messages: Message[]) {
+    this._messages.next(messages);
+  }
+  get messages(): Message[] {
+    return this._messages.getValue();
+  }
+
+  get messages$(): Observable<Message[]> {
+    return this._messages.asObservable();
+  }
+
+  set selectedTeamMember(teamMember: IConnection) {
+    if (teamMember !== this.selectedTeamMember) {
+      this.clearMessages();
+      // if (teamMember) {
+      //   this.getMessages(teamMember.id);
+      // }
+      this._selectedTeamMember.next(teamMember);
+    }
+  }
+
+  get selectedTeamMember(): IConnection {
+    return this._selectedTeamMember.getValue();
+  }
+
+  get selectedTeamMember$(): Observable<IConnection> {
+    return this._selectedTeamMember.asObservable();
   }
 
   get unreadCount$(): Observable<number> {
@@ -67,31 +82,11 @@ export class MessageService extends ListService {
     const unreadMessages = this._unreadMessages.getValue();
     if (unreadMessages) {
       const summary = {};
-      for (let i = 0, message; (message = unreadMessages[i]); i++) {
-        summary[message.id] = message.count;
-      }
+      unreadMessages.forEach(m => summary[m.id] = m.count);
       return summary;
     } else {
       return false;
     }
-  }
-
-  set messages(messages: Message[]) {
-    this._messages.next(messages);
-  }
-
-  set selectedTeamMember(teamMember: IConnection) {
-    if (teamMember !== this.selectedTeamMember) {
-      this.clearMessages();
-      // if (teamMember) {
-      //   this.getMessages(teamMember.id);
-      // }
-      this._selectedTeamMember.next(teamMember);
-    }
-  }
-
-  set isSending(isSending: boolean) {
-    this._isSending.next(isSending);
   }
 
   constructor(
@@ -99,8 +94,7 @@ export class MessageService extends ListService {
     private events: Events,
     private mixpanel: MixpanelService,
     private stakeholderService: StakeholderService,
-    private toastr: ToastController
-  ) {
+    private toastCtrl: ToastController) {
     super();
   }
 
@@ -113,7 +107,8 @@ export class MessageService extends ListService {
     const isAbsUrl = nextPage.length > 0;
     this.isInitializing = !nextPage.length;
     this.isLoadingMore = !this.isInitializing;
-    this.api.get(url, isAbsUrl)
+    this.api
+      .get(url, isAbsUrl)
       .subscribe(
         response => {
           const data = response.json();
@@ -158,22 +153,17 @@ export class MessageService extends ListService {
       const messageUrl = decodeURI(messageArray[messageArray.length - 1]);
       const messageUrlArray = messageUrl.split(`;`);
       message.attachment = {};
-      for (let i = 0, pair; pair = messageUrlArray[i]; ++i) {
+      messageUrlArray.forEach(pair => {
         const keyValue = pair.split(`=`);
         message.attachment[keyValue[0]] = keyValue[1];
-      }
+      });
     }
     return message;
   }
 
   public getParsedMessages(messages: any[]) {
     if (messages && messages.length) {
-      const formattedMessages = [];
-      for (let i = 0, message; message = messages[i]; i++) {
-        const parsedMessage = this.getParsedMessage(message);
-        formattedMessages.push(parsedMessage);
-      }
-      return formattedMessages;
+      return [...messages].map(m => this.getParsedMessage(m));
     } else {
       return messages;
     }
@@ -181,7 +171,8 @@ export class MessageService extends ListService {
 
   public getUnread() {
     this.isInitializing = true;
-    this.api.get(`/messages/unread/`)
+    this.api
+      .get(`/messages/unread/`)
       .subscribe(
         data => {
           const unreads = data.json();
@@ -219,17 +210,18 @@ export class MessageService extends ListService {
     this._filterMessaging.next(selectedConnections);
   }
 
-  public send(stakeholderId: number, message: string) {
+  public send(stakeholderId: number, message: string, midChat: boolean = true) {
     if (this.isSending) { return; }
     this.isSending = true;
     if (message.endsWith(`\n`)) {
       message = message.slice(0, message.length - 2);
     }
-    this.api.post(`/messages/`, { body: message, id: stakeholderId })
+    this.api
+      .post(`/messages/`, { body: message, id: stakeholderId })
       .subscribe(
         response => {
           this.isSending = false;
-          if (this.messages) {
+          if (midChat) {
             this.messages.push(this.getParsedMessage(response.json()));
             this.events.publish(`messageChange`, { messages: this.messages });
           }
@@ -249,7 +241,9 @@ export class MessageService extends ListService {
   }
 
   public sendToGroup(groupMessage: GroupMessage) {
-    this.api.post(`/messages/group/`, groupMessage).subscribe(
+    this.api
+      .post(`/messages/group/`, groupMessage)
+      .subscribe(
       () => this.showMessageSuccessToast(),
       () => this.showMessageErrorToast()
     );
@@ -300,22 +294,20 @@ export class MessageService extends ListService {
 
   // --------------------
 
-  private showMessageErrorToast() {
-    this.toastr
-      .create({
+  private async showMessageErrorToast() {
+    const toast = await this.toastCtrl.create({
         duration: 3000,
         message: `Can't send message; please try again`
-      })
-      .present();
+      });
+    toast.present();
   }
 
-  private showMessageSuccessToast() {
-    this.toastr
-      .create({
+  private async showMessageSuccessToast() {
+    const toast = await this.toastCtrl.create({
         duration: 3000,
         message: `Message sent`
-      })
-      .present();
+      });
+    toast.present();
   }
 
   private startPolling() {

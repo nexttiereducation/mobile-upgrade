@@ -82,17 +82,17 @@ messages {
     margin-left: 10px;
     &:before {
       border-left: 10px solid transparent;
-      border-right: 10px solid $grayLighter;
-      border-top-color: $grayLighter;
+      border-right: 10px solid var(--grayLighter);
+      border-top-color: var(--grayLighter);
       left: -12px;
     }
   }
   div.from-me {
     margin-right: 10px;
     &:after {
-      border-left: 10px solid $blue;
+      border-left: 10px solid var(--blue);
       border-right: 10px solid transparent;
-      border-top-color: $blue;
+      border-top-color: var(--blue);
       right: -12px;
     }
   }
@@ -108,7 +108,7 @@ messages {
       height: 40px;
       width: 40px;
       font-size: 48px;
-      color: $steel50;
+      color: var(--steel50);
       text-align: center;
       line-height: 40px;
       margin-left: -4px;

@@ -1,18 +1,21 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { Events, NavParams, ToastController, ViewController } from '@ionic/angular';
+import { Events, ModalController, NavParams, ToastController } from '@ionic/angular';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 
 import { TaskStatus } from '@nte/constants/task.constants';
 import { BackEndPrompt } from '@nte/models/back-end-prompt.model';
 import { Prompt } from '@nte/models/prompt.model';
 import { Stakeholder } from '@nte/models/stakeholder.model';
 import { TaskTracker } from '@nte/models/task-tracker.model';
-import { MixpanelProvider } from '@nte/services/mixpanel.service';
-import { StakeholderProvider } from '@nte/services/stakeholder.service';
-import { TaskProvider } from '@nte/services/task.service';
+import { MixpanelService } from '@nte/services/mixpanel.service';
+import { StakeholderService } from '@nte/services/stakeholder.service';
+import { TaskService } from '@nte/services/task.service';
 
 @Component({
   selector: `prompt`,
-  templateUrl: `prompt.html`
+  templateUrl: `prompt.html`,
+  styleUrls: [`prompt.scss`]
 })
 export class PromptComponent implements OnInit, OnDestroy {
   // @Output() promptCompleted = new EventEmitter<null>();
@@ -24,14 +27,16 @@ export class PromptComponent implements OnInit, OnDestroy {
   public prompt: BackEndPrompt<any>;
   public stakeholder: Stakeholder;
   public taskTracker: TaskTracker;
+
+  private ngUnsubscribe: Subject<any> = new Subject();
   private today: string;
 
   constructor(params: NavParams,
-    public viewCtrl: ViewController,
     private events: Events,
-    private mixpanel: MixpanelProvider,
-    private stakeholderProvider: StakeholderProvider,
-    private taskProvider: TaskProvider,
+    private mixpanel: MixpanelService,
+    private modalCtrl: ModalController,
+    private stakeholderService: StakeholderService,
+    private taskService: TaskService,
     private toastCtrl: ToastController) {
     this.prompt = params.get(`prompt`);
     this.taskTracker = params.get(`taskTracker`);
@@ -39,24 +44,9 @@ export class PromptComponent implements OnInit, OnDestroy {
     this.today = todaysDate.toISOString().substring(0, 10);
   }
 
-  public completeTask() {
-    const updateSub = this.taskProvider.updateTaskStatus(this.taskTracker.id, TaskStatus.COMPLETED)
-      .subscribe((tracker) => {
-        if (tracker.data instanceof TaskTracker) {
-          this.events.publish(`taskChange`, { taskTracker: tracker.data });
-          this.viewCtrl.dismiss();
-        }
-        updateSub.unsubscribe();
-      });
-  }
-
-  ngOnDestroy() {
-    this.events.unsubscribe(`promptSubmitted`);
-  }
-
   ngOnInit() {
     this.setupEventSubs();
-    this.stakeholder = this.stakeholderProvider.stakeholder;
+    this.stakeholder = this.stakeholderService.stakeholder;
     this.newPrompt = new Prompt<string[]>([], this.prompt.task);
     if (this.taskTracker.status === `ST`) {
       this.mixpanel.event(`task_started`, {
@@ -66,21 +56,39 @@ export class PromptComponent implements OnInit, OnDestroy {
     }
   }
 
+  ngOnDestroy() {
+    this.ngUnsubscribe.next();
+    this.ngUnsubscribe.complete();
+    this.events.unsubscribe(`promptSubmitted`);
+  }
+
+  public completeTask() {
+    this.taskService.updateTaskStatus(this.taskTracker.id, TaskStatus.COMPLETED)
+      .pipe(takeUntil(this.ngUnsubscribe))
+      .subscribe((tracker: any) => {
+        if (tracker.data instanceof TaskTracker) {
+          this.events.publish(
+            `taskChange`,
+            { taskTracker: tracker.data }
+          );
+          this.modalCtrl.dismiss();
+        }
+      });
+  }
+
+
   private setupEventSubs() {
     this.events.subscribe(
       `promptSubmitted`,
-      (data: any) => {
+      async (data: any) => {
         this.taskTracker.completed_on = this.today;
-        this.toastCtrl.create({
+        const toast = await this.toastCtrl.create({
           duration: 5000,
           message: data.successMessage
-        }).present()
-          .then(() => {
-            this.completeTask();
-          })
-          .catch(
-            (err) => console.error(err)
-          );
+        });
+        toast.present()
+          .then(() => this.completeTask())
+          .catch(err => console.error(err));
       }
     );
   }

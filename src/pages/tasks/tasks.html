@@ -1,20 +1,19 @@
 <ion-header mode="ios">
   <ion-toolbar mode="ios"
-              [attr.no-padding]="showParentHeader && user.students.length > 1 ? true : null">
+               [attr.no-padding]="showParentHeader && user.students.length > 1 ? true : null">
     <ion-buttons notifications-button
                  slot="secondary"></ion-buttons>
     <ion-title mode="ios">
       <ng-template [ngIf]="!showParentHeader">Tasks</ng-template>
       <ng-template [ngIf]="showParentHeader">
-        <ng-template [ngIf]="user.students && user.students.length === 1">
-          {{ getDisplayText(activeStudent) }}
+        <ng-template [ngIf]="user.students && user.students.length === 1"> {{ getDisplayText(activeStudent) }}
         </ng-template>
         <ng-template [ngIf]="user.students && user.students.length > 1">
-          <ion-select [selectedText]="getDisplayText(activeStudent)"
-                      [selectOptions]="{title: 'Select Student'}"
+          <ion-select [interfaceOptions]="{title: 'Select Student'}"
+                      [selectedText]="getDisplayText(activeStudent)"
                       [(ngModel)]="activeStudent">
             <ion-select-option *ngFor="let student of user.students"
-                        [value]="student">{{ student.full_name }}</ion-select-option>
+                               [value]="student">{{ student.full_name }}</ion-select-option>
           </ion-select>
         </ng-template>
       </ng-template>
@@ -23,7 +22,6 @@
                  messaging-button></ion-buttons>
   </ion-toolbar>
 </ion-header>
-
 <ion-content class="bg-grayLight">
   <loading *ngIf="!taskTiles || !taskTiles.length"></loading>
   <ion-grid no-padding
@@ -40,9 +38,8 @@
                [hidden]="tile.phase && tile.phase !== user.phase">
         <ion-card class="tile">
           <ion-button class="tile-button"
-                  color="white"
-                 
-                  (click)="goToTaskList(tile)">
+                      color="white"
+                      (click)="viewList(tile)">
             <img class="logo"
                  [src]="tile.iconUrl">
             <div class="tile-label">{{ tile.name }}</div>
@@ -54,9 +51,8 @@
                *ngFor="let school of collegeTrackers">
         <ion-card class="tile">
           <ion-button class="tile-button"
-                  color="white"
-                 
-                  (click)="viewCollege(school)">
+                      color="white"
+                      (click)="viewCollege(school)">
             <div class="tile-avatar-wrapper avatar-shadow">
               <img [src]="school.photo_url">
             </div>

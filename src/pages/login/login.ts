@@ -1,21 +1,17 @@
-import { animate, Component, state, style, transition, trigger, ViewChild } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { EmailComposer } from '@ionic-native/email-composer';
+import { animate, state, style, transition, trigger } from '@angular/animations';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
+import { EmailComposer } from '@ionic-native/email-composer/ngx';
+import { AlertController, Platform } from '@ionic/angular';
 import { Storage } from '@ionic/storage';
-import { AlertController, Content, IonicPage, NavController, Platform } from '@ionic/angular';
-import { Subject } from 'rxjs';
-import { BehaviorSubject } from 'rxjs/BehaviorSubject';
+import { BehaviorSubject, Subject } from 'rxjs';
 
 import { emailRegex, registerMessage } from '@nte/constants/stakeholder.constants';
 import { EnvironmentService } from '@nte/services/environment.service';
 import { MixpanelService } from '@nte/services/mixpanel.service';
 import { StakeholderService } from '@nte/services/stakeholder.service';
-import { ForgotPasswordPage } from './../forgot-password/forgot-password';
 
-@IonicPage({
-  name: `login-page`,
-  priority: `high`
-})
 @Component({
   animations: [
     trigger(`keyboardState`, [
@@ -42,34 +38,26 @@ import { ForgotPasswordPage } from './../forgot-password/forgot-password';
     ])
   ],
   selector: `login`,
-  templateUrl: `login.html`
+  templateUrl: `login.html`,
+  styleUrls: [`login.scss`]
 })
-export class LoginPage {
-  @ViewChild(Content) public content: Content;
+export class LoginPage implements OnInit, OnDestroy {
+  @ViewChild(`Content`, { static: false }) public content;
 
   public email: string;
   public invalid: any = {};
   public isInitialEntry: any = {};
-  public loginForm: FormGroup = this.formBuilder.group({
-    email: [
-      ``,
-      Validators.compose([
-        Validators.required,
-        Validators.pattern(emailRegex)
-      ])
-    ],
-    password: [
-      ``,
-      Validators.compose([
-        Validators.required,
-        Validators.minLength(8)
-      ])
-    ]
-  });
+  public loginForm: FormGroup;
   public password: string;
 
-  private _keyboardShowing = new BehaviorSubject<boolean>(false);
+  private _keyboardShowing: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
   private ngUnsubscribe: Subject<any> = new Subject();
+
+  get emailCtrl() {
+    if (this.loginForm.contains('email')) {
+      return this.loginForm.get('email');
+    }
+  }
 
   get keyboardShowing() {
     return this._keyboardShowing.asObservable();
@@ -83,6 +71,11 @@ export class LoginPage {
     this.stakeholderService.loggingIn = loggingIn;
   }
 
+  get passwordCtrl() {
+    if (this.loginForm.contains('password')) {
+      return this.loginForm.get('password');
+    }
+  }
   constructor(
     public environmentService: EnvironmentService,
     public platform: Platform,
@@ -90,39 +83,38 @@ export class LoginPage {
     private emailComposer: EmailComposer,
     private formBuilder: FormBuilder,
     private mixpanel: MixpanelService,
-    private navCtrl: NavController,
+    private router: Router,
     private stakeholderService: StakeholderService,
-    private storage: Storage
-  ) { }
-
-  ionViewDidEnter() {
-    this.loggingIn = false;
-    this.mixpanel.event(`navigated_to-Login`);
+    private storage: Storage) {
+    this.loginForm = this.formBuilder.group({
+      email: new FormControl(
+        ``,
+        Validators.compose([
+          Validators.required,
+          Validators.pattern(emailRegex)
+        ])
+      ),
+      password: new FormControl(
+        ``,
+        Validators.compose([
+          Validators.required,
+          Validators.minLength(8)
+        ])
+      )
+    });
   }
 
-  ionViewDidLoad() {
+  ngOnInit() {
+    this.loggingIn = false;
     this.stakeholderService.loggedIn = false;
     this.mixpanel.event(`$app_open`);
+    this.mixpanel.event(`navigated_to-Login`);
     // this.setupLoginSub();
     this.setupKeyboardListeners();
-    this.storage.get(`ls.stakeholder`)
-      .then(stakeholder => {
-        if (stakeholder) {
-          this.storage.get(`ls.token`)
-            .then(token => {
-              if (token && token.length) {
-                const currentUser = JSON.parse(stakeholder);
-                this.stakeholderService.setStakeholder({
-                  id: currentUser.id,
-                  token
-                }, true);
-              }
-            });
-        }
-      });
+    this.stakeholderService.checkStorage();
   }
 
-  ionViewWillUnload() {
+  ngOnDestroy() {
     this.ngUnsubscribe.next();
     this.ngUnsubscribe.complete();
   }
@@ -134,14 +126,17 @@ export class LoginPage {
   }
 
   public goToForgotPassword() {
-    this.navCtrl.push(ForgotPasswordPage);
+    this.router.navigate([`forgot-password`]);
   }
 
   public login() {
-    this.stakeholderService.login({
-      email: this.email,
-      password: this.password
-    });
+    this.stakeholderService.loginSuccess
+      .subscribe(loggedIn => {
+        if (loggedIn) {
+          this.router.navigateByUrl(`/app`);
+        }
+      });
+    this.stakeholderService.login(this.loginForm.value);
   }
 
   public loginWithClever() {
@@ -163,12 +158,11 @@ export class LoginPage {
 
   public setIsInitialEntry(ctrlName: string) {
     this._keyboardShowing.next(true);
-    const fieldIsClean = !this.loginForm.controls[ctrlName].dirty;
-    this.isInitialEntry[ctrlName] = fieldIsClean;
+    this.isInitialEntry[ctrlName] = !this.loginForm.controls[ctrlName].dirty;
   }
 
-  public showRegisterAlert() {
-    const regAlert = this.alertCtrl.create({
+  public async showRegisterAlert() {
+    const alert = await this.alertCtrl.create({
       buttons: [
         {
           handler: () => {
@@ -187,11 +181,11 @@ export class LoginPage {
         },
         `Dismiss`
       ],
+      header: registerMessage.title,
       message: registerMessage.message,
-      subHeader: registerMessage.subTitle,
-      header: registerMessage.title
+      subHeader: registerMessage.subTitle
     });
-    regAlert.present();
+    return await alert.present();
   }
 
   public validate(ctrlName: string) {

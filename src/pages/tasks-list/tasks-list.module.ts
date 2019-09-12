@@ -1,10 +1,20 @@
+import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
-import { IonicPageModule } from '@ionic/angular';
+import { FormsModule } from '@angular/forms';
+import { RouterModule, Routes } from '@angular/router';
+import { IonicModule } from '@ionic/angular';
 
-import { ApplicationDatesComponent } from '@nte/components/application-dates/application-dates';
-import { ComponentsModule } from '@nte/components/components.module';
 import { TaskPage } from './../task/task';
 import { TasksListPage } from './tasks-list';
+import { ApplicationDatesComponent } from '@nte/components/application-dates/application-dates';
+import { ComponentsModule } from '@nte/components/components.module';
+
+const routes: Routes = [
+  {
+    path: 'app/tasks/list/:id',
+    component: TasksListPage
+  }
+];
 
 @NgModule({
   declarations: [
@@ -14,13 +24,12 @@ import { TasksListPage } from './tasks-list';
     ApplicationDatesComponent,
     TaskPage
   ],
-  exports: [
-    TasksListPage
-  ],
   imports: [
-    ComponentsModule,
-    IonicPageModule.forChild(TasksListPage)
+    CommonModule,
+    FormsModule,
+    IonicModule,
+    RouterModule.forChild(routes),
+    ComponentsModule
   ]
 })
-
-export class TasksListPageModule {}
+export class TasksListPageModule { }

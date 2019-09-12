@@ -52,7 +52,7 @@ ion-icon.icon-60 {
 
 .avatar-shadow {
   border-radius: 50%;
-  box-shadow: transparentize($black, 0.82) 0px 0px 2px, transparentize($black, 0.74) 0px 2.75px 1.5px;
+  box-shadow: transparentize(var(--black), 0.82) 0px 0px 2px, transparentize(var(--black), 0.74) 0px 2.75px 1.5px;
   overflow: hidden;
 
   &img {
@@ -113,7 +113,7 @@ ion-icon.icon-60 {
 
   .tinyHeader {
     text-align: left;
-    color: $black;
+    color: var(--black);
     margin-bottom: 10px;
 
     &:not(:first-child) {
@@ -183,16 +183,16 @@ ion-icon.icon-60 {
 
 .gray-sections {
   padding-bottom: 15px;
-  background-color: $white;
+  background-color: var(--white);
 
   &:not(.no-headers) {
     >*:nth-child(even) {
-      background-color: $grayLightest-1;
+      background-color: var(--grayLightest-1);
       min-height: 124px;
     }
 
     >*:nth-child(odd) {
-      background-color: $white;
+      background-color: var(--white);
       padding: 12px 20px;
       font-size: 1.1em;
       font-weight: 500;
@@ -200,7 +200,7 @@ ion-icon.icon-60 {
   }
 
   &.no-headers>* {
-    background-color: $grayLightest-1;
+    background-color: var(--grayLightest-1);
   }
 
   >div.body {
@@ -318,7 +318,7 @@ ion-icon.icon-60 {
     }
 
     ion-label.label {
-      color: $gray;
+      color: var(--gray);
       font-weight: bold;
       font-size: 1.2rem;
       position: absolute;
@@ -387,7 +387,7 @@ html {
   font-size: 3rem;
   font-weight: bold;
   text-align: center;
-  color: $blue;
+  color: var(--blue);
 }
 
 .displayTitle {
@@ -399,7 +399,7 @@ html {
 .surveyQuestion {
   @extend .displayTitle;
   letter-spacing: -0.25px;
-  color: $black !important;
+  color: var(--black) !important;
   white-space: normal;
 
   &.small {
@@ -414,7 +414,7 @@ html {
 
 .snackbar {
   font-size: 1.7rem;
-  color: $white;
+  color: var(--white);
 
   &.undo {
     font-weight: bold;
@@ -426,20 +426,20 @@ html {
 
   &.title {
     text-align: center;
-    color: $black;
+    color: var(--black);
   }
 
   &.action {
     font-weight: 500;
     text-align: "right";
-    color: $blue;
+    color: var(--blue);
   }
 }
 
 body,
 .body {
   font-size: 1.4rem;
-  color: $black;
+  color: var(--black);
 
   &.spaced {
     line-height: 1.9rem;
@@ -460,7 +460,7 @@ body,
 
 .subhead {
   font-size: 1.2rem !important;
-  color: $grayDark50;
+  color: var(--grayDark50);
   font-weight: normal;
 
   ion-icon {
@@ -472,24 +472,24 @@ body,
   font-size: 1.2rem;
   font-weight: bold;
   text-align: center;
-  color: $blue;
+  color: var(--blue);
 }
 
 .actionIcon {
   font-size: 1.2rem !important;
   letter-spacing: -0.29px;
-  color: $grayDark50 !important;
+  color: var(--grayDark50) !important;
   text-transform: none;
 
   &.active {
-    color: $blue;
+    color: var(--blue);
   }
 }
 
 .tinyHeader {
   @extend .tinyText;
   text-align: center;
-  color: $blue;
+  color: var(--blue);
   font-weight: bold;
 }
 
@@ -527,7 +527,7 @@ body,
 
 // ------------------- MIXINS ----------------------
 // --- Text Color ---
-$textColors: (black: $black, blue: (base: $blue, transparencies: (50, 100)), grayDark50: $grayDark50, green: (base: $green, transparencies: (50, 100)), red: $red, steel: (base: $steel, transparencies: (50, 100)), white: (base: $white, transparencies: (50, 70, 100)));
+$textColors: (black: var(--black), blue: (base: var(--blue), transparencies: (50, 100)), grayDark50: var(--grayDark50), green: (base: var(--green), transparencies: (50, 100)), red: var(--red), steel: (base: var(--steel), transparencies: (50, 100)), white: (base: var(--white), transparencies: (50, 70, 100)));
 
 @mixin textColor($colorName, $value) {
   $color: $value;
@@ -557,7 +557,7 @@ $value in $textColors {
 }
 
 // --- Background Color ---
-$bgColors: (blue: (base: $blue, transparencies: (10, 50, 100)), gray: $gray, grayLight: $grayLight, grayLightest: $grayLightest, grayLightest-1: $grayLightest-1, grayMedium: $grayLighter, green: (base: $green, transparencies: 10), red: (base: $red, transparencies: (10, 100)), steel50: $steel50, white: (base: $white, transparencies: (10, 50, 100)));
+$bgColors: (blue: (base: var(--blue), transparencies: (10, 50, 100)), gray: var(--gray), grayLight: var(--grayLight), grayLightest: var(--grayLightest), grayLightest-1: var(--grayLightest-1), grayMedium: var(--grayLighter), green: (base: var(--green), transparencies: 10), red: (base: var(--red), transparencies: (10, 100)), steel50: var(--steel50), white: (base: var(--white), transparencies: (10, 50, 100)));
 
 @mixin bgColor($colorName, $value) {
   $color: $value;
@@ -588,7 +588,7 @@ $value in $bgColors {
 }
 
 // --- Toast Background Color ---
-$toastColors: (blue: $blue, green: $green, red: $red);
+$toastColors: (blue: var(--blue), green: var(--green), red: var(--red));
 
 @mixin toast($colorName, $color) {
   &.toast-#{$colorName} .toast-wrapper {
@@ -624,7 +624,7 @@ button {
     width: 5px;
 
     &.swiper-pagination-bullet-active {
-      background: $blue;
+      background: var(--blue);
     }
 
     &:first-of-type:last-of-type {
@@ -698,7 +698,7 @@ ion-checkbox.checkbox-md {
         background-color: transparent;
 
         .checkbox-inner {
-          border-color: $blue;
+          border-color: var(--blue);
         }
       }
     }
@@ -764,7 +764,7 @@ ion-header {
   &.header-ios .toolbar {
 
     // .toolbar-background.toolbar-background-ios {
-    //   // border-bottom-color: rgba(0, 0, 0, 0); $toolbar-border-color
+    //   // border-bottom-color: rgba(0, 0, 0, 0); var(--toolbar-border)-color
     //   border-bottom-width: 0 !important;
     // }
     // .toolbar-content.toolbar-content-ios {
@@ -807,7 +807,7 @@ ion-header {
   ion-grid ion-row ion-col {
     ion-searchbar.searchbar {
       margin-bottom: 0;
-      // background-color: transparent; $searchbar-ios-background-color
+      // background-color: transparent; var(--searchbar-ios-background)-color
       align-items: flex-start;
     }
 
@@ -876,7 +876,7 @@ ion-icon {
       line-height: 16px;
       transform: rotate(-20deg);
       color: inherit;
-      text-shadow: $white 1.5px -1px;
+      text-shadow: var(--white) 1.5px -1px;
     }
   }
 }
@@ -950,7 +950,7 @@ ion-list.list-md {
   }
 
   .item-input.item-input-has-focus {
-    border-bottom: 2px solid $blue;
+    border-bottom: 2px solid var(--blue);
 
     &:not(:last-child) .item-inner {
       margin-left: -16px;
@@ -1013,7 +1013,7 @@ ion-navbar.toolbar {
 }
 
 // ion-range.range-ios {
-//   padding-top: 0; $range-ios-padding-vertical
+//   padding-top: 0; var(--range-ios-padding)-vertical
 // }
 .range-pin {
   // font-size: 1.2rem !important;
@@ -1073,7 +1073,7 @@ ion-range {
 ion-searchbar.searchbar {
   display: flex;
   height: 49px;
-  background-color: $grayLightest;
+  background-color: var(--grayLightest);
   margin-bottom: 12px;
 
   div.searchbar-search-icon {
@@ -1168,8 +1168,8 @@ ion-toast {
 // ------------------- NON-VARIABLE COMPONENT STYLING -----------
 // blue50
 .button-md-blue50 {
-  color: $white;
-  background-color: $blue50;
+  color: var(--white);
+  background-color: var(--blue50);
 
   &.activated {
     background-color: rgba(43, 116, 162, 0.54);
@@ -1179,19 +1179,19 @@ ion-toast {
 
 // grayLight
 .list-header-md-grayLight {
-  color: $black;
-  background-color: $grayLight;
+  color: var(--black);
+  background-color: var(--grayLight);
 }
 
 // primary (blue)
 ion-navbar.toolbar-ios-primary>button.back-button ion-icon {
-  color: $white;
+  color: var(--white);
 }
 
 // red
 .button-md-red {
-  color: $white;
-  background-color: $red;
+  color: var(--white);
+  background-color: var(--red);
 
   &.activated {
     background-color: #ea2a64;
@@ -1235,7 +1235,7 @@ ion-nav {
   box-shadow: none;
 
   .button-inner {
-    color: $blue;
+    color: var(--blue);
   }
 }
 
@@ -1251,7 +1251,7 @@ ion-content.external-page {
   }
 
   input {
-    color: $white;
+    color: var(--white);
   }
 
   +ion-footer {
@@ -1289,11 +1289,11 @@ ion-content.external-page {
 
     &.input-has-focus,
     &.searchbar-has-focus {
-      border: 2px solid $white !important;
+      border: 2px solid var(--white) !important;
       padding: 0 !important;
 
       ion-label {
-        color: $white;
+        color: var(--white);
       }
 
       .searchbar-search-icon {
@@ -1308,26 +1308,26 @@ ion-content.external-page {
     input:-webkit-autofill {
       /* color = white10 over blue */
       -webkit-box-shadow: inset 0 0 0px 9999px #4a9dd1;
-      -webkit-text-fill-color: $white !important;
+      -webkit-text-fill-color: var(--white) !important;
       box-shadow: inset 0 0 0px 9999px #4a9dd1;
-      fill: $white !important;
+      fill: var(--white) !important;
     }
   }
 
   .blue-divider {
-    background-color: $white50;
+    background-color: var(--white50);
     height: 3px;
     width: 75px;
     margin: 30px auto;
   }
 
   .border-white-bold {
-    border: 1px solid $white !important;
-    box-shadow: $white 0 0 0 1px;
+    border: 1px solid var(--white) !important;
+    box-shadow: var(--white) 0 0 0 1px;
   }
 
   .border-white50 {
-    border: 1px solid $white50 !important;
+    border: 1px solid var(--white50) !important;
   }
 
   .external-header {
@@ -1354,15 +1354,15 @@ ion-content.external-page {
   }
 
   .text-input:-ms-input-placeholder {
-    color: $white50;
+    color: var(--white50);
   }
 
   .text-input::-moz-placeholder {
-    color: $white50;
+    color: var(--white50);
   }
 
   .text-input::-webkit-input-placeholder {
-    color: $white50;
+    color: var(--white50);
   }
 
   .validation-error {

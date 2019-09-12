@@ -1,8 +1,7 @@
 import { Injectable } from '@angular/core';
 
-import 'rxjs/add/operator/map';
+import { environment as ENV } from './../../environments/environment';
 
-import { environment as ENV } from './../environments/environment';
 
 // import { EnvVariables } from './../../environment-variables/environment-variables.token';
 

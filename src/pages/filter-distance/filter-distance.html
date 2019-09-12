@@ -1,12 +1,7 @@
 <ion-header mode="ios">
-  <ion-toolbar hideBackButton
-               mode="ios">
-    <ion-buttons slot="secondary">
-      <ion-button icon-only
-                  fill="clear"
-                  (click)="back()">
-        <ion-icon name="ios-arrow-back"></ion-icon>
-      </ion-button>
+  <ion-toolbar mode="ios">
+    <ion-buttons slot="start">
+      <ion-back-button></ion-back-button>
     </ion-buttons>
     <ion-title mode="ios">
       <div class="subhead">{{ title }}</div> {{ category.name }}
@@ -23,10 +18,13 @@
     <ion-item text-center
               no-padding
               [class.bg-blue10]="location.distance"
-              [class.text-steel50]="!category.isActive"> Within <span
-            [class.text-blue]="location.distance">{{ location.distance || '0' }}</span> miles of </ion-item>
+              [class.text-steel50]="!category.isActive">
+      <ion-label> Within <span [class.text-blue]="location.distance">{{ location.distance || '0' }}</span> miles of
+      </ion-label>
+    </ion-item>
     <ion-item no-lines
               class="range-values text-steel50">
+      <ion-label></ion-label>
       <span item-start>5</span>
       <span item-end>100</span>
     </ion-item>
@@ -34,12 +32,12 @@
                min="5"
                max="100"
                debounce="250"
-               [(ngModel)]="location.distance"
+               [(value)]="location.distance"
                (ionChange)="setFilter()">
     </ion-range>
   </ion-list>
-  <ion-list [(ngModel)]="location.method">
-    <ion-radio-group>
+  <ion-list>
+    <ion-radio-group [(value)]="location.method">
       <ion-item padding-left>
         <ion-label>My current location</ion-label>
         <ion-radio slot="start"

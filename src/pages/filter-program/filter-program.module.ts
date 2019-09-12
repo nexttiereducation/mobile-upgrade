@@ -1,8 +1,10 @@
+import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
-import { IonicPageModule } from '@ionic/angular';
+import { FormsModule } from '@angular/forms';
+import { IonicModule } from '@ionic/angular';
 
-import { ComponentsModule } from '@nte/components/components.module';
 import { FilterProgramPage } from './filter-program';
+import { ComponentsModule } from '@nte/components/components.module';
 
 @NgModule({
   declarations: [
@@ -12,9 +14,11 @@ import { FilterProgramPage } from './filter-program';
     FilterProgramPage
   ],
   imports: [
-    IonicPageModule.forChild(FilterProgramPage),
+    CommonModule,
+    FormsModule,
+    IonicModule,
     ComponentsModule
   ]
 })
 
-export class FilterProgramPageModule {}
+export class FilterProgramPageModule { }

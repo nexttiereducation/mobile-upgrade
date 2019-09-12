@@ -3,10 +3,10 @@
           [enabled]="user?.id">
   <notifications></notifications>
 </ion-menu> -->
-
-<ion-nav #nteContent
-         [class.hideParentTabs]="!showTabs"
-         [root]="rootPage"></ion-nav>
+<ion-app>
+  <ion-nav #nteContent
+           [root]="'Tasks' || rootPage"></ion-nav>
+</ion-app>
 <!--          [ngClass]="deviceModel" -->
 <!-- <ion-menu id="messaging"
           side="right"

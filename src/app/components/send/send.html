@@ -17,6 +17,7 @@
   <!-- SCHOLARSHIP -->
   <ion-item no-lines
             *ngSwitchCase="'Scholarship'">
+    <ion-label></ion-label>
     <ion-avatar item-left
                 *ngIf="imageUrl">
       <img class="avatar-shadow bg-white"
@@ -51,6 +52,7 @@
   <!-- TASK -->
   <ion-item no-lines
             *ngSwitchCase="'Task'">
+    <ion-label></ion-label>
     <ion-avatar item-left>
       <img class="bg-white"
            [class.avatar-shadow]="item.task?.task_type == 'CS'"
@@ -65,8 +67,7 @@
     </p>
   </ion-item>
   <!-- CONNECTIONS -->
-  <ion-scroll class="connections"
-              scrollX="true">
+  <div class="connections horizontal-scroll">
     <ion-grid no-padding>
       <ion-row align-items-between
                justify-content-start
@@ -77,7 +78,7 @@
                  margin-right
                  tappable
                  text-center
-                 *ngFor="let connection of (connectionProvider.all$ | async)"
+                 *ngFor="let connection of (connectionService.all$ | async)"
                  (click)="toggleSelection(connection)">
           <ion-icon class="selected-check"
                     name="checkmark"
@@ -90,13 +91,14 @@
         </ion-col>
       </ion-row>
     </ion-grid>
-  </ion-scroll>
+  </div>
   <form (ngSubmit)="send()">
     <ion-item padding>
+      <ion-label></ion-label>
       <ion-input name="message"
                  [disabled]="!selectedConnections.size"
                  [placeholder]="selectedConnections.size ? 'Add a message...' : 'Select recipient(s), then add a message'"
-                 [(ngModel)]="message"></ion-input>
+                 [(value)]="message"></ion-input>
     </ion-item>
   </form>
 </ion-content>

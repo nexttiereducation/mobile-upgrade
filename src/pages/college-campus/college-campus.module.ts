@@ -1,9 +1,19 @@
+import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
-import { GoogleMaps } from '@ionic-native/google-maps';
-import { IonicPageModule } from '@ionic/angular';
+import { FormsModule } from '@angular/forms';
+import { RouterModule, Routes } from '@angular/router';
+import { GoogleMaps } from '@ionic-native/google-maps/ngx';
+import { IonicModule } from '@ionic/angular';
 
-import { ComponentsModule } from '@nte/components/components.module';
 import { CollegeCampusPage } from './college-campus';
+import { ComponentsModule } from '@nte/components/components.module';
+
+const routes: Routes = [
+  {
+    path: '',
+    component: CollegeCampusPage
+  }
+];
 
 @NgModule({
   declarations: [
@@ -13,10 +23,13 @@ import { CollegeCampusPage } from './college-campus';
     CollegeCampusPage
   ],
   imports: [
-    IonicPageModule.forChild(CollegeCampusPage),
+    CommonModule,
+    FormsModule,
+    IonicModule,
+    RouterModule.forChild(routes),
     ComponentsModule
   ],
-  services: [
+  providers: [
     GoogleMaps
   ]
 })

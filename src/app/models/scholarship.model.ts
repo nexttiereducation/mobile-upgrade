@@ -3,8 +3,8 @@ import relativeTime from 'dayjs/plugin/relativeTime';
 import { upperFirst } from 'lodash';
 
 import { ENROLLMENT_LEVEL_ORDER } from '@nte/constants/scholarship.constants';
-import { IIdentifiable } from './global.interface';
-import { IAwardStat, IContact, ICriteria, ISponsor } from './scholarship.interface';
+import { IIdentifiable } from '@nte/interfaces/global.interface';
+import { IAwardStat, IContact, ICriteria, ISponsor } from '@nte/interfaces/scholarship.interface';
 
 dayjs.extend(relativeTime);
 
@@ -185,7 +185,7 @@ export class Scholarship {
   private formatDeadlines() {
     if (this.deadlines && this.deadlines.length) {
       this.deadlines_formatted = [];
-      for (let i = 0, deadline; deadline = this.deadlines[i]; i++) {
+      this.deadlines.forEach(deadline => {
         const deadlineDateObj = dayjs(deadline).format(`MM/DD/YY`);
         const deadlineDate = dayjs(deadlineDateObj).endOf(`day`);
         const deadlineObj = {
@@ -193,7 +193,7 @@ export class Scholarship {
           distance: dayjs(deadlineDate).fromNow()
         };
         this.deadlines_formatted.push(deadlineObj);
-      }
+      });
     }
   }
 
@@ -257,15 +257,15 @@ export class Scholarship {
 
   private setAwardStats() {
     const types = [`avg`, `max`, `min`];
-    for (let i = 0, type; type = types[i]; i++) {
-      const statName = `award` + upperFirst(type);
+    types.forEach(type => {
+      const statName = `award${upperFirst(type)}`;
       const statAmtName = `award_amount_${type}`;
       const statCountName = `${type}_awards`;
       this[statName] = {
         amount: this[statAmtName],
         count: this[statCountName]
       };
-    }
+    });
     this.setAwardAmount();
     this.setAwardCount();
   }

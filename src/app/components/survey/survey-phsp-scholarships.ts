@@ -1,33 +1,35 @@
 import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { Events } from '@ionic/angular';
-import { Subscription } from 'rxjs/Subscription';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 
-import { ISavedScholarship, IScholarship } from '@nte/models/scholarship.interface';
-import { IScholarshipStatusItem, ScholarshipStatusItem } from '@nte/models/status-item.interface';
-import { ScholarshipProvider } from '@nte/services/scholarship.service';
+import { ISavedScholarship, IScholarship } from '@nte/interfaces/scholarship.interface';
+import { IScholarshipStatusItem, ScholarshipStatusItem } from '@nte/interfaces/status-item.interface';
+import { ScholarshipService } from '@nte/services/scholarship.service';
 
 @Component({
   selector: `survey-phsp-scholarships`,
   templateUrl: `survey-phsp-scholarships.html`
 })
 export class SurveyPhspScholarshipsComponent implements OnInit, OnDestroy {
-  @Input() public list: IScholarshipStatusItem[];
-  @Input() public startOnLastSlide: boolean;
+  @Input() list: IScholarshipStatusItem[];
+  @Input() startOnLastSlide: boolean;
 
   public scholarshipResults: IScholarship[];
 
-  private listSub: Subscription;
-  private searchSub: Subscription;
+  private ngUnsubscribe: Subject<any> = new Subject();
 
   constructor(private events: Events,
-    private scholarshipProvider: ScholarshipProvider) { }
+    private scholarshipService: ScholarshipService) { }
 
   ngOnInit() {
-    this.events.subscribe(`search`, (query) => this.onSearch(query));
+    this.events
+      .subscribe(`search`, query => this.onSearch(query));
     if (!this.list) {
-      this.listSub = this.scholarshipProvider.studentScholarships
+      this.scholarshipService.studentScholarships
+        .pipe(takeUntil(this.ngUnsubscribe))
         .subscribe(
-          (scholarships) => {
+          (scholarships: ISavedScholarship[]) => {
             this.list = this.formatScholarships(scholarships);
           },
           err => console.error(err)
@@ -36,29 +38,24 @@ export class SurveyPhspScholarshipsComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    if (this.listSub) {
-      this.listSub.unsubscribe();
-    }
-    if (this.searchSub) {
-      this.searchSub.unsubscribe();
-    }
+    this.ngUnsubscribe.next();
+    this.ngUnsubscribe.complete();
   }
 
 
   public formatScholarships(scholarships: ISavedScholarship[]) {
-    return scholarships.map((scholarshipTracker) => {
-      if (scholarshipTracker.decision === `NA`) {
-        scholarshipTracker.amount_awarded = 0;
+    return scholarships.map(t => {
+      if (t.decision === `NA`) {
+        t.amount_awarded = 0;
       }
-      return new ScholarshipStatusItem(scholarshipTracker);
+      return new ScholarshipStatusItem(t);
     });
   }
 
   public onSearch(query: string) {
-    this.searchSub = this.scholarshipProvider.searchScholarships(`?search=${query}`)
-      .subscribe((response) => {
-        this.scholarshipResults = response;
-      });
+    this.scholarshipService.searchScholarships(`?search=${query}`)
+      .pipe(takeUntil(this.ngUnsubscribe))
+      .subscribe(response => this.scholarshipResults = response);
   }
 
 }

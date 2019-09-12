@@ -1,62 +1,41 @@
-import { Component } from '@angular/core';
-import { AlertController, Events, IonicPage, NavController, NavParams } from '@ionic/angular';
-import { Subscription } from 'rxjs/Subscription';
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
+import { AlertController, Events } from '@ionic/angular';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 
 import { Category } from '@nte/models/category.model';
+import { ListTileCreatePage } from '@nte/pages/list-tile-create/list-tile-create';
 import { FilterService } from '@nte/services/filter.service';
 import { LocationService } from '@nte/services/location.service';
 import { MixpanelService } from '@nte/services/mixpanel.service';
-import { ListTileCreatePage } from './../list-tile-create/list-tile-create';
+import { NavStateService } from '@nte/services/nav-state.service';
 
-@IonicPage()
 @Component({
   selector: `filter-distance`,
   templateUrl: `filter-distance.html`
 })
-export class FilterDistancePage {
+export class FilterDistancePage implements OnInit, OnDestroy {
   public category: Category;
   public title: string;
 
-  private authSub: Subscription;
-  private changeSub: Subscription;
   private listType: string;
+  private ngUnsubscribe: Subject<any> = new Subject();
 
-  constructor(params: NavParams,
-    public navCtrl: NavController,
+  constructor(public router: Router,
     public alertCtrl: AlertController,
     public location: LocationService,
     public filterService: FilterService,
     private events: Events,
-    private mixpanel: MixpanelService) {
-    this.category = params.get(`category`);
-    this.listType = params.get(`listType`);
-    this.title = params.get(`title`);
+    private mixpanel: MixpanelService,
+    navStateService: NavStateService) {
+    const params: any = navStateService.data;
+    this.category = params.category;
+    this.listType = params.listType;
+    this.title = params.title;
   }
 
-  public applyFilters() {
-    this.filterService.filter.updateQuery();
-    this.events.publish(`filterApplied`);
-    const mixpanelData = {
-      distance: this.location.distance,
-      location: this.location.zipOrAddress
-    };
-    this.mixpanel.event(`location_filter_applied`, mixpanelData);
-    this.back();
-  }
-
-  public back() {
-    this.navCtrl.pop({ animation: `ios-transition` });
-  }
-
-  public clear() {
-    this.category.selectedItems = new Array();
-    this.events.publish(`clearCategory`, this.category);
-    this.location.clearAll();
-    this.mixpanel.event(`location_filter_cleared`);
-    this.mixpanel.event(`category_cleared`, { category: this.category.name });
-  }
-
-  public ionViewDidLoad() {
+  ngOnInit() {
     this.setupChangeSub();
     this.setupAuthSub();
     this.location.checkIfLocationAuthorized();
@@ -65,13 +44,27 @@ export class FilterDistancePage {
     }
   }
 
-  public ionViewWillUnload() {
-    if (this.authSub) {
-      this.authSub.unsubscribe();
-    }
-    if (this.changeSub) {
-      this.changeSub.unsubscribe();
-    }
+  ngOnDestroy() {
+    this.ngUnsubscribe.next();
+    this.ngUnsubscribe.complete();
+  }
+
+  public applyFilters() {
+    this.filterService.filter.updateQuery();
+    this.events.publish(`filterApplied`);
+    this.mixpanel.event(`location_filter_applied`, {
+      distance: this.location.distance,
+      location: this.location.zipOrAddress
+    });
+    // TODO: Add logic to close filters
+  }
+
+  public clear() {
+    this.category.selectedItems = new Array();
+    this.events.publish(`clearCategory`, this.category);
+    this.location.clearAll();
+    this.mixpanel.event(`location_filter_cleared`);
+    this.mixpanel.event(`category_cleared`, { category: this.category.name });
   }
 
   public setFilter() {
@@ -90,8 +83,9 @@ export class FilterDistancePage {
     if (preselected.has(`location`) &&
       preselected.get(`location`).values.length) {
       this.location.getZipcode(preselected.get(`location`).values[0].id)
+        .pipe(takeUntil(this.ngUnsubscribe))
         .subscribe((data: any) => {
-          for (let i = 0, addr; addr = data.results[0].address_components[i]; ++i) {
+          data.results[0].address_components.forEach(addr => {
             if (addr.types[0] === `postal_code`) {
               this.location.zipOrAddress = addr.short_name;
               if (this.location.method === `my`) {
@@ -100,14 +94,14 @@ export class FilterDistancePage {
                 this.location.method = `other`;
               }
             }
-          }
+          });
           this.setFilter();
         });
     }
   }
 
-  public showInputAlert() {
-    const alert = this.alertCtrl.create({
+  public async showInputAlert() {
+    const alert = await this.alertCtrl.create({
       buttons: [
         {
           handler: () => { /* handler */ },
@@ -122,23 +116,25 @@ export class FilterDistancePage {
           text: `OK`
         }
       ],
+      header: `Enter ZIP or City`,
       inputs: [
         {
           name: `zip`,
           placeholder: ``
         }
-      ],
-      header: `Enter ZIP or City`
+      ]
     });
-    alert.present();
+    return await alert.present();
   }
 
   public viewSummary() {
-    this.navCtrl.push(
-      ListTileCreatePage,
+    this.router.navigate(
+      [ListTileCreatePage],
       {
+        state: {
         filter: this.filterService.filter,
         page: this.listType
+      }
       }
     );
   }
@@ -146,8 +142,10 @@ export class FilterDistancePage {
   /* PRIVATE METHODS */
 
   private setupAuthSub() {
-    this.authSub = this.location.isAuthorized
-      .subscribe((authorized) => {
+    this.location.isAuthorized
+      .pipe(takeUntil(this.ngUnsubscribe))
+      .subscribe(
+        (authorized) => {
         if (authorized === undefined) { return; }
         if (authorized) {
           this.location.buildQueryString();
@@ -155,19 +153,22 @@ export class FilterDistancePage {
           // this.showInputAlert();
           this.location.method = `other`;
         }
-        this.authSub.unsubscribe();
-      });
+        }
+      );
   }
 
   private setupChangeSub() {
-    this.changeSub = this.location.query
-      .subscribe((data) => {
+    this.location.query
+      .pipe(takeUntil(this.ngUnsubscribe))
+      .subscribe(
+        (data) => {
         if (this.category.selectedItems.length) {
           this.category.selectedItems = new Array();
         }
         this.category.selectedItems.push(data.locationQuery, data.distanceQuery);
         this.events.publish(`queryStringChange`, data.locationQuery);
         this.events.publish(`queryStringChange`, data.distanceQuery);
-      });
+        }
+      );
   }
 }

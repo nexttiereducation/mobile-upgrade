@@ -1,44 +1,32 @@
-import { Component } from '@angular/core';
-import { IonicPage, NavController } from '@ionic/angular';
+import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 
+import { LoginPage } from '@nte/pages/login/login';
+import { RegisterYearPage } from '@nte/pages/register-year/register-year';
 import { EnvironmentService } from '@nte/services/environment.service';
 import { MixpanelService } from '@nte/services/mixpanel.service';
-import { LoginPage } from './../login/login';
-import { RegisterYearPage } from './../register-year/register-year';
 
-@IonicPage({
-  name: `landing-page`,
-  priority: `off`
-})
 @Component({
   selector: `landing`,
-  templateUrl: `landing.html`
+  templateUrl: `landing.html`,
+  styleUrls: [`landing.scss`]
 })
-export class LandingPage {
+export class LandingPage implements OnInit {
   // private loginSub: Subscription;
 
-  constructor(public navCtrl: NavController,
+  constructor(public router: Router,
     public environmentService: EnvironmentService,
     private mixpanel: MixpanelService
     // , private stakeholderService: StakeholderService,
     // private storage: Storage
   ) { }
 
-  public goToLogin() {
-    this.navCtrl.push(LoginPage);
-  }
-
-  public goToRegistration() {
-    this.mixpanel.event(`navigated_to-Register`);
-    this.navCtrl.push(RegisterYearPage);
-  }
-
-  public ionViewDidLoad() {
+  ngOnInit() {
     this.mixpanel.event(`$app_open`);
     // this.storage.get(`ls.stakeholder`).then(
     //   (stakeholder) => {
     //     this.loginSub = this.stakeholderService.loginSuccess.subscribe(() => {
-    //       this.navCtrl.setRoot(TabsPage);
+    //       this.router.setRoot(TabsPage);
     //       this.loginSub.unsubscribe();
     //     });
     //     if (stakeholder) {
@@ -58,4 +46,14 @@ export class LandingPage {
     //   }
     // );
   }
+
+  public goToLogin() {
+    this.router.navigate([LoginPage]);
+  }
+
+  public goToRegistration() {
+    this.mixpanel.event(`navigated_to-Register`);
+    this.router.navigate([RegisterYearPage]);
+  }
+
 }

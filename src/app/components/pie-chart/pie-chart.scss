@@ -54,16 +54,16 @@ pie-chart {
 
   // TITLE COLORS (value inside donut circle)
   .label-blue .nvd3.nv-pie .nv-pie-title {
-    fill: $blue;
+    fill: var(--blue);
   }
   .label-green .nvd3.nv-pie .nv-pie-title {
-    fill: $green;
+    fill: var(--green);
   }
   .label-steel .nvd3.nv-pie .nv-pie-title {
-    fill: $steel;
+    fill: var(--steel);
   }
   .label-red .nvd3.nv-pie .nv-pie-title {
-    fill: $red;
+    fill: var(--red);
   }
   // LABEL COLORS (values outside each donut slice)
   .nv-pieLabels g:nth-of-type(1) text {

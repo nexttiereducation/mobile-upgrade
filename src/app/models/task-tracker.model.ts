@@ -2,10 +2,10 @@ import dayjs from 'dayjs';
 import { upperFirst } from 'lodash';
 
 import { TaskStatus } from '@nte/constants/task.constants';
+import { ITask } from '@nte/interfaces/task.interface';
 import { BackEndPrompt } from '@nte/models/back-end-prompt.model';
 import { PromptSelectOptions } from '@nte/models/prompt-select-options.model';
 import { PromptTestDatesOptions } from '@nte/models/prompt-test-dates-options.model';
-import { ITask } from './task.interface';
 import { YesNoOptions } from '@nte/models/yes-no-options.model';
 
 interface ITemplate {

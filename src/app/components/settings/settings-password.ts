@@ -1,10 +1,10 @@
 import { Component, Input, OnDestroy } from '@angular/core';
-import { ToastController } from '@ionic/angular';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
+import { ToastService } from './../../services/toast.service';
 import { IUserOverview } from '@nte/interfaces/user-overview.interface';
-import { StakeholderProvider } from '@nte/services/stakeholder.service';
+import { StakeholderService } from '@nte/services/stakeholder.service';
 
 @Component({
   selector: `password-settings`,
@@ -24,25 +24,27 @@ export class PasswordSettingsComponent implements OnDestroy {
     return !this.confirmedPassword || !this.currentPassword || !this.newPassword;
   }
 
-  constructor(private stakeholderService: StakeholderProvider,
-    private toastCtrl: ToastController) { }
+  constructor(private stakeholderService: StakeholderService,
+    private toastService: ToastService) { }
 
   ngOnDestroy() {
     this.ngUnsubscribe.next();
     this.ngUnsubscribe.complete();
   }
 
-  resetPassword() {
+  public resetPassword(ev?: any) {
+    // ev.value = form values
+    // ev.valid = form passes validation
     if (this.newPassword !== this.confirmedPassword) {
-      this.toastCtrl.create({ message: `The passwords entered do not match. Please try again!` }).present();
+      this.toastService.open(`The passwords entered do not match. Please try again!`);
     } else if (this.newPassword.length < 8) {
-      this.toastCtrl.create({ message: `Your password must be at least 8 characters long` }).present();
+      this.toastService.open(`Your password must be at least 8 characters long`);
     } else {
       this.stakeholderService.changePassword(this.currentPassword, this.newPassword, this.confirmedPassword)
         .pipe(takeUntil(this.ngUnsubscribe))
         .subscribe(
-          () => this.toastCtrl.create({ message: `Password successfully changed` }).present(),
-          error => this.toastCtrl.create({ message: JSON.parse(error._body).detail }).present()
+          () => this.toastService.open(`Password successfully changed`),
+          error => this.toastService.open(`${JSON.parse(error._body)}.detail`)
         );
     }
   }

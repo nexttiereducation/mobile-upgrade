@@ -1,5 +1,7 @@
+import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
-import { IonicPageModule } from '@ionic/angular';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { IonicModule } from '@ionic/angular';
 
 import { RegisterStudentsPage } from './register-students';
 
@@ -8,8 +10,11 @@ import { RegisterStudentsPage } from './register-students';
     RegisterStudentsPage
   ],
   imports: [
-    IonicPageModule.forChild(RegisterStudentsPage)
+    CommonModule,
+    FormsModule,
+    ReactiveFormsModule,
+    IonicModule
   ]
 })
 
-export class RegisterStudentsPageModule {}
+export class RegisterStudentsPageModule { }

@@ -1,5 +1,5 @@
+import { IListTile } from '@nte/interfaces/list-tile.interface';
 import { IEmptyState } from '@nte/models/empty-state';
-import { IListTile } from '@nte/models/list-tile.interface';
 
 export const TASK_LIST_BASE_URL = `/task_list_mobile/`;
 

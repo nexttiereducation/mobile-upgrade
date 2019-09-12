@@ -18,7 +18,7 @@ export const firebaseConfig: any = {
   }
 };
 
-export const googleProjectKey: string = `74097461173`;
+export const googleProjectKey = `74097461173`;
 
 export const ionicAppConfig = {
   id: `1bf9f377`,
@@ -33,20 +33,20 @@ export const ionicStorageConfig = {
 };
 
 export const ionicConfig = {
-  backButtonIcon: `nt-up`,
-  backButtonText: ``,
-  // locationStrategy: 'path',
-  mode: `md`,
-  platforms: {
-    android: {
-      statusbarPadding: true
-    }
-  },
-  preloadModules: true,
-  preserveSymlinks: true,
-  spinner: `bubbles`,
-  swipeBackEnabled: false,
-  tabsHideOnSubPages: true
+  backButtonText: ``
+  // backButtonIcon: `nt-up`,
+  // // locationStrategy: 'path',
+  // mode: `md`,
+  // platforms: {
+  //   android: {
+  //     statusbarPadding: true
+  //   }
+  // },
+  // preloadModules: true,
+  // preserveSymlinks: true,
+  // spinner: `bubbles`,
+  // swipeBackEnabled: false,
+  // tabsHideOnSubPages: true
   // , tabsLayout: `title-hide`
 };
 
@@ -55,4 +55,4 @@ export const mixpanelConfig = {
   stg: `9cc2a3fd9e2c6d98326e0682a438ca50`
 };
 
-export const oneSignalAppId: string = `b123bab5-6fa6-4dea-99cf-b1e2a00b1437`;
+export const oneSignalAppId = `b123bab5-6fa6-4dea-99cf-b1e2a00b1437`;

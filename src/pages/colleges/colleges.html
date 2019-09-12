@@ -23,11 +23,10 @@
                   [ngClass]="tile.inverse ? 'bg-blue50' : 'bg-white'">
           <ng-template [ngIf]="tile.isLocked">
             <ion-button class="tile-button"
-                   
-                    text-center
-                    [class.text-white]="tile.inverse"
-                    [color]="tile.inverse ? 'blue50' : 'white'"
-                    (click)="viewList(tile)">
+                        text-center
+                        [class.text-white]="tile.inverse"
+                        [color]="tile.inverse ? 'blue50' : 'white'"
+                        (click)="viewList(tile)">
               <ion-badge class="tile-badge"
                          color="green"
                          *ngIf="tile.name === 'Recommended' && recommendations >= 1 && !user.isParent">
@@ -42,27 +41,25 @@
                 <ion-item-options side="start"
                                   *ngIf="tile.isCustom">
                   <ion-button class="lowercase"
-                          color="primary"
-                         
-                          (click)="editTile(tile, slidingItem, i)">
+                              color="primary"
+                              (click)="editTile(tile, slidingItem, i)">
                     <ion-icon name="create"></ion-icon> Edit
                   </ion-button>
                 </ion-item-options>
                 <ion-item>
+                  <ion-label></ion-label>
                   <ion-button class="tile-button"
-                          color="white"
-                         
-                          text-center
-                          (click)="viewList(tile)">
+                              color="white"
+                              text-center
+                              (click)="viewList(tile)">
                     <img [src]="tile.iconUrl" />
-                    <div class="tile-label">{{ tile.name }}</div>
+                    <ion-label class="tile-label">{{ tile.name }}</ion-label>
                   </ion-button>
                 </ion-item>
                 <ion-item-options side="end">
                   <ion-button class="lowercase"
-                          color="red"
-                         
-                          (click)="hideTile(tile, slidingItem, i)">
+                              color="red"
+                              (click)="hideTile(tile, slidingItem, i)">
                     <ion-icon name="close"></ion-icon> Delete
                   </ion-button>
                 </ion-item-options>

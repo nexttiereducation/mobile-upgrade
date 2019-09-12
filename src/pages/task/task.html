@@ -1,6 +1,9 @@
 <ion-header mode="ios">
   <ion-toolbar mode="ios"
                [color]="taskStatus?.color">
+    <ion-buttons slot="start">
+      <ion-back-button></ion-back-button>
+    </ion-buttons>
     <ion-title mode="ios">
       <div class="subhead text-white50"
            *ngIf="taskTracker?.task.name">{{ taskTracker?.task.name }}</div> Task Detail

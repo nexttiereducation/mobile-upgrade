@@ -1,19 +1,26 @@
-import { Component } from '@angular/core';
-import { NavController } from '@ionic/angular';
+import { Component, ViewEncapsulation } from '@angular/core';
+import { Router } from '@angular/router';
 
-import { MessagingPage } from './../../pages/messaging/messaging';
-import { MessageProvider } from '@nte/services/message.service';
+import { MessageService } from '@nte/services/message.service';
 
 @Component({
-  selector: `[messaging-button]`,
-  templateUrl: `messaging-button.html`
+  selector: `messaging-button`,
+  templateUrl: `messaging-button.html`,
+  styles: [`
+    messaging-button button.button-native {
+      padding-left: 0 !important;
+      padding-right: 0 !important;
+    }
+  `],
+  encapsulation: ViewEncapsulation.None
 })
 export class MessagingButtonComponent {
-  constructor(public messageProvider: MessageProvider,
-    private navCtrl: NavController) { }
+  constructor(public messageService: MessageService,
+    private router: Router) { }
 
   public goToMessaging() {
-    this.navCtrl.push(MessagingPage, null, { animation: `ios-transition` });
+    // this.router.navigate([MessagingPage, null]);
+    this.router.navigate(['app/messages']);
   }
 
 }

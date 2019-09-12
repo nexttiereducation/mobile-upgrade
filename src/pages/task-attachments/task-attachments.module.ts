@@ -1,20 +1,29 @@
+import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
-import { IonicPageModule } from 'ionic-angular';
+import { FormsModule } from '@angular/forms';
+import { RouterModule, Routes } from '@angular/router';
+import { IonicModule } from '@ionic/angular';
 
-import { ComponentsModule } from '@nte/components/components.module';
 import { TaskAttachmentsPage } from './task-attachments';
+import { ComponentsModule } from '@nte/components/components.module';
+
+const routes: Routes = [
+  {
+    path: '',
+    component: TaskAttachmentsPage
+  }
+];
 
 @NgModule({
   declarations: [
     TaskAttachmentsPage
   ],
-  exports: [
-    TaskAttachmentsPage
-  ],
   imports: [
-    IonicPageModule.forChild(TaskAttachmentsPage),
+    CommonModule,
+    FormsModule,
+    IonicModule,
+    RouterModule.forChild(routes),
     ComponentsModule
   ]
 })
-
-export class TaskAttachmentsPageModule {}
+export class TaskAttachmentsPageModule { }

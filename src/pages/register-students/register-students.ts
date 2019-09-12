@@ -1,14 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { IonicPage, NavController } from '@ionic/angular';
+import { Router } from '@angular/router';
 
 import { emailRegex } from '@nte/constants/stakeholder.constants';
+import { RegisterFormPage } from '@nte/pages/register-form/register-form';
 import { ConnectionService } from '@nte/services/connection.service';
-import { RegisterFormPage } from './../register-form/register-form';
 
-@IonicPage({
-  name: `register-students-page`
-})
 @Component({
   selector: `register-students`,
   templateUrl: `register-students.html`
@@ -25,7 +22,7 @@ export class RegisterStudentsPage implements OnInit {
   }
 
   constructor(private fb: FormBuilder,
-    private navCtrl: NavController,
+    private router: Router,
     private connectionService: ConnectionService) { }
 
   ngOnInit() {
@@ -49,7 +46,7 @@ export class RegisterStudentsPage implements OnInit {
         }
       }
     }
-    this.navCtrl.push(RegisterFormPage);
+    this.router.navigate([RegisterFormPage]);
   }
 
   private initStudents() {

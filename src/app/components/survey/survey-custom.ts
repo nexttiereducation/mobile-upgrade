@@ -1,51 +1,61 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { Events } from '@ionic/angular';
+import { Subject } from 'rxjs';
+import { map, takeUntil } from 'rxjs/operators';
 
 import { TaskStatus } from '@nte/constants/task.constants';
 import { TaskTracker } from '@nte/models/task-tracker.model';
-import { ApiProvider } from '@nte/services/api.service';
-import { SurveyProvider } from '@nte/services/survey.service';
+import { ApiService } from '@nte/services/api.service';
+import { SurveyService } from '@nte/services/survey.service';
 
 @Component({
   selector: `survey-custom`,
   templateUrl: `survey-custom.html`
 })
-export class SurveyCustomComponent implements OnInit {
-  @Input() public taskTracker: TaskTracker;
+export class SurveyCustomComponent implements OnInit, OnDestroy {
+  @Input() taskTracker: TaskTracker;
 
   public data: any;
   public disableSubmitButton: boolean = true;
   public taskStatus: TaskStatus = TaskStatus;
 
-  constructor(private apiProvider: ApiProvider,
+  private ngUnsubscribe: Subject<any> = new Subject();
+
+  constructor(private api: ApiService,
     private events: Events,
-    private surveyProvider: SurveyProvider) { }
+    private surveyService: SurveyService) { }
 
   ngOnInit() {
     if (this.taskTracker.status === `C`) {
       this.disableSubmitButton = true;
     }
-    this.surveyProvider.getSurveyData(this.taskTracker.task.id)
+    this.surveyService.getSurveyData(this.taskTracker.task.id)
+      .pipe(takeUntil(this.ngUnsubscribe))
       .subscribe(
-        (data) => {
-          this.data = data.results;
-        },
+        data => this.data = data.results,
         err => console.error(err)
       );
   }
 
+  ngOnDestroy() {
+    this.ngUnsubscribe.next();
+    this.ngUnsubscribe.complete();
+  }
+
   public finishSurvey() {
-    return this.apiProvider.patch(
-      `/survey/${this.taskTracker.task.id}`,
-      {
-        results: this.data,
-        survey_is_complete: true
-      }
-    ).map(
-      (response) => {
-        return response.json();
-      }
-    ).subscribe(
+    return this.api
+      .patch(
+        `/survey/${this.taskTracker.task.id}`,
+        {
+          results: this.data,
+          survey_is_complete: true
+        }
+      )
+      .pipe(
+        map(response => response.json()),
+        takeUntil(this.ngUnsubscribe)
+      )
+      .subscribe(
       () => {
         if (this.taskTracker.isStarted) {
           this.taskTracker.updatedStatus();

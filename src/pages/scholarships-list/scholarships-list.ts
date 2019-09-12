@@ -1,49 +1,34 @@
-import { Component, ViewChild } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { AbstractControl, FormControl } from '@angular/forms';
-import {
-  Content,
-  InfiniteScroll,
-  IonicPage,
-  ModalController,
-  NavController,
-  NavParams,
-  ToastController
-} from '@ionic/angular';
+import { Router } from '@angular/router';
+import { IonInfiniteScroll, ModalController, ToastController } from '@ionic/angular';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 
 import { SendComponent } from '@nte/components/send/send';
 import { COLLEGE_NON_PROFIT_QUERY } from '@nte/constants/college.constants';
 import { EMPTY_STATES } from '@nte/constants/scholarship.constants';
-import { IEmptyState } from '@nte/models/empty-state';
+import { FilterPage } from '@nte/pages/filter/filter';
 import { ConnectionService } from '@nte/services/connection.service';
 import { FilterService } from '@nte/services/filter.service';
 import { KeyboardService } from '@nte/services/keyboard.service';
 import { MixpanelService } from '@nte/services/mixpanel.service';
+import { NavStateService } from '@nte/services/nav-state.service';
 import { ScholarshipListTileService } from '@nte/services/scholarship.list-tile.service';
 import { ScholarshipService } from '@nte/services/scholarship.service';
 import { StakeholderService } from '@nte/services/stakeholder.service';
-import { FilterPage } from './../filter/filter';
-import { ScholarshipPage } from './../scholarship/scholarship';
 
-@IonicPage({
-  name: `scholarships-list-page`,
-  segment: `/scholarships/list`
-})
 @Component({
   selector: `scholarships-list`,
-  templateUrl: `scholarships-list.html`
+  templateUrl: `scholarships-list.html`,
+  styleUrls: [`scholarships-list.scss`]
 })
-export class ScholarshipsListPage {
+export class ScholarshipsListPage implements OnInit, OnDestroy {
+  @ViewChild(`Content`, { static: false }) public content;
+  @ViewChild(IonInfiniteScroll, { static: false }) public infiniteScroll: IonInfiniteScroll;
 
-  get user() {
-    return this.stakeholderService.stakeholder;
-  }
-
-  @ViewChild(Content) public content: Content;
-
-  public emptyState: IEmptyState;
   public fetchingScholarships: boolean;
   public filterDefault: any;
-  @ViewChild(InfiniteScroll) public infiniteScroll: InfiniteScroll;
   public isSavingIndex: number;
   public list: any;
   public listName: string;
@@ -54,23 +39,70 @@ export class ScholarshipsListPage {
   public searchTerm: string = ``;
 
   private filtering: boolean;
+  private ngUnsubscribe: Subject<any> = new Subject();
+
+  get emptyState() {
+    return EMPTY_STATES[this.listNameVal || `Search All`];
+  }
+
+  get itemsAreTrackers() {
+    return this.listNameVal === 'Applying' || this.listNameVal === 'Saved';
+  }
+
+  get listNameVal() {
+    return this.list && this.list.name ? this.list.name : this.listName;
+  }
+
+  get ships() {
+    if (this.list && this.list.providerVariable) {
+      const scholarships = this.scholarshipService[this.list.providerVariable];
+      if (this.itemsAreTrackers) {
+        return scholarships.map(t => {
+          t.tracker_id = t.id;
+          return Object.assign(t, t.scholarship);
+        });
+      } else if (this.listNameVal === 'Recommended') {
+        return scholarships.map(r => {
+          r.rec_id = r.id;
+          return Object.assign(r, r.scholarship);
+        });
+      } else {
+        return scholarships;
+      }
+    } else {
+      return [];
+    }
+  }
+
+  get user() {
+    return this.stakeholderService.stakeholder;
+  }
 
   constructor(public connectionService: ConnectionService,
     public filterService: FilterService,
     public keyboard: KeyboardService,
     public modalCtrl: ModalController,
-    public navCtrl: NavController,
-    public params: NavParams,
+    public router: Router,
     public scholarshipService: ScholarshipService,
     private listTileService: ScholarshipListTileService,
     private mixpanel: MixpanelService,
     private stakeholderService: StakeholderService,
-    private toastCtrl: ToastController) {
-    if (this.params.get(`list`)) {
-      this.list = this.params.get(`list`);
-    } else {
-      this.list = this.listTileService.activeList;
-    }
+    private toastCtrl: ToastController,
+    navStateService: NavStateService) {
+    const params: any = navStateService.data;
+    this.list = (params && params.list) ? params.list : (this.listTileService.activeList || null);
+  }
+
+  ngOnInit() {
+    this.updateList();
+    this.filtering = false;
+    // if ((this.list && this.list.isCustom) || this.filtering) {
+    // }
+  }
+
+  ngOnDestroy() {
+    this.ngUnsubscribe.next();
+    this.ngUnsubscribe.complete();
   }
 
   public clearSearch(_event: any) {
@@ -83,19 +115,12 @@ export class ScholarshipsListPage {
     this.keyboard.close();
   }
 
-  public ionViewWillEnter() {
-    if (this.list.isCustom || this.filtering) {
-      this.updateList();
-      this.filtering = false;
-    }
-    this.emptyState = EMPTY_STATES[this.list.name] || EMPTY_STATES[`Search All`];
-  }
-
   public loadMore(_event: Event) {
     if (this.list.name === `Search All`) {
       setTimeout(
         () => {
-          const hasQuery = (this.filterService.filter && this.filterService.filter.queries) ? true : false;
+          const filter = this.filterService.filter;
+          const hasQuery = (filter && filter.queries) ? true : false;
           this.scholarshipService.getScholarships(
             this.scholarshipService.nextPage,
             true,
@@ -110,32 +135,31 @@ export class ScholarshipsListPage {
   public openFilters(event: any) {
     if (event) { event.stopPropagation(); }
     this.filtering = true;
-    this.navCtrl.push(
-      FilterPage,
+    this.router.navigate(
+      [FilterPage],
       {
-        cyol: false,
-        filter: this.filterService.filter,
-        listType: `Scholarships`
+        state: {
+          cyol: false,
+          filter: this.filterService.filter,
+          listType: `Scholarships`
+        }
       }
     );
   }
 
-  public openSendModal(scholarship: any) {
-    const sendItem = scholarship.scholarship ? scholarship.scholarship : scholarship;
-    const sendModal = this.modalCtrl.create(
-      SendComponent,
-      {
+  public async openSendModal(scholarship: any) {
+    const modal = await this.modalCtrl.create({
+      backdropDismiss: true,
+      component: SendComponent,
+      componentProps: {
         imageUrl: `assets/image/avatar/scholarship-green.svg`,
-        item: sendItem,
+        item: scholarship.scholarship || scholarship,
         type: `Scholarship`
       },
-      {
-        cssClass: `smallModal`,
-        enableBackdropDismiss: true,
-        showBackdrop: false
-      }
-    );
-    sendModal.present();
+      cssClass: `smallModal`,
+      showBackdrop: false
+    });
+    return await modal.present();
   }
 
   public remove(scholarship: any) {
@@ -144,39 +168,19 @@ export class ScholarshipsListPage {
     }
     scholarship.saved = false;
     scholarship.applying = false;
-    this.scholarshipService.removeScholarship(scholarship).subscribe(
-      (_response) => {
-        const toast = this.toastCtrl.create({
-          closeButtonText: `UNDO`,
-          duration: 3000,
-          message: `Scholarship removed.`,
-          position: `bottom`,
-          showCloseButton: true
-        });
-        toast.present();
-        toast.onDidDismiss((_data, role) => {
-          if (role === `close`) { // this.listName !== 'Recommended' &&
-            this.save(scholarship);
-          }
-        });
-      }
-    );
+    this.scholarshipService.removeScholarship(scholarship)
+      .pipe(takeUntil(this.ngUnsubscribe))
+      .subscribe(() => this.openRemoveToast(scholarship));
   }
 
   public removeRec(recId: number, hideToast?: boolean) {
-    this.scholarshipService.studentRemoveRecommended(recId, this.user.id).subscribe(
-      (_response) => {
+    this.scholarshipService.studentRemoveRecommended(recId, this.user.id)
+      .pipe(takeUntil(this.ngUnsubscribe))
+      .subscribe((_response) => {
         if (!hideToast) {
-          const toast = this.toastCtrl.create({
-            duration: 3000,
-            message: `Recommendation removed.`,
-            position: `bottom`,
-            showCloseButton: false
-          });
-          toast.present();
+          this.openRemoveRecToast();
         }
-      }
-    );
+      });
   }
 
   public resetSavingIndex() {
@@ -193,35 +197,29 @@ export class ScholarshipsListPage {
     //     ApplicationDatesComponent // TODO
     //   );
     //   applyModal.present();
-    //   applyModal.onDidDismiss((data, role) => {
+    //   applyModal.onDidDismiss().then((data, role) => {
     //     if (data.applying && this.recommendationId) {
     //       this.removeRecommendation();
     //     }
     //   });
     // } else {
     //  this.scholarship.saved = !isApplying;
-    this.mixpanel.event(`scholarship saved`, { 'scholarship name': scholarship.name });
+    this.mixpanel.event(
+      `scholarship saved`,
+      { 'scholarship name': scholarship.name }
+    );
     this.scholarshipService.saveScholarship(scholarId, isExisting, false)
-      .subscribe((response) => {
-        scholarship.saved = response.scholarship.saved;
-        const toast = this.toastCtrl.create({
-          closeButtonText: `UNDO`,
-          duration: 3000,
-          message: `Saved!`,
-          position: `bottom`,
-          showCloseButton: true
-        });
-        toast.present();
-        toast.onDidDismiss((_data, role) => {
-          if (this.listName !== `Recommended` && role === `close`) {
-            this.remove(scholarship);
+      .pipe(takeUntil(this.ngUnsubscribe))
+      .subscribe(
+        (response) => {
+          scholarship.saved = response.scholarship.saved;
+          this.openSaveToast(scholarship);
+          this.resetSavingIndex();
+          if (recId) {
+            this.removeRec(recId, true);
           }
-        });
-        this.resetSavingIndex();
-        if (recId) {
-          this.removeRec(recId, true);
         }
-      });
+      );
   }
 
   public scrollToTop() {
@@ -230,10 +228,13 @@ export class ScholarshipsListPage {
 
   public search(event: any) {
     if (event) { event.stopPropagation(); }
-    this.mixpanel.event(`search_entered`, {
-      'search term entered': this.searchTerm,
-      'page': `Scholarships`
-    });
+    this.mixpanel.event(
+      `search_entered`,
+      {
+        'search term entered': this.searchTerm,
+        page: `Scholarships`
+      }
+    );
     this.updateList();
   }
 
@@ -242,42 +243,30 @@ export class ScholarshipsListPage {
   }
 
   public viewScholarship(scholarship: any) {
-    let schParams: any = {};
+    let params: any = {};
     if (scholarship.scholarship && scholarship.scholarship.id) {
-      schParams = {
+      params = {
         id: scholarship.scholarship.id,
         scholarship: scholarship.scholarship
       };
       if (this.list.name === `Recommended`) {
-        schParams.recommendation = scholarship;
+        params.recommendation = scholarship;
       } else {
-        schParams.tracker = scholarship;
+        params.tracker = scholarship;
       }
     } else {
-      schParams = {
+      params = {
         id: scholarship.id,
         scholarship
       };
     }
-    this.navCtrl.push(
-      ScholarshipPage,
-      schParams
+    this.router.navigate(
+      [`app/scholarships/${scholarship.id}`],
+      { state: params }
     );
   }
 
   // PRIVATE METHODS
-
-  // private getConnections() {
-  //   if (this.user.isParent && !this.user.students) {
-  //     const studentSub = this.stakeholderService.getStudentsForParent()
-  //       .subscribe(
-  //         (data) => {
-  //           this.user.students = data;
-  //           studentSub.unsubscribe();
-  //         }
-  //       );
-  //   }
-  // }
 
   // private getScholarshipFilter() {
   //   const scholarshipSub = this.scholarshipService.getFilters()
@@ -295,6 +284,45 @@ export class ScholarshipsListPage {
   //       err => console.error(err)
   //     );
   // }
+
+  private async openRemoveToast(scholarship) {
+    const toast = await this.toastCtrl.create({
+      buttons: [{
+        handler: () => this.save(scholarship),
+        text: 'Undo'
+      }],
+      duration: 3000,
+      message: `Scholarship removed.`,
+      position: `bottom`
+    });
+    toast.present();
+  }
+
+  private async openRemoveRecToast() {
+    const toast = await this.toastCtrl.create({
+      duration: 3000,
+      message: `Recommendation removed.`,
+      position: `bottom`
+    });
+    toast.present();
+  }
+
+  private async openSaveToast(scholarship: any) {
+    const toast = await this.toastCtrl.create({
+      buttons: [{
+        handler: () => {
+          if (this.listName !== `Recommended`) {
+            this.remove(scholarship);
+          }
+        },
+        text: 'Undo'
+      }],
+      duration: 3000,
+      message: `Scholarship saved.`,
+      position: `bottom`
+    });
+    toast.present();
+  }
 
   private updateList() {
     let query: string = ``;

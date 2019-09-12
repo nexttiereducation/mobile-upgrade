@@ -1,5 +1,6 @@
+import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
-import { IonicPageModule } from '@ionic/angular';
+import { IonicModule } from '@ionic/angular';
 
 import { FilterDistancePage } from './filter-distance';
 
@@ -11,8 +12,9 @@ import { FilterDistancePage } from './filter-distance';
     FilterDistancePage
   ],
   imports: [
-    IonicPageModule.forChild(FilterDistancePage)
+    CommonModule,
+    IonicModule
   ]
 })
 
-export class FilterDistancePageModule {}
+export class FilterDistancePageModule { }

@@ -4,60 +4,61 @@
        text-center>{{ college?.name }}</div>
   <div class="gray-sections"
        *ngIf="college">
-    <ng-template [ngIf]="(college.is_public || college.is_four_year)
-                         || college.school_setting
-                         || (college.religious_affil && college.religious_affil !== 'Not applicable')">
+    <ng-template [ngIf]="(college?.is_public || college?.is_four_year)
+                         || college?.school_setting
+                         || (college?.religious_affil && college?.religious_affil !== 'Not applicable')">
       <div>Overview</div>
       <ion-grid>
         <ion-row align-items-center
                  justify-content-center>
           <ion-col align-self-center
-                   *ngIf="college.is_public || college.is_four_year">
+                   *ngIf="college?.is_public || college?.is_four_year">
             <div text-center>
-              {{ (college.is_public ? 'Public, ' : 'Private, ') + (college.is_four_year ? '4 year' : '2 year') }}</div>
+              {{ (college?.is_public ? 'Public, ' : 'Private, ') + (college?.is_four_year ? '4 year' : '2 year') }}
+            </div>
           </ion-col>
           <ion-col align-self-center
                    text-center
-                   *ngIf="college.school_setting">
+                   *ngIf="college?.school_setting">
             <img src="assets/image/college/setting_city.svg"
-                 *ngIf="college.school_setting[0] === 'C'">
+                 *ngIf="college?.school_setting[0] === 'C'">
             <img src="assets/image/college/setting_rural.svg"
-                 *ngIf="college.school_setting[0] === 'R'">
+                 *ngIf="college?.school_setting[0] === 'R'">
             <img src="assets/image/college/setting_suburb.svg"
-                 *ngIf="college.school_setting[0] === 'S'">
+                 *ngIf="college?.school_setting[0] === 'S'">
             <img src="assets/image/college/setting_town.svg"
-                 *ngIf="college.school_setting[0] === 'T'">
-            <div>{{ college.school_setting }}</div>
+                 *ngIf="college?.school_setting[0] === 'T'">
+            <div>{{ college?.school_setting }}</div>
           </ion-col>
           <ion-col align-self-center
-                   *ngIf="college.religious_affil && college.religious_affil !== 'Not applicable'">
-            <div text-center>{{ college.religious_affil }}</div>
+                   *ngIf="college?.religious_affil && college?.religious_affil !== 'Not applicable'">
+            <div text-center>{{ college?.religious_affil }}</div>
           </ion-col>
         </ion-row>
       </ion-grid>
     </ng-template>
-    <ng-template [ngIf]="(college.population || college.details.undergrad_population || college.details.grad_population)
+    <ng-template [ngIf]="(college?.population || details?.undergrad_population || details?.grad_population)
                          || maleFemaleChart || diversityChart">
       <div>Demographics</div>
       <div>
-        <ion-grid *ngIf="college.population || college.details.undergrad_population || college.details.grad_population">
+        <ion-grid *ngIf="college?.population || details?.undergrad_population || details?.grad_population">
           <ion-row>
             <ion-col align-self-center
                      text-center
-                     *ngIf="college.population">
-              <div class="displayHeader">{{ college.population | number:'1.0-0' }}</div>
+                     *ngIf="college?.population">
+              <div class="displayHeader">{{ college?.population | number:'1.0-0' }}</div>
               <div>Total Students</div>
             </ion-col>
             <ion-col align-self-center
                      text-center
-                     *ngIf="college.details.undergrad_population">
-              <div class="displayHeader text-black">{{ college.details.undergrad_population | number:'1.0-0' }}</div>
+                     *ngIf="details?.undergrad_population">
+              <div class="displayHeader text-black">{{ details?.undergrad_population | number:'1.0-0' }}</div>
               <div>Undergrad</div>
             </ion-col>
             <ion-col align-self-center
                      text-center
-                     *ngIf="college.details.grad_population">
-              <div class="displayHeader text-black">{{ college.details.grad_population | number:'1.0-0' }}</div>
+                     *ngIf="details?.grad_population">
+              <div class="displayHeader text-black">{{ details?.grad_population | number:'1.0-0' }}</div>
               <div>Graduate</div>
             </ion-col>
           </ion-row>
@@ -83,10 +84,10 @@
         </ion-grid>
       </div>
     </ng-template>
-    <ng-template [ngIf]="college.details.mission_statement">
+    <ng-template [ngIf]="details?.mission_statement">
       <div>Description</div>
       <div class="body spaced"
-           padding>{{ college.details.mission_statement }}</div>
+           padding>{{ details?.mission_statement }}</div>
     </ng-template>
   </div>
 </ion-content>

@@ -1,33 +1,25 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 
+import { ITileList } from '@nte/interfaces/tile-list.interface';
 import { ApiService } from '@nte/services/api.service';
-
-import { ICustomListTile } from '@nte/models/list-tile-custom.interface';
-import { IListTile } from '@nte/models/list-tile.interface';
-import { ITileList } from '@nte/models/tile-list.interface';
+import { ListTileService } from '@nte/services/list-tile.service';
 
 @Injectable({ providedIn: 'root' })
-export class CollegeListTileService {
-  private _activeList: BehaviorSubject<ICustomListTile | IListTile> = new BehaviorSubject(null);
-
-  get activeList() {
-    return this._activeList.getValue();
+export class CollegeListTileService extends ListTileService {
+  constructor(private api: ApiService) {
+    super();
   }
-
-  set activeList(listTile: ICustomListTile | IListTile) {
-    this._activeList.next(listTile || null);
-  }
-
-  constructor(private api: ApiService) { }
 
   public create(list: ITileList): Observable<any> {
     return this.api
       .post(`/custom_institutions_list/`, list)
-      .map(response => response.json());
+      .pipe(map(response => response.json()));
   }
 
   public delete(id: number): Observable<Response> {
-    return this.api.delete(`/custom_institutions_list/${id}`);
+    return this.api
+      .delete(`/custom_institutions_list/${id}`);
   }
 }

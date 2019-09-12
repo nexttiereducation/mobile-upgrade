@@ -1,36 +1,30 @@
-import { Component, ViewChild } from '@angular/core';
-import {
-  Content,
-  Events,
-  InfiniteScroll,
-  InfiniteScrollContent,
-  IonicPage,
-  NavController,
-  NavParams
-} from '@ionic/angular';
-import { Observable } from 'rxjs';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { Router } from '@angular/router';
+import { Events, IonContent, IonInfiniteScroll, IonInfiniteScrollContent } from '@ionic/angular';
+import { Observable, Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 
-import { IEmptyState } from '@nte/models/empty-state';
+import { IEmptyState } from '@nte/interfaces/empty-state.interface';
 import { Message } from '@nte/models/message.model';
 import { TaskTracker } from '@nte/models/task-tracker.model';
-import { CollegePage } from './../../pages/college/college';
-import { ScholarshipPage } from './../../pages/scholarship/scholarship';
-import { TaskPage } from './../../pages/task/task';
+import { CollegePage } from '@nte/pages/college/college';
+import { ScholarshipPage } from '@nte/pages/scholarship/scholarship';
+import { TaskPage } from '@nte/pages/task/task';
 import { MessageService } from '@nte/services/message.service';
+import { NavStateService } from '@nte/services/nav-state.service';
+import { ParamService } from '@nte/services/param.service';
 import { StakeholderService } from '@nte/services/stakeholder.service';
 import { TaskService } from '@nte/services/task.service';
 
-@IonicPage({
-  name: `messages-page`
-})
 @Component({
   selector: `messages`,
-  templateUrl: `messages.html`
+  templateUrl: `messages.html`,
+  styleUrls: [`messages.scss`]
 })
-export class MessagesPage {
-  @ViewChild(Content) public content: Content;
-  @ViewChild(`infiniteScroll`) public infiniteScroll: InfiniteScrollContent;
-  @ViewChild(`messagesContainer`) public messagesContainer;
+export class MessagesPage implements OnInit, OnDestroy {
+  @ViewChild(IonContent, { static: false }) public content;
+  @ViewChild(`messagesContainer`, { static: false }) public messagesContainer;
+  @ViewChild(`infiniteScroll`, { static: false }) infiniteScroll: IonInfiniteScrollContent;
 
   public avatarPlaceholder: string = `assets/image/contact/avatar.svg`;
   public emptyState: IEmptyState;
@@ -47,6 +41,8 @@ export class MessagesPage {
   public subtitle: string = ``;
   public teamMemberPhoto?: string;
   public taskTracker: TaskTracker;
+
+  private ngUnsubscribe: Subject<any> = new Subject();
 
   get hasNextPage() {
     switch (this.messageType) {
@@ -92,22 +88,22 @@ export class MessagesPage {
     return this.stakeholderService.stakeholder;
   }
 
-  constructor(params: NavParams,
+  constructor(paramService: ParamService,
     public events: Events,
     public messageService: MessageService,
-    private navCtrl: NavController,
+    private router: Router,
     private stakeholderService: StakeholderService,
-    private taskService: TaskService) {
-    this.emptyState = params.get(`emptyState`);
-    this.messageType = params.get(`messageType`);
-    this.scrollDown = params.get(`scrollDown`);
-    this.status = params.get(`status`);
-    this.subtitle = params.get(`subtitle`);
-    this.taskTracker = params.get(`taskTracker`);
-    this.teamMemberPhoto = params.get(`teamMemberPhoto`) || this.avatarPlaceholder;
+    private taskService: TaskService,
+    navStateService: NavStateService) {
+    const params: any = navStateService.data;
+    this.emptyState = params.emptyState;
+    this.messageType = params.messageType;
+    this.scrollDown = params.scrollDown;
+    this.subtitle = params.subtitle;
+    this.teamMemberPhoto = params.teamMemberPhoto || this.avatarPlaceholder;
   }
 
-  ionViewDidEnter() {
+  ngOnInit() {
     switch (this.messageType) {
       case `message`:
         this.messageService.getMessages(this.messageService.selectedTeamMember.id);
@@ -119,17 +115,6 @@ export class MessagesPage {
         break;
     }
     this.scrollToBottom();
-  }
-
-  ionViewDidLeave() {
-    this.clear();
-    this.events.unsubscribe(`messageChange`);
-    this.events.unsubscribe(`moreMessages`);
-    this.events.unsubscribe(`moreNotes`);
-    this.events.unsubscribe(`noteChange`);
-  }
-
-  ionViewDidLoad() {
     this.setupChangeSubs();
     this.setupKeyboardSubs();
     if (this.emptyState && this.emptyState.body) {
@@ -137,8 +122,14 @@ export class MessagesPage {
     }
   }
 
-  public back() {
-    this.navCtrl.pop({ animation: `ios-transition` });
+  ngOnDestroy() {
+    this.ngUnsubscribe.next();
+    this.ngUnsubscribe.complete();
+    this.clear();
+    this.events.unsubscribe(`messageChange`);
+    this.events.unsubscribe(`moreMessages`);
+    this.events.unsubscribe(`moreNotes`);
+    this.events.unsubscribe(`noteChange`);
   }
 
   public clear() {
@@ -165,7 +156,7 @@ export class MessagesPage {
     return mDate && pDate && (mDate !== pDate);
   }
 
-  public loadMoreMessages(infiniteScroll: InfiniteScroll) {
+  public loadMoreMessages(infiniteScroll: IonInfiniteScroll) {
     this.loadingMore = true;
     this.events.subscribe(
       `moreMessages`,
@@ -186,7 +177,7 @@ export class MessagesPage {
     if (attachment && attachment.page) {
       switch (attachment.page) {
         case `colleges`:
-          this.navCtrl.push(
+          this.router.navigate([
             CollegePage,
             {
               college: {
@@ -195,23 +186,26 @@ export class MessagesPage {
               },
               id: attachment.id
             }
-          );
+          ]);
           break;
         case `scholarships`:
-          this.navCtrl.push(
-            ScholarshipPage,
-            { id: attachment.id }
+          this.router.navigate(
+            [ScholarshipPage],
+            { state: { id: attachment.id } }
           );
           break;
         case `tasks`:
           this.taskService.getTaskTrackerById(attachment.id)
+            .pipe(takeUntil(this.ngUnsubscribe))
             .subscribe(response => {
-              this.navCtrl.push(
-                TaskPage,
+              this.router.navigate(
+                [TaskPage],
                 {
-                  isParent: this.user.isParent,
-                  task: response,
-                  taskTypeImg: `assets/image/task/tile_all.svg`
+                  state: {
+                    isParent: this.user.isParent,
+                    task: response,
+                    taskTypeImg: `assets/image/task/tile_all.svg`
+                  }
                 }
               );
             });
@@ -247,6 +241,7 @@ export class MessagesPage {
         break;
     }
     this.newMessage = ``;
+    this.scrollToBottom();
   }
 
   private setupChangeSubs() {
@@ -281,6 +276,7 @@ export class MessagesPage {
         if (!this.loadingMore) {
           this.scrollToBottom();
         }
+        this.loadingMore = false;
         this.messageService.isSending = false;
         break;
       case `note`:

@@ -1,19 +1,21 @@
-import { Component } from '@angular/core';
-import { NavParams, ViewController } from '@ionic/angular';
-import { Subject } from 'rxjs/Subject';
-import { Subscription } from 'rxjs/Subscription';
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { ModalController } from '@ionic/angular';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 
 import { IApplicationDate } from '@nte/interfaces/application-date.interface';
 import { ICollege } from '@nte/interfaces/college.interface';
-import { CollegeProvider } from '@nte/services/college.service';
-import { MixpanelProvider } from '@nte/services/mixpanel.service';
-import { StakeholderProvider } from '@nte/services/stakeholder.service';
+import { CollegeService } from '@nte/services/college.service';
+import { MixpanelService } from '@nte/services/mixpanel.service';
+import { NavStateService } from '@nte/services/nav-state.service';
+import { StakeholderService } from '@nte/services/stakeholder.service';
 
 @Component({
   selector: `application-dates`,
-  templateUrl: `application-dates.html`
+  templateUrl: `application-dates.html`,
+  styleUrls: [`application-dates.scss`]
 })
-export class ApplicationDatesComponent {
+export class ApplicationDatesComponent implements OnInit, OnDestroy {
   public admissionTypeInfo = {};
   public applicationDates: IApplicationDate[];
   public applicationMethod: string;
@@ -27,32 +29,37 @@ export class ApplicationDatesComponent {
   public selectedDate: IApplicationDate;
   public skipFields: boolean = false;
 
-  private datesSub: Subscription;
-  private typeInfoSub: Subscription;
+  private ngUnsubscribe: Subject<any> = new Subject();
 
   get user() {
-    return this.stakeholderProvider.stakeholder;
+    return this.stakeholderService.stakeholder;
   }
 
-  constructor(public params: NavParams,
-    public viewCtrl: ViewController,
-    private collegeProvider: CollegeProvider,
-    private mixpanel: MixpanelProvider,
-    private stakeholderProvider: StakeholderProvider) {
-    this.college = params.get(`college`);
-    this.isNewAdd = params.get(`isNewAdd`);
-    this.isRec = params.get(`isRec`);
-    this.saveSchoolSubject = params.get(`saveSchoolSubject`);
+  constructor(private collegeService: CollegeService,
+    private mixpanel: MixpanelService,
+    private modalCtrl: ModalController,
+    private stakeholderService: StakeholderService,
+    navStateService: NavStateService) {
+    const params: any = navStateService.data;
+    this.college = params.college;
+    this.isNewAdd = params.isNewAdd;
+    this.isRec = params.isRec;
+    this.saveSchoolSubject = params.saveSchoolSubject;
   }
 
-  public ionViewDidLoad() {
+  ngOnInit() {
     this.getDates();
     this.getAdmissionTypeInfo();
   }
 
+  ngOnDestroy() {
+    this.ngUnsubscribe.next();
+    this.ngUnsubscribe.complete();
+  }
+
   public addWithoutDates() {
     this.skipFields = true;
-    this.viewCtrl.dismiss(null, `skip`);
+    this.modalCtrl.dismiss(null, `skip`);
   }
 
   public applicationMethodChange(value: string | number) {
@@ -74,18 +81,18 @@ export class ApplicationDatesComponent {
   }
 
   public closeNoDeadlines() {
-    this.viewCtrl.dismiss(null, `no-deadlines`);
+    this.modalCtrl.dismiss(null, `no-deadlines`);
   }
 
   public generateArray(obj) {
-    return Object.keys(obj).map(
-      (key) => obj[key]
-    );
+    return Object.keys(obj).map(key => obj[key]);
   }
 
   public getAdmissionTypeInfo() {
-    this.typeInfoSub = this.collegeProvider.getAdmissionTypeInfo()
-      .subscribe((data: any) => {
+    this.collegeService.getAdmissionTypeInfo()
+      .pipe(takeUntil(this.ngUnsubscribe))
+      .subscribe(
+        (data: any) => {
         if (!data) { return; }
         this.admissionTypeInfo = {
           'Early Action': {
@@ -127,8 +134,7 @@ export class ApplicationDatesComponent {
         };
         this.parseDetails();
       },
-        err => console.error(err),
-        () => this.typeInfoSub.unsubscribe()
+        err => console.error(err)
       );
   }
 
@@ -175,11 +181,12 @@ export class ApplicationDatesComponent {
       application_method: this.applicationMethod,
       application_type: applicationType
     };
-    this.viewCtrl.dismiss(data, `follow`);
+    this.modalCtrl.dismiss(data, `follow`);
   }
 
   private getDates() {
-    this.datesSub = this.collegeProvider.getApplicationDates(this.college.id)
+    this.collegeService.getAppDates(this.college.id)
+      .pipe(takeUntil(this.ngUnsubscribe))
       .subscribe(
         (dates) => {
           this.applicationDates = dates || [];
@@ -187,8 +194,7 @@ export class ApplicationDatesComponent {
             this.selectedDate = dates[0];
           }
         },
-        err => console.error(err),
-        () => this.datesSub.unsubscribe()
+        err => console.error(err)
       );
   }
 

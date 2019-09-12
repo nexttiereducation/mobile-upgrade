@@ -1,14 +1,10 @@
-import { Component } from '@angular/core';
-import { NavController } from '@ionic/angular';
+import { Component, ViewEncapsulation } from '@angular/core';
+import { Router } from '@angular/router';
 
 @Component({
+  encapsulation: ViewEncapsulation.None,
   selector: `[list-tabs]`,
-  host: {
-    '[class.tabs]': `true`,
-    '[class.tabs-md]': `true`,
-    '[class.tabbar]': `true`,
-    '[class.show-tabbar]': `true`
-  },
+  styleUrls: [`list-tabs.scss`],
   templateUrl: `list-tabs.html`
 })
 export class ListTabsComponent {
@@ -18,6 +14,13 @@ export class ListTabsComponent {
     return false;
   }
 
-  constructor(public navCtrl: NavController) { }
+  constructor(public router: Router) { }
 
+  public selectTab(idx: number) {
+    // TODO: Determine if this file is still needed. If not, delete it.
+    // this.router.parent.select(idx);
+    // this.router.pop();
+    console.log('hi');
+  }
 }
+

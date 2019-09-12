@@ -1,25 +1,28 @@
 {
     "compileOnSave": false,
     "compilerOptions": {
-        "baseUrl": "src",
-        "outDir": "./dist/out-tsc",
-        "sourceMap": true,
+        "allowSyntheticDefaultImports": true,
+        "baseUrl": ".",
         "declaration": false,
-        "module": "esnext",
-        "moduleResolution": "node",
         "emitDecoratorMetadata": true,
         "experimentalDecorators": true,
         "importHelpers": true,
+        "lib": ["es2018", "dom"],
+        "module": "es2015",
+        "moduleResolution": "node",
+        "outDir": "./dist/out-tsc",
+        "sourceMap": true,
         "target": "es2015",
         "typeRoots": ["node_modules/@types"],
-        "lib": ["es2018", "dom"],
         "paths": {
-            "@nte/components/*": ["app/components/*"],
-            "@nte/constants/*": ["app/constants/*"],
-            "@nte/interfaces/*": ["app/interfaces/*"],
-            "@nte/models/*": ["app/models/*"],
-            "@nte/pipes/*": ["app/pipes/*"],
-            "@nte/providers/*": ["app/providers/*"]
+            "@nte/components/*": ["src/app/components/*"],
+            "@nte/constants/*": ["src/app/constants/*"],
+            "@nte/interfaces/*": ["src/app/interfaces/*"],
+            "@nte/models/*": ["src/app/models/*"],
+            "@nte/pipes/*": ["src/app/pipes/*"],
+            "@nte/services/*": ["src/app/services/*"],
+            "@nte/pages/*": ["src/pages/*"],
+            "@nte/app/*": ["src/app/*"]
         }
     },
     "angularCompilerOptions": {

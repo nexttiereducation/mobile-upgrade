@@ -1,23 +1,20 @@
-import { Component } from '@angular/core';
-import { IonicPage, NavController } from '@ionic/angular';
+import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
 
 import { MESSAGES_EMPTY_STATE, MESSAGING_EMPTY_STATE } from '@nte/constants/messaging.constants';
 import { IConnection } from '@nte/interfaces/connection.interface';
-import { IEmptyState } from '@nte/models/empty-state';
-import { IPendingConnection } from '@nte/models/pending-connection.interface';
+import { IEmptyState } from '@nte/interfaces/empty-state.interface';
+import { IPendingConnection } from '@nte/interfaces/pending-connection.interface';
 import { ConnectionService } from '@nte/services/connection.service';
 import { MessageService } from '@nte/services/message.service';
 import { StakeholderService } from '@nte/services/stakeholder.service';
-import { MessagesPage } from './../messages/messages';
 
-@IonicPage({
-  name: `messaging-page`
-})
 @Component({
   selector: `messaging`,
-  templateUrl: `messaging.html`
+  templateUrl: `messaging.html`,
+  styleUrls: [`messaging.scss`]
 })
-export class MessagingPage {
+export class MessagingPage implements OnInit {
   public emptyState: IEmptyState = MESSAGING_EMPTY_STATE;
   public messagesEmptyState: IEmptyState = MESSAGES_EMPTY_STATE;
   public scrollDown: boolean = false;
@@ -32,10 +29,11 @@ export class MessagingPage {
 
   constructor(public connectionService: ConnectionService,
     public messageService: MessageService,
-    private navCtrl: NavController,
+    private route: ActivatedRoute,
+    private router: Router,
     private stakeholderService: StakeholderService) { }
 
-  ionViewDidEnter() {
+  ngOnInit() {
     if (!this.connectionService.all
       || !this.connectionService.all.length) {
       this.connectionService.getAllConnections();
@@ -52,7 +50,7 @@ export class MessagingPage {
   }
 
   public back() {
-    this.navCtrl.pop({ animation: `ios-transition` });
+    // this.navCtrl.pop({ animation: `ios-transition` });
   }
 
   public cancelInvite(pendingConnection: IPendingConnection) {
@@ -75,31 +73,34 @@ export class MessagingPage {
         && this.messageSummary[user.id].photo_url
         && this.messageSummary[user.id].photo_url.length) {
         return this.messageSummary[user.id].photo_url;
+      } else {
+        return `assets/image/contact/avatar-gray.svg`;
       }
     }
-    return `assets/image/contact/avatar-gray.svg`;
-  }
-
-  public loadMore() {
-    this.messageService.getMessages(null, this.messageService.nextPage);
   }
 
   public getSummary(connection: any) {
     return this.messageService.unreadMessageSummary[connection.id];
   }
 
+  public loadMore() {
+    this.messageService.getMessages(null, this.messageService.nextPage);
+  }
+
   public selectTeamMember(teamMember: IConnection | any) {
     this.messageService.selectedTeamMember = teamMember;
-    this.navCtrl.push(
-      MessagesPage,
+    this.router.navigate(
+      [teamMember.id],
       {
-        emptyState: this.messagesEmptyState,
-        messageType: `message`,
-        scrollDown: this.scrollDown,
-        subtitle: teamMember.get_full_name,
-        teamMemberPhoto: teamMember.profile_photo
-      },
-      { animation: `ios-transition` }
+        relativeTo: this.route,
+        state: {
+          emptyState: this.messagesEmptyState,
+          messageType: `message`,
+          scrollDown: this.scrollDown,
+          subtitle: teamMember.get_full_name,
+          teamMemberPhoto: teamMember.profile_photo
+        }
+      }
     );
   }
 

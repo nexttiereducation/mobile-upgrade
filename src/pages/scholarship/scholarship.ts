@@ -1,50 +1,66 @@
-import { Component } from '@angular/core';
-import { AlertController, IonicPage, NavController, NavParams, ToastController } from '@ionic/angular';
+import { Component, OnDestroy } from '@angular/core';
+import { Router } from '@angular/router';
+import { AlertController, ToastController } from '@ionic/angular';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 
-import { IRecommendedScholarship, ISavedScholarship, IScholarship } from '@nte/models/scholarship.interface';
+import { IRecommendedScholarship, ISavedScholarship, IScholarship } from '@nte/interfaces/scholarship.interface';
 import { LinkService } from '@nte/services/link.service';
 import { MixpanelService } from '@nte/services/mixpanel.service';
+import { NavStateService } from '@nte/services/nav-state.service';
 import { ScholarshipService } from '@nte/services/scholarship.service';
 import { StakeholderService } from '@nte/services/stakeholder.service';
 
-@IonicPage({
-  name: `scholarship-page`
-})
 @Component({
   selector: `scholarship`,
-  templateUrl: `scholarship.html`
+  templateUrl: `scholarship.html`,
+  styleUrls: [`scholarship.scss`]
 })
-export class ScholarshipPage {
+export class ScholarshipPage implements OnDestroy {
   public isFalse: boolean = false;
   public isTrue: boolean = true;
   public recommendation: IRecommendedScholarship;
   public recommendationId: number;
   public scholarship: IScholarship;
   public tracker: ISavedScholarship;
+  private ngUnsubscribe: Subject<any> = new Subject();
+
+  get criteria() {
+    if (this.scholarship && this.scholarship.criteria) {
+      return this.scholarship.criteria;
+    } else {
+      return null;
+    }
+  }
 
   get user() {
     return this.stakeholderService.stakeholder;
   }
 
-  constructor(params: NavParams,
-    public linkService: LinkService,
+  constructor(public linkService: LinkService,
     private alertCtrl: AlertController,
     private mixpanel: MixpanelService,
-    private navCtrl: NavController,
+    private router: Router,
     private scholarshipService: ScholarshipService,
     private stakeholderService: StakeholderService,
-    private toastCtrl: ToastController) {
-    if (params.get(`scholarship`)) {
-      this.scholarship = params.get(`scholarship`);
+    private toastCtrl: ToastController,
+    navStateService: NavStateService) {
+    const params: any = navStateService.data;
+    this.recommendation = params.recommendation;
+    this.tracker = params.tracker;
+    const scholarship = params.scholarship;
+    if (scholarship) {
+      this.scholarship = scholarship;
     } else {
-      const sub = this.scholarshipService.getById(params.get(`id`))
-        .subscribe((scholarship) => {
-          this.scholarship = scholarship;
-          sub.unsubscribe();
-        });
+      this.scholarshipService.getById(params.id)
+        .pipe(takeUntil(this.ngUnsubscribe))
+        .subscribe(s => this.scholarship = s);
     }
-    this.recommendation = params.get(`recommendation`);
-    this.tracker = params.get(`tracker`);
+  }
+
+  ngOnDestroy() {
+    this.ngUnsubscribe.next();
+    this.ngUnsubscribe.complete();
   }
 
   public hasRange(propSuffix: string, isNonCriteriaProp: boolean = false) {
@@ -71,36 +87,18 @@ export class ScholarshipPage {
     this.scholarship.saved = false;
     this.scholarship.applying = false;
     this.scholarshipService.removeScholarship(this.scholarship)
-      .subscribe(
-        () => {
-          const toast = this.toastCtrl.create({
-            closeButtonText: `UNDO`,
-            duration: 3000,
-            message: `Scholarship removed.`,
-            position: `bottom`,
-            showCloseButton: true
-          });
-          toast.present();
-          toast.onDidDismiss((_data, role) => {
-            if (role === `close`) { // this.listName !== 'Recommended' &&
-              this.save(null);
-            }
-          });
-        }
-      );
+      .pipe(takeUntil(this.ngUnsubscribe))
+      .subscribe(() => this.openRemoveToast());
   }
 
   public removeRecommendation(_event?: Event) {
     // event.stopPropagation();
     this.scholarshipService.studentRemoveRecommended(this.recommendation.id, this.user.id)
+      .pipe(takeUntil(this.ngUnsubscribe))
       .subscribe(() => {
-        this.toastCtrl.create({
-          duration: 3000,
-          message: `Recommendation removed.`,
-          position: `bottom`,
-          showCloseButton: false
-        }).present();
-        this.navCtrl.pop();
+        this.openRemoveRecToast();
+        // this.router.pop();
+        // TODO: Check if routing is needed here
       });
   }
 
@@ -113,44 +111,36 @@ export class ScholarshipPage {
     //     ApplicationDatesComponent // TODO
     //   );
     //   applyModal.present();
-    //   applyModal.onDidDismiss((data, role) => {
+    //   applyModal.onDidDismiss().then((data, role) => {
     //     if (data.applying && this.recommendation && this.recommendation.id) {
     //       this.removeRecommendation();
     //     }
     //   });
     // } else {
     this.scholarship.saved = !isApplying;
-    this.mixpanel.event(`scholarship saved`, { 'scholarship name': this.scholarship.name });
-    this.scholarshipService.saveScholarship(this.scholarship.id, isExisting, isApplying).subscribe(
+    this.mixpanel.event(`scholarship saved`,
+      { 'scholarship name': this.scholarship.name }
+    );
+    this.scholarshipService.saveScholarship(this.scholarship.id, isExisting, isApplying)
+      .pipe(takeUntil(this.ngUnsubscribe))
+      .subscribe(
       () => {
         if (this.recommendation && this.recommendation.id) {
           this.removeRecommendation();
         }
-        const toast = this.toastCtrl.create({
-          closeButtonText: `UNDO`,
-          duration: 3000,
-          message: `Saved!`,
-          position: `bottom`,
-          showCloseButton: true
-        });
-        toast.present();
-        toast.onDidDismiss((_data, role) => {
-          if (role === `close`) {
-            this.remove(null);
-          }
-        });
+          this.openSaveToast();
       }
     );
     // }
   }
 
-  public showMoreInfo(detail: string) {
-    const alert = this.alertCtrl.create({
+  public async openAlert(detail: string) {
+    const alert = await this.alertCtrl.create({
       buttons: [`OK`],
-      subHeader: detail,
-      header: ``
+      header: ``,
+      subHeader: detail
     });
-    alert.present();
+    return await alert.present();
   }
 
   public toggleSaved(event: Event) {
@@ -159,6 +149,41 @@ export class ScholarshipPage {
     } else {
       this.save(event);
     }
+  }
+
+  private async openRemoveToast() {
+    const toast = await this.toastCtrl.create({
+      buttons: [{
+        handler: () => this.save(null),
+        text: `Undo`
+      }],
+      duration: 3000,
+      message: `Scholarship removed.`,
+      position: `bottom`
+    });
+    toast.present();
+  }
+
+  private async openRemoveRecToast() {
+    const toast = await this.toastCtrl.create({
+      duration: 3000,
+      message: `Recommendation removed.`,
+      position: `bottom`
+    });
+    toast.present();
+  }
+
+  private async openSaveToast() {
+    const toast = await this.toastCtrl.create({
+      buttons: [{
+        handler: () => this.remove(null),
+        text: `Undo`
+      }],
+      duration: 3000,
+      message: `Scholarship saved.`,
+      position: `bottom`
+    });
+    toast.present();
   }
 
 }

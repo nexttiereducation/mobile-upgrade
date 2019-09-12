@@ -1,0 +1,115 @@
+ion-card.tile {
+  height: 124px;
+  margin: 2px !important;
+  padding: 0 !important;
+  width: calc(100% - 4px) !important;
+
+  >ion-list {
+    margin: 0 !important;
+  }
+
+  ion-card-content {
+    height: 124px;
+    padding: 0 !important;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+
+  ion-item-sliding>ion-item.item-md,
+  ion-item-sliding>ion-item.item-md.item-block .item-inner {
+    border-width: 0px !important;
+    padding: 0;
+  }
+
+  ion-item-options,
+  ion-item-options button {
+    height: 125px !important;
+  }
+
+  img {
+    max-height: 85px;
+    max-width: 85px;
+  }
+
+  .button-inner {
+    flex-direction: column;
+  }
+
+  .item-native {
+    border: none !important;
+  }
+
+  $clipboardSize: 77.5px;
+
+  .tile-avatar-wrapper {
+    width: $clipboardSize;
+    height: $clipboardSize;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 7.5px;
+    align-items: center;
+    justify-items: center;
+
+    img {
+      width: $clipboardSize;
+      height: $clipboardSize;
+      object-fit: contain;
+    }
+
+  }
+
+  .tile-badge {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    padding: 0 !important;
+    width: 25px;
+    height: 25px;
+    border-radius: 50%;
+    line-height: 24px;
+    font-size: 14px;
+    animation: pulseOut 1.5s infinite ease-out;
+  }
+
+  .tile-button {
+    height: 124px;
+    margin: 0 !important;
+    padding: 0 !important;
+    width: 100% !important;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    --padding-start: 0px;
+    --padding-end: 0px;
+    --inner-padding-end: 0px;
+  }
+
+  .tile-content-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    --padding-start: 0px;
+  }
+
+  .tile-label {
+    font-size: 14px;
+    text-transform: none;
+    font-weight: 400;
+    line-height: 16px;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+    max-width: 90%;
+  }
+
+  .label,
+  ion-label {
+    margin: 0 !important;
+  }
+}

@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { DeeplinkMatch, Deeplinks } from '@ionic-native/deeplinks';
+import { DeeplinkMatch, Deeplinks } from '@ionic-native/deeplinks/ngx';
 
 import { CollegePage } from '@nte/pages/college/college';
 import { CollegesPage } from '@nte/pages/colleges/colleges';

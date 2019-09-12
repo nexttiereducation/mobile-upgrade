@@ -1,33 +1,31 @@
-import { Component } from '@angular/core';
-import { IonicPage, ModalController, NavController } from '@ionic/angular';
-import { Subject } from 'rxjs/Subject';
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
+import { ModalController } from '@ionic/angular';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 
 import { ApplicationDatesComponent } from '@nte/components/application-dates/application-dates';
 import { TASK_LIST_EMPTY_STATES, TASK_TILES } from '@nte/constants/task.constants';
-import { ICollegeTracker } from '@nte/models/college-tracker.interface';
-import { ICollege } from '@nte/models/college.interface';
-import { IStudent } from '@nte/models/student.interface';
+import { ICollegeTracker } from '@nte/interfaces/college-tracker.interface';
+import { IStudent } from '@nte/interfaces/student.interface';
 import { CollegeService } from '@nte/services/college.service';
 import { MessageService } from '@nte/services/message.service';
 import { MixpanelService } from '@nte/services/mixpanel.service';
 import { StakeholderService } from '@nte/services/stakeholder.service';
 import { TaskService } from '@nte/services/task.service';
-import { TasksListPage } from './../tasks-list/tasks-list';
 
-@IonicPage({
-  name: `tasks-page`,
-  priority: `high`,
-  segment: `/tasks`
-})
 @Component({
   selector: `tasks`,
-  templateUrl: `tasks.html`
+  templateUrl: `tasks.html`,
+  styleUrls: [`tasks.scss`]
 })
-export class TasksPage {
+export class TasksPage implements OnInit, OnDestroy {
   public activeStudent: IStudent;
   public isParent: boolean;
   public parentEmptyState: any;
   public taskTiles: any[];
+
+  private ngUnsubscribe: Subject<any> = new Subject();
 
   get allTasksTile() {
     if (this.taskTiles) {
@@ -35,11 +33,19 @@ export class TasksPage {
     }
   }
 
-  get collegeTrackers(): (ICollege | ICollegeTracker)[] {
+  get collegeTrackers(): any[] {
     if (this.isParent) {
       return this.activeStudent.institutions;
     } else {
-      return this.user.institution_trackers;
+      if (this.user.institution_trackers) {
+        return this.user.institution_trackers.map((t: any) => {
+          t.iconUrl = t.photo_url;
+          t.name = t.institution_name;
+          return t;
+        });
+      } else {
+        return null;
+      }
     }
   }
 
@@ -60,28 +66,30 @@ export class TasksPage {
   constructor(public collegeService: CollegeService,
     public messageService: MessageService,
     public modalCtrl: ModalController,
-    public navCtrl: NavController,
+    public route: ActivatedRoute,
+    public router: Router,
     public stakeholderService: StakeholderService,
     public taskService: TaskService,
     private mixpanel: MixpanelService) { }
 
-  ionViewDidLoad() {
+  ngOnInit() {
     this.isParent = this.user.isParent;
-    for (let i = 0, tile; tile = TASK_TILES[i]; ++i) {
+    this.taskTiles = [...TASK_TILES].map(tile => {
       tile.iconFileName = tile.iconFileName || `type_${tile.name}`;
       tile.iconUrl = `assets/image/task/${tile.iconFileName.toLowerCase()}.svg`;
-    }
-    this.taskTiles = TASK_TILES;
-  }
-
-  ionViewWillEnter() {
+      return tile;
+    });
     if (this.isParent) {
       this.setupParent();
     } else {
       this.updateCollegeTrackers();
     }
     this.mixpanel.event(`navigated_to-Student-Tasks`);
-    // (grab started survey tasks as well and call a function to concat them into whichever list get chosen)
+  }
+
+  ngOnDestroy() {
+    this.ngUnsubscribe.next();
+    this.ngUnsubscribe.complete();
   }
 
   public getDisplayText(student: IStudent) {
@@ -93,49 +101,49 @@ export class TasksPage {
     }
   }
 
-  public goToTaskList(listTile: any, collegeTracker?: ICollegeTracker) {
-    this.navCtrl.push(
-      TasksListPage,
-      {
-        collegeTracker,
-        impersonatedStudent: this.activeStudent,
-        tile: listTile
-      });
-  }
-
   public openApplicationDates(collegeTracker: ICollegeTracker) {
-    this.collegeService.getCollegeDetails(collegeTracker.institution)
-      .subscribe((college) => {
-        const isNewAdd = false;
-        const saveSchoolSubject = new Subject<any>();
-        const modal = this.modalCtrl.create(ApplicationDatesComponent, { college, isNewAdd, saveSchoolSubject });
-        const saveSchoolSub = saveSchoolSubject.subscribe((data) => {
-          if (data.application_type) {
-            this.collegeService.updateCollegeTracker(collegeTracker.institution, data)
-              .subscribe((tracker) => {
-                const idx = this.user.institution_trackers.findIndex((t: any) => {
-                  return collegeTracker.institution === (t.college ? t.college : t.institution);
-                });
-                this.user.institution_trackers[idx] = tracker;
-                this.goToTaskList(null, collegeTracker);
-                modal.dismiss();
+    this.collegeService.getDetails(collegeTracker.institution)
+      .pipe(takeUntil(this.ngUnsubscribe))
+      .subscribe(
+        (college) => {
+          const isNewAdd = false;
+          const saveSchoolSubject = new Subject<any>();
+          const saveSchoolSub = saveSchoolSubject
+            .pipe(takeUntil(this.ngUnsubscribe))
+            .subscribe(
+              (data) => {
+                if (data.application_type) {
+                  this.collegeService.updateTracker(collegeTracker.institution, data)
+                    .pipe(takeUntil(this.ngUnsubscribe))
+                    .subscribe(
+                      (tracker) => {
+                        const idx = this.user.institution_trackers.findIndex((t: any) => {
+                          return collegeTracker.institution === (t.college ? t.college : t.institution);
+                        });
+                        this.user.institution_trackers[idx] = tracker;
+                        this.viewList(null, collegeTracker);
+                        this.openAppDatesModal({
+                          college,
+                          isNewAdd,
+                          saveSchoolSubject,
+                          saveSchoolSub
+                        });
+                      });
+                }
               });
-          }
         });
-        modal.present();
-        modal.onDidDismiss(() => {
-          saveSchoolSub.unsubscribe();
-        });
-      });
   }
 
   public updateCollegeTrackers() {
     if (this.user && this.user.id) {
-      this.collegeService.getFollowedColleges()
-        .subscribe((response: any) => {
-          const trackers: ICollegeTracker[] = response.json();
-          this.user.institution_trackers = trackers;
-        });
+      this.collegeService.getFollowed()
+        .pipe(takeUntil(this.ngUnsubscribe))
+        .subscribe(
+          (response: any) => {
+            const trackers: ICollegeTracker[] = response.json();
+            this.user.institution_trackers = trackers;
+          }
+        );
     }
   }
 
@@ -143,15 +151,51 @@ export class TasksPage {
     if (!collegeTracker.application_type && this.user.phase === `Senior`) {
       this.openApplicationDates(collegeTracker);
     } else {
-      this.goToTaskList({
-        colSpan: 6,
-        filter: `?institution=${collegeTracker.institution}`,
-        iconUrl: collegeTracker.photo_url,
-        isLocked: true,
-        name: collegeTracker.institution_name
-      }, collegeTracker);
+      this.viewList(
+        {
+          colSpan: 6,
+          filter: `?institution=${collegeTracker.institution}`,
+          iconUrl: collegeTracker.photo_url,
+          isLocked: true,
+          name: collegeTracker.institution_name
+        },
+        collegeTracker
+      );
       // we want to pass the right information down to the list
     }
+  }
+
+  public viewList(listTile: any, collegeTracker?: ICollegeTracker) {
+    const listName = listTile.iconFileName.replace(`tile_`, ``).replace(`type_`, ``);
+    this.router.navigate(
+      [
+        `app`,
+        `tasks`,
+        `list`,
+        collegeTracker ? collegeTracker.institution : listName
+      ],
+      {
+        // relativeTo: this.route,
+        state: {
+          collegeTracker,
+          impersonatedStudent: this.activeStudent,
+          tile: listTile
+        }
+      }
+    );
+  }
+
+  private async openAppDatesModal(data: any) {
+    const modal = await this.modalCtrl.create({
+      component: ApplicationDatesComponent,
+      componentProps: {
+        college: data.college,
+        isNewAdd: data.isNewAdd,
+        saveSchoolSubject: data.saveSchoolSubject
+      }
+    });
+    await modal.onDidDismiss().then(() => data.saveSchoolSub.unsubscribe());
+    return await modal.present();
   }
 
   private setupParent() {
@@ -162,12 +206,15 @@ export class TasksPage {
       return;
     }
     this.stakeholderService.getStudentsForParent()
-      .subscribe((students) => {
-        if (students && students.length) {
-          this.activeStudent = students[0];
-        } else {
-          this.parentEmptyState = TASK_LIST_EMPTY_STATES.Parent;
+      .pipe(takeUntil(this.ngUnsubscribe))
+      .subscribe(
+        (students) => {
+          if (students && students.length) {
+            this.activeStudent = students[0];
+          } else {
+            this.parentEmptyState = TASK_LIST_EMPTY_STATES.Parent;
+          }
         }
-      });
+      );
   }
 }

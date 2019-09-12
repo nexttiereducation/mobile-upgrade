@@ -27,7 +27,7 @@
                       size="large"
                       class="border-white-bold"
                       color="white"
-                      [outline]="option !== stakeholderService.newUser.graduation"
+                      [fill]="option !== stakeholderService.newUser.graduation ? 'outline' : null"
                       [ngClass]="{'text-blue bold': option === stakeholderService.newUser.graduation}"
                       (click)="setGraduationYear(option)"> {{ option.year }} </ion-button>
         </ion-col>
@@ -39,7 +39,7 @@
                       class="border-white-bold no-caps"
                       color="white"
                       margin-top
-                      [outline]="stakeholderService.newUser.stakeholder_type !== 'Parent'"
+                      [fill]="stakeholderService.newUser.stakeholder_type !== 'Parent' ? 'outline' : null"
                       [ngClass]="{'text-blue bold': stakeholderService.newUser.stakeholder_type === 'Parent'}"
                       (click)="setGraduationYear(parentOption)"> I'm a parent </ion-button>
         </ion-col>

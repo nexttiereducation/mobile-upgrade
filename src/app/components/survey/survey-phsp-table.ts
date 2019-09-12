@@ -1,6 +1,6 @@
 import { Component, Input, OnChanges, OnInit, ViewChild } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup } from '@angular/forms';
-import { Events, Slides } from '@ionic/angular';
+import { Events, IonSlides } from '@ionic/angular';
 import { pick } from 'lodash';
 
 import { DECISION_OPTIONS } from '@nte/constants/phsp-form.constants';
@@ -9,20 +9,21 @@ import {
   ICollegeStatusItem,
   IScholarshipStatusItem,
   ScholarshipStatusItem
-} from '@nte/models/status-item.interface';
-import { SurveyProvider } from '@nte/services/survey.service';
+} from '@nte/interfaces/status-item.interface';
+import { SurveyService } from '@nte/services/survey.service';
 
 @Component({
   selector: `survey-phsp-table`,
-  templateUrl: `survey-phsp-table.html`
+  templateUrl: `survey-phsp-table.html`,
+  styleUrls: [`survey-phsp-table.scss`]
 })
 export class SurveyPhspTableComponent implements OnInit, OnChanges {
-  @ViewChild(`phspSlider`) public phspSlider: Slides;
+  @ViewChild(`phspSlider`, { static: false }) public phspSlider: IonSlides;
 
-  @Input() public category: string;
-  @Input() public list: (IScholarshipStatusItem | ICollegeStatusItem)[];
-  @Input() public searchResults: any[];
-  @Input() public startOnLastSlide: boolean;
+  @Input() category: string;
+  @Input() list: (IScholarshipStatusItem | ICollegeStatusItem)[];
+  @Input() searchResults: any[];
+  @Input() startOnLastSlide: boolean;
 
   public addingItem: boolean = false;
   public decisionOptions = DECISION_OPTIONS;
@@ -55,7 +56,7 @@ export class SurveyPhspTableComponent implements OnInit, OnChanges {
   constructor(
     private events: Events,
     private fb: FormBuilder,
-    private surveyProvider: SurveyProvider
+    private surveyService: SurveyService
   ) {
     this.createForm();
   }
@@ -68,11 +69,13 @@ export class SurveyPhspTableComponent implements OnInit, OnChanges {
       this.list = [];
     }
     if (this.startOnLastSlide) {
-      const lastSlideIndex = this.phspSlider.length();
-      this.initialSlideIndex = lastSlideIndex;
+      this.phspSlider.length()
+        .then((lastSlideIndex: number) => {
+          this.initialSlideIndex = lastSlideIndex;
+        });
     }
-    this.phspSlider.enableKeyboardControl(false);
-    this.phspSlider.keyboardControl = false;
+    // this.phspSlider.enableKeyboardControl(false);
+    // this.phspSlider.keyboardControl = false;
   }
 
   ngOnChanges(changes: any) {
@@ -115,19 +118,22 @@ export class SurveyPhspTableComponent implements OnInit, OnChanges {
       page: this.category
     });
     if (this.isCollege) {
-      this.surveyProvider.setCollegeStatusSectionValidity(true);
+      this.surveyService.setCollegeStatusSectionValidity(true);
     } else {
-      this.surveyProvider.setScholarshipStatusSectionValidity(true);
+      this.surveyService.setScholarshipStatusSectionValidity(true);
     }
   }
 
   public goToNextSlide() {
     this.updateList();
-    if (this.slideIndex === this.phspSlider.length() - 2) {
-      this.phspSlider.slideTo(this.phspSlider.length() - 1);
-    } else {
-      this.phspSlider.slideNext();
-    }
+    this.phspSlider.length()
+      .then((lastSlideIndex: number) => {
+        if (this.slideIndex === lastSlideIndex - 2) {
+          this.phspSlider.slideTo(lastSlideIndex - 1);
+        } else {
+          this.phspSlider.slideNext();
+        }
+      });
   }
 
   public goToPrevPage() {
@@ -168,7 +174,9 @@ export class SurveyPhspTableComponent implements OnInit, OnChanges {
   }
 
   public slideChanged() {
-    this.slideIndex = this.phspSlider.getActiveIndex();
+    this.phspSlider.getActiveIndex().then((idx) => {
+      this.slideIndex = idx;
+    });
   }
 
   public toggleApplyStatus(itemIndex: number) {

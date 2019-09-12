@@ -1,12 +1,7 @@
 <ion-header mode="ios">
-  <ion-toolbar hideBackButton
-               mode="ios">
-    <ion-buttons slot="secondary">
-      <ion-button icon-only
-                  fill="clear"
-                  (click)="back()">
-        <ion-icon name="ios-arrow-back"></ion-icon>
-      </ion-button>
+  <ion-toolbar mode="ios">
+    <ion-buttons slot="start">
+      <ion-back-button></ion-back-button>
     </ion-buttons>
     <ion-title mode="ios">
       <div class="subhead">{{ title }}</div> {{ category?.name }}
@@ -23,7 +18,7 @@
     <ion-searchbar debounce="1000"
                    mode="ios"
                    type="search"
-                   [(ngModel)]="searchTerm"
+                   [(value)]="searchTerm"
                    (ionClear)="clearSearch($event)"
                    (ionInput)="search($event)">
     </ion-searchbar>
@@ -33,7 +28,9 @@
   <ng-template [ngIf]="isAlphabetized">
     <ion-item-group *ngFor="let group of groupedOptions">
       <ion-item-divider light
-                        id="{{group.letter}}">{{ group.letter }}</ion-item-divider>
+                        id="{{group.letter}}">
+        <ion-label>{{ group.letter }}</ion-label>
+      </ion-item-divider>
       <ion-item *ngFor="let option of group.options"
                 padding-right
                 [class.bg-blue10]="option?.isActive">
@@ -64,8 +61,8 @@
         <ion-label>{{option.value}}</ion-label>
       </ion-item>
     </ion-list> -->
-    <ion-list class="options"
-              [virtualScroll]="options">
+    <ion-virtual-scroll class="options"
+                        [items]="options">
       <!-- *ngIf="options" -->
       <ion-item *virtualItem="let option"
                 [class.bg-blue10]="option?.isActive">
@@ -74,7 +71,7 @@
         <ion-label tappable
                    (click)="updateOption(option)">{{ option.value }}</ion-label>
       </ion-item>
-    </ion-list>
+    </ion-virtual-scroll>
   </ng-template>
 </ion-content>
 <ion-footer *ngIf="category?.isActive || filterService.filter?.activeChildCount">

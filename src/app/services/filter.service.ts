@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { trimStart } from 'lodash';
-import { BehaviorSubject } from 'rxjs/BehaviorSubject';
+import { BehaviorSubject } from 'rxjs';
+import { map } from 'rxjs/internal/operators/map';
 
 import { Filter } from '@nte/models/filter.model';
 import { ApiService } from '@nte/services/api.service';
@@ -43,7 +44,8 @@ export class FilterService {
   public search(query: string, itemType: string) {
     let path = itemType === `program` ? `/program_code` : `/${itemType}`;
     path += `s/?name=${query}`;
-    return this.apiService.get(path).map(response => response.json());
+    return this.apiService.get(path)
+      .pipe(map(response => response.json()));
   }
 
   public setCyol(isCyol: boolean) {

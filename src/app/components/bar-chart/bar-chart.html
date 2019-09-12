@@ -1,0 +1,30 @@
+<div class="tinyHeader"
+     *ngIf="tinyHeader"
+     [ngClass]="'text-' + labelColor">{{ tinyHeader }}</div>
+<ion-grid class="bar-chart-wrapper">
+  <ion-row class="ion-align-items-center">
+    <ion-col size="1"
+             *ngIf="range && (range[0] || range[0] === 0)">
+      <div class="tinyText ion-text-right text-grayDark50 nowrap">{{ range[0] }}</div>
+    </ion-col>
+    <ion-col no-padding>
+      <div class="bar-bg"></div>
+      <div class="bar-value"
+           [style.width.%]="(value/range[1]) * 100">{{ value }}</div>
+      <!-- <nvd3 config="newConfig"
+            #barChart
+            [data]="newData"
+            [ngClass]="'label-' + labelColor"
+            [options]="newOptions"></nvd3> -->
+    </ion-col>
+    <ion-col size="1"
+             *ngIf="range && range[1]">
+      <div class="tinyText text-grayDark50 nowrap">{{ range[1] }}</div>
+    </ion-col>
+  </ion-row>
+</ion-grid>
+<div class="ion-text-center"
+     *ngIf="label"
+     [ngClass]="subLabel ? 'body bold uppercase text-' + labelColor : 'body'">{{ label }}</div>
+<div class="subhead"
+     *ngIf="subLabel">{{ subLabel }}</div>

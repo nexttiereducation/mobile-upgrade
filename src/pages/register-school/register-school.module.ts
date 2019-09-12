@@ -1,19 +1,30 @@
+import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
-import { IonicPageModule } from '@ionic/angular';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { RouterModule, Routes } from '@angular/router';
+import { IonicModule } from '@ionic/angular';
 
-import { ComponentsModule } from '@nte/components/components.module';
 import { RegisterSchoolPage } from './register-school';
+import { ComponentsModule } from '@nte/components/components.module';
+
+const routes: Routes = [
+  {
+    path: 'register/school',
+    component: RegisterSchoolPage
+  }
+];
 
 @NgModule({
   declarations: [
     RegisterSchoolPage
   ],
-  exports: [
-    RegisterSchoolPage
-  ],
   imports: [
-    ComponentsModule,
-    IonicPageModule.forChild(RegisterSchoolPage)
+    CommonModule,
+    FormsModule,
+    ReactiveFormsModule,
+    IonicModule,
+    RouterModule.forChild(routes),
+    ComponentsModule
   ]
 })
-export class RegisterSchoolPageModule {}
+export class RegisterSchoolPageModule { }

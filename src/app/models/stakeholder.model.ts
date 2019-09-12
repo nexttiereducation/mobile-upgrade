@@ -1,8 +1,8 @@
-import { ICollegeTracker } from './college-tracker.interface';
-import { ICollege } from './college.interface';
 import { IResult } from './interest-profiler.models';
-import { IStudentConnection } from './student-connection.interface';
-import { IStudent } from './student.interface';
+import { ICollegeTracker } from '@nte/interfaces/college-tracker.interface';
+import { ICollege } from '@nte/interfaces/college.interface';
+import { IStudentConnection } from '@nte/interfaces/student-connection.interface';
+import { IStudent } from '@nte/interfaces/student.interface';
 import { ActScore } from '@nte/models/test-score-act.model';
 import { SatScore } from '@nte/models/test-score-sat.model';
 
@@ -204,7 +204,7 @@ export class Stakeholder {
 
   public isAllowed(actionName?: string, resource?: string): boolean {
     if (this.entitlements) {
-      for (let i = 0, entitlement: any; entitlement = this.entitlements[i]; ++i) {
+      this.entitlements.forEach(entitlement => {
         if (entitlement.name.toUpperCase() === actionName.toUpperCase()) {
           if (!resource) {
             return true;
@@ -214,7 +214,7 @@ export class Stakeholder {
             return true;
           }
         }
-      }
+      });
     }
     return false;
   }

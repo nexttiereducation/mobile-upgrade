@@ -1,27 +1,25 @@
 import { Component } from '@angular/core';
-import { IonicPage, NavController } from '@ionic/angular';
+import { Router } from '@angular/router';
 
-import { IHighSchool } from '@nte/models/high-school.interface';
+import { IHighSchool } from '@nte/interfaces/high-school.interface';
+import { RegisterFormPage } from '@nte/pages/register-form/register-form';
 import { MixpanelService } from '@nte/services/mixpanel.service';
 import { StakeholderService } from '@nte/services/stakeholder.service';
-import { RegisterFormPage } from './../register-form/register-form';
 
-@IonicPage({
-  name: `register-school-page`
-})
 @Component({
   selector: `register-school`,
-  templateUrl: `register-school.html`
+  templateUrl: `register-school.html`,
+  styleUrls: [`register-school.scss`]
 })
 export class RegisterSchoolPage {
   public selectedHighSchool: IHighSchool;
 
-  constructor(public navCtrl: NavController,
+  constructor(public router: Router,
     private mixpanel: MixpanelService,
     private stakeholderService: StakeholderService) { }
 
   public next() {
-    this.navCtrl.push(RegisterFormPage);
+    this.router.navigate([RegisterFormPage]);
   }
 
   public onHighSchoolChanged(school: IHighSchool) {
@@ -33,7 +31,9 @@ export class RegisterSchoolPage {
   }
 
   public saveSchool() {
-    this.mixpanel.event(`sign_up_select_school`, { school_name: this.selectedHighSchool.name });
+    this.mixpanel.event(`sign_up_select_school`, {
+      school_name: this.selectedHighSchool.name
+    });
     this.stakeholderService.newUser.highschool = this.selectedHighSchool.id;
     this.stakeholderService.newUser.highschool_name = this.selectedHighSchool.name;
     this.next();

@@ -6,21 +6,21 @@ export const COLLEGE_TILES: any[] = [
     isLocked: true,
     name: `Saved`,
     order: 0,
-    providerVariable: `savedColleges$`
+    serviceVariable: `savedColleges$`
   },
   {
     colSpan: 4,
     isLocked: true,
     name: `Recommended`,
     order: 1,
-    providerVariable: `recommendations$`
+    serviceVariable: `recommendations$`
   },
   {
     colSpan: 4,
     isLocked: true,
     name: `Matching`,
     order: 2,
-    providerVariable: `matchingColleges$`,
+    serviceVariable: `matchingColleges$`,
     stakeholder_type: `Student`
   },
   {
@@ -29,7 +29,7 @@ export const COLLEGE_TILES: any[] = [
     isLocked: true,
     name: `Search All`,
     order: 3,
-    providerVariable: `all$`
+    serviceVariable: `all$`
   },
   {
     colSpan: 6,
@@ -44,7 +44,7 @@ export const COLLEGE_TILES: any[] = [
     isLocked: false,
     name: `Top Colleges`,
     order: 5,
-    providerVariable: `all$`
+    serviceVariable: `all$`
   },
   {
     colSpan: 4,
@@ -52,7 +52,7 @@ export const COLLEGE_TILES: any[] = [
     isLocked: false,
     name: `Near You`,
     order: 6,
-    providerVariable: `nearbyColleges$`
+    serviceVariable: `nearbyColleges$`
   },
   {
     colSpan: 4,
@@ -60,7 +60,7 @@ export const COLLEGE_TILES: any[] = [
     isLocked: false,
     name: `Great Value`,
     order: 7,
-    providerVariable: `all$`
+    serviceVariable: `all$`
   },
   {
     colSpan: 4,
@@ -68,7 +68,7 @@ export const COLLEGE_TILES: any[] = [
     isLocked: false,
     name: `Balanced Life`,
     order: 8,
-    providerVariable: `all$`
+    serviceVariable: `all$`
   }
 ];
 

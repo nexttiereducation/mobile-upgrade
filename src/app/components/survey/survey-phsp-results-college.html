@@ -15,7 +15,7 @@
         <img [src]="surveyResults.results.college_attending.college_logo || surveyResults.results.college_attending.photo_url ||
                     'assets/image/avatar/school.svg'">
       </ion-avatar>
-      <div class="text-black bold">{{ surveyResults.results.college_attending.name || 'Undecided' }}</div>
+      <ion-label class="text-black bold">{{ surveyResults.results.college_attending.name || 'Undecided' }}</ion-label>
     </ion-item>
   </ion-card>
   <ion-grid no-padding>

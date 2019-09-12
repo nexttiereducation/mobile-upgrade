@@ -1,20 +1,23 @@
 import { Component, Input, ViewChild } from '@angular/core';
-import { Events, Slides } from '@ionic/angular';
+import { Events, IonSlides } from '@ionic/angular';
 import { cloneDeep, pickBy } from 'lodash';
+import { Subject } from 'rxjs';
+import { map, takeUntil } from 'rxjs/operators';
 
 import { careerClusters } from '@nte/constants/careers.constants';
 import { TaskTracker } from '@nte/models/task-tracker.model';
-import { StakeholderProvider } from '@nte/services/stakeholder.service';
-import { SurveyProvider } from '@nte/services/survey.service';
+import { StakeholderService } from '@nte/services/stakeholder.service';
+import { SurveyService } from '@nte/services/survey.service';
 
 @Component({
   selector: `survey-cc`,
-  templateUrl: `survey-cc.html`
+  templateUrl: `survey-cc.html`,
+  styleUrls: [`survey-cc.scss`]
 })
 export class SurveyCcComponent {
-  @ViewChild(`ccSlider`) public ccSlider: Slides;
+  @ViewChild(`ccSlider`, { static: false }) public ccSlider: IonSlides;
 
-  @Input() public taskTracker: TaskTracker;
+  @Input() taskTracker: TaskTracker;
 
   public answers: any = {
     subjects: []
@@ -36,12 +39,14 @@ export class SurveyCcComponent {
   };
   public suggestedClusters: any;
 
+  private ngUnsubscribe: Subject<any> = new Subject();
+
   get areSubjectsSelected() {
     return this.questions.subjects.filter((s) => s.selected).length > 0;
   }
 
-  constructor(public stakeholderProvider: StakeholderProvider,
-    public surveyProvider: SurveyProvider,
+  constructor(public stakeholderService: StakeholderService,
+    public surveyService: SurveyService,
     public events: Events) {
     this.setupSurvey();
   }
@@ -86,7 +91,8 @@ export class SurveyCcComponent {
     if (this.isNoAnswers) {
       return;
     }
-    this.studentAnswers.page = this.ccSlider.realIndex;
+    this.ccSlider.getActiveIndex()
+      .then(idx => this.studentAnswers.page = idx);
     if (this.ccSlider) {
       if (goBack) {
         this.ccSlider.slidePrev();
@@ -94,22 +100,26 @@ export class SurveyCcComponent {
         this.ccSlider.slideNext();
       }
     }
-    this.surveyProvider.saveSurveyData(
-      this.taskTracker.task.id, {
-      answers: this.studentAnswers,
-      survey_is_complete: isFinalPage
-    }
+    this.surveyService.saveSurveyData(
+      this.taskTracker.task.id,
+      {
+        answers: this.studentAnswers,
+        survey_is_complete: isFinalPage
+      }
     )
-      .map((response) => {
-        if (isFinalPage) {
-          return response.json();
-        } else {
-          return null;
-        }
-      })
+      .pipe(
+        map(response => {
+          if (isFinalPage) {
+            return response.json();
+          } else {
+            return null;
+          }
+        }),
+        takeUntil(this.ngUnsubscribe)
+      )
       .subscribe(
-        (data) => {
-          this.surveyProvider.currentSurvey.answers = this.studentAnswers;
+        (data: any) => {
+          this.surveyService.currentSurvey.answers = this.studentAnswers;
           if (isFinalPage) {
             this.suggestedClusters = data.results;
             this.isSurveyComplete = true;
@@ -123,7 +133,7 @@ export class SurveyCcComponent {
   private getClusterAnswerValues(itemType: string, questions: any, answers: any) {
     const clusterAnswerValues = {};
     if (questions && questions[itemType] && questions[itemType].length) {
-      for (let j = 0, item; item = questions[itemType][j]; ++j) {
+      questions[itemType].forEach(item => {
         let isSelected = false;
         if (answers && answers[itemType] && answers[itemType].length) {
           const itemIndex = answers[itemType].findIndex([`name`, item]);
@@ -132,13 +142,13 @@ export class SurveyCcComponent {
           isSelected = false;
         }
         clusterAnswerValues[item] = isSelected;
-      }
+      });
     }
     return clusterAnswerValues;
   }
 
   private setupSurvey() {
-    const survey = this.surveyProvider.currentSurvey;
+    const survey = this.surveyService.currentSurvey;
     if (survey.results.length > 0) {
       this.isSurveyComplete = true;
       this.suggestedClusters = survey.results;
@@ -147,10 +157,10 @@ export class SurveyCcComponent {
     } else if (Object.keys(survey.answers).length === 0) {
       this.studentAnswers = cloneDeep(survey.questions);
       survey.answers.clusters = [];
-      for (let i = 0, cluster; cluster = this.studentAnswers.clusters[i]; ++i) {
+      this.studentAnswers.clusters.forEach(cluster => {
         cluster.personal_qualities = [];
         cluster.activities = [];
-      }
+      });
     } else {
       this.studentAnswers = Object.assign(this.studentAnswers, survey.answers);
     }
@@ -158,14 +168,14 @@ export class SurveyCcComponent {
     this.questions.subjects = survey.questions.subjects;
     this.studentAnswers.subjects = Object.assign(survey.questions.subjects, this.studentAnswers.subjects);
     this.studentAnswers.page = survey.answers.page || 0;
-    for (let i = 0, clusterQuestions; clusterQuestions = this.questions.clusters[i]; ++i) {
-      const clusterAnswers = survey.answers.clusters[i];
-      this.answers[clusterQuestions.cluster_code] = {
-        activities: this.getClusterAnswerValues(`activities`, clusterQuestions, clusterAnswers),
+    this.questions.clusters.forEach((clusterQs: any, i: number) => {
+      const clusterAs = survey.answers.clusters[i];
+      this.answers[clusterQs.cluster_code] = {
+        activities: this.getClusterAnswerValues(`activities`, clusterQs, clusterAs),
         cluster_index: i,
-        personal_qualities: this.getClusterAnswerValues(`personal_qualities`, clusterQuestions, clusterAnswers)
+        personal_qualities: this.getClusterAnswerValues(`personal_qualities`, clusterQs, clusterAs)
       };
-    }
+    });
     this.isLoaded = true;
   }
 

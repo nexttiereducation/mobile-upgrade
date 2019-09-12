@@ -1,26 +1,25 @@
 import { Injectable } from '@angular/core';
-import { ToastController } from '@ionic/angular';
 import { Storage } from '@ionic/storage';
 import { merge } from 'lodash';
-import { BehaviorSubject } from 'rxjs';
-import { Observable } from 'rxjs/Observable';
-import { Subject } from 'rxjs/Subject';
+import { BehaviorSubject, Observable, Subject } from 'rxjs';
+import { map } from 'rxjs/internal/operators/map';
+import { tap } from 'rxjs/internal/operators/tap';
 
-import 'rxjs/add/operator/map';
-
+import { NodeApiService } from './api-node.service';
+import { ApiService } from './api.service';
+import { HighSchoolService } from './high-school.service';
+import { MixpanelService } from './mixpanel.service';
+import { PushNotificationService } from './push-notification.service';
+import { ToastService } from './toast.service';
+import { INewUser } from '@nte/interfaces/new-user.interface';
+import { IStudent } from '@nte/interfaces/student.interface';
 import { IResult } from '@nte/models/interest-profiler.models';
-import { INewUser } from '@nte/models/new-user.interface';
 import { Stakeholder } from '@nte/models/stakeholder.model';
-import { IStudent } from '@nte/models/student.interface';
-import { NodeApiService } from '@nte/services/api-node.service';
 import { ApiTokenService } from '@nte/services/api-token.service';
-import { ApiService } from '@nte/services/api.service';
-import { HighSchoolService } from '@nte/services/high-school.service';
-import { MixpanelService } from '@nte/services/mixpanel.service';
 
 @Injectable({ providedIn: 'root' })
 export class StakeholderService {
-  public loggingIn = false;
+  public loggingIn: boolean = false;
   public newUser: INewUser = {
     email: null,
     first_name: null,
@@ -33,6 +32,9 @@ export class StakeholderService {
   private _loginSuccess: Subject<any> = new Subject<any>();
   private _logoutSuccess: Subject<any> = new Subject<any>();
   private _stakeholder: BehaviorSubject<Stakeholder> = new BehaviorSubject<Stakeholder>(null);
+  set loggedIn(isLoggedIn: boolean) {
+    this._loggedIn.next(isLoggedIn);
+  }
 
   get loggedIn(): boolean {
     return this._loggedIn.getValue();
@@ -50,6 +52,10 @@ export class StakeholderService {
     return this._logoutSuccess.asObservable();
   }
 
+  set stakeholder(stakeholder: Stakeholder) {
+    this._stakeholder.next(stakeholder);
+  }
+
   get stakeholder(): Stakeholder {
     return this._stakeholder.getValue();
   }
@@ -58,40 +64,60 @@ export class StakeholderService {
     return this._stakeholder.asObservable();
   }
 
-  set loggedIn(isLoggedIn: boolean) {
-    this._loggedIn.next(isLoggedIn);
-  }
-
-  set stakeholder(stakeholder: Stakeholder) {
-    this._stakeholder.next(stakeholder);
-  }
-
   constructor(public api: ApiService,
     public apiToken: ApiTokenService,
     public nodeApi: NodeApiService,
     public storage: Storage,
     private highSchoolService: HighSchoolService,
     private mixpanel: MixpanelService,
-    private toastCtrl: ToastController) {
+    private pnService: PushNotificationService,
+    private toastService: ToastService) {
     this.stakeholder = new Stakeholder({});
   }
 
+  public checkStorage() {
+    return this.storage.get(`ls.stakeholder`)
+      .then(
+        stakeholder => {
+          if (stakeholder) {
+            this.storage.get(`ls.token`)
+              .then(token => {
+                if (token && token.length) {
+                  const currentUser = JSON.parse(stakeholder);
+                  this.setStakeholder({
+                    id: currentUser.id,
+                    token
+                  }, true);
+                }
+              });
+            return true;
+          } else {
+            return false;
+          }
+        },
+        err => false
+      );
+  }
+
   changePassword(currentPassword: string, newPassword: string, confirmedPassword) {
-    return this.api.post(`/stakeholder/password/change/`, {
-      new_password: newPassword,
-      new_password_confirm: confirmedPassword,
-      old_password: currentPassword
-    });
+    return this.api
+      .post(`/stakeholder/password/change/`, {
+        new_password: newPassword,
+        new_password_confirm: confirmedPassword,
+        old_password: currentPassword
+      });
   }
 
   public deleteUser() {
-    this.api.delete(`/stakeholder/`)
+    this.api
+      .delete(`/stakeholder/`)
       .subscribe(() => this.logout());
   }
 
   public getCleverAuthToken(cleverData: any) {
     const cleverAuthData = cleverData || {};
-    return this.api.postWithoutAuthorization(`/clever/login/`, cleverAuthData)
+    return this.api
+      .postWithoutAuthorization(`/clever/login/`, cleverAuthData)
       .subscribe(
         response => this.setStakeholder(response.json(), true, `clever`),
         err => console.error(err)
@@ -99,11 +125,12 @@ export class StakeholderService {
   }
 
   public getGraduationYearOptions() {
-    return this.api.optionsNoAuth(`/stakeholder/register/`)
-      .map((response) => {
+    return this.api
+      .optionsNoAuth(`/stakeholder/register/`)
+      .pipe(map((response) => {
         const result = response.json();
         return result.actions.POST.graduation_year;
-      });
+      }));
   }
 
   public getNewUserForRegistration() {
@@ -114,15 +141,17 @@ export class StakeholderService {
   }
 
   public getOverview() {
-    return this.nodeApi.get(`/users/${this.stakeholder.id}/overview`)
-      .map((response) => {
+    return this.nodeApi
+      .get(`/users/${this.stakeholder.id}/overview`)
+      .pipe(map((response) => {
         this.stakeholder = Object.assign(this.stakeholder, response.json());
         return response.json();
-      });
+      }));
   }
 
   public getStakeholderInformation(isLoggingIn?: boolean, loginService?: string) {
-    this.api.get(`/stakeholder`)
+    this.api
+      .get(`/stakeholder`)
       .subscribe((response) => {
         const data = response.json();
         this.stakeholder = new Stakeholder(data);
@@ -149,17 +178,21 @@ export class StakeholderService {
   }
 
   public getStudentsForParent(queryString = ``): Observable<IStudent[]> {
-    return this.api.get(`/students/${queryString}`)
-      .map((response) => response.json().results)
-      .do<IStudent[]>((students) => {
-        this.stakeholder.students = students;
-        return students;
-      });
+    return this.api
+      .get(`/students/${queryString}`)
+      .pipe(
+        map((response) => response.json().results),
+        tap<IStudent[]>((students) => {
+          this.stakeholder.students = students;
+          return students;
+        })
+      );
   }
 
   public login(loginData: any) {
     this.loggingIn = true;
-    this.api.postWithoutAuthorization(`/stakeholder/login/`, loginData)
+    this.api
+      .postWithoutAuthorization(`/stakeholder/login/`, loginData)
       .subscribe(
         response => {
           const data = response.json();
@@ -168,18 +201,18 @@ export class StakeholderService {
         },
         err => {
           this.loggingIn = false;
-          let errorMessage = `Unable to log you in. Please try again!`;
-          if (err && err._body) {
-            if (this.isJson(err._body)) {
-              errorMessage = JSON.parse(err._body).detail;
-            }
-          }
-          this.toastCtrl.create({
-            duration: 5000,
-            message: errorMessage
-          }).present();
+          this.showLoginErrorToast(err);
         }
       );
+  }
+
+  public loginViaStorage() {
+    this.storage.get(`ls.token`)
+      .then(token => {
+        if (token && token.length) {
+          this.setSessionStorage(token, true);
+        }
+      });
   }
 
   public logout() {
@@ -203,7 +236,8 @@ export class StakeholderService {
 
   public populateEntitlements() {
     const entitlements = new Array();
-    return this.api.getPaged(`/stakeholder/entitlement/all/`)
+    return this.api
+      .getPaged(`/stakeholder/entitlement/all/`)
       .subscribe(data => {
         entitlements.push.apply(entitlements, data);
         this.stakeholder.entitlements = entitlements;
@@ -221,20 +255,23 @@ export class StakeholderService {
     if (this.newUser.graduation) {
       this.newUser = this.getNewUserForRegistration();
     }
-    return this.api.postWithoutAuthorization(`/stakeholder/register`, this.newUser)
-      .map((response) => {
+    return this.api
+      .postWithoutAuthorization(`/stakeholder/register`, this.newUser)
+      .pipe(map((response) => {
         this.mixpanel.event(`user_registered`);
         return response.json();
-      });
+      }));
   }
 
   public removeProfilePicture(userId: number) {
-    return this.nodeApi.delete(`/users/${userId}/profile-pic`);
+    return this.nodeApi
+      .delete(`/users/${userId}/profile-pic`);
   }
 
   public sendForgotPasswordEmail(email: string): Observable<any> {
-    return this.api.postWithoutAuthorization(`/stakeholder/forgot`, { email })
-      .map(response => response.json());
+    return this.api
+      .postWithoutAuthorization(`/stakeholder/forgot`, { email })
+      .pipe(map(response => response.json()));
   }
 
   public setHighSchool() {
@@ -257,7 +294,7 @@ export class StakeholderService {
     this.api.setupHeaders(token).then(() => {
       this.nodeApi.setupHeaders(token);
       this.getStakeholderInformation(isLoggingIn, loginService);
-      // this.pnService.setToken();
+      this.pnService.setToken();
     });
   }
 
@@ -267,21 +304,38 @@ export class StakeholderService {
     this.setSessionStorage(this.stakeholder.authToken, isLoggingIn, loginService);
   }
 
+  public updateInterestProfile(data: any) {
+    this.api
+      .patch(`/stakeholder`, { interest_profiler_result: data })
+      .pipe(map(response => response.json()))
+      .subscribe(
+        (response: any) => {
+          this.setInterestProfilerResult(
+            response.interest_profiler_result
+          );
+        },
+        err => console.error(err)
+      );
+  }
+
+
   public updateProfilePicture(file: File) {
     const formData = new FormData();
     formData.append(`profile_photo`, file);
     formData.append(`type`, file.type);
-    return this.api.patchFile(`/stakeholder/`, file)
-      .map((response: any) => this.stakeholder = response);
+    return this.api
+      .patchFile(`/stakeholder/`, file)
+      .pipe(map((response: any) => this.stakeholder = response));
   }
 
   public updateStakeholder() {
-    this.api.get(`/stakeholder`)
-      .map((response) => {
+    this.api
+      .get(`/stakeholder`)
+      .pipe(map((response) => {
         const data = response.json();
         const updatedStakeholder = new Stakeholder(data);
         merge(this.stakeholder, updatedStakeholder);
-      });
+      }));
   }
 
   private isJson(jsonString: string) {
@@ -290,5 +344,15 @@ export class StakeholderService {
     } catch (e) {
       return false;
     }
+  }
+
+  private async showLoginErrorToast(err: any) {
+    let errorMessage = `Unable to log you in. Please try again!`;
+    if (err && err._body) {
+      if (this.isJson(err._body)) {
+        errorMessage = JSON.parse(err._body).detail;
+      }
+    }
+    this.toastService.open(errorMessage);
   }
 }

@@ -1,4 +1,4 @@
-import { IFeedCategory } from '@nte/models/feed-category.interface';
+import { IFeedCategory } from '@nte/interfaces/feed-category.interface';
 
 const URLS = {
   ACHIEVEMENT: `https://next-tier.s3.amazonaws.com/build/images/notifications/ic_thumb_noti_item_accomplishment.svg`,

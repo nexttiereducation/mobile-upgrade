@@ -3,10 +3,8 @@ import { Headers, Http } from '@angular/http';
 import { Storage } from '@ionic/storage';
 import { extend } from 'lodash';
 import { BehaviorSubject } from 'rxjs';
-import { Observable } from 'rxjs/Observable';
-import { Subject } from 'rxjs/Subject';
+import { Observable, Subject } from 'rxjs';
 
-import 'rxjs/add/operator/map';
 
 import { UrlService } from '@nte/services/url.service';
 

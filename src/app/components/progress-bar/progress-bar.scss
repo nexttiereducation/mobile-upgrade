@@ -1,11 +1,11 @@
 progress-bar {
   display: block;
   width: 100%;
-  background-color: $grayLighter;
+  background-color: var(--grayLighter);
   height: 4px;
   .progress {
     height: 4px;
-    background-color: transparentize($green, 0.5);
+    background-color: transparentize(var(--green), 0.5);
     transition: width 0.25s ease-in-out;
   }
 }

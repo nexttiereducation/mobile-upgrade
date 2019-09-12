@@ -1,26 +1,26 @@
 import { Component } from '@angular/core';
-import { NavController } from '@ionic/angular';
+import { Router } from '@angular/router';
 
-import { NotificationsPage } from './../../pages/notifications/notifications';
-import { NotificationProvider } from '@nte/services/notification.service';
+import { NotificationService } from '@nte/services/notification.service';
 
 @Component({
-  selector: `[notifications-button]`,
+  selector: `notifications-button`,
   templateUrl: `notifications-button.html`
 })
 export class NotificationsButtonComponent {
-  constructor(public notificationProvider: NotificationProvider,
-    private navCtrl: NavController) { }
+  constructor(public notificationService: NotificationService,
+    private router: Router) { }
 
   public goToNotifications() {
-    this.navCtrl.push(
-      NotificationsPage,
-      null,
-      {
-        animation: `ios-transition`,
-        direction: `back`
-      }
-    );
+    this.router.navigate(['app/notifications']);
+    // this.router.navigate([
+    //   NotificationsPage,
+    //   null,
+    //   {
+    //     animation: `ios-transition`,
+    //     direction: `back`
+    //   }
+    // ]);
   }
 
 }

@@ -1,12 +1,7 @@
 <ion-header mode="ios">
   <ion-toolbar mode="ios">
-    <ion-buttons slot="secondary">
-      <ion-button fill="clear"
-                  color="black"
-                  icon-only
-                  (click)="back()">
-        <ion-icon name="funnel"></ion-icon>
-      </ion-button>
+    <ion-buttons slot="start">
+      <ion-back-button></ion-back-button>
     </ion-buttons>
     <ion-title mode="ios"> Create your own list! </ion-title>
   </ion-toolbar>
@@ -56,9 +51,8 @@
   <div padding>
     <h6>Pick an Image</h6>
     <ion-grid class="pick-an-image"
-              no-padding
-              [(ngModel)]="list.image">
-      <ion-radio-group>
+              no-padding>
+      <ion-radio-group [(value)]="list.image">
         <ion-row>
           <ng-template let-image
                        ngFor

@@ -24,7 +24,7 @@ college {
 
     ion-icon {
       &[name=nt-save]:before {
-        color: $blue50;
+        color: var(--blue50);
       }
 
       &[name=nt-saved] {
@@ -36,7 +36,7 @@ college {
         text-align: center;
 
         &:before {
-          color: $blue50;
+          color: var(--blue50);
         }
       }
     }

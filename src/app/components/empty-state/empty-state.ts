@@ -1,10 +1,12 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, ViewEncapsulation } from '@angular/core';
 
-import { IEmptyState } from '@nte/models/empty-state';
+import { IEmptyState } from '@nte/interfaces/empty-state.interface';
 
 @Component({
   selector: `empty-state`,
-  templateUrl: `empty-state.html`
+  templateUrl: `empty-state.html`,
+  styleUrls: [`empty-state.scss`],
+  encapsulation: ViewEncapsulation.None
 })
 export class EmptyStateComponent implements OnInit {
   @Input() public emptyState?: IEmptyState;

@@ -1,8 +1,18 @@
+import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
-import { IonicPageModule } from '@ionic/angular';
+import { FormsModule } from '@angular/forms';
+import { RouterModule, Routes } from '@angular/router';
+import { IonicModule } from '@ionic/angular';
 
-import { ComponentsModule } from '@nte/components/components.module';
 import { CollegeFinancialPage } from './college-financial';
+import { ComponentsModule } from '@nte/components/components.module';
+
+const routes: Routes = [
+  {
+    path: '',
+    component: CollegeFinancialPage
+  }
+];
 
 @NgModule({
   declarations: [
@@ -12,9 +22,12 @@ import { CollegeFinancialPage } from './college-financial';
     CollegeFinancialPage
   ],
   imports: [
-    IonicPageModule.forChild(CollegeFinancialPage),
+    CommonModule,
+    FormsModule,
+    IonicModule,
+    RouterModule.forChild(routes),
     ComponentsModule
   ]
 })
 
-export class CollegeFinancialPageModule {}
+export class CollegeFinancialPageModule { }

@@ -1,29 +1,38 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnDestroy, Output } from '@angular/core';
 import { Events } from '@ionic/angular';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 
-import { IHighSchool } from '@nte/models/high-school.interface';
-import { HighSchoolProvider } from '@nte/services/high-school.service';
-import { KeyboardProvider } from '@nte/services/keyboard.service';
+import { IHighSchool } from '@nte/interfaces/high-school.interface';
+import { HighSchoolService } from '@nte/services/high-school.service';
+import { KeyboardService } from '@nte/services/keyboard.service';
 
 @Component({
   selector: `high-school`,
-  templateUrl: `high-school.html`
+  templateUrl: `high-school.html`,
+  styleUrls: [`high-school.scss`]
 })
-export class HighSchoolComponent {
+export class HighSchoolComponent implements OnDestroy {
+  @Input() isNewUser: boolean;
+  @Input() isPrompt: boolean;
   @Output() public highSchoolChanged = new EventEmitter<IHighSchool>();
 
   public highSchools: IHighSchool[];
-  @Input() public isNewUser: boolean;
-  @Input() public isPrompt: boolean;
   public searchValue: string;
   public selectedHighSchool: IHighSchool;
 
-  private nameQueryParam = `name=`;
-  private zipCodeQueryParam = `zipcode=`;
+  private nameQueryParam: string = `name=`;
+  private ngUnsubscribe: Subject<any> = new Subject();
+  private zipCodeQueryParam: string = `zipcode=`;
 
   constructor(private events: Events,
-    private highSchoolProvider: HighSchoolProvider,
-    private keyboard: KeyboardProvider) { }
+    private highSchoolService: HighSchoolService,
+    private keyboard: KeyboardService) { }
+
+  ngOnDestroy() {
+    this.ngUnsubscribe.next();
+    this.ngUnsubscribe.complete();
+  }
 
   public closeKeyboard() {
     this.keyboard.close();
@@ -35,7 +44,8 @@ export class HighSchoolComponent {
   }
 
   public saveHighSchool() {
-    this.highSchoolProvider.updateHighSchool(this.selectedHighSchool.id)
+    this.highSchoolService.updateHighSchool(this.selectedHighSchool.id)
+      .pipe(takeUntil(this.ngUnsubscribe))
       .subscribe(() => {
         delete this.selectedHighSchool;
         if (this.isPrompt) {
@@ -46,7 +56,8 @@ export class HighSchoolComponent {
 
   public search() {
     const query = this.createSearchQuery();
-    this.highSchoolProvider.searchSchools(query, this.isNewUser)
+    this.highSchoolService.searchSchools(query, this.isNewUser)
+      .pipe(takeUntil(this.ngUnsubscribe))
       .subscribe((response) => {
         this.highSchools = response;
       });

@@ -1,17 +1,15 @@
-import { animate, Component, state, style, transition, trigger } from '@angular/core';
-import { GoogleMap, GoogleMaps, GoogleMapsAnimation, GoogleMapsEvent } from '@ionic-native/google-maps';
-import { IonicPage, NavController, NavParams } from '@ionic/angular';
+import { animate, state, style, transition, trigger } from '@angular/animations';
+import { Component } from '@angular/core';
+import { GoogleMap, GoogleMaps, GoogleMapsAnimation, GoogleMapsEvent } from '@ionic-native/google-maps/ngx';
 import { BehaviorSubject } from 'rxjs';
 
 import { DonutChart } from '@nte/models/donut-chart.model';
 import { CollegeService } from '@nte/services/college.service';
 
-@IonicPage({
-  name: `college-campus-page`
-})
 @Component({
   selector: `college-campus`,
   templateUrl: `college-campus.html`,
+  styleUrls: [`college-campus.scss`],
   animations: [
     trigger(`mapState`, [
       state(`ready`,
@@ -31,11 +29,17 @@ export class CollegeCampusPage {
   public animation = GoogleMapsAnimation;
   public college: any;
   public event = GoogleMapsEvent;
-  public latitude: number;
-  public longitude: number;
   public map: GoogleMap;
 
   private _mapReady: BehaviorSubject<boolean> = new BehaviorSubject(null);
+
+  get details() {
+    if (this.college && this.college.details) {
+      return this.college.details;
+    } else {
+      return {};
+    }
+  }
 
   get fraternityChart() {
     if (this.details.percent_in_fraternity) {
@@ -44,13 +48,11 @@ export class CollegeCampusPage {
       return null;
     }
   }
-  get details() {
-    if (this.college && this.college.details) {
-      return this.college.details;
-    } else {
-      return {};
-    }
+
+  get latitude() {
+    return +this.college.latitude;
   }
+
   get liveOnCampusChart() {
     if (this.details.percent_in_sorority) {
       return new DonutChart(this.details.percent_in_sorority);
@@ -58,9 +60,18 @@ export class CollegeCampusPage {
       return null;
     }
   }
+
+  get longitude() {
+    return +this.college.longitude;
+  }
+
   get mapReady$() {
     return this._mapReady.asObservable();
   }
+  set mapReady(ready: boolean) {
+    this._mapReady.next(ready);
+  }
+
   get outOfStateChart() {
     if (this.details.perecentage_fresh_out) {
       return new DonutChart(this.details.perecentage_fresh_out);
@@ -68,12 +79,10 @@ export class CollegeCampusPage {
       return null;
     }
   }
-  set mapReady(ready: boolean) {
-    this._mapReady.next(ready);
-  }
+
   get sororityChart() {
-    if (this.details.freshman_perecent_on_campus) {
-      return new DonutChart(this.details.freshman_perecent_on_campus);
+    if (this.details.percent_in_sorority) {
+      return new DonutChart(this.details.in_sorority);
     } else {
       return null;
     }
@@ -86,20 +95,14 @@ export class CollegeCampusPage {
     }
   }
 
-  constructor(public navCtrl: NavController,
-    public params: NavParams,
-    public collegeService: CollegeService,
-    private googleMaps: GoogleMaps) {
-    this.college = params.data;
-  }
+  constructor(public collegeService: CollegeService,
+    private googleMaps: GoogleMaps) { }
 
   public ionViewDidLoad() {
     this.loadMap();
   }
 
   private loadMap() {
-    this.latitude = +this.college.latitude;
-    this.longitude = +this.college.longitude;
     // Create a map after the view is loaded.
     // (platform is already ready in app.component.ts)
     // var div = document.getElementById("map_canvas");

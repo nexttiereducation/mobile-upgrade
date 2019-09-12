@@ -1,11 +1,12 @@
 import { Component, Input, OnDestroy } from '@angular/core';
-import { ToastController } from '@ionic/angular';
 import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/internal/operators/takeUntil';
 
+import { ToastService } from './../../services/toast.service';
 import { NOTIFICATION_SETTING_SECTIONS } from '@nte/constants/settings-notification.constants';
 import { IUserOverview } from '@nte/interfaces/user-overview.interface';
-import { SettingsProvider } from '@nte/services/settings.service';
-import { StakeholderProvider } from '@nte/services/stakeholder.service';
+import { SettingsService } from '@nte/services/settings.service';
+import { StakeholderService } from '@nte/services/stakeholder.service';
 
 @Component({
   selector: `notification-settings`,
@@ -23,9 +24,9 @@ export class NotificationSettingsComponent implements OnDestroy {
     return this.stakeholderService.stakeholder;
   }
 
-  constructor(private settingsProvider: SettingsProvider,
-    private stakeholderService: StakeholderProvider,
-    private toastCtrl: ToastController) { }
+  constructor(private settingsService: SettingsService,
+    private stakeholderService: StakeholderService,
+    private toastService: ToastService) { }
 
   ngOnDestroy() {
     this.ngUnsubscribe.next();
@@ -53,21 +54,15 @@ export class NotificationSettingsComponent implements OnDestroy {
     setTimeout(
       () => {
         console.log(this.userOverview);
-        this.settingsProvider.updateNotificationSettings(this.userOverview)
-          .takeUntil(this.ngUnsubscribe)
+        this.settingsService.updateNotificationSettings(this.userOverview)
+          .pipe(takeUntil(this.ngUnsubscribe))
           .subscribe(
             response => {
               this.userOverview = response;
-              this.toastCtrl.create({
-                duration: 3000,
-                message: `Notification preferences saved.`
-              }).present();
+              this.toastService.open(`Notification preferences saved.`);
             },
             () => {
-              this.toastCtrl.create({
-                duration: 3000,
-                message: `Can't update notification settings. Please try again.`
-              }).present();
+              this.toastService.open(`Can't update notification settings. Please try again.`);
             }
           );
       },

@@ -1,8 +1,10 @@
+import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
-import { IonicPageModule } from '@ionic/angular';
+import { FormsModule } from '@angular/forms';
+import { IonicModule } from '@ionic/angular';
 
-import { ComponentsModule } from '@nte/components/components.module';
 import { MessagesPage } from './messages';
+import { ComponentsModule } from '@nte/components/components.module';
 
 @NgModule({
   declarations: [
@@ -12,8 +14,10 @@ import { MessagesPage } from './messages';
     MessagesPage
   ],
   imports: [
-    ComponentsModule,
-    IonicPageModule.forChild(MessagesPage)
+    IonicModule,
+    CommonModule,
+    FormsModule,
+    ComponentsModule
   ]
 })
 export class MessagesPageModule { }

@@ -4,28 +4,29 @@ import { split, trimEnd } from 'lodash';
 @Component({
   encapsulation: ViewEncapsulation.None,
   selector: `pie-chart`,
-  templateUrl: `pie-chart.html`
+  templateUrl: `pie-chart.html`,
+  styleUrls: [`pie-chart.scss`]
 })
 export class PieChartComponent implements OnInit {
-  @Input() public label?: string;
-  @Input() public labelColor?: any = `blue`;
+  @ViewChild(`pieChart`, { static: false }) pieChartElem;
+
+  @Input() label?: string;
+  @Input() labelColor?: any = `blue`;
+  @Input() series: any;
+  @Input() showLegend: boolean = false;
+  @Input() size: string = `small`;
+  @Input() subLabel: boolean = false;
+  @Input() tinyHeader?: string;
+  @Input() unit: string = `student`;
 
   public newConfig: any;
   public newData: any;
   public newOptions: any;
-  @ViewChild(`pieChart`) public pieChartElem;
-  @Input() public series: any;
-  @Input() public showLegend?: boolean = false;
-  @Input() public size?: string = `small`;
-  @Input() public subLabel?: boolean = false;
-  @Input() public tinyHeader?: string;
-  @Input() public unit?: string = `student`;
 
-  public ionViewDidLoad() {
-    this.pieChartElem.fill = this.series.colors[0];
-  }
+  constructor() { }
 
   ngOnInit() {
+    this.pieChartElem.fill = this.series && this.series.colors ? this.series.colors[0] : `#e1e1e1`;
     this.setupNewChart();
     this.newConfig = {
       deepWatchData: false,

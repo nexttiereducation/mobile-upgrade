@@ -1,29 +1,28 @@
-import { Component, ViewChild } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
-import { Content, Events, IonicPage, ModalController, NavController, NavParams, ToastController } from '@ionic/angular';
+import { ActivatedRoute, Router } from '@angular/router';
+import { Events, ModalController, ToastController } from '@ionic/angular';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 
 import { PromptComponent } from '@nte/components/prompt/prompt';
 import { TASK_NOTES_EMPTY_STATE, TASK_STATUSES, TaskStatus } from '@nte/constants/task.constants';
+import { IEmptyState } from '@nte/interfaces/empty-state.interface';
 import { BackEndPrompt } from '@nte/models/back-end-prompt.model';
-import { IEmptyState } from '@nte/models/empty-state';
 import { TaskTracker } from '@nte/models/task-tracker.model';
-import { TaskAttachmentsPage } from './../../pages/task-attachments/task-attachments';
-import { TaskSurveyPage } from './../../pages/task-survey/task-survey';
 import { LinkService } from '@nte/services/link.service';
 import { MixpanelService } from '@nte/services/mixpanel.service';
+import { NavStateService } from '@nte/services/nav-state.service';
 import { SurveyService } from '@nte/services/survey.service';
 import { TaskService } from '@nte/services/task.service';
-import { MessagesPage } from './../messages/messages';
 
-@IonicPage({
-  name: `task-page`
-})
 @Component({
   selector: `task`,
-  templateUrl: `task.html`
+  templateUrl: `task.html`,
+  styleUrls: [`task.scss`]
 })
-export class TaskPage {
-  @ViewChild(Content) public content: Content;
+export class TaskPage implements OnInit, OnDestroy {
+  @ViewChild(`Content`, { static: false }) public content;
 
   public addingNote: boolean;
   public id: number;
@@ -37,41 +36,49 @@ export class TaskPage {
   public taskTracker: any;
   public typeImage: string;
 
+  private ngUnsubscribe: Subject<any> = new Subject();
   private page: string;
   private taskNotesEmptyState: IEmptyState;
 
-  constructor(params: NavParams,
-    public events: Events,
+  constructor(public events: Events,
     public linkService: LinkService,
     public sanitizer: DomSanitizer,
     private mixpanel: MixpanelService,
     private modalCtrl: ModalController,
-    private navCtrl: NavController,
+    private route: ActivatedRoute,
+    private router: Router,
     private surveyService: SurveyService,
     private taskService: TaskService,
-    private toastCtrl: ToastController) {
-    this.id = params.get(`id`);
-    this.isParent = params.get(`isParent`);
-    this.page = params.get(`page`);
-    this.prompt = params.get(`prompt`);
-    this.taskTracker = params.get(`task`) || null;
-    this.typeImage = params.get(`taskTypeImg`);
+    private toastCtrl: ToastController,
+    navStateService: NavStateService) {
+    const params: any = navStateService.data;
+    this.id = params.id;
+    this.isParent = params.isParent;
+    this.page = params.page;
+    this.prompt = params.prompt;
+    this.taskTracker = params.task;
+    this.typeImage = params.taskTypeImg;
     this.taskNotesEmptyState = TASK_NOTES_EMPTY_STATE;
   }
 
-  ionViewDidLoad() {
+  ngOnInit() {
     if (this.taskTracker) {
       this.init();
     } else {
       this.taskService.getTaskTrackerById(this.id)
-        .subscribe((tracker: TaskTracker) => {
-          this.taskTracker = tracker;
-          this.init();
-        });
+        .pipe(takeUntil(this.ngUnsubscribe))
+        .subscribe(
+          (tracker: TaskTracker) => {
+            this.taskTracker = tracker;
+            this.init();
+          }
+        );
     }
   }
 
-  ionViewWillUnload() {
+  ngOnDestroy() {
+    this.ngUnsubscribe.next();
+    this.ngUnsubscribe.complete();
     this.events.unsubscribe(`loadMore`);
     this.events.unsubscribe(`sendMessage`);
     this.events.unsubscribe(`taskChange`);
@@ -84,11 +91,26 @@ export class TaskPage {
   public addNote(note: string) {
     if (this.addingNote) { return; }
     this.addingNote = true;
-    this.taskService.createNote(this.taskTracker, note);
+    this.taskService.createNote(this.taskTracker.id, note)
+      .pipe(takeUntil(this.ngUnsubscribe))
+      .subscribe(
+        () => {
+          this.getNotes();
+          this.addingNote = false;
+          this.mixpanel.event(`task_note_added`, {
+            'task title': this.taskTracker.task.name
+          });
+        },
+        (error) => {
+          console.error(error);
+          this.addingNote = false;
+        }
+      );
   }
 
   public deleteNote(noteId: number, index) {
     this.taskService.deleteNote(this.taskTracker.id, noteId)
+      .pipe(takeUntil(this.ngUnsubscribe))
       .subscribe(
         () => {
           this.notes.splice(index, 1);
@@ -103,48 +125,67 @@ export class TaskPage {
   }
 
   public goToAttachments() {
-    this.navCtrl.push(
-      TaskAttachmentsPage,
-      { taskTracker: this.taskTracker },
-      { animation: `ios-transition` }
+    this.router.navigate(
+      [
+        `app`,
+        `tasks`,
+        this.taskTracker.id,
+        `attachments`
+      ],
+      {
+        state: {
+          taskTracker: this.taskTracker
+        }
+      }
     );
   }
 
   public goToNotes() {
-    this.navCtrl.push(
-      MessagesPage,
+    this.router.navigate(
+      [
+        `app`,
+        `tasks`,
+        this.taskTracker.id,
+        `notes`
+      ],
       {
-        emptyState: this.taskNotesEmptyState,
-        messages: this.notes,
-        messageType: `note`,
-        subtitle: this.taskTracker.task.name,
-        status: this.taskStatus,
-        taskTracker: this.taskTracker
-      },
-      { animation: `ios-transition` }
+        state: {
+          emptyState: this.taskNotesEmptyState,
+          messages: this.notes,
+          messageType: `note`,
+          subtitle: this.taskTracker.task.name
+        }
+      }
     );
   }
 
   public goToSurvey() {
-    this.navCtrl.push(
-      TaskSurveyPage,
-      { taskTracker: this.taskTracker },
-      { animation: `ios-transition` }
+    this.router.navigate(
+      [
+        `app`,
+        `tasks`,
+        this.taskTracker.id,
+        `survey`
+      ],
+      {
+        state: {
+          taskTracker: this.taskTracker
+        }
+      }
     );
   }
 
-  public openPromptModal() {
-    this.modalCtrl.create(
-      PromptComponent,
-      {
+  public async openPromptModal() {
+    const modal = await this.modalCtrl.create({
+      backdropDismiss: true,
+      component: PromptComponent,
+      componentProps: {
         prompt: this.prompt,
         taskTracker: this.taskTracker
       },
-      {
-        enableBackdropDismiss: true,
-        showBackdrop: false
-      }
-    ).present();
+      showBackdrop: false
+    });
+    return await modal.present();
   }
 
   public updateStatus() {
@@ -161,30 +202,22 @@ export class TaskPage {
       this.taskTracker.updatedStatus();
     }
     this.taskService.updateTaskStatus(this.taskTracker.id, this.taskTracker.status)
+      .pipe(takeUntil(this.ngUnsubscribe))
       .subscribe(
         (change) => {
           this.isUpdating = false;
           if (change && (change.data instanceof TaskTracker)) {
             this.taskTracker = change.data;
             this.taskStatus = TASK_STATUSES[this.taskTracker.status];
-            this.events.publish(`taskChange`, { taskTracker: this.taskTracker });
+            this.events.publish(`taskChange`, {
+              taskTracker: this.taskTracker
+            });
             if (this.taskTracker.isSurveyTask) {
               this.goToSurvey();
             } else {
-              const toast = this.toastCtrl.create({
-                closeButtonText: `UNDO`,
-                duration: 5000,
-                message: `Task Completed.`,
-                showCloseButton: true
-              });
-              toast.present();
-              toast.onDidDismiss((_data, role) => {
-                if (role === `close`) {
-                  this.taskService.resetTask(this.taskTracker);
-                  this.taskStatus = TASK_STATUSES[TaskStatus.NOT_STARTED];
-                }
-              });
-              this.navCtrl.pop();
+              this.openTaskCompleteToast();
+              // this.router.pop();
+              // TODO: Implement logic to go back to task list
             }
           } else if (change) {
             // This is the case where there is a prompt
@@ -200,17 +233,17 @@ export class TaskPage {
   /* PRIVATE METHODS */
 
   private getNotes(loadingMore?: boolean) {
-    const noteSub = this.taskService.getNotes(this.taskTracker.id)
+    this.taskService.getNotes(this.taskTracker.id)
+      .pipe(takeUntil(this.ngUnsubscribe))
       .subscribe(
         (response) => {
           this.notes = response.notes;
           this.notesCount = response.count;
         },
-        err => console.error(err),
+        (err) => console.error(err),
         () => {
           const eventName = loadingMore ? `moreNotes` : `noteChange`;
           this.events.publish(eventName, { notes: this.notes });
-          noteSub.unsubscribe();
         }
       );
   }
@@ -236,6 +269,21 @@ export class TaskPage {
       'task title': this.taskTracker.task.name,
       'task type': this.taskTracker.task.task_type
     });
+  }
+
+  private async openTaskCompleteToast() {
+    const toast = await this.toastCtrl.create({
+      buttons: [{
+        handler: () => {
+          this.taskService.resetTask(this.taskTracker);
+          this.taskStatus = TASK_STATUSES[TaskStatus.NOT_STARTED];
+        },
+        text: `Undo`
+      }],
+      duration: 5000,
+      message: `Task completed.`
+    });
+    toast.present();
   }
 
   private setupEventSubs() {

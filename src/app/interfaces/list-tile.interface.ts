@@ -10,6 +10,6 @@ export class IListTile {
   public name: string;
   public order: number;
   public phase?: string;
-  public providerVariable: string;
+  public serviceVariable: string;
   public stakeholder_type?: string;
 }

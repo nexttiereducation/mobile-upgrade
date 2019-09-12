@@ -1,5 +1,5 @@
 <ion-slides #ccSlider
-            [initialSlide]="studentAnswers.page"
+            [options]="{initialSlide: studentAnswers.page}"
             *ngIf="!isSurveyComplete && isLoaded">
   <ion-slide>
     <div padding
@@ -7,7 +7,7 @@
       <div class="surveyQuestion">Which of these subject areas do&nbsp;you&nbsp;like?</div>
       <div class="subhead">Check all that apply.</div>
     </div>
-    <ion-scroll scrollY="true">
+    <div class="scrollable">
       <ion-list [hidden]="!studentAnswers.subjects">
         <ion-item *ngFor="let subject of studentAnswers.subjects">
           <ion-label text-wrap>{{ subject.name }}</ion-label>
@@ -17,7 +17,7 @@
       <div [hidden]="studentAnswers.subjects">
         <loading></loading>
       </div>
-    </ion-scroll>
+    </div>
     <ion-grid>
       <ion-row>
         <ion-col>
@@ -39,7 +39,7 @@
         <div class="surveyQuestion">Which of these activities do&nbsp;you&nbsp;like?</div>
         <div class="subhead">Check any/all that apply.</div>
       </div>
-      <ion-scroll scrollY="true">
+      <div class="scrollable">
         <ion-list>
           <ion-item *ngFor="let activity of cluster.activities">
             <ion-label text-wrap>{{ activity }}</ion-label>
@@ -47,7 +47,7 @@
             </ion-checkbox>
           </ion-item>
         </ion-list>
-      </ion-scroll>
+      </div>
       <ion-grid>
         <ion-row>
           <ion-col>
@@ -70,7 +70,7 @@
         <div class="surveyQuestion">Which of these personal qualities describe&nbsp;you?</div>
         <div class="subhead">Check any/all that apply.</div>
       </div>
-      <ion-scroll scrollY="true">
+      <div class="scrollable">
         <ion-list>
           <ion-item *ngFor="let quality of cluster.personal_qualities">
             <ion-label text-wrap>{{ quality }}</ion-label>
@@ -78,7 +78,7 @@
             </ion-checkbox>
           </ion-item>
         </ion-list>
-      </ion-scroll>
+      </div>
       <ion-grid>
         <ion-row>
           <ion-col>

@@ -1,58 +1,53 @@
 import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { Events } from '@ionic/angular';
-import { map } from 'lodash';
-import { Subscription } from 'rxjs/Subscription';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 
-import 'rxjs/add/operator/map';
-
-import { ICollegeTracker } from '@nte/models/college-tracker.interface';
-import { ICollege } from '@nte/models/college.interface';
-import { CollegeStatusItem, ICollegeStatusItem } from '@nte/models/status-item.interface';
-import { CollegeProvider } from '@nte/services/college.service';
-import { StakeholderProvider } from '@nte/services/stakeholder.service';
-import { SurveyProvider } from '@nte/services/survey.service';
+import { ICollegeTracker } from '@nte/interfaces/college-tracker.interface';
+import { ICollege } from '@nte/interfaces/college.interface';
+import { CollegeStatusItem, ICollegeStatusItem } from '@nte/interfaces/status-item.interface';
+import { CollegeService } from '@nte/services/college.service';
+import { StakeholderService } from '@nte/services/stakeholder.service';
+import { SurveyService } from '@nte/services/survey.service';
 
 @Component({
   selector: `survey-phsp-colleges`,
   templateUrl: `survey-phsp-colleges.html`
 })
 export class SurveyPhspCollegesComponent implements OnInit, OnDestroy {
-  @Input() public list: ICollegeStatusItem[];
-  @Input() public startOnLastSlide: boolean;
+  @Input() list: ICollegeStatusItem[];
+  @Input() startOnLastSlide: boolean;
 
   public collegeResults: ICollege[];
 
-  private searchSub: Subscription;
+  private ngUnsubscribe: Subject<any> = new Subject();
 
-  constructor(private collegeProvider: CollegeProvider,
+  constructor(private collegeService: CollegeService,
     private events: Events,
-    private surveyProvider: SurveyProvider,
-    private stakeholderProvider: StakeholderProvider) { }
-
-  ngOnDestroy() {
-    if (this.searchSub) {
-      this.searchSub.unsubscribe();
-    }
-  }
+    private surveyService: SurveyService,
+    private stakeholderService: StakeholderService) { }
 
   ngOnInit() {
     this.events.subscribe(`search`, query => this.onSearch(query));
     if (!this.list) {
-      this.list = this.formatColleges(this.stakeholderProvider.stakeholder.institution_trackers);
+      this.list = this.formatColleges(this.stakeholderService.stakeholder.institution_trackers);
     }
-    this.surveyProvider.hideButtons = true;
+    this.surveyService.hideButtons = true;
+  }
+
+  ngOnDestroy() {
+    this.ngUnsubscribe.next();
+    this.ngUnsubscribe.complete();
   }
 
   public formatColleges(colleges: ICollegeTracker[]) {
-    return map(
-      colleges,
-      college => new CollegeStatusItem(college)
-    );
+    return colleges.map(c => new CollegeStatusItem(c));
   }
 
   public onSearch(query: string) {
-    this.searchSub = this.collegeProvider.searchColleges(`?search=${query}`)
-      .subscribe(response => this.collegeResults = response);
+    this.collegeService.search(`?search=${query}`)
+      .pipe(takeUntil(this.ngUnsubscribe))
+      .subscribe((response: ICollege[]) => this.collegeResults = response);
   }
 
 }

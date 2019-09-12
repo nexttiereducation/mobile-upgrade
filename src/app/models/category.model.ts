@@ -1,7 +1,7 @@
 import { groupBy } from 'lodash';
 
-import { IPlaceholderValues } from './placeholder-values.interface';
-import { ITypeSettings } from './type-settings.interface';
+import { IPlaceholderValues } from '@nte/interfaces/placeholder-values.interface';
+import { ITypeSettings } from '@nte/interfaces/type-settings.interface';
 import { Option } from '@nte/models/option.model';
 import { QueryObject } from '@nte/models/queryobject.model';
 
@@ -47,13 +47,10 @@ export class Category {
     this.setVariables(category, preselectedFilters);
     const isPreselected = this.preselectedFilters
       && this.preselectedFilters.has(this.query.name);
-    const categoryValues = new Array();
+    let categoryValues = new Array();
     if (isPreselected) {
       const selectedVals = [...this.preselectedFilters.get(this.query.name).values];
-      for (let i = 0; i < selectedVals.length; i++) {
-        const val = selectedVals[i];
-        categoryValues.push(val);
-      }
+      categoryValues = [...selectedVals];
     }
     if (category.config) {
       this.config = category.config ? category.config : {};
@@ -82,9 +79,9 @@ export class Category {
 
   public filterOptions(searchTerms: string[]) {
     let filteredOptions = [];
-    for (let i = 0, searchTerm; searchTerm = searchTerms[i]; ++i) {
+    searchTerms.forEach((searchTerm: any) => {
       filteredOptions = filteredOptions.concat(this._dependencyResolvers[searchTerm.id]);
-    }
+    });
     return filteredOptions;
   }
 
@@ -95,18 +92,20 @@ export class Category {
   public initializeOptions(options: any[], values?: any[]) {
     this.options = new Array();
     this._rawOptions = new Array();
-    for (let i = 0, newOption; newOption = options[i]; i++) {
-      this._rawOptions.push(new Option(newOption));
-      if (values && values.length) {
-        const index = values.findIndex((value) => value.id === newOption.id);
-        if (index > -1) {
-          newOption.isActive = true;
-          values[index].id = newOption.id;
-          values[index].displayValue = newOption.value;
-          this.selectedItems = values;
+    if (options && options.length > 0) {
+      options.forEach(opt => {
+        this._rawOptions.push(new Option(opt));
+        if (values && values.length) {
+          const index = values.findIndex((value) => value.id === opt.id);
+          if (index > -1) {
+            opt.isActive = true;
+            values[index].id = opt.id;
+            values[index].displayValue = opt.value;
+            this.selectedItems = values;
+          }
         }
-      }
-      this.options.push(new Option(newOption));
+        this.options.push(new Option(opt));
+      });
     }
   }
 

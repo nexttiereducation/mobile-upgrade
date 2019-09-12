@@ -6,17 +6,11 @@
   </ion-navbar>
 </ion-header> -->
 <ion-header mode="ios">
-  <ion-toolbar hideBackButton
-               mode="ios"
+  <ion-toolbar mode="ios"
                [color]="toolbarColor"
                [ngSwitch]="messageType">
     <ion-buttons slot="secondary">
-      <ion-button fill="clear"
-                  icon-only
-                  (click)="back()"
-                  [color]="messageType === 'message' ? 'black' : 'white'">
-        <ion-icon name="ios-arrow-back"></ion-icon>
-      </ion-button>
+      <ion-back-button></ion-back-button>
     </ion-buttons>
     <ion-title mode="ios"
                *ngSwitchCase="'note'">
@@ -37,7 +31,7 @@
     <ion-infinite-scroll position="top"
                          #infiniteScroll
                          (ionInfinite)="loadMoreMessages($event)"
-                         [enabled]="hasNextPage">
+                         [disabled]="!hasNextPage">
       <ion-infinite-scroll-content></ion-infinite-scroll-content>
     </ion-infinite-scroll>
     <ion-grid #messagesContainer>
@@ -64,7 +58,7 @@
                      no-padding
                      *ngIf="message && user?.id !== message.author?.id">
               <ion-avatar class="avatar-shadow"
-                          item-left
+                          slot="left"
                           [style.visibility]="(isFirst
                                                || isNewAuthor(message, i)
                                                || isNewDate(message, i))
@@ -83,9 +77,9 @@
                               || isNewDate(message, i))"> {{ user?.id !== message.author?.id
                    ? (message.author?.full_name || (message.author?.first_name + ' ' + message.author?.last_name))
                    : 'Me' }} </div>
-              <div class="body expand="
-                   block"
-                   paragraph"
+              <div class="body"
+                   expand="block"
+                   paragraph
                    [attr.margin-top]="messageType === 'note'
                                       && user?.id === message.author?.id
                                       && (isFirst
@@ -132,14 +126,14 @@
       <ion-row align-items-stretch
                class="from-me"
                justify-content-end
-               *ngIf="messageService.sending$ | async">
+               *ngIf="messageService.isSending$ | async">
         <ion-col class="message-col">
-          <div class="body expand="
-               block"
+          <div class="body"
+               expand="block"
                paragraph
                from-me
-               bg-blue-50">
-            <ion-loading></ion-loading>
+               bg-blue-50>
+            <ion-spinner></ion-spinner>
           </div>
         </ion-col>
         <ion-col class="avatar-col"
@@ -160,6 +154,7 @@
       <!-- <div class="flex-row"
          padding-horizontal> -->
       <!-- <input type="text" /> -->
+      <ion-label></ion-label>
       <input ion-input
              name="message"
              type="text"

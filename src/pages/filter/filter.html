@@ -18,7 +18,8 @@
       <ng-template [ngIf]="category.subCategories">
         <ion-list-header class="bold"
                          color="grayLight"
-                         no-margin> {{ category.name }}
+                         no-margin>
+          <ion-label>{{ category.name }}</ion-label>
           <!-- <button fill="clear" ion-button item-end size="small" color="white"
                   *ngIf="category.activeChildCount"
                   (click)="clearCategory(category)">Clear</button> -->
@@ -26,23 +27,28 @@
         <ion-item *ngFor="let subCategory of category?.subCategories; let i = index"
                   (click)="viewDetails(subCategory, category.name)"
                   [class.bg-blue10]="subCategory.isActive"
-                  [hidden]="subCategory.dependency && categoryService.filterArray?.length < 1 "> {{ subCategory.name }}
-          <ion-badge item-end
-                     *ngIf="subCategory.isActive">{{ subCategory.activeChildCount }}</ion-badge>
+                  [hidden]="subCategory.dependency && categoryService.filterArray?.length < 1 ">
+          <ion-label> {{ subCategory.name }} <ion-badge item-end
+                       *ngIf="subCategory.isActive">{{ subCategory.activeChildCount }}</ion-badge>
+          </ion-label>
         </ion-item>
       </ng-template>
     </ng-template>
     <ion-list-header class="bold"
                      color="grayLight"
-                     no-margin>Other</ion-list-header>
+                     no-margin>
+      <ion-label> Other </ion-label>
+    </ion-list-header>
     <ng-template let-category
                  let-i="index"
                  ngFor
                  [ngForOf]="categories">
       <ion-item *ngIf="!category?.subCategories"
                 (click)="viewDetails(category)"
-                [class.bg-blue10]="category.isActive"> {{ category.name }} <ion-badge item-end
-                   *ngIf="category?.isActive">{{ category.activeChildCount }}</ion-badge>
+                [class.bg-blue10]="category.isActive">
+        <ion-label>{{ category.name }} <ion-badge item-end
+                     *ngIf="category?.isActive">{{ category.activeChildCount }}</ion-badge>
+        </ion-label>
       </ion-item>
     </ng-template>
   </ion-list>

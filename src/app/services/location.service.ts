@@ -1,11 +1,8 @@
 import { Injectable } from '@angular/core';
-import { Diagnostic } from '@ionic-native/diagnostic';
-import { Geolocation } from '@ionic-native/geolocation';
+import { Diagnostic } from '@ionic-native/diagnostic/ngx';
+import { Geolocation } from '@ionic-native/geolocation/ngx';
 import { AlertController } from '@ionic/angular';
-import { Observable } from 'rxjs/Observable';
-import { Subject } from 'rxjs/Subject';
-
-import 'rxjs/operators/map';
+import { Observable, Subject } from 'rxjs';
 
 import { PERMISSION } from '@nte/constants/location.constants';
 import { ApiService } from '@nte/services/api.service';
@@ -174,8 +171,8 @@ export class LocationService {
 
   /* PRIVATE METHODS */
 
-  public confirmGoToSettings() {
-    const alert = this.alertCtrl.create({
+  public async confirmGoToSettings() {
+    const alert = await this.alertCtrl.create({
       buttons: [
         {
           handler: () => {
@@ -278,7 +275,7 @@ export class LocationService {
         return PERMISSION.granted;
       case permStatus.NOT_REQUESTED:
         return PERMISSION.request;
-      case permStatus.DENIED:
+      case permStatus.DENIED_ONCE:
       case permStatus.DENIED_ALWAYS:
       case permStatus.RESTRICTED:
         return PERMISSION.denied;

@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Keyboard } from '@ionic-native/keyboard';
+import { Keyboard } from '@ionic-native/keyboard/ngx';
 
 @Injectable({ providedIn: 'root' })
 export class KeyboardService {

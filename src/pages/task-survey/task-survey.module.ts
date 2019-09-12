@@ -1,48 +1,40 @@
+import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
-import { IonicPageModule } from 'ionic-angular';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { RouterModule, Routes } from '@angular/router';
+import { IonicModule } from '@ionic/angular';
 
+import { TaskSurveyPage } from './task-survey';
 import { ComponentsModule } from '@nte/components/components.module';
-import { SurveyCcComponent } from '@nte/components/survey/survey-cc';
-import { SurveyCustomComponent } from '@nte/components/survey/survey-custom';
-import { SurveyIpComponent } from '@nte/components/survey/survey-ip';
-import { SurveyPhspComponent } from '@nte/components/survey/survey-phsp';
-import { SurveyPhspCollegesComponent } from '@nte/components/survey/survey-phsp-colleges';
-import { SurveyPhspResultsComponent } from '@nte/components/survey/survey-phsp-results';
-import { SurveyPhspScholarshipsComponent } from '@nte/components/survey/survey-phsp-scholarships';
-import { SurveyPhspTableComponent } from '@nte/components/survey/survey-phsp-table';
+import { SurveyModule } from '@nte/components/survey/survey.module';
 import { PipesModule } from '@nte/pipes/pipes.module';
 import { SurveyIpService } from '@nte/services/survey-ip.service';
 import { SurveyService } from '@nte/services/survey.service';
-import { TaskSurveyPage } from './task-survey';
 
-import { SurveyPhspResultsCollegeComponent } from '@nte/components/survey/survey-phsp-results-college';
-
-// tslint:disable-next-line:import-spacing
-const components = [
-  TaskSurveyPage,
-  SurveyCcComponent,
-  SurveyCustomComponent,
-  SurveyIpComponent,
-  SurveyPhspCollegesComponent,
-  SurveyPhspComponent,
-  SurveyPhspResultsCollegeComponent,
-  SurveyPhspResultsComponent,
-  SurveyPhspScholarshipsComponent,
-  SurveyPhspTableComponent
+const routes: Routes = [
+  {
+    path: 'app/tasks/:id/survey',
+    component: TaskSurveyPage
+  }
 ];
 
 @NgModule({
-  declarations: components,
-  exports: components,
-  imports: [
-    ComponentsModule,
-    IonicPageModule.forChild(TaskSurveyPage),
-    PipesModule
+  declarations: [
+    TaskSurveyPage
   ],
-  services: [
+  imports: [
+    CommonModule,
+    FormsModule,
+    ReactiveFormsModule,
+    IonicModule,
+    RouterModule.forChild(routes),
+    ComponentsModule,
+    PipesModule,
+    SurveyModule
+  ],
+  providers: [
     SurveyService,
     SurveyIpService
   ]
 })
-
 export class TaskSurveyPageModule { }

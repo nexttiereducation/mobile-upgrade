@@ -1,17 +1,17 @@
 import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
-import { ToastController } from '@ionic/angular';
 import { cloneDeep } from 'lodash';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
+import { ToastService } from './../../services/toast.service';
 import { EMAIL_REGEX } from '@nte/constants/regex.constants';
 import { IContactEmail } from '@nte/interfaces/contact-email.interface';
 import { IContactPhone } from '@nte/interfaces/contact-phone.interface';
 import { IContactSettings } from '@nte/interfaces/contact-settings.interface';
 import { IPhoneVerification } from '@nte/interfaces/phone-verification.interface';
 import { IUserOverview } from '@nte/interfaces/user-overview.interface';
-import { SettingsProvider } from '@nte/services/settings.service';
+import { SettingsService } from '@nte/services/settings.service';
 
 @Component({
   selector: `contact-settings`,
@@ -38,8 +38,8 @@ export class ContactSettingsComponent implements OnInit, OnDestroy {
       && this.currentUser.notification_settings.sms.isEnabled;
   }
 
-  constructor(private settingsProvider: SettingsProvider,
-    private toast: ToastController) { }
+  constructor(private settingsService: SettingsService,
+    private toastService: ToastService) { }
 
   ngOnInit() {
     this.primaryEmailControl.setValue(this.currentUser.email);
@@ -63,14 +63,14 @@ export class ContactSettingsComponent implements OnInit, OnDestroy {
     const baseProperty = isAlternate ? this.currentUser.alternate_contact_information : this.currentUser;
     return {
       email: (removeValue && isAlternate) ? null : baseProperty.email,
-      isAlternate: isAlternate
+      isAlternate
     };
   }
 
   getUpdatedPhone(isAlternate?: boolean, removeValue?: boolean) {
     const baseProperty = isAlternate ? this.currentUser.alternate_contact_information : this.currentUser;
     return {
-      isAlternate: isAlternate,
+      isAlternate,
       phoneNumber: removeValue ? null : baseProperty.phone_number,
       phoneType: baseProperty.phone_type
     };
@@ -121,7 +121,7 @@ export class ContactSettingsComponent implements OnInit, OnDestroy {
     if (phone) {
       const hasValue = (phone && phone.length > 0);
       if (phone.length && phone.charAt(0) !== `+`) {
-        this.toast.create({ message: `Country code required.` }).present();
+        this.toastService.open(`Country code required.`);
         return;
       }
       this.updatePhone(isAlternate, hasValue);
@@ -131,14 +131,14 @@ export class ContactSettingsComponent implements OnInit, OnDestroy {
   updateEmail(isAlternate: boolean, hasValue: boolean = true) {
     const updatedEmail: IContactEmail = this.getUpdatedEmail(isAlternate, !hasValue);
     if (updatedEmail.email && updatedEmail.email.length) {
-      this.settingsProvider.updateEmail(this.currentUser.id, updatedEmail)
+      this.settingsService.updateEmail(this.currentUser.id, updatedEmail)
         .pipe(takeUntil(this.ngUnsubscribe))
         .subscribe(
           response => {
             this.resetUser(response);
-            this.toast.create({ message: `${isAlternate ? `Alternate` : `Main`} email address saved.` }).present();
+            this.toastService.open(`${isAlternate ? `Alternate` : `Main`} email address saved.`);
           },
-          () => this.toast.create({ message: `Can't update email settings. Please try again.` }).present()
+          () => this.toastService.open(`Can't update email settings. Please try again.`)
         );
     }
   }
@@ -152,24 +152,24 @@ export class ContactSettingsComponent implements OnInit, OnDestroy {
     }
     const updatedPhone: IContactPhone = this.getUpdatedPhone(isAlternate, !hasValue);
     if (updatedPhone.phoneNumber && updatedPhone.phoneNumber.length) {
-      this.settingsProvider.updatePhone(this.currentUser.id, updatedPhone)
+      this.settingsService.updatePhone(this.currentUser.id, updatedPhone)
         .pipe(takeUntil(this.ngUnsubscribe))
         .subscribe(
           response => {
             this.resetUser(response);
-            this.toast.create({ message: `${isAlternate ? `Alternate` : `Main`} phone number/type saved.` }).present();
+            this.toastService.open(`${isAlternate ? `Alternate` : `Main`} phone number/type saved.`);
           },
-          () => this.toast.create({ message: `Can't update phone settings. Please try again.` }).present()
+          () => this.toastService.open(`Can't update phone settings. Please try again.`)
         );
     }
   }
 
   updateNotificationSettings() {
-    this.settingsProvider.updateNotificationSettings(this.currentUser)
+    this.settingsService.updateNotificationSettings(this.currentUser)
       .pipe(takeUntil(this.ngUnsubscribe))
       .subscribe(
         response => this.resetUser(response),
-        () => this.toast.create({ message: `Can't update notification settings. Please try again.` }).present()
+        () => this.toastService.open(`Can't update notification settings. Please try again.`)
       );
   }
 
@@ -178,15 +178,15 @@ export class ContactSettingsComponent implements OnInit, OnDestroy {
       phoneNumber: this.currentUser.phone_number,
       verificationCode: this.verificationCode
     };
-    this.settingsProvider.verifyPhone(this.currentUser.id, verificationInfo)
+    this.settingsService.verifyPhone(this.currentUser.id, verificationInfo)
       .pipe(takeUntil(this.ngUnsubscribe))
       .subscribe(
         response => {
           this.resetUser(response);
           this.verificationCode = null;
-          this.toast.create({ message: `Phone number verified.` }).present();
+          this.toastService.open(`Phone number verified.`);
         },
-        () => this.toast.create({ message: `Can't verify phone number. Please try again.` }).present()
+        () => this.toastService.open(`Can't verify phone number. Please try again.`)
       );
   }
 

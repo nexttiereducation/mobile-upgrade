@@ -1,14 +1,15 @@
 import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { AbstractControl, FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { Events, ToastController } from '@ionic/angular';
-import { Subscription } from 'rxjs/Subscription';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 
 import { BackEndPrompt } from '@nte/models/back-end-prompt.model';
 import { CustomTestDate } from '@nte/models/custom-test-date.model';
 import { PromptTestDatesOptions } from '@nte/models/prompt-test-dates-options.model';
 import { Prompt } from '@nte/models/prompt.model';
-import { DatetimeProvider } from '@nte/services/datetime.service';
-import { PromptProvider } from '@nte/services/prompt.service';
+import { DatetimeService } from '@nte/services/datetime.service';
+import { PromptService } from '@nte/services/prompt.service';
 
 @Component({
   selector: `prompt-test-dates`,
@@ -28,7 +29,11 @@ export class PromptTestDatesComponent implements OnInit, OnDestroy {
   public simplifiedForm: boolean = false;
   public testPromptForm: FormGroup;
 
-  private knownDatesChangeSub: Subscription;
+  private ngUnsubscribe: Subject<any> = new Subject();
+
+  get choices() {
+    return this.prompt.options.choices;
+  }
 
   get customDateControls(): AbstractControl[] {
     return this.customDates.controls;
@@ -51,20 +56,29 @@ export class PromptTestDatesComponent implements OnInit, OnDestroy {
   }
 
   get lastChoiceSelected(): boolean {
-    const choices = this.prompt.options.choices;
-    return choices[choices.length - 1].isChosen;
+    return this.choices[this.choices.length - 1].isChosen;
   }
 
-  constructor(
+  constructor(private datetimeService: DatetimeService,
     private events: Events,
-    private datetimeProvider: DatetimeProvider,
     private formBuilder: FormBuilder,
-    private promptProvider: PromptProvider,
-    private toastCtrl: ToastController
-  ) {
-    this.maxYear = this.datetimeProvider.maxYear();
-    this.minYear = this.datetimeProvider.minYear();
-    this.datePickerOptions = this.datetimeProvider.pickerOptions;
+    private promptService: PromptService,
+    private toastCtrl: ToastController) {
+    this.maxYear = this.datetimeService.maxYear();
+    this.minYear = this.datetimeService.minYear();
+    this.datePickerOptions = this.datetimeService.pickerOptions;
+  }
+
+  ngOnInit() {
+    const noneOptionIndex = this.choices.findIndex(c => c.value === this.noneOption);
+    this.prompt.options.choices.splice(noneOptionIndex, 1);
+    this.buildForm();
+    this.setCustomDeadlines([new CustomTestDate({})]);
+  }
+
+  ngOnDestroy() {
+    this.ngUnsubscribe.next();
+    this.ngUnsubscribe.complete();
   }
 
   public addCustomDeadline() {
@@ -95,21 +109,6 @@ export class PromptTestDatesComponent implements OnInit, OnDestroy {
     choice.isChosen = !choice.isChosen;
   }
 
-  ngOnDestroy() {
-    if (this.knownDatesChangeSub) {
-      this.knownDatesChangeSub.unsubscribe();
-    }
-  }
-
-  ngOnInit() {
-    const noneOptionIndex = this.prompt.options.choices.findIndex(
-      c => c.value === this.noneOption
-    );
-    this.prompt.options.choices.splice(noneOptionIndex, 1);
-    this.buildForm();
-    this.setCustomDeadlines([new CustomTestDate({})]);
-  }
-
   public removeCustomDate(index: number) {
     this.customDates.removeAt(index);
     this.testPromptForm.setControl(`customDatesArray`, this.customDates);
@@ -137,22 +136,17 @@ export class PromptTestDatesComponent implements OnInit, OnDestroy {
     } else {
       this.formatDateOptions();
     }
-    this.promptProvider.submitNewPrompt(this.newPrompt).subscribe(
-      () => {
-        this.newPrompt.custom_deadlines = [``];
-        this.events.publish(`promptSubmitted`, {
-          successMessage: `Test dates saved`
-        });
-      },
-      () => {
-        this.toastCtrl
-          .create({
-            duration: 3000,
-            message: `An error has occurred, please try again.`
-          })
-          .present();
-      }
-    );
+    this.promptService.submitNewPrompt(this.newPrompt)
+      .pipe(takeUntil(this.ngUnsubscribe))
+      .subscribe(
+        () => {
+          this.newPrompt.custom_deadlines = [``];
+          this.events.publish(`promptSubmitted`, {
+            successMessage: `Test dates saved`
+          });
+        },
+        () => this.showErrorToast()
+      );
   }
 
   private buildForm() {
@@ -175,11 +169,9 @@ export class PromptTestDatesComponent implements OnInit, OnDestroy {
         Validators.required
       )
     });
-    this.knownDatesChangeSub = this.knownDatesArray.valueChanges.subscribe(
-      val => {
-        this.testPromptForm.controls.selectedDates.setValue(this.mapDates(val));
-      }
-    );
+    this.knownDatesArray.valueChanges
+      .pipe(takeUntil(this.ngUnsubscribe))
+      .subscribe(v => this.testPromptForm.controls.selectedDates.setValue(this.mapDates(v)));
   }
 
   private formatCustomDateOptions() {
@@ -203,5 +195,13 @@ export class PromptTestDatesComponent implements OnInit, OnDestroy {
         }
       });
     }
+  }
+
+  private async showErrorToast() {
+    const toast = await this.toastCtrl.create({
+      duration: 3000,
+      message: `An error has occurred, please try again.`
+    });
+    toast.present();
   }
 }

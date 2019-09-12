@@ -70,11 +70,11 @@
 }
 
 .grey-gradient {
-  @include greyGradient($grayLighter, $gray);
+  @include greyGradient(var(--grayLighter), var(--gray));
 }
 
 .darker-grey-gradient {
-  @include greyGradient($gray, $steel);
+  @include greyGradient(var(--gray), var(--steel));
 }
 
 ion-card.placeholder {

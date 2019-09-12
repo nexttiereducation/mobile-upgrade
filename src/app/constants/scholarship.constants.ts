@@ -1,4 +1,4 @@
-import { IListTile } from '@nte/models/list-tile.interface';
+import { IListTile } from '@nte/interfaces/list-tile.interface';
 
 const dir = `assets/image`;
 
@@ -9,7 +9,7 @@ export const SCHOLARSHIP_TILES: IListTile[] = [
     isLocked: true,
     name: `Saved`,
     order: 0,
-    providerVariable: `savedScholarships`
+    serviceVariable: `savedScholarships`
   },
   {
     colSpan: 4,
@@ -17,7 +17,7 @@ export const SCHOLARSHIP_TILES: IListTile[] = [
     isLocked: true,
     name: `Recommended`,
     order: 1,
-    providerVariable: `recommendedScholarships`
+    serviceVariable: `recommendedScholarships`
   },
   {
     colSpan: 4,
@@ -26,7 +26,7 @@ export const SCHOLARSHIP_TILES: IListTile[] = [
     name: `Applying`,
     order: 2,
     phase: `Senior`,
-    providerVariable: `applyingScholarships`
+    serviceVariable: `applyingScholarships`
   },
   {
     colSpan: 6,
@@ -34,7 +34,7 @@ export const SCHOLARSHIP_TILES: IListTile[] = [
     isLocked: true,
     name: `Search All`,
     order: 3,
-    providerVariable: `scholarships`
+    serviceVariable: `scholarships`
   },
   {
     colSpan: 6,
@@ -43,7 +43,7 @@ export const SCHOLARSHIP_TILES: IListTile[] = [
     isLocked: true,
     name: `Create Your Own List!`,
     order: 4,
-    providerVariable: null
+    serviceVariable: null
   }
 ];
 

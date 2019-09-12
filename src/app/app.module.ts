@@ -1,34 +1,36 @@
+import { AgmCoreModule } from '@agm/core';
 import { HttpClientModule } from '@angular/common/http';
-import { ErrorHandler, NgModule } from '@angular/core';
+import { NgModule } from '@angular/core';
 import { HttpModule } from '@angular/http';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { CallNumber } from '@ionic-native/call-number';
-import { Deeplinks } from '@ionic-native/deeplinks';
-import { Device } from '@ionic-native/device';
-import { Diagnostic } from '@ionic-native/diagnostic';
-import { EmailComposer } from '@ionic-native/email-composer';
-import { File } from '@ionic-native/file';
-import { Geolocation } from '@ionic-native/geolocation';
-import { GoogleMaps } from '@ionic-native/google-maps';
-import { Keyboard } from '@ionic-native/keyboard';
-import { LocationAccuracy } from '@ionic-native/location-accuracy';
-import { Mixpanel, MixpanelPeople } from '@ionic-native/mixpanel';
-import { NativeStorage } from '@ionic-native/native-storage';
-import { SplashScreen } from '@ionic-native/splash-screen';
-import { StatusBar } from '@ionic-native/status-bar';
-import { ThemeableBrowser } from '@ionic-native/themeable-browser';
-import { Config, Content, InfiniteScroll, IonicApp, IonicErrorHandler, IonicModule } from '@ionic/angular';
+import { RouteReuseStrategy } from '@angular/router';
+import { CallNumber } from '@ionic-native/call-number/ngx';
+import { Deeplinks } from '@ionic-native/deeplinks/ngx';
+import { Device } from '@ionic-native/device/ngx';
+import { Diagnostic } from '@ionic-native/diagnostic/ngx';
+import { EmailComposer } from '@ionic-native/email-composer/ngx';
+import { File } from '@ionic-native/file/ngx';
+import { Geolocation } from '@ionic-native/geolocation/ngx';
+import { GoogleMaps } from '@ionic-native/google-maps/';
+import { Keyboard } from '@ionic-native/keyboard/ngx';
+import { LocationAccuracy } from '@ionic-native/location-accuracy/ngx';
+import { Mixpanel, MixpanelPeople } from '@ionic-native/mixpanel/ngx';
+import { NativeStorage } from '@ionic-native/native-storage/ngx';
+import { SplashScreen } from '@ionic-native/splash-screen/ngx';
+import { StatusBar } from '@ionic-native/status-bar/ngx';
+import { ThemeableBrowser } from '@ionic-native/themeable-browser/ngx';
+import { IonicModule, IonicRouteStrategy } from '@ionic/angular';
 import { IonicStorageModule } from '@ionic/storage';
-import { FCMNG } from 'fcm-ng';
 import { MaterialIconsModule } from 'ionic2-material-icons';
-import { NvD3Module } from 'ngx-nvd3';
 
 import { NteAppComponent } from './app.component';
-import { ionicConfig, ionicStorageConfig } from './app.config';
-import { CustomTransition } from './app.transition';
+import { agmConfig, ionicConfig, ionicStorageConfig } from './app.config';
+import { SettingsModule } from './components/settings/settings.module';
+import { ToastService } from './services/toast.service';
+import { AuthGuard } from '@nte/app/guards/auth.guard';
 import { ComponentsModule } from '@nte/components/components.module';
-import { FilterCategoryPageModule } from '@nte/pages/category/category.module';
+import { SurveyModule } from '@nte/components/survey/survey.module';
 import { CollegeAcademicPageModule } from '@nte/pages/college-academic/college-academic.module';
 import { CollegeApplicationPageModule } from '@nte/pages/college-application/college-application.module';
 import { CollegeCampusPageModule } from '@nte/pages/college-campus/college-campus.module';
@@ -37,6 +39,7 @@ import { CollegeGeneralPageModule } from '@nte/pages/college-general/college-gen
 import { CollegePageModule } from '@nte/pages/college/college.module';
 import { CollegesListPageModule } from '@nte/pages/colleges-list/colleges-list.module';
 import { CollegesPageModule } from '@nte/pages/colleges/colleges.module';
+import { FilterCategoryPageModule } from '@nte/pages/filter-category/filter-category.module';
 import { FilterChecklistPageModule } from '@nte/pages/filter-checklist/filter-checklist.module';
 import { FilterDistancePageModule } from '@nte/pages/filter-distance/filter-distance.module';
 import { FilterProgramPageModule } from '@nte/pages/filter-program/filter-program.module';
@@ -69,6 +72,7 @@ import { ApiTokenService } from '@nte/services/api-token.service';
 import { ApiService } from '@nte/services/api.service';
 import { AuthService } from '@nte/services/auth.service';
 import { CategoryService } from '@nte/services/category.service';
+import { CollegeTabsService } from '@nte/services/college-tabs.service';
 import { CollegeListTileService } from '@nte/services/college.list-tile.service';
 import { CollegeService } from '@nte/services/college.service';
 import { ConnectionService } from '@nte/services/connection.service';
@@ -80,11 +84,15 @@ import { FilterService } from '@nte/services/filter.service';
 import { HighSchoolService } from '@nte/services/high-school.service';
 import { KeyboardService } from '@nte/services/keyboard.service';
 import { LinkService } from '@nte/services/link.service';
+import { ListTileService } from '@nte/services/list-tile.service';
 import { ListService } from '@nte/services/list.service';
 import { LocationService } from '@nte/services/location.service';
 import { MessageService } from '@nte/services/message.service';
 import { MixpanelService } from '@nte/services/mixpanel.service';
+import { NavStateService } from '@nte/services/nav-state.service';
 import { NotificationService } from '@nte/services/notification.service';
+import { ParamService } from '@nte/services/param.service';
+import { PrevRouteService } from '@nte/services/prev-route.service';
 import { PromptService } from '@nte/services/prompt.service';
 import { PushNotificationService } from '@nte/services/push-notification.service';
 import { RecommendationsService } from '@nte/services/recommendations.service';
@@ -99,18 +107,21 @@ import { SurveyService } from '@nte/services/survey.service';
 import { TaskService } from '@nte/services/task.service';
 import { UrlService } from '@nte/services/url.service';
 
+// import { NvD3Module } from 'ngx-nvd3';
+
 @NgModule({
-  bootstrap: [IonicApp],
+  bootstrap: [NteAppComponent],
   declarations: [NteAppComponent],
-  entryComponents: [NteAppComponent],
+  entryComponents: [],
   imports: [
     BrowserModule,
     BrowserAnimationsModule,
     HttpModule,
     HttpClientModule,
-    IonicModule.forRoot(NteAppComponent, ionicConfig),
+    AgmCoreModule.forRoot(agmConfig),
+    IonicModule.forRoot(ionicConfig),
     IonicStorageModule.forRoot(ionicStorageConfig),
-    NvD3Module,
+    // NvD3Module,
     MaterialIconsModule,
     // ---------------------
     ComponentsModule,
@@ -151,9 +162,11 @@ import { UrlService } from '@nte/services/url.service';
     RegisterStudentsPageModule,
     RegisterYearPageModule,
 
+    ScholarshipPageModule,
     ScholarshipsPageModule,
     ScholarshipsListPageModule,
-    ScholarshipPageModule,
+    SettingsModule,
+    SurveyModule,
 
     TabsPageModule,
 
@@ -163,13 +176,13 @@ import { UrlService } from '@nte/services/url.service';
     TasksListPageModule,
     TasksPageModule
   ],
-  services: [
+  providers: [
     CallNumber,
     Deeplinks,
     Device,
     Diagnostic,
     EmailComposer,
-    FCMNG,
+    // FCMNG,
     File,
     Geolocation,
     GoogleMaps,
@@ -181,22 +194,20 @@ import { UrlService } from '@nte/services/url.service';
     SplashScreen,
     StatusBar,
     ThemeableBrowser,
-    IonicApp,
-    Content,
-    InfiniteScroll,
-    {
-      provide: ErrorHandler,
-      useClass: IonicErrorHandler
-    },
+    // InfiniteScroll,
+    { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
+
     // ---------------------
+    ApiTokenService,
     ApiService,
     NodeApiService,
-    ApiTokenService,
+    AuthGuard,
     ListService,
     AuthService,
     CategoryService,
     CollegeListTileService,
     CollegeService,
+    CollegeTabsService,
     ConnectionService,
     DatetimeService,
     DeepLinksService,
@@ -206,10 +217,14 @@ import { UrlService } from '@nte/services/url.service';
     HighSchoolService,
     KeyboardService,
     LinkService,
+    ListTileService,
     LocationService,
     MessageService,
     MixpanelService,
+    NavStateService,
     NotificationService,
+    ParamService,
+    PrevRouteService,
     PromptService,
     PushNotificationService,
     RecommendationsService,
@@ -222,11 +237,8 @@ import { UrlService } from '@nte/services/url.service';
     SurveyIpService,
     SurveyService,
     TaskService,
+    ToastService,
     UrlService
   ]
 })
-export class AppModule {
-  constructor(public config: Config) {
-    this.config.setTransition(`nexttier-transition`, CustomTransition);
-  }
-}
+export class AppModule { }

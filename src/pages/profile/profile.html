@@ -15,20 +15,22 @@
              [src]="profilePhoto || 'assets/image/contact/avatar.svg'">
       </ion-col>
     </ion-row>
-    <ion-row *ngIf="user">
+    <ion-row *ngIf="userOverview">
       <ion-col class="text-white70"
                text-center>
-        <div class="displayTitle bold text-white">{{ user.first_name + ' ' + user.last_name }}</div>
-        <div class="email">{{ user.email }}</div>
-        <div>{{ user.graduation_year ? 'Class of ' + user.graduation_year : user.stakeholder_type }}</div>
+        <div class="displayTitle bold text-white">{{ userOverview.first_name + ' ' + userOverview.last_name }}</div>
+        <div class="email">{{ userOverview.email }}</div>
+        <div>
+          {{ userOverview.graduation_year ? 'Class of ' + userOverview.graduation_year : userOverview.stakeholder_type }}
+        </div>
       </ion-col>
     </ion-row>
   </ion-grid>
-  <ng-container *ngIf="userOverview">
-    <notification-settings [userOverview]="userOverview"></notification-settings>
-    <general-settings [currentUser]="userOverview"></general-settings>
-    <contact-settings [currentUser]="userOverview"></contact-settings>
-    <password-settings [currentUser]="userOverview"></password-settings>
+  <ng-container *ngIf="user">
+    <notification-settings [userOverview]="user"></notification-settings>
+    <general-settings [currentUser]="user"></general-settings>
+    <contact-settings [currentUser]="user"></contact-settings>
+    <password-settings [currentUser]="user"></password-settings>
   </ng-container>
 </ion-content>
 <ion-footer>

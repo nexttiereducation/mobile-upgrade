@@ -7,22 +7,23 @@ export class LinkPipe implements PipeTransform {
     options.truncate = { length: 25, location: `smart` };
     options.replaceFn = (match) => {
       const tag = match.buildTag();  // returns an Autolinker.HtmlTag instance
-      switch ( match.getType() ) {
-        case `email` :
+      switch (match.getType()) {
+        case `email`:
           tag.setClass(`external-link external-link-email`);
           return tag;
-        case `phone` :
+        case `phone`:
           tag.setClass(`external-link external-link-phone`);
           return tag;
-        case `url` :
+        case `url`:
           if (options.truncateOnly) {
             tag.setTagName(`span`);
           } else {
             tag.setClass(`external-link external-link-url`);
           }
           return tag;
-        }
-      };
-    return Autolinker.link(value, options);
+      }
+    };
+    const linker = new Autolinker.Autolinker(options);
+    return linker.link(value);
   }
 }

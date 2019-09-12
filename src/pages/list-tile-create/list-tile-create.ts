@@ -1,6 +1,8 @@
-import { Component } from '@angular/core';
-import { IonicPage, NavController, NavParams } from '@ionic/angular';
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { trimEnd } from 'lodash';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 
 import { COLLEGE_NON_PROFIT_QUERY, CREATE_LIST_IMAGES } from '@nte/constants/college.constants';
 import { Filter } from '@nte/models/filter.model';
@@ -8,22 +10,20 @@ import { QueryObject } from '@nte/models/queryobject.model';
 import { CollegeListTileService } from '@nte/services/college.list-tile.service';
 import { CollegeService } from '@nte/services/college.service';
 import { FilterService } from '@nte/services/filter.service';
+import { NavStateService } from '@nte/services/nav-state.service';
+import { ParamService } from '@nte/services/param.service';
 import { ScholarshipListTileService } from '@nte/services/scholarship.list-tile.service';
 import { ScholarshipService } from '@nte/services/scholarship.service';
-import { CollegesPage } from './../colleges/colleges';
-import { ScholarshipsPage } from './../scholarships/scholarships';
 
-@IonicPage({
-  name: `list-tile-create-page`
-})
 @Component({
   selector: `list-tile-create`,
-  templateUrl: `list-tile-create.html`
+  templateUrl: `list-tile-create.html`,
+  styleUrls: [`list-tile-create.scss`]
 })
-export class ListTileCreatePage {
+export class ListTileCreatePage implements OnInit, OnDestroy {
   public existingList: any;
   public filterOptions: Filter;
-  public images = CREATE_LIST_IMAGES;
+  public images: string[] = CREATE_LIST_IMAGES;
   public list: any = {
     filters: []
   };
@@ -33,12 +33,14 @@ export class ListTileCreatePage {
   public pageItemService: any;
   public showSummary: boolean = false;
 
+  private ngUnsubscribe: Subject<any> = new Subject();
+
   get filter() {
     return this.filterOptions;
   }
 
   get rootPage() {
-    return this.page === `Scholarships` ? ScholarshipsPage : CollegesPage;
+    return this.page.toLowerCase();
   }
 
   get selectionsMade() {
@@ -47,69 +49,22 @@ export class ListTileCreatePage {
       || (!this.showSummary && this.filterOptions && this.filterOptions.isActive);
   }
 
-  constructor(params: NavParams,
+  constructor(paramService: ParamService,
     public filterService: FilterService,
     private collegeListTileService: CollegeListTileService,
     private scholarshipListTileService: ScholarshipListTileService,
-    private navCtrl: NavController,
+    private router: Router,
     private collegeService: CollegeService,
-    private scholarshipService: ScholarshipService) {
-    this.page = params.get(`page`);
-    this.filterOptions = params.get(`filter`);
-    const servicePrefix = trimEnd(this.page.toLowerCase(), `s`);
-    switch (servicePrefix) {
-      case `college`:
-        this.pageItemService = this.collegeService;
-        this.listTileService = this.collegeListTileService;
-        break;
-      case `scholarship`:
-        this.pageItemService = this.scholarshipService;
-        this.listTileService = this.scholarshipListTileService;
-        break;
-      default:
-        break;
-    }
-    if (params.get(`list`)) {
-      this.existingList = params.get(`list`);
-    } else {
-      this.existingList = this.listTileService.activeList;
-    }
+    private scholarshipService: ScholarshipService,
+    navStateService: NavStateService) {
+    const params: any = navStateService.data;
+    this.page = params.page;
+    this.filterOptions = params.filter;
+    this.existingList = params.list || this.listTileService.activeList;
+    this.setupServices();
   }
 
-  public back() {
-    this.navCtrl.pop();
-  }
-
-  public clear() {
-    this.existingList = null;
-    this.filterOptions = null;
-    // this.images = null;
-    this.list = { filters: [] };
-    // this.nonProfitQuery = null;
-    this.page = null;
-    this.showSummary = null;
-  }
-
-  public close(eventName?: string, data?: any) {
-    // this.navCtrl.popTo(this.page.toLowerCase());
-    // this.navCtrl.popToRoot();
-    if (eventName && data) {
-      data.page = this.page;
-      data[eventName] = true;
-      this.navCtrl.setRoot(this.rootPage, data);
-    } else {
-      this.navCtrl.popToRoot();
-    }
-  }
-
-  public getFilters() {
-    this.list.filters = [];
-    this.filterOptions.queries.forEach((query) => {
-      this.list.filters.push(query);
-    });
-  }
-
-  public ionViewDidLoad() {
+  ngOnInit() {
     if (this.existingList) {
       this.list.name = this.existingList.name;
       this.list.image = this.existingList.iconUrl;
@@ -127,8 +82,39 @@ export class ListTileCreatePage {
     }
   }
 
-  public ionViewDidUnload() {
+  ngOnDestroy() {
+    this.ngUnsubscribe.next();
+    this.ngUnsubscribe.complete();
     this.clear();
+  }
+
+  public clear() {
+    this.existingList = null;
+    this.filterOptions = null;
+    // this.images = null;
+    this.list = { filters: [] };
+    // this.nonProfitQuery = null;
+    this.page = null;
+    this.showSummary = null;
+  }
+
+  public close(eventName?: string, data?: any) {
+    // this.router.popTo(this.page.toLowerCase());
+    // this.router.popToRoot();
+    if (eventName && data) {
+      data.page = this.page;
+      data[eventName] = true;
+      this.router.navigate([this.rootPage, data]);
+    } else {
+      this.router.navigate([this.rootPage]);
+    }
+  }
+
+  public getFilters() {
+    this.list.filters = [];
+    this.filterOptions.queries.forEach((query) => {
+      this.list.filters.push(query);
+    });
   }
 
   public removeFilter(query: QueryObject, filterIndex: number, valueIndex: number) {
@@ -167,6 +153,7 @@ export class ListTileCreatePage {
 
   private createNewList(newList: any) {
     this.pageItemService.createList(newList)
+      .pipe(takeUntil(this.ngUnsubscribe))
       .subscribe(
         (response) => {
           const eventData = {
@@ -179,8 +166,25 @@ export class ListTileCreatePage {
       );
   }
 
+  private setupServices() {
+    const providerPrefix = trimEnd(this.page.toLowerCase(), `s`);
+    switch (providerPrefix) {
+      case `college`:
+        this.pageItemService = this.collegeService;
+        this.listTileService = this.collegeListTileService;
+        break;
+      case `scholarship`:
+        this.pageItemService = this.scholarshipService;
+        this.listTileService = this.scholarshipListTileService;
+        break;
+      default:
+        break;
+    }
+  }
+
   private updateList(updatedList: any, id: number) {
     this.pageItemService.updateList(updatedList, id)
+      .pipe(takeUntil(this.ngUnsubscribe))
       .subscribe(
         (response) => {
           const eventData: any = {

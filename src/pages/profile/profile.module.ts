@@ -1,27 +1,25 @@
+import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
-import { IonicPageModule } from '@ionic/angular';
+import { FormsModule } from '@angular/forms';
+import { IonicModule } from '@ionic/angular';
 
-import { ComponentsModule } from '@nte/components/components.module';
-import { ContactSettingsComponent } from '@nte/components/settings/settings-contact';
-import { GeneralSettingsComponent } from '@nte/components/settings/settings-general';
-import { NotificationSettingsComponent } from '@nte/components/settings/settings-notification';
-import { PasswordSettingsComponent } from '@nte/components/settings/settings-password';
 import { ProfilePage } from './profile';
+import { ComponentsModule } from '@nte/components/components.module';
+import { SettingsModule } from '@nte/components/settings/settings.module';
 
 @NgModule({
   declarations: [
-    ProfilePage,
-    GeneralSettingsComponent,
-    ContactSettingsComponent,
-    PasswordSettingsComponent,
-    NotificationSettingsComponent
+    ProfilePage
   ],
   exports: [
     ProfilePage
   ],
   imports: [
-    IonicPageModule.forChild(ProfilePage),
-    ComponentsModule
+    CommonModule,
+    FormsModule,
+    IonicModule,
+    ComponentsModule,
+    SettingsModule
   ]
 })
 

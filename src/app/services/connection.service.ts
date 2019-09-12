@@ -1,14 +1,11 @@
 import { Injectable } from '@angular/core';
-import { ToastController } from '@ionic/angular';
-import { BehaviorSubject } from 'rxjs/BehaviorSubject';
-import { Observable } from 'rxjs/Observable';
-import { map } from 'rxjs/operators/map';
+import { BehaviorSubject, Observable } from 'rxjs';
+import { map } from 'rxjs/internal/operators/map';
 
-import 'rxjs/add/operator/map';
-
+import { ToastService } from './toast.service';
+import { IPendingConnection } from '@nte/interfaces/pending-connection.interface';
+import { IStudent } from '@nte/interfaces/student.interface';
 import { ConnectionInvites } from '@nte/models/connection-invites.model';
-import { IPendingConnection } from '@nte/models/pending-connection.interface';
-import { IStudent } from '@nte/models/student.interface';
 import { ApiService } from '@nte/services/api.service';
 import { ListService } from '@nte/services/list.service';
 import { MixpanelService } from '@nte/services/mixpanel.service';
@@ -37,7 +34,7 @@ export class ConnectionService extends ListService {
   constructor(private apiService: ApiService,
     private mixpanel: MixpanelService,
     private stakeholderService: StakeholderService,
-    private toastCtrl: ToastController) {
+    private toastService: ToastService) {
     super();
   }
 
@@ -46,20 +43,14 @@ export class ConnectionService extends ListService {
       .subscribe(
         () => {
           this.mixpanel.event(`connection_invite_accepted`);
-          this.toastCtrl.create({
-            duration: 3000,
-            message: `Invitation accepted.`
-          }).present();
+          this.toastService.open(`Invitation accepted`);
           this.getPending();
           this.getAllConnections();
           // this.studentService.getStudents();
         },
         err => {
           console.error(err);
-          this.toastCtrl.create({
-            duration: 3000,
-            message: `Can't accept invite; please try again.`
-          }).present();
+          this.toastService.open(`Can't accept invite; please try again.`);
         }
       );
   }
@@ -73,18 +64,12 @@ export class ConnectionService extends ListService {
       .subscribe(
         () => {
           this.mixpanel.event(`connection_invite_declined`);
-          this.toastCtrl.create({
-            duration: 3000,
-            message: `Invitation declined.`
-          }).present();
+          this.toastService.open(`Invitation declined.`);
           this.getPending();
         },
         err => {
           console.error(err);
-          this.toastCtrl.create({
-            duration: 3000,
-            message: `Can't decline invite; please try again.`
-          }).present();
+          this.toastService.open(`Can't decline invite; please try again.`);
         }
       );
   }
@@ -128,20 +113,14 @@ export class ConnectionService extends ListService {
       .subscribe(
         () => {
           this.mixpanel.event(`connection_invite_sent`);
-          this.toastCtrl.create({
-            duration: 3000,
-            message: `Invite sent to ${email}.`
-          }).present();
+          this.toastService.open(`Invite sent to ${email}.`);
           this.getPending();
         },
         err => {
           console.error(err);
           const errBody = JSON.parse(err._body);
           const errorMessage = (errBody && errBody.detail) ? errBody.detail : `Email address invalid; please try again.`;
-          this.toastCtrl.create({
-            duration: 3000,
-            message: errorMessage
-          }).present();
+          this.toastService.open(errorMessage);
         }
       );
   }
@@ -158,18 +137,12 @@ export class ConnectionService extends ListService {
       .subscribe(
         () => {
           this.mixpanel.event(`connection_invite_revoked`);
-          this.toastCtrl.create({
-            duration: 3000,
-            message: `Invitation revoked.`
-          }).present();
+          this.toastService.open(`Invitation revoked.`);
           this.getPending();
         },
         err => {
           console.error(err);
-          this.toastCtrl.create({
-            duration: 3000,
-            message: `Can't revoke invite; please try again.`
-          }).present();
+          this.toastService.open(`Can't revoke invite; please try again.`);
         }
       );
   }

@@ -1,8 +1,7 @@
 import { Injectable } from '@angular/core';
 
-import 'rxjs/add/operator/map';
-
 import { EnvironmentService } from '@nte/services/environment.service';
+
 
 @Injectable({ providedIn: 'root' })
 export class UrlService {

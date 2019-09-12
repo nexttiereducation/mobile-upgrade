@@ -1,9 +1,12 @@
+import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
-import { IonicPageModule } from 'ionic-angular';
+import { FormsModule } from '@angular/forms';
+import { IonicModule } from '@ionic/angular';
 
-import { ComponentsModule } from '@nte/components/components.module';
 import { ScholarshipsListPageModule } from './../scholarships-list/scholarships-list.module';
 import { ScholarshipsPage } from './scholarships';
+import { ComponentsModule } from '@nte/components/components.module';
+
 
 @NgModule({
   declarations: [
@@ -13,9 +16,11 @@ import { ScholarshipsPage } from './scholarships';
     ScholarshipsPage
   ],
   imports: [
+    CommonModule,
+    FormsModule,
+    IonicModule,
     ComponentsModule,
-    IonicPageModule.forChild(ScholarshipsPage),
     ScholarshipsListPageModule
   ]
 })
-export class ScholarshipsPageModule {}
+export class ScholarshipsPageModule { }

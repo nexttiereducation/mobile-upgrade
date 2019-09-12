@@ -3,7 +3,7 @@ profile {
     height: 100px;
     width: 100px;
     display: inline-block;
-    border: 9px solid $blueMedium;
+    border: 9px solid var(--blueMedium);
     border-radius: 50%;
   }
   .email {

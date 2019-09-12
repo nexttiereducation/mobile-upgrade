@@ -10,4 +10,4 @@ import { MaterialIconsModule } from 'ionic2-material-icons';
   ]
 })
 
-export class SharedModule {}
+export class ComponentsModule { }

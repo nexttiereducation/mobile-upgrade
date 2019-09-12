@@ -2,7 +2,7 @@ high-school {
   ion-searchbar.searchbar-md {
     &.register {
       &.searchbar-has-value .searchbar-input {
-        -webkit-text-fill-color: $white !important;
+        -webkit-text-fill-color: var(--white) !important;
       }
       .searchbar-clear-icon,
       .searchbar-search-icon {
@@ -15,7 +15,7 @@ high-school {
         box-shadow: none !important;
         color: white !important;
         -webkit-box-shadow: none !important;
-        -webkit-text-fill-color: $white50;
+        -webkit-text-fill-color: var(--white50);
         padding-right: 0px;
       }
     }

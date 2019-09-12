@@ -1,6 +1,7 @@
-import { Component } from '@angular/core';
-import { App, IonicPage, NavController } from '@ionic/angular';
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 
 import { NOTIFICATION_SETTING_SECTIONS } from '@nte/constants/settings-notification.constants';
 import { extendedProfileCopy } from '@nte/constants/stakeholder.constants';
@@ -10,19 +11,15 @@ import { MessageService } from '@nte/services/message.service';
 import { MixpanelService } from '@nte/services/mixpanel.service';
 import { StakeholderService } from '@nte/services/stakeholder.service';
 import { UrlService } from '@nte/services/url.service';
-import { LoginPage } from './../login/login';
 
-@IonicPage({
-  name: `profile-page`
-})
 @Component({
   selector: `profile`,
   templateUrl: `profile.html`
 })
-export class ProfilePage {
+export class ProfilePage implements OnInit, OnDestroy {
   public extendedProfileCopy: string = extendedProfileCopy;
   public sections: any[] = NOTIFICATION_SETTING_SECTIONS;
-  public userOverview;
+  public userOverview: any;
 
   private ngUnsubscribe: Subject<any> = new Subject();
 
@@ -44,36 +41,32 @@ export class ProfilePage {
 
   constructor(public linkService: LinkService,
     public messageService: MessageService,
-    public navCtrl: NavController,
+    public router: Router,
     public stakeholderService: StakeholderService,
-    private app: App,
     private connectionService: ConnectionService,
     private mixpanel: MixpanelService,
     private urlService: UrlService) { }
 
-  ionViewDidLoad() {
+  ngOnInit() {
     this.stakeholderService.getOverview()
-      .takeUntil(this.ngUnsubscribe)
-      .subscribe(user => this.userOverview = user);
-  }
-
-  ionViewDidEnter() {
+      .pipe(takeUntil(this.ngUnsubscribe))
+      .subscribe(overview => this.userOverview = overview);
     this.mixpanel.event(`navigated_to-Profile`);
   }
 
-  ionViewDidLeave() {
+  ngOnDestroy() {
     this.ngUnsubscribe.next();
     this.ngUnsubscribe.complete();
   }
 
-  logout() {
+  public logout() {
     this.stakeholderService.logoutSuccess
-      .takeUntil(this.ngUnsubscribe)
+      .pipe(takeUntil(this.ngUnsubscribe))
       .subscribe(
         () => {
           this.connectionService.clear();
           this.mixpanel.event(`logout`);
-          this.app.getRootNavs()[0].setRoot(LoginPage);
+          this.router.navigate(['login']);
         }
       );
     this.stakeholderService.logout();

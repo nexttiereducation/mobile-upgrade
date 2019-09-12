@@ -1,13 +1,13 @@
 import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
-import { ToastController } from '@ionic/angular';
 import { Subject } from 'rxjs';
 import { debounceTime, takeUntil } from 'rxjs/operators';
 
+import { ToastService } from './../../services/toast.service';
 import { IFirstName, ILastName } from '@nte/interfaces/settings-general.interface';
 import { IUserOverview } from '@nte/interfaces/user-overview.interface';
-import { SettingsProvider } from '@nte/services/settings.service';
-import { StakeholderProvider } from '@nte/services/stakeholder.service';
+import { SettingsService } from '@nte/services/settings.service';
+import { StakeholderService } from '@nte/services/stakeholder.service';
 
 @Component({
   selector: `general-settings`,
@@ -30,9 +30,9 @@ export class GeneralSettingsComponent implements OnInit, OnDestroy {
     return this.currentUser.stakeholder_type === `Parent` || !this.currentUser.district;
   }
 
-  constructor(private accountSettingsProvider: SettingsProvider,
-    private stakeholderService: StakeholderProvider,
-    private toastCtrl: ToastController) { }
+  constructor(private accountSettingsService: SettingsService,
+    private stakeholderService: StakeholderService,
+    private toastService: ToastService) { }
 
   ngOnInit() {
     this.firstNameControl.setValue(this.currentUser.first_name);
@@ -60,19 +60,19 @@ export class GeneralSettingsComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.ngUnsubscribe))
       .subscribe(
         () => this.currentUser.profile_photo_url = null,
-        () => this.toastCtrl.create({ message: `Can't remove profile picture. Please try again.` }).present()
+        () => this.toastService.open(`Can't remove profile picture. Please try again.`)
       );
   }
 
   updateGeneralSettings(name: IFirstName | ILastName) {
-    this.accountSettingsProvider.updateUserInfo(this.currentUser.id, name)
+    this.accountSettingsService.updateUserInfo(this.currentUser.id, name)
       .pipe(takeUntil(this.ngUnsubscribe))
       .subscribe(
         response => {
-          this.toastCtrl.create({ message: `Settings updated.` }).present();
+          this.toastService.open(`Settings updated.`);
           this.currentUser = response;
         },
-        () => this.toastCtrl.create({ message: `Can't update settings. Please try again.` }).present()
+        () => this.toastService.open(`Can't update settings. Please try again.`)
       );
   }
 
@@ -83,11 +83,11 @@ export class GeneralSettingsComponent implements OnInit, OnDestroy {
         (response: any) => {
           this.currentUser.profile_photo_url = response.profile_photo;
           this.attachingFile = false;
-          this.toastCtrl.create({ message: `Profile picture updated.` }).present();
+          this.toastService.open(`Profile picture updated.`);
         },
         err => {
           console.error(err);
-          this.toastCtrl.create({ message: `Can't update profile picture. Please try again.` }).present();
+          this.toastService.open(`Can't update profile picture. Please try again.`);
         }
       );
   }

@@ -1,12 +1,7 @@
 <ion-header mode="ios">
-  <ion-toolbar hideBackButton
-               mode="ios">
-    <ion-buttons slot="secondary">
-      <ion-button icon-only
-                  fill="clear"
-                  (click)="back()">
-        <ion-icon name="ios-arrow-back"></ion-icon>
-      </ion-button>
+  <ion-toolbar mode="ios">
+    <ion-buttons slot="start">
+      <ion-back-button></ion-back-button>
     </ion-buttons>
     <ion-title mode="ios">
       <div class="subhead">{{ title }}</div> {{ category?.name }}
@@ -25,8 +20,10 @@
               [class.bg-blue10]="category?.selectedItems[0]?.id"
               [class.text-blue]="category?.selectedItems[0]?.id"
               [class.text-steel50]="!category?.isActive">
-      <ng-template [ngIf]="category?.config.prefix">{{ category?.config.prefix }}</ng-template>
-      {{ selectedValueDisplay | number }}
+      <ion-label>
+        <ng-template [ngIf]="category?.config.prefix">{{ category?.config.prefix }}</ng-template>
+        {{ selectedValueDisplay | number }}
+      </ion-label>
     </ion-item>
     <ion-item no-lines
               class="range-values text-steel50">
@@ -34,6 +31,7 @@
         <ng-template [ngIf]="category?.config.prefix">{{ category?.config.prefix }}</ng-template>
         {{ (category?.config.min | number) || 0 }}
       </span>
+      <ion-label></ion-label>
       <span item-end>
         <ng-template [ngIf]="category?.config.prefix">{{ category?.config.prefix }}</ng-template>
         {{ (category?.config.max | number) || 100 }}
@@ -45,7 +43,7 @@
                mode="ios"
                step="{{category?.config.step || 50}}"
                [dualKnobs]="dualKnobs"
-               [(ngModel)]="selectedValue"
+               [(value)]="selectedValue"
                (ionChange)="setFilter()">
     </ion-range>
   </ion-list>

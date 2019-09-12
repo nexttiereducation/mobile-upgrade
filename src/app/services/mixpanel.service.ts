@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
-import { Mixpanel, MixpanelPeople } from '@ionic-native/mixpanel';
+import { Mixpanel, MixpanelPeople } from '@ionic-native/mixpanel/ngx';
 
-import { INewUser } from '@nte/models/new-user.interface';
+import { INewUser } from '@nte/interfaces/new-user.interface';
 import { Stakeholder } from '@nte/models/stakeholder.model';
 import { EnvironmentService } from '@nte/services/environment.service';
 

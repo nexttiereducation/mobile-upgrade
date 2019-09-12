@@ -1,17 +1,10 @@
-import { Component, Renderer2, ViewChild } from '@angular/core';
+import { Component, OnDestroy, OnInit, Renderer2, ViewChild } from '@angular/core';
 import { AbstractControl, FormControl } from '@angular/forms';
-import { NativeStorage } from '@ionic-native/native-storage';
-import {
-  Content,
-  Events,
-  IonicPage,
-  ItemSliding,
-  ModalController,
-  NavController,
-  NavParams,
-  ToastController
-} from '@ionic/angular';
-import { Subscription } from 'rxjs/Subscription';
+import { ActivatedRoute, Router } from '@angular/router';
+import { NativeStorage } from '@ionic-native/native-storage/ngx';
+import { Events, IonContent, IonItemSliding, ModalController, ToastController } from '@ionic/angular';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 
 import { SendComponent } from '@nte/components/send/send';
 import {
@@ -22,30 +15,28 @@ import {
   TASK_TILES,
   TaskStatus
 } from '@nte/constants/task.constants';
+import { ICollegeTracker } from '@nte/interfaces/college-tracker.interface';
+import { ICollege } from '@nte/interfaces/college.interface';
+import { IEmptyState } from '@nte/interfaces/empty-state.interface';
+import { IStudent } from '@nte/interfaces/student.interface';
 import { BackEndPrompt } from '@nte/models/back-end-prompt.model';
-import { ICollegeTracker } from '@nte/models/college-tracker.interface';
-import { ICollege } from '@nte/models/college.interface';
-import { IEmptyState } from '@nte/models/empty-state';
-import { IStudent } from '@nte/models/student.interface';
 import { TaskTracker } from '@nte/models/task-tracker.model';
 import { ConnectionService } from '@nte/services/connection.service';
 import { KeyboardService } from '@nte/services/keyboard.service';
 import { MixpanelService } from '@nte/services/mixpanel.service';
+import { NavStateService } from '@nte/services/nav-state.service';
 import { StakeholderService } from '@nte/services/stakeholder.service';
 import { SurveyService } from '@nte/services/survey.service';
 import { TaskService } from '@nte/services/task.service';
-import { TaskPage } from './../task/task';
 
-@IonicPage({
-  name: `tasks-list-page`
-})
 @Component({
   selector: `tasks-list`,
-  templateUrl: `tasks-list.html`
+  templateUrl: `tasks-list.html`,
+  styleUrls: [`tasks-list.scss`]
 })
-export class TasksListPage {
-  @ViewChild(Content) public content: Content;
-  @ViewChild(ItemSliding) public animatedSlidingItem: ItemSliding;
+export class TasksListPage implements OnInit, OnDestroy {
+  @ViewChild(IonContent, { static: false }) public content: IonContent;
+  @ViewChild(IonItemSliding, { static: false }) public animatedSlidingItem: IonItemSliding;
 
   public collegeImgUrls: any = {};
   public collegeTracker: ICollege | ICollegeTracker | any;
@@ -63,10 +54,7 @@ export class TasksListPage {
   public taskStatus: any = TaskStatus;
   public taskStatuses: any = TASK_STATUSES;
 
-  private parentUpdateSub: any;
-  private resizeContentSub: any;
-  private searchControlSub: any;
-  private taskChangeSub: any;
+  private ngUnsubscribe: Subject<any> = new Subject();
 
   get isSearchAll() {
     return this.list ? this.list.name === `Search All` : this.listName === `Search All`;
@@ -76,32 +64,34 @@ export class TasksListPage {
     return this.stakeholderService.stakeholder;
   }
 
-  constructor(params: NavParams,
-    public connectionService: ConnectionService,
+  constructor(public connectionService: ConnectionService,
     public events: Events,
     public keyboard: KeyboardService,
     public nativeStorage: NativeStorage,
-    public navCtrl: NavController,
+    public route: ActivatedRoute,
+    public router: Router,
     public modalCtrl: ModalController,
     public stakeholderService: StakeholderService,
     public surveyService: SurveyService,
     public taskService: TaskService,
     public toastCtrl: ToastController,
     private mixpanel: MixpanelService,
-    private renderer: Renderer2) {
-    this.collegeTracker = params.get(`collegeTracker`);
-    this.connections = params.get(`connections`);
-    this.impersonatedStudent = params.get(`impersonatedStudent`);
-    this.list = params.get(`tile`) || TASK_TILES[0];
+    private renderer: Renderer2,
+    navStateService: NavStateService) {
+    const params: any = navStateService.data;
+    this.collegeTracker = params.collegeTracker || null;
+    this.connections = params.connections || null;
+    this.impersonatedStudent = params.impersonatedStudent || null;
+    this.list = params.tile || TASK_TILES[0];
   }
 
-  ionViewDidLoad() {
-    if (this.impersonatedStudent) {
+  ngOnInit() {
+    if (this.impersonatedStudent && this.impersonatedStudent.id) {
       this.getTasks(this.impersonatedStudent.id);
     } else {
       this.getTasks();
     }
-    this.taskChangeSub = this.events.subscribe(
+    this.events.subscribe(
       `taskChange`,
       (data: any) => {
         if (data.taskTracker.status === TaskStatus.COMPLETED) {
@@ -111,31 +101,21 @@ export class TasksListPage {
         }
       }
     );
-    this.resizeContentSub = this.taskService.resizeContent
-      .subscribe(() => {
-        this.content.resize();
-      });
+    // this.taskService.resizeContent
+    //   .pipe(takeUntil(this.ngUnsubscribe))
+    //   .subscribe(() => this.content.resize());
     this.mixpanel.event(`task_filter_selected`, {
       filter: this.listName
     });
   }
 
-  ionViewWillUnload() {
-    if (this.searchControlSub) {
-      this.searchControlSub.unsubscribe();
-    }
-    if (this.taskChangeSub) {
-      this.taskChangeSub.unsubscribe();
-    }
-    if (this.parentUpdateSub) {
-      this.parentUpdateSub.unsubscribe();
-    }
-    if (this.resizeContentSub) {
-      this.resizeContentSub.unsubscribe();
-    }
+  ngOnDestroy() {
+    this.ngUnsubscribe.next();
+    this.ngUnsubscribe.complete();
+    this.events.unsubscribe(`taskChange`);
   }
 
-  public checkSwiper(_itemSliding: ItemSliding, taskTracker: TaskTracker) {
+  public checkSwiper(_itemSliding: IonItemSliding, taskTracker: TaskTracker) {
     this.taskUpdated(null, taskTracker);
   }
 
@@ -156,7 +136,7 @@ export class TasksListPage {
       this.query = `${TASK_LIST_BASE_URL}${this.list.filter}`;
       this.emptyState = TASK_LIST_EMPTY_STATES[this.listName];
       if (impersonationId) {
-        this.query += this.query.includes(`?`) ? `&` : `?`;
+        this.query.includes(`?`) ? this.query += `&` : this.query += `?`;
         this.query += `student_id=${impersonationId}`;
       }
       this.taskService.getUserTasks(this.query, false, true);
@@ -173,58 +153,63 @@ export class TasksListPage {
       infiniteScroll.enable(false);
       return;
     }
-    const loadMoreSub: Subscription = this.taskService.moreToScroll
-      .subscribe((more) => {
-        if (!more) {
-          infiniteScroll.enable(false);
+    this.taskService.moreToScroll
+      .pipe(takeUntil(this.ngUnsubscribe))
+      .subscribe(
+        (more) => {
+          if (!more) {
+            infiniteScroll.enable(false);
+          }
+          infiniteScroll.complete();
         }
-        infiniteScroll.complete();
-        loadMoreSub.unsubscribe();
-      });
+      );
     this.taskService.getMoreTasks();
   }
 
-  public openSendModal(task: any) {
-    const sendModal = this.modalCtrl.create(
-      SendComponent,
-      {
+  public async openSendModal(task: any) {
+    const modal = await this.modalCtrl.create({
+      backdropDismiss: true,
+      component: SendComponent,
+      componentProps: {
         imageUrl: this.getTaskImageUrl(task),
         item: task,
         type: `Task`
       },
-      {
-        cssClass: `smallModal`,
-        enableBackdropDismiss: true,
-        showBackdrop: false
-      }
-    );
-    sendModal.present();
+      cssClass: `smallModal`,
+      showBackdrop: false
+    });
+    return await modal.present();
   }
 
   public openTaskDetail(task: any, _prompt: BackEndPrompt<any> = null, page: string = null) {
     const imgUrl = this.getTaskImageUrl(task);
     // if (task.prompt && task.prompt.id) {
-    //   this.navCtrl.push(PromptPage, {
+    //   this.router.navigate([PromptPage, {
     //     isParent: this.impersonatedStudent,
     //     page: page,
     //     prompt: task.prompt,
     //     taskTracker: task,
     //     taskTypeImg: imgUrl
-    //   });
+    //   }]);
     // } else {
-    this.navCtrl.push(TaskPage, {
-      isParent: this.impersonatedStudent,
-      page,
-      prompt: task.prompt,
-      task,
-      taskTypeImg: imgUrl
-    });
+    this.router.navigate(
+      [`app/tasks/${task.id}`],
+      {
+        state: {
+          isParent: this.impersonatedStudent,
+          page,
+          prompt: task.prompt,
+          task,
+          taskTypeImg: imgUrl
+        }
+      }
+    );
     // }
   }
 
   public resetAnimatedItemSliding() {
-    this.animatedSlidingItem.startSliding(0);
-    this.animatedSlidingItem.endSliding(0);
+    this.animatedSlidingItem.open(`end`);
+    this.animatedSlidingItem.close();
   }
 
   public scrollToTop() {
@@ -240,19 +225,22 @@ export class TasksListPage {
       this.hasSearchTerm = true;
       this.mixpanel.event(`search_entered`, {
         'search term entered': this.searchTerm,
-        'page': `Tasks`
+        page: `Tasks`
       });
-      this.taskService.getUserTasks(`${this.query}${this.isSearchAll && this.user.isStudent ? `?` : `&`}search=${this.searchTerm}`);
+      const query = `${this.query}${this.isSearchAll && this.user.isStudent ? '?' : '&'}search=${this.searchTerm}`;
+      this.taskService.getUserTasks(query);
     }
   }
 
   public setCollegeImages(colleges: (ICollege | ICollegeTracker)[]) {
-    colleges.forEach(
-      (collegeTracker: any) => {
-        const id = collegeTracker.institution || collegeTracker.id;
-        this.collegeImgUrls[id] = collegeTracker.photo_url;
-      }
-    );
+    if (colleges && colleges.length > 0) {
+      colleges.forEach(
+        (collegeTracker: any) => {
+          const id = collegeTracker.institution || collegeTracker.id;
+          this.collegeImgUrls[id] = collegeTracker.photo_url;
+        }
+      );
+    }
   }
 
   public setViewedTasksListPage() {
@@ -294,6 +282,7 @@ export class TasksListPage {
       taskTracker.updatedStatus(TaskStatus.COMPLETED);
     }
     this.taskService.updateTaskStatus(taskTracker.id, taskTracker.status)
+      .pipe(takeUntil(this.ngUnsubscribe))
       .subscribe(
         (taskTrackerChange) => {
           if (taskTrackerChange && (taskTrackerChange.data instanceof TaskTracker)) {
@@ -302,19 +291,7 @@ export class TasksListPage {
               this.openTaskDetail(newTracker);
             } else {
               this.taskService.removeTask(newTracker);
-              const toast = this.toastCtrl.create({
-                closeButtonText: `UNDO`,
-                duration: 5000,
-                message: `Task Completed.`,
-                position: `bottom`,
-                showCloseButton: true
-              });
-              toast.present();
-              toast.onDidDismiss((_data, role) => {
-                if (role === `close`) {
-                  this.taskService.resetTask(taskTracker);
-                }
-              });
+              this.openTaskCompleteToast(newTracker);
             }
           } else if (taskTrackerChange) {
             // This is the case where there is a prompt
@@ -329,5 +306,18 @@ export class TasksListPage {
 
   private getTaskImageUrl(task: any) {
     return this.isSearchAll ? (task.iconUrl || this.collegeImgUrls[task.institution]) : this.iconUrl;
+  }
+
+  private async openTaskCompleteToast(taskTracker: TaskTracker) {
+    const toast = await this.toastCtrl.create({
+      buttons: [{
+        handler: () => this.taskService.resetTask(taskTracker),
+        text: `Undo`
+      }],
+      duration: 5000,
+      message: `Task completed.`,
+      position: `bottom`
+    });
+    toast.present();
   }
 }

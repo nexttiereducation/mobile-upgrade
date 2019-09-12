@@ -1,32 +1,27 @@
 import { AfterViewInit, Component } from '@angular/core';
-import { CallNumber } from '@ionic-native/call-number';
-import { Device } from '@ionic-native/device';
-import { EmailComposer } from '@ionic-native/email-composer';
-import { Mixpanel } from '@ionic-native/mixpanel';
-import { SplashScreen } from '@ionic-native/splash-screen';
-import { StatusBar } from '@ionic-native/status-bar';
-import { App, Platform } from '@ionic/angular';
+import { CallNumber } from '@ionic-native/call-number/ngx';
+import { Device } from '@ionic-native/device/ngx';
+import { EmailComposer } from '@ionic-native/email-composer/ngx';
+import { Mixpanel } from '@ionic-native/mixpanel/ngx';
+import { SplashScreen } from '@ionic-native/splash-screen/ngx';
+import { StatusBar } from '@ionic-native/status-bar/ngx';
+import { Platform } from '@ionic/angular';
 import { Subject } from 'rxjs';
 
 import { mixpanelConfig } from './app.config';
-import { LoginPage } from '@nte/pages/login/login';
-import { MessagingPage } from '@nte/pages/messaging/messaging';
-import { NotificationsPage } from '@nte/pages/notifications/notifications';
-import { TabsPage } from '@nte/pages/tabs/tabs';
-import { ConnectionProvider } from '@nte/providers/connection.provider';
-import { DeepLinksService } from '@nte/providers/deep-links.provider';
-import { EnvironmentProvider } from '@nte/providers/environment.provider';
-import { LinkProvider } from '@nte/providers/link.provider';
-import { MessageProvider } from '@nte/providers/message.provider';
-import { NotificationProvider } from '@nte/providers/notification.provider';
-import { StakeholderProvider } from '@nte/providers/stakeholder.provider';
+import { ConnectionService } from '@nte/services/connection.service';
+import { DeepLinksService } from '@nte/services/deep-links.service';
+import { EnvironmentService } from '@nte/services/environment.service';
+import { LinkService } from '@nte/services/link.service';
+import { MessageService } from '@nte/services/message.service';
+import { NotificationService } from '@nte/services/notification.service';
+import { StakeholderService } from '@nte/services/stakeholder.service';
 
 @Component({
+  selector: `app-root`,
   templateUrl: `app.component.html`
 })
 export class NteAppComponent implements AfterViewInit {
-  public messagingPage: any = MessagingPage;
-  public notificationsPage: any = NotificationsPage;
   public rootPage;
   public showTabs: boolean;
 
@@ -55,24 +50,23 @@ export class NteAppComponent implements AfterViewInit {
   }
 
   get user() {
-    return this.stakeholderProvider.stakeholder || null;
+    return this.stakeholderService.stakeholder || null;
   }
 
   constructor(
     public device: Device,
-    private app: App,
     private callNumber: CallNumber,
-    private connectionProvider: ConnectionProvider,
+    private connectionService: ConnectionService,
     private deepLinks: DeepLinksService,
     private emailComposer: EmailComposer,
-    private environmentProvider: EnvironmentProvider,
-    private linkProvider: LinkProvider,
-    private messageProvider: MessageProvider,
+    private environmentService: EnvironmentService,
+    private linkService: LinkService,
+    private messageService: MessageService,
     private mixpanel: Mixpanel,
-    private notificationProvider: NotificationProvider,
+    private notificationService: NotificationService,
     private platform: Platform,
     private splashScreen: SplashScreen,
-    private stakeholderProvider: StakeholderProvider,
+    private stakeholderService: StakeholderService,
     private statusBar: StatusBar) {
     this.platform
       .ready()
@@ -92,10 +86,19 @@ export class NteAppComponent implements AfterViewInit {
   }
 
   ngAfterViewInit() {
-    setTimeout(() => {
-      this.app.getActiveNavs()[0].setRoot(LoginPage);
-    }, 2000);
+    // setTimeout(() => {
+    //   this.app.getActiveNavs()[0].setRoot(LoginPage);
+    // }, 2000);
     this.deepLinks.init();
+    const externalLinks = document.getElementsByClassName(`external-link`);
+    if (externalLinks && externalLinks.length > 0) {
+      Array.from(externalLinks).forEach(externalLink => {
+        externalLink.addEventListener(
+          `click`,
+          e => { this.openExternalLink(e); }
+        );
+      });
+    }
   }
 
   private composeEmail(addr: string) {
@@ -115,10 +118,10 @@ export class NteAppComponent implements AfterViewInit {
   }
 
   private initForUser() {
-    this.nav.setRoot(TabsPage);
-    this.connectionProvider.initialize();
-    this.messageProvider.init();
-    this.notificationProvider.init();
+    // this.nav.setRoot(TabsPage);
+    this.connectionService.initialize();
+    this.messageService.init();
+    this.notificationService.init();
   }
 
   private openExternalLink(ev) {
@@ -127,7 +130,7 @@ export class NteAppComponent implements AfterViewInit {
     if (element.tagName === `A`) {
       if (element.classList.contains(`external-link-url`)) {
         ev.preventDefault();
-        this.linkProvider.open(element.href);
+        this.linkService.open(element.href);
       } else if (this.platform.is(`android`)) {
         if (element.classList.contains(`external-link-phone`)) {
           ev.preventDefault();
@@ -155,7 +158,7 @@ export class NteAppComponent implements AfterViewInit {
 
   private setupAppListeners() {
     if (this.mixpanel) {
-      if (this.environmentProvider.isProduction) {
+      if (this.environmentService.isProduction) {
         this.mixpanel.init(mixpanelConfig.prod);
       } else {
         this.mixpanel.init(mixpanelConfig.stg);
@@ -201,18 +204,18 @@ export class NteAppComponent implements AfterViewInit {
   }
 
   private setupLinkSub() {
-    this.app.viewDidLoad
-      .takeUntil(this.ngUnsubscribe)
-      .subscribe(() => {
-        const externalLinks = document.getElementsByClassName(`external-link`);
-        for (let i = 0; i < externalLinks.length; i++) {
-          const externalLink = externalLinks[i];
-          externalLink.addEventListener(
-            `click`,
-            e => { this.openExternalLink(e); }
-          );
-        }
-      });
+    // this.app.viewDidLoad
+    //   .takeUntil(this.ngUnsubscribe)
+    //   .subscribe(() => {
+    //     const externalLinks = document.getElementsByClassName(`external-link`);
+    //     for (let i = 0; i < externalLinks.length; i++) {
+    //       const externalLink = externalLinks[i];
+    //       externalLink.addEventListener(
+    //         `click`,
+    //         e => { this.openExternalLink(e); }
+    //       );
+    //     }
+    //   });
   }
 
   setupPush() {
@@ -245,10 +248,10 @@ export class NteAppComponent implements AfterViewInit {
   }
 
   private setupUserSub() {
-    if (this.stakeholderProvider.loggedIn) {
+    if (this.stakeholderService.loggedIn) {
       this.initForUser();
     } else {
-      this.stakeholderProvider.loginSuccess
+      this.stakeholderService.loginSuccess
         // .pipe(takeUntil(this.ngUnsubscribe)
         .subscribe((isLoggedIn: boolean) => {
           if (isLoggedIn) {

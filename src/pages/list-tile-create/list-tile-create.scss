@@ -40,7 +40,7 @@ list-tile-create {
 
       &.selected {
         .button-inner {
-          background-color: transparentize($steel, 0.9);
+          --background-color: transparentize(var(--steel), 0.9);
           border-radius: 50%;
         }
       }

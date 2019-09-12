@@ -1,13 +1,15 @@
+import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
-import { IonicPageModule } from '@ionic/angular';
+import { FormsModule } from '@angular/forms';
+import { IonicModule } from '@ionic/angular';
 
-import { ComponentsModule } from '@nte/components/components.module';
-import { FilterCategoryPageModule } from './../category/category.module';
-import { FilterChecklistPageModule } from './../filter-checklist/filter-checklist.module';
-import { FilterDistancePageModule } from './../filter-distance/filter-distance.module';
-import { FilterProgramPageModule } from './../filter-program/filter-program.module';
-import { FilterRangePageModule } from './../filter-range/filter-range.module';
 import { FilterPage } from './filter';
+import { ComponentsModule } from '@nte/components/components.module';
+import { FilterCategoryPageModule } from '@nte/pages/filter-category/filter-category.module';
+import { FilterChecklistPageModule } from '@nte/pages/filter-checklist/filter-checklist.module';
+import { FilterDistancePageModule } from '@nte/pages/filter-distance/filter-distance.module';
+import { FilterProgramPageModule } from '@nte/pages/filter-program/filter-program.module';
+import { FilterRangePageModule } from '@nte/pages/filter-range/filter-range.module';
 
 @NgModule({
   declarations: [
@@ -17,8 +19,10 @@ import { FilterPage } from './filter';
     FilterPage
   ],
   imports: [
+    CommonModule,
+    FormsModule,
+    IonicModule,
     ComponentsModule,
-    IonicPageModule.forChild(FilterPage),
     // added
     FilterChecklistPageModule,
     FilterDistancePageModule,

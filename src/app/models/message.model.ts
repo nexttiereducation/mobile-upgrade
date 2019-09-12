@@ -1,4 +1,4 @@
-import { IMessageUser } from './message-user.interface';
+import { IMessageUser } from '@nte/interfaces/message-user.interface';
 
 export class Message {
   public author: IMessageUser;

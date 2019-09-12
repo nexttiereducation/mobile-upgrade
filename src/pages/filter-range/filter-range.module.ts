@@ -1,5 +1,6 @@
+import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
-import { IonicPageModule } from '@ionic/angular';
+import { IonicModule } from '@ionic/angular';
 
 import { FilterRangePage } from './filter-range';
 
@@ -11,8 +12,9 @@ import { FilterRangePage } from './filter-range';
     FilterRangePage
   ],
   imports: [
-    IonicPageModule.forChild(FilterRangePage)
+    CommonModule,
+    IonicModule
   ]
 })
 
-export class FilterRangePageModule {}
+export class FilterRangePageModule { }

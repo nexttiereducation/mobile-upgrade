@@ -1,5 +1,6 @@
+import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
-import { IonicPageModule } from '@ionic/angular';
+import { IonicModule } from '@ionic/angular';
 
 import { FilterChecklistPage } from './filter-checklist';
 
@@ -11,8 +12,9 @@ import { FilterChecklistPage } from './filter-checklist';
     FilterChecklistPage
   ],
   imports: [
-    IonicPageModule.forChild(FilterChecklistPage)
+    CommonModule,
+    IonicModule
   ]
 })
 
-export class FilterChecklistPageModule {}
+export class FilterChecklistPageModule { }

@@ -1,5 +1,8 @@
 <ion-header mode="ios">
   <ion-toolbar mode="ios">
+    <ion-buttons slot="start">
+      <ion-back-button></ion-back-button>
+    </ion-buttons>
     <ion-title mode="ios"
                tappable
                (click)="scrollToTop()">
@@ -142,6 +145,7 @@
       <ion-card class="placeholder"
                 *ngFor="let placeholder of placeholders">
         <ion-item>
+          <ion-label></ion-label>
           <ion-avatar class="grey-gradient"
                       item-left></ion-avatar>
           <div class="grey-gradient"></div>

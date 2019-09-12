@@ -10,12 +10,12 @@ prompt-test-dates {
     padding: 1px;
     &.valid {
       .toolbar-background.toolbar-background-md {
-        background: $green;
+        background: var(--green);
       }
     }
     &.invalid {
       .toolbar-background.toolbar-background-md {
-        background: $orange;
+        background: var(--orange);
       }
     }
   }

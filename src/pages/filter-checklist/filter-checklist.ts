@@ -1,22 +1,26 @@
-import { Component, ViewChild } from '@angular/core';
-import { Content, Events, IonicPage, NavController, NavParams } from '@ionic/angular';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { Router } from '@angular/router';
+import { Events } from '@ionic/angular';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 
 import { ALPHABET } from '@nte/constants/filter.constants';
 import { Category } from '@nte/models/category.model';
 import { Option } from '@nte/models/option.model';
+import { ListTileCreatePage } from '@nte/pages/list-tile-create/list-tile-create';
 import { CollegeService } from '@nte/services/college.service';
 import { FilterService } from '@nte/services/filter.service';
 import { MixpanelService } from '@nte/services/mixpanel.service';
-import { ListTileCreatePage } from './../list-tile-create/list-tile-create';
+import { NavStateService } from '@nte/services/nav-state.service';
 
-@IonicPage()
 @Component({
   selector: `filter-checklist`,
-  templateUrl: `filter-checklist.html`
+  templateUrl: `filter-checklist.html`,
+  styleUrls: [`filter-checklist.scss`]
 })
-export class FilterChecklistPage {
+export class FilterChecklistPage implements OnInit, OnDestroy {
+  @ViewChild(`Content`, { static: false }) public content;
 
-  @ViewChild(Content) public content: Content;
   public alphabet = ALPHABET;
   public category: Category;
 
@@ -27,6 +31,7 @@ export class FilterChecklistPage {
   public title: string;
 
   private listType: string;
+  private ngUnsubscribe: Subject<any> = new Subject();
 
   get categoryOptions() {
     return [...this.category.options];
@@ -48,26 +53,37 @@ export class FilterChecklistPage {
     return this.category.selectedItems.map((o) => o.id);
   }
 
-  constructor(params: NavParams,
+  constructor(
     public events: Events,
     public filterService: FilterService,
-    public navCtrl: NavController,
+    public router: Router,
     private collegeService: CollegeService,
-    private mixpanel: MixpanelService) {
-    this.category = params.get(`category`);
-    this.isAlphabetized = params.get(`isAlpha`);
-    this.listType = params.get(`listType`);
-    this.title = params.get(`title`);
+    private mixpanel: MixpanelService,
+    navStateService: NavStateService) {
+    const params: any = navStateService.data;
+    this.category = params.category;
+    this.isAlphabetized = params.isAlpha;
+    this.listType = params.listType;
+    this.title = params.title;
+  }
+
+  ngOnInit() {
+    this.options = this.categoryOptions;
+    if (this.isAlphabetized) {
+      this.groupOptions();
+    }
+    this.checkOptions();
+  }
+
+  ngOnDestroy() {
+    this.ngUnsubscribe.next();
+    this.ngUnsubscribe.complete();
   }
 
   public applyFilters() {
     this.filterService.filter.updateQuery();
     this.events.publish(`filterApplied`);
-    this.back();
-  }
-
-  public back() {
-    this.navCtrl.pop({ animation: `ios-transition` });
+    // TODO: Implement logic for closing filters
   }
 
   public clear() {
@@ -82,14 +98,6 @@ export class FilterChecklistPage {
     this.options = null;
   }
 
-  public ionViewDidLoad() {
-    this.options = this.categoryOptions;
-    if (this.isAlphabetized) {
-      this.groupOptions();
-    }
-    this.checkOptions();
-  }
-
   public scrollTo(letter: string) {
     const yOffset = document.getElementById(letter).offsetTop;
     this.content.scrollTo(0, yOffset, 1200);
@@ -102,8 +110,9 @@ export class FilterChecklistPage {
     if (val && val.trim() !== ``) {
       if (this.isColleges) {
         // get institutions based on searchQuery
-        const url = `?sector=1&sector=2&sector=4&sector=5&search=${val}`;
-        this.collegeService.searchColleges(url, true).subscribe(
+        this.collegeService.search(`?sector=1&sector=2&sector=4&sector=5&search=${val}`, true)
+          .pipe(takeUntil(this.ngUnsubscribe))
+          .subscribe(
           (response) => {
             this.options = response.map(
               (college) => new Option({
@@ -142,24 +151,25 @@ export class FilterChecklistPage {
 
   public viewSummary() {
     this.filterService.filter.updateQuery();
-    this.navCtrl.push(
-      ListTileCreatePage,
+    this.router.navigate(
+      [ListTileCreatePage],
       {
+        state: {
         filter: this.filterService.filter,
         page: this.listType
+      }
       }
     );
   }
 
   private checkOptions() {
     if (this.category && this.category.hasOptions && this.category.hasSelectedItems) {
-      for (let i = 0; i < this.category.selectedItems.length; i++) {
-        const item = this.category.selectedItems[i];
+      this.category.selectedItems.forEach(item => {
         const optIndex = this.optionIds.indexOf(item.id);
         if (optIndex > -1) {
           this.options[optIndex].isActive = true;
         }
-      }
+      });
     }
   }
 
@@ -187,11 +197,10 @@ export class FilterChecklistPage {
       name: this.category.query.name,
       values: this.category.selectedItems
     };
-    const eventObj = {
+    this.events.publish(`queryStringChange`, query);
+    this.events.publish(`categoryDependencyChange`, {
       category: this.category,
       query
-    };
-    this.events.publish(`queryStringChange`, query);
-    this.events.publish(`categoryDependencyChange`, eventObj);
+    });
   }
 }

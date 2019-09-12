@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs/Observable';
+import { Observable } from 'rxjs';
+import { map } from 'rxjs/internal/operators/map';
 
 import { InterestProfiler } from '@nte/models/interest-profiler.models';
 import { ApiService } from '@nte/services/api.service';
@@ -22,12 +23,16 @@ export class SurveyIpService {
 
   get pages() {
     if (!this._interestProfiler) { return 0; }
-    return (this._interestProfiler.profiler.questions.length / this.pageDelimiter) - 1;
+    return (this.pagedQuestions.length / this.pageDelimiter) - 1;
   }
 
   get surveyProgress() {
     if (!this._interestProfiler) { return 0; }
     return this._interestProfiler.progress;
+  }
+
+  get user() {
+    return this.stakeholderService.stakeholder;
   }
 
   constructor(private apiService: ApiService,
@@ -41,22 +46,22 @@ export class SurveyIpService {
   }
 
   public getResults(): Observable<any> {
-    return this.apiService.patch(
-      `/survey/${this._taskId}`,
-      {
+    return this.apiService
+      .patch(
+        `/survey/${this._taskId}`, {
         answers: this._interestProfiler.answers,
         survey_is_complete: true
       }
-    )
-      .map((response) => response.json());
+      )
+      .pipe(map((response) => response.json()));
   }
 
   public getStartingPage() {
-    const index = this._interestProfiler.profiler.questions.findIndex((question) => !question.answer);
+    const index = this.pagedQuestions.findIndex((question) => !question.answer);
     if (this.pageDelimiter === 1) {
-      return (index === -1) ? (this._interestProfiler.profiler.questions.length - 1) : index;
+      return (index === -1) ? (this.pagedQuestions.length - 1) : index;
     }
-    if (index === this._interestProfiler.profiler.questions.length) {
+    if (index === this.pagedQuestions.length) {
       return (index / this.pageDelimiter);
     }
     return (index < this.pageDelimiter) ? 0 : Math.floor(((index + 1) / this.pageDelimiter));
@@ -68,9 +73,9 @@ export class SurveyIpService {
       this.configureProfiler(interestProfiler);
     } else {
       this._taskId = taskId;
-      const route = `/survey/${taskId}`;
-      return this.apiService.get(route)
-        .map((response) => new InterestProfiler(response.json()))
+      return this.apiService
+        .get(`/survey/${taskId}`)
+        .pipe(map((response) => new InterestProfiler(response.json())))
         .subscribe(
           (interestProfiler) => {
             this.configureProfiler(interestProfiler);
@@ -80,10 +85,13 @@ export class SurveyIpService {
   }
 
   public saveAnswers() {
-    return this.apiService.patch(`/survey/${this._taskId}`, { answers: this._interestProfiler.answers })
-      .map((response) => response.json())
+    return this.apiService
+      .patch(`/survey/${this._taskId}`, {
+        answers: this._interestProfiler.answers
+      })
+      .pipe(map((response) => response.json()))
       .subscribe(
-        (data) => this.stakeholderService.stakeholder.interest_profiler_answers = data.current_answers,
+        (data) => this.user.interest_profiler_answers = data.current_answers,
         err => console.error(err)
       );
   }

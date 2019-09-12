@@ -15,10 +15,12 @@
   <ion-item-group class="bordered-list hover-list mat-font-default"
                   *ngIf="(connectionService.invites$ | async)?.received?.length || (connectionService.invites$ | async)?.sent?.length">
     <ng-template [ngIf]="(connectionService.invites$ | async)?.received?.length > 0">
-      <ion-item-divider> Invitations Received </ion-item-divider>
+      <ion-item-divider>
+        <ion-label>Invitations Received</ion-label>
+      </ion-item-divider>
       <ion-item class="mat-font-default"
                 *ngFor="let invite of (connectionService.invites$ | async)?.received">
-        <div class="body"> {{invite.stakeholder.first_name + ' ' + invite.stakeholder.last_name}} </div>
+        <ion-label class="body"> {{invite.stakeholder.first_name + ' ' + invite.stakeholder.last_name}} </ion-label>
         <ion-button fill="clear"
                     icon-only
                     item-end
@@ -38,10 +40,12 @@
       </ion-item>
     </ng-template>
     <ng-template [ngIf]="(connectionService.invites$ | async)?.sent?.length > 0">
-      <ion-item-divider> Invitations Sent </ion-item-divider>
+      <ion-item-divider>
+        <ion-label> Invitations Sent </ion-label>
+      </ion-item-divider>
       <ion-item class="mat-font-default"
                 *ngFor="let invite of (connectionService.invites$ | async)?.sent">
-        <div class="body">{{invite.invite_email}}</div>
+        <ion-label class="body">{{invite.invite_email}}</ion-label>
         <ion-button fill="clear"
                     icon-only
                     item-end
@@ -54,7 +58,9 @@
   </ion-item-group>
   <ion-item-group *ngIf="(connectionService.all$ | async)?.length
                          || (messageService.unreadMessages$ | async)?.length">
-    <ion-item-divider> Team Members </ion-item-divider>
+    <ion-item-divider>
+      <ion-label>Team Members</ion-label>
+    </ion-item-divider>
     <ion-item size="large"
               *ngFor="let connection of (connectionService.all$ | async)"
               (click)="selectTeamMember(connection)">

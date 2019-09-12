@@ -12,7 +12,7 @@
                  [ngClass]="{'bg-white10 border-white50 register': isNewUser}"
                  (ionInput)="search()"
                  (search)="closeKeyboard()"
-                 [(ngModel)]="searchValue">
+                 [(value)]="searchValue">
   </ion-searchbar>
   <ion-list>
     <ion-item tappable
@@ -51,7 +51,7 @@
   <ion-footer *ngIf="!isNewUser">
     <ion-toolbar color="green">
       <ion-button expand="full"
-                  clear
+                  fill="clear"
                   color="white"
                   (click)="saveHighSchool()">Save</ion-button>
     </ion-toolbar>

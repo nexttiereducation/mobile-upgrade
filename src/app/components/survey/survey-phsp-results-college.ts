@@ -3,11 +3,12 @@ import { Events } from '@ionic/angular';
 
 @Component({
   selector: `survey-phsp-results-college`,
-  templateUrl: `survey-phsp-results-college.html`
+  templateUrl: `survey-phsp-results-college.html`,
+  styleUrls: [`survey-phsp-results-college.scss`]
 })
 export class SurveyPhspResultsCollegeComponent implements OnInit {
-  @Input() public surveyResults: any;
-  @Input() public taskIsComplete: boolean;
+  @Input() surveyResults: any;
+  @Input() taskIsComplete: boolean;
 
   public collegeCharts: any = {};
   public planDisplayValues = {
@@ -15,6 +16,10 @@ export class SurveyPhspResultsCollegeComponent implements OnInit {
     two_year: `2 year`
   };
   public scholarshipChart: any;
+
+  get results() {
+    return this.surveyResults.results;
+  }
 
   constructor(private events: Events) { }
 

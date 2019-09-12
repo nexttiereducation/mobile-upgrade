@@ -1,8 +1,8 @@
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 
-import { IFeedCategory } from './feed-category.interface';
 import { FEED_CATEGORIES } from '@nte/constants/feed-item.constants';
+import { IFeedCategory } from '@nte/interfaces/feed-category.interface';
 import { Stakeholder } from '@nte/models/stakeholder.model';
 
 dayjs.extend(relativeTime);

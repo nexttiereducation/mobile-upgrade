@@ -1,37 +1,33 @@
-import { Component } from '@angular/core';
-import { NativeStorage } from '@ionic-native/native-storage';
-import { IonicPage, ItemSliding, NavController, NavParams, ToastController } from '@ionic/angular';
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { ActivatedRoute, Params, Router } from '@angular/router';
+import { NativeStorage } from '@ionic-native/native-storage/ngx';
+import { NavController, ToastController } from '@ionic/angular';
 import { indexOf, pullAll, words, zipObject } from 'lodash';
-import { Subscription } from 'rxjs/Subscription';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 
 import { COLLEGE_NON_PROFIT_QUERY, COLLEGE_TILES, EMPTY_STATES } from '@nte/constants/college.constants';
+import { IListTile } from '@nte/interfaces/list-tile.interface';
 import { Filter } from '@nte/models/filter.model';
-import { IListTile } from '@nte/models/list-tile.interface';
-import { ListTileCreatePage } from './../../pages/list-tile-create/list-tile-create';
 import { CollegeListTileService } from '@nte/services/college.list-tile.service';
 import { CollegeService } from '@nte/services/college.service';
 import { EnvironmentService } from '@nte/services/environment.service';
 import { FilterService } from '@nte/services/filter.service';
 import { MessageService } from '@nte/services/message.service';
 import { MixpanelService } from '@nte/services/mixpanel.service';
+import { NavStateService } from '@nte/services/nav-state.service';
 import { StakeholderService } from '@nte/services/stakeholder.service';
-import { CollegesListPage } from './../colleges-list/colleges-list';
-import { FilterPage } from './../filter/filter';
-import { MessagingPage } from './../messaging/messaging';
 
-@IonicPage({
-  name: `colleges-page`,
-  priority: `high`,
-  segment: `/colleges`
-})
 @Component({
   selector: `colleges`,
-  templateUrl: `colleges.html`
+  templateUrl: `colleges.html`,
+  styleUrls: [`colleges.scss`]
 })
-export class CollegesPage {
+export class CollegesPage implements OnInit, OnDestroy {
   public connections: any;
   public emptyStates: any = EMPTY_STATES;
   public hiddenTiles: any = {};
+  public params: Params;
   public recommendations: number;
   public showTiles: boolean = true;
   public tiles: any[] = new Array();
@@ -44,7 +40,7 @@ export class CollegesPage {
     Recommended: `navigated_to-Colleges-Recommendations`,
     Saved: `navigated_to-Colleges-Saved`
   };
-  private recSub: Subscription;
+  private ngUnsubscribe: Subject<any> = new Subject();
   private userId: string;
 
   get activeTile() {
@@ -73,23 +69,37 @@ export class CollegesPage {
 
   constructor(
     public messageService: MessageService,
-    public navCtrl: NavController,
+    public router: Router,
     private collegeService: CollegeService,
     private environment: EnvironmentService,
     private filterService: FilterService,
     private listTileService: CollegeListTileService,
     private mixpanel: MixpanelService,
     private nativeStorage: NativeStorage,
-    private params: NavParams,
+    private navCtrl: NavController,
+    private route: ActivatedRoute,
     private stakeholderService: StakeholderService,
-    private toastCtrl: ToastController
-  ) {
-    this.connections = params.get(`connections`);
+    private toastCtrl: ToastController,
+    navStateService: NavStateService) {
+    const params: any = navStateService.data;
+    this.connections = params.connections;
+  }
+
+  ngOnInit() {
+    this.setupTiles();
+    this.setupRecSub();
+    this.initialize();
+  }
+
+  ngOnDestroy() {
+    this.ngUnsubscribe.next();
+    this.ngUnsubscribe.complete();
+    this.tiles = new Array();
   }
 
   ionViewDidEnter() {
     this.mixpanel.event(`navigated_to-Colleges`);
-    this.collegeService.initializeRecommendations(
+    this.collegeService.initRecs(
       this.user.id,
       this.user.isParent
     );
@@ -99,20 +109,6 @@ export class CollegesPage {
       } else if (this.params.get(`updatedListTile`)) {
         this.updateTile(this.params.data);
       }
-    }
-  }
-
-  ionViewDidLoad() {
-    this.tiles = [...COLLEGE_TILES];
-    this.setupTiles();
-    this.setupRecSub();
-    this.initialize();
-  }
-
-  ionViewWillUnload() {
-    this.tiles = new Array();
-    if (this.recSub) {
-      this.recSub.unsubscribe();
     }
   }
 
@@ -140,55 +136,38 @@ export class CollegesPage {
     }
   }
 
-  public editTile(tile: IListTile, slidingItem: ItemSliding) {
-    slidingItem.close();
+  public editTile(tile: IListTile) {
     this.listTileService.activeList = (tile);
-    this.navCtrl.setPages([
+    this.router.navigate(
+      [`app/colleges/list/${tile.id}/edit`],
       {
-        page: CollegesPage,
-        params: {
-          connections: this.connections
-        }
-      },
-      {
-        page: FilterPage,
-        params: {
+        state: {
+          connections: this.connections,
           cyol: true,
           filter: new Filter(this.filterCategories, tile.filter),
+          list: tile,
           listType: `Colleges`,
+          page: `Colleges`,
           title: `Create Your Own List!`
         }
-      },
-      {
-        page: ListTileCreatePage,
-        params: {
-          filter: new Filter(this.filterCategories, tile.filter),
-          list: tile,
-          page: `Colleges`
-        }
       }
-    ]);
+    );
   }
 
   public goToMessaging() {
-    this.navCtrl.push(MessagingPage, { teamMembers: this.connections });
+    this.router.navigate(
+      ['app/messages'],
+      { state: { teamMembers: this.connections } }
+    );
   }
 
-  public hideTile(tile: any, slidingItem: ItemSliding, _index?: number) {
+  public hideTile(tile: any) {
     if (tile.isCustom) {
       this.deleteCustomList(tile);
     } else {
       this.hiddenTiles[tile.name] = true;
       this.updateHiddenTiles(this.hiddenTiles);
-      const hideToast = this.getListRemovedToast(true);
-      hideToast.onDidDismiss((_data, role) => {
-        if (role === `close`) {
-          slidingItem.close();
-          this.hiddenTiles[tile.name] = false;
-          this.updateHiddenTiles(this.hiddenTiles);
-        }
-      });
-      hideToast.present();
+      this.openHideTileToast(tile);
     }
   }
 
@@ -200,12 +179,33 @@ export class CollegesPage {
     collegeFilters.clear();
     this.filterService.filter = collegeFilters;
     this.listTileService.activeList = null;
-    this.navCtrl.push(FilterPage, {
+    this.router.navigate(
+      [`app/colleges/list/create`],
+      {
+        state: {
       cyol: true,
       filter: collegeFilters,
       listType: `Colleges`,
       title: `Create Your Own List!`
+        }
+      }
+    );
+  }
+
+  public async openHideTileToast(tile: any) {
+    const toast = await this.toastCtrl.create({
+      buttons: [{
+        handler: () => {
+          this.hiddenTiles[tile.name] = false;
+          this.updateHiddenTiles(this.hiddenTiles);
+        },
+        text: 'Undo'
+      }],
+      duration: 3000,
+      message: `List removed.`,
+      position: `bottom`,
     });
+    toast.present();
   }
 
   public shouldHide(tile: IListTile) {
@@ -236,6 +236,7 @@ export class CollegesPage {
     if (tile.name === `Create Your Own List!`) {
       this.openCreateModal();
     } else {
+      this.listTileService.activeList = tile;
       if (tile.name !== `Near You`) {
         if (tile.filter) {
           this.collegeService.setBaseFilter(tile.filter);
@@ -245,26 +246,40 @@ export class CollegesPage {
           tile.filter
         );
       }
-      this.navCtrl.push(CollegesListPage, {
+      // this.navCtrl.navigateForward(
+      this.router.navigate(
+        [
+          `app`,
+          `colleges`,
+          `list`,
+          tile.iconFileName
+        ],
+        {
+          // relativeTo: this.route,
+          state: {
         connections: this.connections,
         filter: this.filterService.filter,
         list: tile
-      });
+          }
+        }
+      );
     }
   }
 
   private deleteCustomList(tile: any) {
-    const deleteSub = this.collegeService
-      .deleteCustomList(tile.id)
-      .subscribe(_response => {
+    this.collegeService.deleteCustomList(tile.id)
+      .pipe(takeUntil(this.ngUnsubscribe))
+      .subscribe(
+        _response => {
         this.tiles = this.tiles.filter(t => t.id !== tile.id);
-        this.getListRemovedToast().present();
-        deleteSub.unsubscribe();
-      });
+          this.openHideTileToast(tile);
+        }
+      );
   }
 
   private getFilters() {
-    const collegeSub = this.collegeService.getCollegeFilter()
+    this.collegeService.getFilter()
+      .pipe(takeUntil(this.ngUnsubscribe))
       .subscribe(
         response => {
           const filter = response.json();
@@ -275,138 +290,136 @@ export class CollegesPage {
           );
           this.filterService.filter = this.defaultFilters;
           this.filterService.filter.updateQuery();
-          collegeSub.unsubscribe();
         },
         err => console.error(err)
       );
   }
 
-  private getListRemovedToast(showCloseButton: boolean = false) {
-    return this.toastCtrl.create({
-      duration: 3000,
-      message: `List removed.`,
-      position: `bottom`,
-      showCloseButton,
-      closeButtonText: `Undo`
-    });
-  }
-
   private initialize() {
     this.getFilters();
-    this.collegeService.initializeColleges();
-    this.collegeService.initializeSaved(this.user.id, this.user.isParent);
+    this.collegeService.initColleges();
+    this.collegeService.initSaved(this.user.id, this.user.isParent);
     if (!this.user.isParent) {
-      this.collegeService.getMatchingColleges();
+      this.collegeService.getMatching();
     }
   }
 
   private setupCustomListTiles() {
-    const customListSub = this.collegeService
-      .getCustomLists()
-      .subscribe(lists => {
-        lists.forEach(list => this.setupNewTile(list));
-        customListSub.unsubscribe();
-      });
+    this.collegeService.getCustomLists()
+      .pipe(takeUntil(this.ngUnsubscribe))
+      .subscribe(lists => lists.forEach(list => this.setupNewTile(list)));
   }
 
   private setupNewTile(tile: any) {
     if (tile && this.tileIds.indexOf(tile.id) === -1) {
       tile.iconUrl = tile.mobile_image_url || tile.image_url;
-      const newTile = {
+      this.tiles.push({
         colSpan: 4,
         filter: tile.query,
         iconUrl: tile.iconUrl,
         id: tile.id,
         isCustom: true,
         name: tile.name,
-        serviceVariable: `collegeList`
-      };
-      this.tiles.push(newTile);
+        providerVariable: `collegeList`
+      });
     }
   }
 
   private setupPremadeListTiles() {
-    const listSub = this.collegeService.getPremadeLists()
-      .subscribe((lists: any[]) => {
-        if (lists && lists.length > 0) {
-          lists.forEach((list: any) => {
-            const idx = this.tiles.findIndex(t => t.name === list.name);
-            if (idx) {
-              this.tiles[idx].filter += `&tag=${list.id}`;
-            }
-          });
-        }
-        listSub.unsubscribe();
-      });
-  }
-
-  private setupRecSub() {
-    this.recSub = this.collegeService.recommendationsCount
-      .subscribe(count => {
-        if ((!count || count === null) && count !== 0) {
-          return;
-        } else {
-          this.recommendations = count;
-        }
-      });
-  }
-
-  private setupTiles() {
-    this.userId = this.user.id.toString();
-    this.nativeStorage
-      .getItem(this.userId)
-      .then(
-        storedItems => {
-          const tilesToHide = {};
-          if (storedItems.hiddenTiles && storedItems.hiddenTiles.length > 0) {
-            storedItems.hiddenTiles.forEach((val, key) => {
-              if (val) {
-                tilesToHide[key] = val;
+    this.collegeService.getPremadeLists()
+      .pipe(takeUntil(this.ngUnsubscribe))
+      .subscribe(
+        (lists: any[]) => {
+          if (lists && lists.length) {
+            lists.forEach((list: any) => {
+                const tileObj = this.tiles.find(t => t.name === list.name);
+                if (tileObj) {
+                  tileObj.filter += `&tag=${list.id}`;
               }
             });
           }
-          const tileNamesToHide = Object.keys(tilesToHide);
-          if (tileNamesToHide.length > 0) {
-            this.hiddenTiles = tilesToHide;
-            pullAll(this.tileNames, tileNamesToHide);
-          } else {
-            this.hiddenTiles = {};
-            this.tileNames.forEach(t => this.hiddenTiles[t] = false);
-            this.updateHiddenTiles(this.hiddenTiles);
-          }
-        },
-        err => {
-          if (err.code === 2) {
-            this.hiddenTiles = zipObject(
-              this.tileNames,
-              this.tileNames.map(() => false)
-            );
-            this.updateHiddenTiles(this.hiddenTiles, true);
-          } else {
-            this.showTileLoadingErrorToast();
-          }
         }
-      )
-      .catch(err => console.error(err));
-    this.tiles.forEach(tile => {
-      const fileWords = words(tile.name);
-      tile.iconFileName = fileWords[0].toLowerCase();
-      tile.iconUrl = `assets/image/college/tile_${tile.iconFileName}.svg`;
-      tile.columns = `col-${tile.colSpan}`;
-    });
-    this.setupPremadeListTiles();
-    this.setupCustomListTiles();
+      );
   }
 
-  private showTileLoadingErrorToast() {
+  private setupRecSub() {
+    this.collegeService.recommendationsCount
+      .pipe(takeUntil(this.ngUnsubscribe))
+      .subscribe(
+        count => {
+          if ((!count || count === null) && count !== 0) {
+            return;
+          } else {
+            this.recommendations = count;
+          }
+        }
+      );
+  }
+
+  private setupTiles() {
+    this.tiles = [...COLLEGE_TILES].map(tile => {
+      const fileWords = words(tile.name);
+      tile.iconFileName = fileWords[0].toLowerCase();
+      tile.iconUrl = `./assets/image/college/tile_${tile.iconFileName}.svg`;
+      tile.columns = `col-${tile.colSpan}`;
+      return tile;
+    });
+    if (this.user && this.user.id) {
+      this.userId = this.user.id.toString();
+      this.nativeStorage
+        .getItem(this.userId)
+        .then(
+          storedItems => {
+            const tilesToHide = {};
+            if (storedItems.hiddenTiles && storedItems.hiddenTiles.length > 0) {
+              storedItems.hiddenTiles.forEach((val, key) => {
+                if (val) {
+                  tilesToHide[key] = val;
+                }
+              });
+            }
+            const tileNamesToHide = Object.keys(tilesToHide);
+            if (tileNamesToHide.length > 0) {
+              this.hiddenTiles = tilesToHide;
+              pullAll(this.tileNames, tileNamesToHide);
+            } else {
+              this.hiddenTiles = {};
+              this.tileNames.forEach(t => this.hiddenTiles[t] = false);
+              this.updateHiddenTiles(this.hiddenTiles);
+            }
+          },
+          err => {
+            if (err.code === 2) {
+              this.hiddenTiles = zipObject(
+                this.tileNames,
+                this.tileNames.map(() => false)
+              );
+              this.updateHiddenTiles(this.hiddenTiles, true);
+            } else {
+              this.showTileLoadingErrorToast();
+            }
+          }
+        )
+        .catch(err => console.error(err));
+      this.tiles.forEach(tile => {
+        const fileWords = words(tile.name);
+        tile.iconFileName = fileWords[0].toLowerCase();
+        tile.iconUrl = `assets/image/college/tile_${tile.iconFileName}.svg`;
+        tile.columns = `col-${tile.colSpan}`;
+      });
+      this.setupPremadeListTiles();
+      this.setupCustomListTiles();
+    }
+  }
+
+  private async showTileLoadingErrorToast() {
     if (!this.environment.isLocal) {
-      // this.toastCtrl
-      //   .create({
+      // const toast = await this.toastCtrl.create({
       //     duration: 3000,
-      //     message: `Unable to load saved tile data`,
+      //   message: `Unable to load saved tile data.`,
       //     position: `bottom`
-      //   })
-      //   .present();
+      // });
+      // toast.present();
     }
   }
 
@@ -419,13 +432,18 @@ export class CollegesPage {
         .then(
           storedItems => {
             storedItems.hiddenTiles = hiddenTiles;
-            this.nativeStorage.setItem(this.userId, storedItems)
-              .then(
-                () => this.hiddenTiles = storedItems.hiddenTiles,
-                _error => this.showTileLoadingErrorToast()
+            this.nativeStorage.setItem(this.userId, storedItems).then(
+              () => {
+                this.hiddenTiles = storedItems.hiddenTiles;
+              },
+              _error => {
+                this.showTileLoadingErrorToast();
+              }
               );
           },
-          _error => this.showTileLoadingErrorToast()
+          _error => {
+            this.showTileLoadingErrorToast();
+          }
         )
         .catch(err => console.error(err));
     }

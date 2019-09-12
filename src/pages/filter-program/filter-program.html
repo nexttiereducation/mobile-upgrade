@@ -1,12 +1,7 @@
 <ion-header mode="ios">
-  <ion-toolbar hideBackButton
-               mode="ios">
-    <ion-buttons slot="secondary">
-      <ion-button icon-only
-                  fill="clear"
-                  (click)="back()">
-        <ion-icon name="ios-arrow-back"></ion-icon>
-      </ion-button>
+  <ion-toolbar mode="ios">
+    <ion-buttons slot="start">
+      <ion-back-button></ion-back-button>
     </ion-buttons>
     <ion-title mode="ios">
       <div class="subhead">{{ title || '' }}</div> {{ category.name }}
@@ -18,7 +13,7 @@
     </ion-buttons>
   </ion-toolbar>
   <ion-searchbar mode="ios"
-                 [(ngModel)]="searchValue"
+                 [(value)]="searchValue"
                  (ionClear)="clearSearch($event)"
                  (ionInput)="search($event)"
                  (keyup.enter)="closeKeyboard()">
@@ -33,7 +28,9 @@
   </ng-template>
   <ng-template [ngIf]="itemType === 'program'">
     <ng-template [ngIf]="category.selectedItems[0]">
-      <ion-item-divider light>Selected Program</ion-item-divider>
+      <ion-item-divider light>
+        <ion-label>Selected Program</ion-label>
+      </ion-item-divider>
       <ion-item>
         <ion-radio slot="start"
                    checked="true"></ion-radio>
@@ -41,10 +38,11 @@
       </ion-item>
     </ng-template>
     <ng-template [ngIf]="items?.length">
-      <ion-item-divider light>Search Results</ion-item-divider>
-      <ion-list mode="ios"
-                [(ngModel)]="selectedItem">
-        <ion-radio-group>
+      <ion-item-divider light>
+        <ion-label>Search Results</ion-label>
+      </ion-item-divider>
+      <ion-list mode="ios">
+        <ion-radio-group [(value)]="selectedItem">
           <ng-template ngFor
                        let-item
                        [ngForOf]="items"
@@ -63,14 +61,18 @@
   </ng-template>
   <ng-template [ngIf]="itemType === 'major'">
     <ng-template [ngIf]="category?.selectedItems && category.selectedItems?.length">
-      <ion-item-divider light>Selected Majors</ion-item-divider>
+      <ion-item-divider light>
+        <ion-label>Selected Majors</ion-label>
+      </ion-item-divider>
       <ion-item padding-left
                 *ngFor="let item of category?.selectedItems">
         <ion-label>{{ item.displayValue }}</ion-label>
       </ion-item>
     </ng-template>
     <ng-template [ngIf]="items?.length">
-      <ion-item-divider light>Search Results</ion-item-divider>
+      <ion-item-divider light>
+        <ion-label>Search Results</ion-label>
+      </ion-item-divider>
       <ion-list>
         <ng-template ngFor
                      let-item

@@ -24,11 +24,13 @@
                       #item>
       <ion-item size="large"
                 (click)="view(notification, item)">
-        <div class="tinyText text-steel"
-             *ngIf="notification.created_on"
-             [style.margin-bottom.px]="4"> {{notification.created_on | date:'MMM dd yyyy • h:mma'}} </div>
-        <p [class.bold]="notification.read === false"
-           [style.white-space]="'normal'"> {{notification.body}} </p>
+        <ion-label>
+          <div class="tinyText text-steel"
+               *ngIf="notification.created_on"
+               [style.margin-bottom.px]="4"> {{notification.created_on | date:'MMM dd yyyy • h:mma'}} </div>
+          <p [class.bold]="notification.read === false"
+             [style.white-space]="'normal'"> {{notification.body}} </p>
+        </ion-label>
       </ion-item>
       <ion-item-options side="start"
                         *ngIf="!notification.read">

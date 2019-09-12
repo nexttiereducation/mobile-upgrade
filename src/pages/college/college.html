@@ -1,20 +1,25 @@
 <ion-header mode="ios">
   <ion-toolbar mode="ios">
-    <ion-title class="avatar-title"
-               mode="ios"
-               *ngIf="college && college.name">
+    <ion-buttons slot="start">
+      <ion-back-button></ion-back-button>
+    </ion-buttons>
+    <ion-item class="avatar-title"
+              detail="false"
+              lines="none"
+              mode="ios"
+              *ngIf="college && college.name">
       <ion-avatar class="avatar-shadow"
-                  item-left>
+                  slot="start">
         <img [src]="college?.photo_url" />
       </ion-avatar>
-      <div class="avatar-title-text"
-           text-left
-           *ngIf="college">
+      <ion-label class="avatar-title-text flex-column"
+                 text-left
+                 *ngIf="college">
         <div class="truncate body">{{ college.name }}</div>
-        <div class="truncate subhead"
+        <div class="flex-row truncate subhead"
              *ngIf="!isRecd">
           <ion-icon name="pin"></ion-icon>
-          <span> {{ college.city?.length && college.state?.length
+          <span class="subhead"> {{ college.city?.length && college.state?.length
                 ? college.city + ', ' + college.state
                 : '&nbsp;' }} </span>
         </div>
@@ -27,32 +32,48 @@
           <span class="bold"
                 [style.line-height.px]="20"> {{recommender?.get_full_name}} </span>
         </div>
-      </div>
-    </ion-title>
+      </ion-label>
+    </ion-item>
     <ion-buttons slot="primary">
       <ion-button fill="clear"
-                  icon-only
                   (click)="toggleSaved($event)"
                   [class.changing]="isChanging"
                   [color]="isSaved ? 'primary' : 'black'"
                   [disabled]="isChanging">
-        <ion-icon name="nt-saved"
+        <ion-icon src="assets/icon/saved.svg"
+                  slot="icon-only"
                   *ngIf="isSaved || isChanging"></ion-icon>
-        <ion-icon name="nt-save"
+        <ion-icon src="assets/icon/save.svg"
+                  slot="icon-only"
                   *ngIf="!isSaved || isChanging"></ion-icon>
       </ion-button>
     </ion-buttons>
   </ion-toolbar>
 </ion-header>
-<ion-content no-padding>
-  <ion-tabs class="college-tabs"
-            selectedIndex="selectedIndex"
-            tabsPlacement="bottom"
-            *ngIf="college?.details">
-    <ion-tab *ngFor="let tab of tabs"
-             [root]="tab.page"
-             [rootParams]="college"
-             [tabIcon]="tab.icon"></ion-tab>
-  </ion-tabs>
-  <ion-loading *ngIf="!college?.details"></ion-loading>
-</ion-content>
+<ion-tabs class="college-tabs"
+          #collegeTabs>
+  <ion-tab-bar selected-tab="general"
+               slot="bottom">
+    <ion-tab-button tab="general">
+      <ion-label>General</ion-label>
+      <ion-icon name="information-circle"></ion-icon>
+    </ion-tab-button>
+    <ion-tab-button tab="academic">
+      <ion-label>Academic</ion-label>
+      <ion-icon name="school"></ion-icon>
+    </ion-tab-button>
+    <ion-tab-button tab="financial">
+      <ion-label>Financial</ion-label>
+      <ion-icon name="cash"></ion-icon>
+    </ion-tab-button>
+    <ion-tab-button tab="campus">
+      <ion-label>Campus</ion-label>
+      <ion-icon name="pin"></ion-icon>
+    </ion-tab-button>
+    <ion-tab-button tab="application">
+      <ion-label>Application</ion-label>
+      <ion-icon name="document"></ion-icon>
+    </ion-tab-button>
+  </ion-tab-bar>
+</ion-tabs>
+<!-- <loading *ngIf="!college?.details"></loading> -->

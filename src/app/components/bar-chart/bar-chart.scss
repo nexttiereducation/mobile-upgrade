@@ -1,0 +1,47 @@
+@import './../../../theme/variables.scss';
+
+bar-chart {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: center;
+  min-height: 75px !important;
+  max-height: 75px;
+
+  ion-grid,
+  ion-row,
+  ion-col {
+    min-height: 30px !important;
+    max-height: 30px !important;
+  }
+
+  ion-grid {
+    width: 100%;
+  }
+}
+
+.bar-bg,
+.bar-value {
+  display: block;
+  height: 20px;
+}
+
+.bar-bg {
+  background-color: var(--grayLight);
+  width: 100%;
+  border-radius: 10px;
+}
+
+.bar-value {
+  color: var(--white);
+  text-align: right;
+  background-color: var(--blue);
+  position: absolute;
+  left: 0;
+  top: 0;
+  padding-right: 10px;
+  border-top-left-radius: 10px;
+  border-bottom-left-radius: 10px;
+  line-height: 20px;
+  font-weight: 600;
+}

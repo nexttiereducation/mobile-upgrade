@@ -1,8 +1,9 @@
 landing {
   background-size: contain;
-  background-color: $white;
+  background-color: var(--white);
   $bgImageHeight: 30%;
   $landingHeight: 100% - $bgImageHeight;
+
   .scroll-content {
     overflow-y: hidden;
   }
@@ -12,6 +13,7 @@ landing {
     height: 100%;
     width: 100%;
     z-index: -1;
+
     .bg-image {
       position: absolute;
       top: 0;
@@ -19,9 +21,10 @@ landing {
       right: 0;
       height: $bgImageHeight;
       background-size: cover;
-      background-image: url('../assets/image/bg/login.svg');
+      background-image: url('./../../assets/image/bg/login.svg');
     }
-    > * {
+
+    >* {
       width: 100%;
     }
   }
@@ -35,6 +38,7 @@ landing {
     top: $bgImageHeight;
     width: 100%;
     height: $landingHeight;
+
     .stacked-logo {
       margin-top: -60px;
       height: 185px;

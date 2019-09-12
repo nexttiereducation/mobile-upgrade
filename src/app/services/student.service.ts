@@ -1,9 +1,8 @@
 import { Injectable } from '@angular/core';
-import { Subject } from 'rxjs/Subject';
+import { Subject } from 'rxjs';
 
-import 'rxjs/add/operator/map';
+import { IStudent } from '@nte/interfaces/student.interface';
 
-import { IStudent } from '@nte/models/student.interface';
 
 @Injectable({ providedIn: 'root' })
 export class StudentService {

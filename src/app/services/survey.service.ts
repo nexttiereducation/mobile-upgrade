@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
-import { Subject } from 'rxjs/Subject';
-
-import 'rxjs/add/operator/map';
+import { Subject } from 'rxjs';
+import { map } from 'rxjs/internal/operators/map';
 
 import { SURVEY_NAMES } from '@nte/constants/survey.constants';
 import { ApiService } from '@nte/services/api.service';
@@ -85,18 +84,18 @@ export class SurveyService {
 
   public getStudentSurveyData(taskId: number, studentId: number) {
     return this.apiService.get(`/survey/${taskId}?student_pk=${studentId}`)
-      .map((response) => {
+      .pipe(map((response) => {
         this.currentSurvey = response.json();
         return response.json();
-      });
+      }));
   }
 
   public getSurveyData(taskId: number) {
     return this.apiService.get(`/survey/${taskId}`)
-      .map((response) => {
+      .pipe(map((response) => {
         this.currentSurvey = response.json();
         return response.json();
-      });
+      }));
   }
 
   public saveSurveyData(taskId: number, surveyData: any) {

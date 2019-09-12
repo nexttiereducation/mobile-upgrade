@@ -16,7 +16,7 @@
     </div>
     <ion-slides formArrayName="items"
                 #phspSlider
-                [initialSlide]="initialSlideIndex"
+                [options]="{initialSlide: initialSlideIndex}"
                 (ionSlideDidChange)="slideChanged()">
       <ng-template [ngIf]="list.length">
         <ion-slide *ngFor="let item of items.controls; let itemIndex = index"
@@ -89,10 +89,12 @@
         <ion-card>
           <ion-item class="bg-grayLight"
                     text-center>
-            <div class="surveyQuestion small"
-                 no-padding>Did you apply to any&nbsp;<ng-template [ngIf]="list && list.length">other&nbsp;
-              </ng-template>{{ category }}s?</div>
-            <div class="subhead">If so, please add them here.</div>
+            <ion-label>
+              <div class="surveyQuestion small"
+                   no-padding>Did you apply to any&nbsp;<ng-template [ngIf]="list && list.length">other&nbsp;
+                </ng-template>{{ category }}s?</div>
+              <div class="subhead">If so, please add them here.</div>
+            </ion-label>
           </ion-item>
           <ion-searchbar mode="ios"
                          (ionClear)="onClear($event)"

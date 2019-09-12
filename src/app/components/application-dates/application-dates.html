@@ -37,9 +37,8 @@
       <ng-template [ngIf]="applicationDates?.length">
         <div padding
              class="medium">Application Deadline</div>
-        <ion-list [(ngModel)]="selectedDate"
-                  no-lines>
-          <ion-radio-group>
+        <ion-list no-lines>
+          <ion-radio-group [(value)]="selectedDate">
             <ion-item *ngFor="let date of applicationDates">
               <ion-label>
                 <div class="application-date-button text-white"

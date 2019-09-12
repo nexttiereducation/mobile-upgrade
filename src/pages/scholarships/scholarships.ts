@@ -1,40 +1,36 @@
-import { Component } from '@angular/core';
-import { IonicPage, ItemSliding, NavController, NavParams, ToastController } from '@ionic/angular';
-import { Subscription } from 'rxjs/Subscription';
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
+import { IonItemSliding, ToastController } from '@ionic/angular';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 
 import { SCHOLARSHIP_TILES } from '@nte/constants/scholarship.constants';
+import { ICustomListTile } from '@nte/interfaces/list-tile-custom.interface';
+import { IListTile } from '@nte/interfaces/list-tile.interface';
 import { Filter } from '@nte/models/filter.model';
-import { ICustomListTile } from '@nte/models/list-tile-custom.interface';
-import { IListTile } from '@nte/models/list-tile.interface';
-import { ListTileCreatePage } from './../../pages/list-tile-create/list-tile-create';
+import { FilterPage } from '@nte/pages/filter/filter';
+import { ListTileCreatePage } from '@nte/pages/list-tile-create/list-tile-create';
 import { EnvironmentService } from '@nte/services/environment.service';
 import { FilterService } from '@nte/services/filter.service';
 import { MessageService } from '@nte/services/message.service';
 import { MixpanelService } from '@nte/services/mixpanel.service';
+import { NavStateService } from '@nte/services/nav-state.service';
 import { ScholarshipListTileService } from '@nte/services/scholarship.list-tile.service';
 import { ScholarshipService } from '@nte/services/scholarship.service';
 import { StakeholderService } from '@nte/services/stakeholder.service';
-import { FilterPage } from './../filter/filter';
-import { ScholarshipsListPage } from './../scholarships-list/scholarships-list';
 
-@IonicPage({
-  name: `scholarships-page`,
-  priority: `high`,
-  segment: `/scholarships`
-})
 @Component({
   selector: `scholarships`,
   templateUrl: `scholarships.html`
 })
-export class ScholarshipsPage {
+export class ScholarshipsPage implements OnInit, OnDestroy {
   public connections: any;
   public hiddenTiles: any = {};
   public recommendations: number;
   public tiles = Array<any>();
 
-  private filterSub: Subscription;
+  private ngUnsubscribe: Subject<any> = new Subject();
   private params: any;
-  private recSub: Subscription;
   private tilesDefault: IListTile[];
 
   get activeTile() {
@@ -53,19 +49,34 @@ export class ScholarshipsPage {
     return this.stakeholderService.stakeholder;
   }
 
-  constructor(navParams: NavParams,
+  constructor(
     public messageService: MessageService,
-    public navCtrl: NavController,
+    public router: Router,
     private environment: EnvironmentService,
     private filterService: FilterService,
     private listTileService: ScholarshipListTileService,
     private mixpanel: MixpanelService,
+    private route: ActivatedRoute,
     private scholarshipService: ScholarshipService,
     private stakeholderService: StakeholderService,
-    private toastCtrl: ToastController) {
-    this.connections = navParams.get(`connections`);
+    private toastCtrl: ToastController,
+    navStateService: NavStateService) {
+    const params: any = navStateService.data;
+    this.connections = params.connections;
     this.tilesDefault = [...SCHOLARSHIP_TILES];
-    this.params = navParams;
+  }
+
+  ngOnInit() {
+    this.tiles = [...this.tilesDefault];
+    this.setupCustomLists();
+    this.setupRecSub();
+    this.initialize();
+  }
+
+  ngOnDestroy() {
+    this.ngUnsubscribe.next();
+    this.ngUnsubscribe.complete();
+    this.tiles = new Array();
   }
 
   ionViewDidEnter() {
@@ -80,37 +91,21 @@ export class ScholarshipsPage {
     }
   }
 
-  ionViewDidLoad() {
-    this.tiles = [...this.tilesDefault];
-    this.setupCustomLists();
-    this.setupRecSub();
-    this.initialize();
+  public deleteTile(tile: IListTile, _slidingItem: IonItemSliding, tileIndex: number) {
+    this.scholarshipService.deleteList(tile.id)
+      .pipe(takeUntil(this.ngUnsubscribe))
+      .subscribe(
+        () => {
+          this.tiles.splice(tileIndex, 1);
+          this.openRemovedToast();
+        }
+      );
   }
 
-  ionViewWillUnload() {
-    this.tiles = new Array();
-    if (this.filterSub) {
-      this.filterSub.unsubscribe();
-    }
-    if (this.recSub) {
-      this.recSub.unsubscribe();
-    }
-  }
-
-  public deleteTile(tile: IListTile, _slidingItem: ItemSliding, tileIndex: number) {
-    const deleteSub = this.scholarshipService.deleteList(tile.id).subscribe(
-      () => {
-        this.tiles.splice(tileIndex, 1);
-        this.getListRemovedToast().present();
-        deleteSub.unsubscribe();
-      }
-    );
-  }
-
-  public editTile(tile: IListTile, slidingItem: ItemSliding) {
+  public editTile(tile: IListTile, slidingItem: IonItemSliding) {
     slidingItem.close();
-    this.listTileService.setActiveList(tile);
-    this.navCtrl.setPages([
+    this.listTileService.activeList = tile;
+    this.router.navigate([
       {
         page: ScholarshipsPage,
         params: {
@@ -141,13 +136,17 @@ export class ScholarshipsPage {
     const scholarshipFilters = new Filter(this.filterCategories);
     scholarshipFilters.clear();
     this.filterService.filter = scholarshipFilters;
-    this.listTileService.setActiveList();
-    this.navCtrl.push(
-      FilterPage, {
-        cyol: true,
-        filter: scholarshipFilters,
-        listType: `Scholarships`,
-        title: `Create Your Own List!`
+    this.listTileService.activeList = null;
+    this.router.navigate(
+      ['filters'],
+      {
+        relativeTo: this.route,
+        state: {
+          cyol: true,
+          filter: scholarshipFilters,
+          listType: `Scholarships`,
+          title: `Create Your Own List!`
+        }
       }
     );
   }
@@ -159,24 +158,20 @@ export class ScholarshipsPage {
     if (tile.name === `Create Your Own List!`) {
       this.openCreateModal();
     } else {
-      this.listTileService.setActiveList(tile);
+      this.listTileService.activeList = tile;
       this.scholarshipService.setBaseFilter(tile.filter);
       this.filterService.filter = new Filter(this.filterCategories, tile.filter);
-      this.navCtrl.push(ScholarshipsListPage, {
+      this.router.navigate(
+        [`app/scholarships/list/${tile.iconFileName}`],
+        {
+          state: {
         connections: this.connections,
         filter: this.filterService.filter,
         list: tile
-      });
+          }
+        }
+      );
     }
-  }
-
-  private getListRemovedToast(showCloseButton: boolean = false) {
-    return this.toastCtrl.create({
-      duration: 3000,
-      message: `List removed.`,
-      position: `bottom`,
-      showCloseButton
-    });
   }
 
   private initialize() {
@@ -186,24 +181,39 @@ export class ScholarshipsPage {
     this.scholarshipService.getRecommendedScholarships(this.user.id);
   }
 
+  private async openRemovedToast(showCloseButton: boolean = false) {
+    const toast = await this.toastCtrl.create({
+      duration: 3000,
+      message: `List removed.`,
+      position: `bottom`,
+      showCloseButton
+    });
+    toast.present();
+  }
+
+  private async openTileLoadingErrorToast() {
+    if (!this.environment.isLocal) {
+      // const toast = await this.toastCtrl.create({
+      //   duration: 3000,
+      //   message: `Can't load saved tile data.`,
+      //   position: `bottom`
+      // });
+      // toast.present();
+    }
+  }
+
   private setupCustomLists() {
-    const overviewSub = this.stakeholderService.getOverview().subscribe(
-      (data) => {
-        const customLists = data.custom_scholarship_queries;
-        for (let i = 0, tile; tile = customLists[i]; i++) {
-          this.setupNewTile(tile);
-        }
-        overviewSub.unsubscribe();
-      },
-      () => {
-        this.showTileLoadingErrorToast();
-      }
+    this.stakeholderService.getOverview()
+      .pipe(takeUntil(this.ngUnsubscribe))
+      .subscribe(
+        data => data.custom_scholarship_queries.forEach(t => this.setupNewTile(t)),
+        () => this.openTileLoadingErrorToast()
     );
   }
 
   private setupNewTile(tile: ICustomListTile | any) {
     if (tile && this.tileIds.indexOf(tile.id) === -1) {
-      const newTile: IListTile = {
+      this.tiles.push({
         colSpan: 4,
         filter: tile.query,
         iconUrl: tile.iconUrl || tile.image_url,
@@ -213,26 +223,14 @@ export class ScholarshipsPage {
         name: tile.name,
         order: this.tiles.length,
         serviceVariable: `scholarships`
-      };
-      this.tiles.push(newTile);
+      });
     }
   }
 
   private setupRecSub() {
-    this.recSub = this.scholarshipService.recommendedScholarships
-      .subscribe(
-        (recs) => { this.recommendations = recs.length; }
-      );
-  }
-
-  private showTileLoadingErrorToast() {
-    if (!this.environment.isLocal) {
-      // this.toastCtrl.create({
-      //   duration: 3000,
-      //   message: `Unable to load saved tile data`,
-      //   position: `bottom`
-      // }).present();
-    }
+    this.scholarshipService.recommended$
+      .pipe(takeUntil(this.ngUnsubscribe))
+      .subscribe(recs => this.recommendations = recs.length);
   }
 
   private updateTile(data: any) {
@@ -241,7 +239,7 @@ export class ScholarshipsPage {
     updatedTile.iconUrl = newList.iconUrl || newList.image_url;
     updatedTile.filter = newList.query;
     updatedTile.name = newList.name;
-    this.listTileService.setActiveList(null);
+    this.listTileService.activeList = null;
   }
 
 }

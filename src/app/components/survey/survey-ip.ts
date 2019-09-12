@@ -1,51 +1,56 @@
-import { Component, Input, OnChanges, OnInit, ViewChild } from '@angular/core';
-import { Events, Slides } from '@ionic/angular';
+import { Component, Input, OnChanges, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { Events, IonSlides } from '@ionic/angular';
 import { orderBy } from 'lodash';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 
 import { IP_RESULT_DESCRIPTIONS } from '@nte/constants/survey.constants';
 import { IResult } from '@nte/models/interest-profiler.models';
 import { TaskTracker } from '@nte/models/task-tracker.model';
-import { ApiProvider } from '@nte/services/api.service';
-import { StakeholderProvider } from '@nte/services/stakeholder.service';
-import { SurveyIpProvider } from '@nte/services/survey-ip.service';
-import { SurveyProvider } from '@nte/services/survey.service';
-import { TaskProvider } from '@nte/services/task.service';
+import { ApiService } from '@nte/services/api.service';
+import { StakeholderService } from '@nte/services/stakeholder.service';
+import { SurveyIpService } from '@nte/services/survey-ip.service';
+import { SurveyService } from '@nte/services/survey.service';
+import { TaskService } from '@nte/services/task.service';
 
 @Component({
   selector: `survey-ip`,
-  templateUrl: `survey-ip.html`
+  templateUrl: `survey-ip.html`,
+  styleUrls: [`survey-ip.scss`]
 })
-export class SurveyIpComponent implements OnInit, OnChanges {
-  @ViewChild(`ipSlider`) public ipSlider: Slides;
+export class SurveyIpComponent implements OnInit, OnChanges, OnDestroy {
+  @ViewChild(`ipSlider`, { static: false }) public ipSlider: IonSlides;
 
-  @Input() public taskTracker: TaskTracker;
+  @Input() taskTracker: TaskTracker;
 
   public areaDescriptions: any = IP_RESULT_DESCRIPTIONS;
   public isSliding: boolean;
   public sliderOptions: any;
 
+  private ngUnsubscribe: Subject<any> = new Subject();
   private results: IResult[];
 
   get currentSurvey() {
-    return this.surveyProvider.currentSurvey;
+    return this.surveyService.currentSurvey;
   }
 
   get user() {
-    return this.stakeholderProvider.stakeholder;
+    return this.stakeholderService.stakeholder;
   }
 
   constructor(
-    public apiProvider: ApiProvider,
+    public api: ApiService,
     public events: Events,
-    public stakeholderProvider: StakeholderProvider,
-    public taskProvider: TaskProvider,
-    public surveyIpProvider: SurveyIpProvider,
-    public surveyProvider: SurveyProvider) { }
+    public stakeholderService: StakeholderService,
+    public taskService: TaskService,
+    public surveyIpService: SurveyIpService,
+    public surveyService: SurveyService) { }
 
   ngOnInit() {
-    this.results = this.stakeholderProvider.stakeholder.interest_profiler_result;
-    this.setupInterestProfiler(this.surveyProvider.currentSurvey);
+    this.results = this.stakeholderService.stakeholder.interest_profiler_result;
+    this.setupInterestProfiler(this.surveyService.currentSurvey);
     this.sliderOptions = {
+      initialSlide: this.surveyIpService.page,
       loop: false,
       pager: false
     };
@@ -53,6 +58,11 @@ export class SurveyIpComponent implements OnInit, OnChanges {
 
   ngOnChanges() {
     this.setupInterestProfiler();
+  }
+
+  ngOnDestroy() {
+    this.ngUnsubscribe.next();
+    this.ngUnsubscribe.complete();
   }
 
   public back() {
@@ -73,52 +83,51 @@ export class SurveyIpComponent implements OnInit, OnChanges {
   }
 
   public finish() {
-    this.surveyIpProvider.getResults().subscribe(
-      data => {
-        const results = data.results.map(result => {
-          result.score = +result.score;
-          return result;
-        });
-        this.results = orderBy(results, result => +result.score, [`desc`]);
-        this.updateStakeholder(this.results);
-        this.surveyProvider.currentSurvey.results = this.results;
-        this.taskTracker.updatedStatus();
-        this.events.publish(`taskChange`, { taskTracker: this.taskTracker });
-      },
-      err => console.error(err)
-    );
+    this.surveyIpService.getResults()
+      .pipe(takeUntil(this.ngUnsubscribe))
+      .subscribe(
+        data => {
+          const results = data.results.map(result => {
+            result.score = +result.score;
+            return result;
+          });
+          this.results = orderBy(results, result => +result.score, [`desc`]);
+          this.updateStakeholder(this.results);
+          this.surveyService.currentSurvey.results = this.results;
+          this.taskTracker.updatedStatus();
+          this.events.publish(`taskChange`, { taskTracker: this.taskTracker });
+        },
+        err => console.error(err)
+      );
   }
 
   public slideChanged() {
-    const slideIndex = this.ipSlider.getActiveIndex();
-    this.surveyIpProvider.page = slideIndex;
-    const cantSwipeToPrev = this.ipSlider.isBeginning();
-    const cantSwipeToNext =
-      !this.surveyIpProvider.pagedQuestions[slideIndex].answer ||
-      this.ipSlider.isEnd();
-    this.ipSlider.lockSwipeToPrev(cantSwipeToPrev);
-    this.ipSlider.lockSwipeToNext(cantSwipeToNext);
+    let slideIndex: number;
+    this.ipSlider.getActiveIndex().then((idx) => {
+      slideIndex = idx;
+      this.surveyIpService.page = slideIndex;
+      let cantSwipeToPrev;
+      let cantSwipeToNext;
+      this.ipSlider.isBeginning().then(cantSwipeBack => {
+        cantSwipeToPrev = cantSwipeBack;
+        this.ipSlider.isEnd().then(cantSwipeForward => {
+          cantSwipeToNext = cantSwipeForward || !this.surveyIpService.pagedQuestions[slideIndex].answer;
+          this.ipSlider.lockSwipeToPrev(cantSwipeToPrev);
+          this.ipSlider.lockSwipeToNext(cantSwipeToNext);
+        });
+      });
+    });
   }
 
   private setupInterestProfiler(currentSurvey?: any) {
-    this.surveyIpProvider.pageDelimiter = 1;
-    this.surveyIpProvider.initializeProfiler(
+    this.surveyIpService.pageDelimiter = 1;
+    this.surveyIpService.initializeProfiler(
       this.taskTracker.task.id,
       currentSurvey
     );
   }
 
   private updateStakeholder(data: any) {
-    this.apiProvider
-      .patch(`/stakeholder`, { interest_profiler_result: data })
-      .map(response => response.json())
-      .subscribe(
-        response => {
-          this.stakeholderProvider.setInterestProfilerResult(
-            response.interest_profiler_result
-          );
-        },
-        err => console.error(err)
-      );
+    this.stakeholderService.updateInterestProfile(data);
   }
 }

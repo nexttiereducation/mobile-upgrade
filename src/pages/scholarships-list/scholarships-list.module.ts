@@ -1,9 +1,19 @@
+import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
-import { IonicPageModule } from '@ionic/angular';
+import { FormsModule } from '@angular/forms';
+import { RouterModule, Routes } from '@angular/router';
+import { IonicModule } from '@ionic/angular';
 
+import { ScholarshipsListPage } from './scholarships-list';
 import { ComponentsModule } from '@nte/components/components.module';
 import { SendComponent } from '@nte/components/send/send';
-import { ScholarshipsListPage } from './scholarships-list';
+
+const routes: Routes = [
+  {
+    path: 'app/scholarships/list/:id',
+    component: ScholarshipsListPage
+  }
+];
 
 @NgModule({
   declarations: [
@@ -13,8 +23,11 @@ import { ScholarshipsListPage } from './scholarships-list';
     SendComponent
   ],
   imports: [
-    ComponentsModule,
-    IonicPageModule.forChild(ScholarshipsListPage)
+    CommonModule,
+    FormsModule,
+    IonicModule,
+    RouterModule.forChild(routes),
+    ComponentsModule
   ]
 })
-export class ScholarshipsListPageModule {}
+export class ScholarshipsListPageModule { }

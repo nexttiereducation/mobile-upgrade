@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import { Diagnostic } from '@ionic-native/diagnostic';
-import { LocationAccuracy } from '@ionic-native/location-accuracy';
+import { Diagnostic } from '@ionic-native/diagnostic/ngx';
+import { LocationAccuracy } from '@ionic-native/location-accuracy/ngx';
 import { AlertController, Platform } from '@ionic/angular';
 
 @Injectable({ providedIn: 'root' })
@@ -35,7 +35,7 @@ export class LocationAccuracyService {
       case this.diagnostic.permissionStatus.NOT_REQUESTED:
         this.requestLocationAuthorization();
         break;
-      case this.diagnostic.permissionStatus.DENIED:
+      case this.diagnostic.permissionStatus.DENIED_ONCE:
         if (this.platform.is(`android`)) {
           this.onError(`User denied permission to use location`);
         } else {
@@ -67,8 +67,8 @@ export class LocationAccuracyService {
     );
   }
 
-  goToLocationSettingsConfirm() {
-    const confirm = this.alertCtrl.create({
+  async goToLocationSettingsConfirm() {
+    const confirm = await this.alertCtrl.create({
       header: `Go to Settings?`,
       message: `Failed to automatically set Location Mode to 'High Accuracy'.
         Would you like to switch to the Location Settings page and do this manually?`,

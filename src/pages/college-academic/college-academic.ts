@@ -1,35 +1,42 @@
-import { Component } from '@angular/core';
-import { IonicPage, NavController, NavParams } from '@ionic/angular';
+import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
 import { mean } from 'lodash';
 
+import { ICollegeDetails } from '@nte/interfaces/college-details.interface';
+import { CollegeTabsService } from '@nte/services/college-tabs.service';
 import { CollegeService } from '@nte/services/college.service';
 
-@IonicPage({
-  name: `college-academic-page`
-})
 @Component({
   selector: `college-academic`,
-  templateUrl: `college-academic.html`
+  templateUrl: `college-academic.html`,
+  styleUrls: [`college-academic.scss`]
 })
-export class CollegeAcademicPage {
+export class CollegeAcademicPage implements OnInit {
   public admissionChart: any;
   public averageAct: number;
   public averageSatMath: number;
   public averageSatReading: number;
   public averageSatWriting: number;
-  public college: any;
   public furtherStudyChart: any;
   public graduationChart: any;
   public jobMarketChart: any;
   public retentionChart: any;
 
-  constructor(public navCtrl: NavController,
-    public params: NavParams,
-    public collegeService: CollegeService) {
-    this.college = params.data;
+  get college() {
+    return this.collegeTabsService.activeCollege;
   }
 
-  public ionViewDidLoad() {
+  get details(): ICollegeDetails {
+    return this.college ? this.college.details : null;
+  }
+
+  constructor(
+    public collegeService: CollegeService,
+    public collegeTabsService: CollegeTabsService,
+    public route: ActivatedRoute,
+    public router: Router) { }
+
+  ngOnInit() {
     this.setupCharts();
     this.setupAverages();
   }
@@ -39,58 +46,61 @@ export class CollegeAcademicPage {
   }
 
   private setupAverages() {
-    const cd = this.college.details;
-    this.averageAct = this.getRoundedMean(cd.act_25, cd.act_75);
-    this.averageSatMath = this.getRoundedMean(cd.sat_math_25, cd.sat_math_75);
-    this.averageSatReading = this.getRoundedMean(cd.sat_reading_25, cd.sat_reading_75);
-    this.averageSatWriting = this.getRoundedMean(cd.sat_writing_25, cd.sat_writing_75);
+    if (this.details) {
+      this.averageAct = this.getRoundedMean(this.details.act_25, this.details.act_75);
+      this.averageSatMath = this.getRoundedMean(this.details.sat_math_25, this.details.sat_math_75);
+      this.averageSatReading = this.getRoundedMean(this.details.sat_reading_25, this.details.sat_reading_75);
+      this.averageSatWriting = this.getRoundedMean(this.details.sat_writing_25, this.details.sat_writing_75);
+    }
   }
 
   private setupCharts() {
-    /* ADMISSION */
-    if (+this.college.details.admission_rate) {
-      this.admissionChart = {
-        values: [
-          +this.college.details.admission_rate,
-          (100 - +this.college.details.admission_rate)
-        ]
-      };
-    }
-    /* RETENTION */
-    if (this.college.details.retention_pcf) {
-      this.retentionChart = {
-        values: [
-          this.college.details.retention_pcf,
-          (100 - this.college.details.retention_pcf)
-        ]
-      };
-    }
-    /* GRADUATION */
-    if (this.college.six_year_grad_pcf) {
-      this.graduationChart = {
-        values: [
-          this.college.six_year_grad_pcf,
-          (100 - this.college.six_year_grad_pcf)
-        ]
-      };
-    }
-    /* FURTHER STUDY */
-    if (this.college.details.percentage_further_education_immediate) {
-      this.furtherStudyChart = {
-        values: [
-          this.college.details.percentage_further_education_immediate,
-          (100 - this.college.details.percentage_further_education_immediate)
-        ]
-      };
-    }
-    /* JOB MARKET */
-    if (this.college.details.percentage_enter_work_one_year) {
-      this.jobMarketChart = {
-        values: [
-          this.college.details.percentage_enter_work_one_year,
-          (100 - this.college.details.percentage_enter_work_one_year)
-        ]
-      };
+    if (this.details) {
+      /* ADMISSION */
+      if (+this.details.admission_rate) {
+        this.admissionChart = {
+          values: [
+            +this.details.admission_rate,
+            (100 - +this.details.admission_rate)
+          ]
+        };
+      }
+      /* RETENTION */
+      if (this.details.retention_pcf) {
+        this.retentionChart = {
+          values: [
+            this.details.retention_pcf,
+            (100 - +this.details.retention_pcf)
+          ]
+        };
+      }
+      /* GRADUATION */
+      if (this.college.six_year_grad_pcf) {
+        this.graduationChart = {
+          values: [
+            this.college.six_year_grad_pcf,
+            (100 - +this.college.six_year_grad_pcf)
+          ]
+        };
+      }
+      /* FURTHER STUDY */
+      if (this.details.percentage_further_education_immediate) {
+        this.furtherStudyChart = {
+          values: [
+            this.details.percentage_further_education_immediate,
+            (100 - +this.details.percentage_further_education_immediate)
+          ]
+        };
+      }
+      /* JOB MARKET */
+      if (this.details.percentage_enter_work_one_year) {
+        this.jobMarketChart = {
+          values: [
+            this.details.percentage_enter_work_one_year,
+            (100 - +this.details.percentage_enter_work_one_year)
+          ]
+        };
+      }
     }
   }
 

@@ -1,6 +1,7 @@
 import { uniqBy } from 'lodash';
+import { map } from 'rxjs/operators';
 
-import { ApiProvider } from './../providers/api.provider';
+import { ApiService } from './../services/api.service';
 
 export class SelectedConnections {
   public count = 0;
@@ -14,7 +15,7 @@ export class SelectedConnections {
   public selected = new Array<number>();
   public useDeselected = false;
 
-  constructor(private api: ApiProvider) { }
+  constructor(private api: ApiService) { }
 
   public clear(deselectedItems?: any[], retainCountSettings?: boolean) {
     for (let i = 0, deselectee: any; deselectee = deselectedItems[i]; ++i) {
@@ -80,7 +81,7 @@ export class SelectedConnections {
         ids_to_ignore: this.deselected
       };
       this.api.post(`/stakeholder/bulk-update/count`, body)
-        .map((response) => response.json())
+        .pipe(map((response) => response.json()))
         .subscribe(
           (data) => this.count = data.count,
           err => console.error(err)

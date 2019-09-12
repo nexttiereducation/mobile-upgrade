@@ -1,25 +1,21 @@
-import { Component, ViewChild } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { AbstractControl, FormControl } from '@angular/forms';
-import {
-  Content,
-  IonicPage,
-  ModalController,
-  NavController,
-  NavParams,
-  Platform,
-  ToastController
-} from '@ionic/angular';
+import { ActivatedRoute, Router } from '@angular/router';
+import { ModalController, Platform, ToastController } from '@ionic/angular';
+import { OverlayEventDetail } from '@ionic/core';
 import { isNumber } from 'lodash';
-import { Subscription } from 'rxjs/Subscription';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 
 import { ApplicationDatesComponent } from '@nte/components/application-dates/application-dates';
 import { SendComponent } from '@nte/components/send/send';
 import { COLLEGE_NON_PROFIT_QUERY, EMPTY_STATES } from '@nte/constants/college.constants';
-import { ICollegeRecommendation } from '@nte/models/college-recommendation.interface';
-import { ICollegeTracker } from '@nte/models/college-tracker.interface';
-import { ICollege } from '@nte/models/college.interface';
-import { IEmptyState } from '@nte/models/empty-state';
+import { ICollegeRecommendation } from '@nte/interfaces/college-recommendation.interface';
+import { ICollegeTracker } from '@nte/interfaces/college-tracker.interface';
+import { ICollege } from '@nte/interfaces/college.interface';
+import { IEmptyState } from '@nte/interfaces/empty-state.interface';
 import { Filter } from '@nte/models/filter.model';
+import { CollegeTabsService } from '@nte/services/college-tabs.service';
 import { CollegeListTileService } from '@nte/services/college.list-tile.service';
 import { CollegeService } from '@nte/services/college.service';
 import { ConnectionService } from '@nte/services/connection.service';
@@ -27,22 +23,19 @@ import { FilterService } from '@nte/services/filter.service';
 import { KeyboardService } from '@nte/services/keyboard.service';
 import { LocationService } from '@nte/services/location.service';
 import { MixpanelService } from '@nte/services/mixpanel.service';
+import { NavStateService } from '@nte/services/nav-state.service';
 import { StakeholderService } from '@nte/services/stakeholder.service';
-import { CollegePage } from './../college/college';
-import { FilterPage } from './../filter/filter';
 
-@IonicPage({
-  name: `colleges-list-page`
-})
 @Component({
   selector: `colleges-list`,
-  templateUrl: `colleges-list.html`
+  templateUrl: `colleges-list.html`,
+  styleUrls: [`colleges-list.scss`]
 })
-export class CollegesListPage {
-  @ViewChild(Content) public content: Content;
+export class CollegesListPage implements OnInit, OnDestroy {
+  @ViewChild(`Content`, { static: false }) public content;
 
   public bgImageBounds: any = { top: 61, bottom: 33.19 };
-  public colleges = [];
+  public colleges: any[] = [];
   public connections: any[];
   public emptyState: IEmptyState;
   public filtering: boolean;
@@ -50,73 +43,65 @@ export class CollegesListPage {
   public list: any;
   public listName: string;
   public nonProfitQuery = COLLEGE_NON_PROFIT_QUERY;
-  public placeholders = [null, null, null];
+  public placeholders: any[] = [null, null, null];
   public searchControl: AbstractControl = new FormControl(``);
   public searchTerm: string = ``;
 
-  private searchControlSub: Subscription;
+  private ngUnsubscribe: Subject<any> = new Subject();
 
   get colleges$() {
-    if (this.list.serviceVariable && this.collegeService[this.list.serviceVariable]) {
-      return this.collegeService[this.list.serviceVariable];
-    } else {
-      return this.collegeService.all$;
-    }
+    return this.collegeService[this.list.serviceVariable];
   }
 
   get isNearby() {
-    return this.list.name === `Near You` || this.listName === `Near You`;
+    return this.listNameVal === `Near You`;
   }
 
   get isRecd() {
-    return this.list.name === `Recommended` || this.listName === `Recommended`;
+    return this.listNameVal === `Recommended`;
+  }
+
+  get listNameVal() {
+    return this.list && this.list.name ? this.list.name : this.listName || '';
   }
 
   get user() {
     return this.stakeholderService.stakeholder;
   }
 
-  constructor(params: NavParams,
+  constructor(
     public collegeService: CollegeService,
+    public collegeTabsService: CollegeTabsService,
     public connectionService: ConnectionService,
     public filterService: FilterService,
     public keyboard: KeyboardService,
     public modalCtrl: ModalController,
-    public navCtrl: NavController,
+    public route: ActivatedRoute,
+    public router: Router,
     public platform: Platform,
     private listTileService: CollegeListTileService,
     private location: LocationService,
     private mixpanel: MixpanelService,
     private stakeholderService: StakeholderService,
-    private toastCtrl: ToastController) {
-    this.connections = params.get(`connections`);
-    this.filterService.filter = params.get(`filter`);
-    if (params.get(`list`)) {
-      this.list = params.get(`list`);
-    } else {
-      this.list = this.listTileService.activeList;
-    }
+    private toastCtrl: ToastController,
+    navStateService: NavStateService) {
+    const params: any = navStateService.data;
+    this.connections = params.connections || null;
+    this.filterService.filter = params.filter || null;
+    this.list = params.list || this.listTileService.activeList || null;
   }
 
-  ionViewDidEnter() {
+  ngOnInit() {
+    this.setupEmptyState();
+    this.updateCollegeList();
     if (this.filtering) {
-      this.updateCollegeList();
       this.filtering = false;
     }
   }
 
-  ionViewDidLoad() {
-    this.updateCollegeList();
-    this.setupEmptyState();
-  }
-
-  ionViewWillUnload() {
-    if (this.searchControlSub) {
-      this.searchControlSub.unsubscribe();
-    }
-    if (!this.list.serviceVariable || this.list.serviceVariable === `all$`) {
-      this.collegeService.all = null;
-    }
+  ngOnDestroy() {
+    this.ngUnsubscribe.next();
+    this.ngUnsubscribe.complete();
   }
 
   public clearSearch(_event: Event) {
@@ -132,33 +117,22 @@ export class CollegesListPage {
   public followCollege(college: ICollege | ICollegeRecommendation | ICollegeTracker | any,
     fromToast?: boolean, id?: number) {
     const collegeId = id || this.collegeService.getIdFromCollege(college);
-    const collegeName = this.getNameFromInstitution(college);
-    const collegeInfo = { id: collegeId, name: collegeName };
+    const collegeName = this.collegeService.getNameFromCollege(college);
     const isRec = this.list.name === `Recommended`;
+    const collegeInfo = {
+      fromToast,
+      id: collegeId,
+      isRec,
+      name: collegeName
+    };
     if (this.user.phase === `Senior`) {
       const isNewAdd = true;
       if (college && college.institution) {
         college = isNumber(college.institution) ? college : college.institution;
       }
-      this.collegeService.getCollegeDetails(collegeId)
-        .subscribe((collegeDetails) => {
-          const applyModal = this.modalCtrl.create(
-            ApplicationDatesComponent, {
-              college: collegeDetails,
-              isNewAdd,
-              isRec
-            });
-          applyModal.present();
-          applyModal.onDidDismiss((data, role) => {
-            if (role === `follow`) {
-              this.saveCollege(collegeInfo, fromToast, data, isRec);
-            } else if (role === `skip`) {
-              this.saveCollege(collegeInfo, fromToast, null, isRec);
-            } else {
-              this.resetSavingIndex();
-            }
-          });
-        });
+      this.collegeService.getDetails(collegeId)
+        .pipe(takeUntil(this.ngUnsubscribe))
+        .subscribe(details => this.openApplyModal(details, collegeInfo));
     } else {
       this.saveCollege(collegeInfo, fromToast, null, isRec);
     }
@@ -183,15 +157,15 @@ export class CollegesListPage {
       infiniteScroll.enable(false);
       return;
     }
-    const loadMoreSub: Subscription = this.collegeService.moreToScroll
+    this.collegeService.moreToScroll
+      .pipe(takeUntil(this.ngUnsubscribe))
       .subscribe((more) => {
         if (!more) {
           infiniteScroll.enable(false);
         }
         infiniteScroll.complete();
-        loadMoreSub.unsubscribe();
       });
-    this.collegeService.getMoreColleges(this.isNearby);
+    this.collegeService.getMore(this.isNearby);
   }
 
   public isSaved(college: any) {
@@ -202,12 +176,15 @@ export class CollegesListPage {
   public onFilterOpen(event: Event) {
     if (event) { event.stopPropagation(); }
     this.filtering = true;
-    this.navCtrl.push(
-      FilterPage,
+    this.router.navigate(
+      [`filter`],
       {
-        cyol: false,
-        filter: this.filterService.filter,
-        listType: `Colleges`
+        relativeTo: this.route,
+        state: {
+          cyol: false,
+          filter: this.filterService.filter,
+          listType: `Colleges`
+        }
       }
     );
   }
@@ -216,35 +193,90 @@ export class CollegesListPage {
     if (event) { event.stopPropagation(); }
     this.mixpanel.event(`search_entered`, {
       'search term entered': this.searchTerm,
-      'page': `Colleges`
+      page: `Colleges`
     });
     this.updateCollegeList();
   }
 
-  public openSendModal(college: any) {
+  public async openApplyModal(details: any, data: any) {
+    const applyModal = await this.modalCtrl.create({
+      component: ApplicationDatesComponent,
+      componentProps: {
+        college: details,
+        isNewAdd: data.isNewAdd,
+        isRec: data.isRec
+      }
+    });
+    applyModal.onDidDismiss()
+      .then((detail: OverlayEventDetail) => {
+        if (detail.role === `follow`) {
+          this.saveCollege(data, data.fromToast, detail.data, data.isRec);
+        } else if (detail.role === `skip`) {
+          this.saveCollege(data, data.fromToast, null, data.isRec);
+        } else {
+          this.resetSavingIndex();
+        }
+      });
+    return await applyModal.present();
+  }
+
+  public async openSendModal(college: any) {
     const collegeItem = this.getCollegeObj(college);
-    const sendModal = this.modalCtrl.create(
-      SendComponent,
-      {
+    const sendModal = await this.modalCtrl.create({
+      backdropDismiss: true,
+      component: SendComponent,
+      componentProps: {
         item: collegeItem,
         type: `College`
       },
-      {
-        cssClass: `smallModal`,
-        enableBackdropDismiss: true,
-        showBackdrop: false
-      }
-    );
-    sendModal.present();
+      cssClass: `smallModal`,
+      showBackdrop: false
+    });
+    return await sendModal.present();
+  }
+
+  public async openRemoveRecToast() {
+    const toast = await this.toastCtrl.create({
+      message: `Recommendation declined.`
+    });
+    toast.present();
+  }
+
+  public async openSaveToast(college: any, isRec: boolean) {
+    const toast = await this.toastCtrl.create({
+      buttons: [{
+        handler: () => {
+          if (this.list.name !== `Recommended`) {
+            this.unsaveCollege(college, true, college.id);
+          }
+        },
+        text: `Undo`
+      }],
+      message: isRec ? `Recommendation Saved!` : `Saved!`
+    });
+    toast.present();
+  }
+
+  public async openUnsaveToast(college: any, id: number, name: string) {
+    const toast = await this.toastCtrl.create({
+      buttons: [{
+        handler: () => this.followCollege(college, true, id),
+        text: `Undo`
+      }],
+      message: `${name} removed from Saved.`
+    });
+    toast.present();
   }
 
   public removeRec(rec: ICollegeRecommendation) {
-    this.collegeService.declineRecommendation(rec)
+    this.collegeService.declineRec(rec)
+      .pipe(takeUntil(this.ngUnsubscribe))
       .subscribe(() => {
-        const mixpanelData = { institution_id: rec.institution.id, institution_name: rec.institution.name };
-        this.mixpanel.event(`recommended_school_rejected`, mixpanelData);
-        const toast = this.buildToast(``, `toast-red`, 5000, `Recommendation Removed!`, false);
-        toast.present();
+        this.mixpanel.event(`recommended_school_rejected`, {
+          institution_id: rec.institution.id,
+          institution_name: rec.institution.name
+        });
+        this.openRemoveRecToast();
       });
   }
 
@@ -254,10 +286,14 @@ export class CollegesListPage {
 
   public saveCollege(college: any, fromToast?: boolean, applicationData?: any, isRec?: boolean) {
     this.collegeService.save(college, this.user, applicationData, isRec)
+      .pipe(takeUntil(this.ngUnsubscribe))
       .subscribe(
         () => {
           this.resetSavingIndex();
-          const mixpanelData = { institution_id: college.id, institution_name: college.name };
+          const mixpanelData = {
+            institution_id: college.id,
+            institution_name: college.name
+          };
           if (!this.user.isParent) {
             this.stakeholderService.updateStakeholder();
             if (isRec) {
@@ -268,16 +304,9 @@ export class CollegesListPage {
             }
           }
           this.mixpanel.event(`school_added`, mixpanelData);
-          if (fromToast) { return; }
-          const toastMessage = isRec ? `Recommendation Saved!` : `Saved!`;
-          const showCloseButton = !isRec;
-          const toast = this.buildToast(`UNDO`, `toast-green`, 5000, toastMessage, showCloseButton);
-          toast.present();
-          toast.onDidDismiss((_data, role) => {
-            if (this.list.name !== `Recommended` && role === `close`) {
-              this.unsaveCollege(college, true, college.id);
-            }
-          });
+          if (!fromToast) {
+            this.openSaveToast(college, isRec);
+          }
         },
         (error) => {
           this.resetSavingIndex();
@@ -292,47 +321,41 @@ export class CollegesListPage {
 
   public unsaveCollege(college: ICollege | ICollegeTracker, fromToast?: boolean, id?: number) {
     const collegeId = id ? id : this.collegeService.getIdFromCollege(college);
-    this.collegeService.unsave(collegeId, this.user.isParent).subscribe(
-      () => {
-        this.stakeholderService.updateStakeholder();
-        this.mixpanel.event(`school_removed`, { institution_id: collegeId });
-        if (fromToast || this.list.name === `Recommended`) { return; }
-        const toast = this.buildToast(`UNDO`, `toast-red`, 5000, `College Removed`);
-        toast.present();
-        toast.onDidDismiss((_data, role) => {
-          if (role === `close`) { this.followCollege(college, true, collegeId); }
-        });
-      },
-      (err) => console.error(err)
-    );
+    const collegeName = this.collegeService.getNameFromCollege(college);
+    this.collegeService.unsave(collegeId, this.user.isParent)
+      .pipe(takeUntil(this.ngUnsubscribe))
+      .subscribe(
+        () => {
+          this.stakeholderService.updateStakeholder();
+          this.mixpanel.event(`school_removed`,
+            { institution_id: collegeId }
+          );
+          if (!fromToast && this.list.name !== `Recommended`) {
+            this.openUnsaveToast(college, collegeId, collegeName);
+          }
+        },
+        (err) => console.error(err)
+      );
   }
 
   public viewCollege(college: any) {
+    this.collegeTabsService.activeCollege = college;
     const id = this.collegeService.getIdFromCollege(college);
-    this.navCtrl.push(
-      CollegePage,
+    this.router.navigateByUrl(
+      `app/colleges/${id}/general`,
       {
-        college,
-        id,
-        isRecd: this.collegeService.isRecd(id) || this.isRecd,
-        isSaved: this.collegeService.isSaved(id)
+        // relativeTo: this.route,
+        state: {
+          college,
+          id,
+          isRecd: this.collegeService.isRecd(id) || this.isRecd,
+          isSaved: this.collegeService.isSaved(id)
+        }
       }
     );
   }
 
   /* PRIVATE METHODS */
-
-  private buildToast(buttonText: string, cssClass: string, duration: number, message: string,
-    showCloseButton: boolean = true) {
-    return this.toastCtrl.create({
-      closeButtonText: buttonText,
-      cssClass,
-      duration,
-      message,
-      position: `bottom`,
-      showCloseButton
-    });
-  }
 
   private getCollegeObj(college: any) {
     if (college.institution && !isNumber(college.institution)) {
@@ -342,38 +365,23 @@ export class CollegesListPage {
     }
   }
 
-  // private getConnections() {
-  //   if (this.user.isParent && !this.user.students) {
-  //     const studentSub = this.stakeholderService.getStudentsForParent()
-  //       .subscribe(
-  //         (data) => {
-  //           this.user.students = data;
-  //           studentSub.unsubscribe();
-  //         }
-  //       );
-  //   }
-  // }
 
   private getLocation() {
-    const posSub = this.location.position.subscribe(
-      (pos) => {
-        if (pos) {
-          this.location.distance = 30;
-          this.location.showPosition(pos);
-          this.filterService.filter = new Filter(
-            this.filterService.filter.categories,
-            this.collegeService.getNearbyQueryFromPosition(pos)
-          );
-          this.collegeService.initializeNearbyColleges();
-          posSub.unsubscribe();
+    this.location.position
+      .pipe(takeUntil(this.ngUnsubscribe))
+      .subscribe(
+        (pos) => {
+          if (pos) {
+            this.location.distance = 30;
+            this.location.showPosition(pos);
+            this.filterService.filter = new Filter(
+              this.filterService.filter.categories,
+              this.collegeService.getNearbyQueryFromPosition(pos)
+            );
+          }
         }
-      }
-    );
+      );
     this.location.checkIfLocationAuthorized();
-  }
-
-  private getNameFromInstitution(college: any) {
-    return college.institution ? college.institution.name : college.name;
   }
 
   private setupEmptyState() {
@@ -386,7 +394,7 @@ export class CollegesListPage {
       this.emptyState = EMPTY_STATES.Default;
     }
     if (this.emptyState) {
-      this.emptyState.imagePath = this.list.iconUrl;
+      this.emptyState.imagePath = this.list ? this.list.iconUrl : null;
       this.emptyState.isAbsoluteUrl = true;
     }
   }

@@ -1,4 +1,4 @@
-import { IPendingConnection } from './pending-connection.interface';
+import { IPendingConnection } from '@nte/interfaces/pending-connection.interface';
 
 export class ConnectionInvites {
   constructor(

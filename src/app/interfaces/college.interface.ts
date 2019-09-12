@@ -28,8 +28,8 @@ export interface ICollege {
   online_application_url?: string;
   photo_url: string;
   population?: number;
-  program?: string[];
   program_detail?: string[];
+  program?: string[];
   region?: string;
   religious_affil?: string;
   school_setting?: any;

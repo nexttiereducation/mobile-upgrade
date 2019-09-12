@@ -1,6 +1,6 @@
 import { some, startCase, trimEnd } from 'lodash';
 
-import { ISort } from './sort.interface';
+import { ISort } from '@nte/interfaces/sort.interface';
 import { Category } from '@nte/models/category.model';
 import { QueryObject } from '@nte/models/queryobject.model';
 
@@ -79,24 +79,24 @@ export class Filter {
       category = new Category(this.getCategoryByName(this._rawData, categoryName));
       return;
     }
-    for (let i = 0, filterCat; filterCat = this.filterCategories[i]; i++) {
-      const subcatIndex = filterCat.subCategories.findIndex((cat: any) => cat.name === categoryName);
+    this.filterCategories.forEach(cat => {
+      const subcatIndex = cat.subCategories.findIndex((c: any) => c.name === categoryName);
       const subcategory = this.getCategoryByName(this.rawDataCategories, categoryName);
-      filterCat.subCategories[subcatIndex] = new Category(subcategory);
-      this.clearQueries(filterCat.subCategories[subcatIndex].subCategories);
-    }
+      cat.subCategories[subcatIndex] = new Category(subcategory);
+      this.clearQueries(cat.subCategories[subcatIndex].subCategories);
+    });
   }
 
   public clearQueries(categories: Category[]) {
     if (categories && categories.length) {
-      for (let i = 0, subCategory; subCategory = categories[i]; ++i) {
+      categories.forEach(cat => {
         const query = {
-          displayName: subCategory.name,
-          name: subCategory.query.name,
+          displayName: cat.name,
+          name: cat.query.name,
           values: []
         };
         this.updateQuery(query);
-      }
+      });
     }
   }
 
@@ -108,9 +108,9 @@ export class Filter {
     this.categories = new Array();
     this.sort = null;
     if (categories) {
-      for (let i = 0, category: Category; category = categories[i]; ++i) {
+      categories.forEach(category => {
         this.categories.push(new Category(category, preselectedFilters));
-      }
+      });
     }
   }
 

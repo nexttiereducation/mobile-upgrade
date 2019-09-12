@@ -1,9 +1,9 @@
 survey-phsp-table {
   ion-checkbox {
     &.checkbox-md .checkbox-icon {
-        border: 2px solid $blue;
+        border: 2px solid var(--blue);
       &.checkbox-checked {
-        background-color: $blue;
+        background-color: var(--blue);
       }
       .checkbox-inner {
         border-color: white;

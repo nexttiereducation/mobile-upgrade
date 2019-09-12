@@ -1,24 +1,24 @@
 <ion-tabs class="app-tabs"
           selectedIndex="0"
           #tabContainer>
-  <ion-tab tabIcon="nt-tasks"
-           tabTitle="Tasks"
-           tabUrlPath="tasks"
-           [root]="tasks"></ion-tab>
-  <ion-tab tabBadgeStyle="green"
-           tabIcon="nt-colleges"
-           tabTitle="Colleges"
-           tabUrlPath="colleges"
-           [root]="colleges"
-           [tabBadge]="(recsService.college$ | async)?.length"></ion-tab>
-  <ion-tab tabBadgeStyle="green"
-           tabIcon="nt-scholarships"
-           tabTitle="Scholarships"
-           tabUrlPath="scholarships"
-           [root]="scholarships"
-           [tabBadge]="(recsService.scholarship$ | async)?.length"></ion-tab>
-  <ion-tab tabIcon="nt-profile"
-           tabTitle="Profile"
-           tabUrlPath="profile"
-           [root]="profile"></ion-tab>
+  <ion-tab-bar slot="bottom">
+    <ion-tab-button tab="tasks">
+      <ion-label>Tasks</ion-label>
+      <ion-icon src="assets/icon/tasks.svg"></ion-icon>
+    </ion-tab-button>
+    <ion-tab-button tab="colleges">
+      <ion-label>Colleges</ion-label>
+      <ion-icon src="assets/icon/colleges.svg"></ion-icon>
+      <ion-badge color="green">{{ (collegeRecs | async)?.length }}</ion-badge>
+    </ion-tab-button>
+    <ion-tab-button tab="scholarships">
+      <ion-label>Scholarships</ion-label>
+      <ion-icon src="assets/icon/scholarships.svg"></ion-icon>
+      <ion-badge color="green">{{ (scholarshipRecs | async)?.length }}</ion-badge>
+    </ion-tab-button>
+    <ion-tab-button tab="profile">
+      <ion-label>Profile</ion-label>
+      <ion-icon src="assets/icon/profile.svg"></ion-icon>
+    </ion-tab-button>
+  </ion-tab-bar>
 </ion-tabs>

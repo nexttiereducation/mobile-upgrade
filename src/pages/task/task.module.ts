@@ -1,32 +1,62 @@
+import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
-import { IonicPageModule } from '@ionic/angular';
+import { FormsModule } from '@angular/forms';
+import { RouterModule, Routes } from '@angular/router';
+import { IonicModule } from '@ionic/angular';
 
+import { TaskPage } from './task';
 import { ComponentsModule } from '@nte/components/components.module';
 import { PromptComponent } from '@nte/components/prompt/prompt';
-import { PromptScholarshipComponent } from '@nte/components/prompt/prompt-scholarship';
-import { PromptSelectComponent } from '@nte/components/prompt/prompt-select';
-import { PromptTestDatesComponent } from '@nte/components/prompt/prompt-test-dates';
+import { PromptModule } from '@nte/components/prompt/prompt.module';
+import { MessagesPage } from '@nte/pages/messages/messages';
 import { PipesModule } from '@nte/pipes/pipes.module';
-import { TaskPage } from './task';
 
-const components = [
-  PromptComponent,
-  PromptScholarshipComponent,
-  PromptSelectComponent,
-  PromptTestDatesComponent,
-  TaskPage
+const routes: Routes = [
+  {
+    path: 'app/tasks/:id',
+    children: [
+      {
+        path: '',
+        component: TaskPage
+      },
+      {
+        path: 'attachments',
+        loadChildren: '@nte/pages/task-attachments/task-attachments.module#TaskAttachmentsPageModule',
+        // component: TaskAttachmentsPage
+      },
+      {
+        path: 'notes',
+        component: MessagesPage
+      },
+      // {
+      //   path: 'prompt',
+      //   loadChildren: '@nte/pages/task-prompt/task-prompt.module#TaskPromptPageModule',
+      //   // component: PromptComponent
+      // },
+      {
+        path: 'survey',
+        loadChildren: '@nte/pages/task-survey/task-survey.module#TaskSurveyPageModule',
+        // component: TaskSurveyPage
+      },
+    ]
+  }
 ];
 
 @NgModule({
-  declarations: components,
+  declarations: [
+    TaskPage
+  ],
   entryComponents: [
     PromptComponent
   ],
-  exports: components,
   imports: [
+    CommonModule,
+    FormsModule,
+    IonicModule,
+    RouterModule.forChild(routes),
     ComponentsModule,
     PipesModule,
-    IonicPageModule.forChild(TaskPage)
+    PromptModule
   ]
 })
 export class TaskPageModule { }

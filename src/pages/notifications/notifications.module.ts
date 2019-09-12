@@ -1,27 +1,37 @@
+import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
-import { IonicPageModule } from '@ionic/angular';
+import { FormsModule } from '@angular/forms';
+import { RouterModule, Routes } from '@angular/router';
+import { IonicModule } from '@ionic/angular';
 
-import { ComponentsModule } from '@nte/components/components.module';
-import { NotificationService } from '@nte/services/notification.service';
-import { CollegePageModule } from './../college/college.module';
-import { CollegesListPageModule } from './../colleges-list/colleges-list.module';
-import { CollegesPageModule } from './../colleges/colleges.module';
-import { MessagingPageModule } from './../messaging/messaging.module';
-import { TaskPageModule } from './../task/task.module';
-import { TasksListPageModule } from './../tasks-list/tasks-list.module';
-import { TasksPageModule } from './../tasks/tasks.module';
 import { NotificationsPage } from './notifications';
+import { ComponentsModule } from '@nte/components/components.module';
+import { CollegePageModule } from '@nte/pages/college/college.module';
+import { CollegesListPageModule } from '@nte/pages/colleges-list/colleges-list.module';
+import { CollegesPageModule } from '@nte/pages/colleges/colleges.module';
+import { MessagingPageModule } from '@nte/pages/messaging/messaging.module';
+import { TaskPageModule } from '@nte/pages/task/task.module';
+import { TasksListPageModule } from '@nte/pages/tasks-list/tasks-list.module';
+import { TasksPageModule } from '@nte/pages/tasks/tasks.module';
+import { NotificationService } from '@nte/services/notification.service';
+
+const routes: Routes = [
+  {
+    path: 'app/notifications',
+    component: NotificationsPage
+  }
+];
 
 @NgModule({
   declarations: [
     NotificationsPage
   ],
-  exports: [
-    NotificationsPage
-  ],
   imports: [
+    CommonModule,
+    FormsModule,
+    IonicModule,
+    RouterModule.forChild(routes),
     ComponentsModule,
-    IonicPageModule.forChild(NotificationsPage),
     TasksPageModule,
     TasksListPageModule,
     TaskPageModule,
@@ -30,7 +40,7 @@ import { NotificationsPage } from './notifications';
     CollegePageModule,
     MessagingPageModule
   ],
-  services: [
+  providers: [
     NotificationService
   ]
 })

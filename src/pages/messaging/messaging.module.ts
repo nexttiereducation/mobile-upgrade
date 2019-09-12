@@ -1,19 +1,36 @@
+import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
-import { IonicPageModule } from '@ionic/angular';
+import { FormsModule } from '@angular/forms';
+import { RouterModule, Routes } from '@angular/router';
+import { IonicModule } from '@ionic/angular';
 
-import { ComponentsModule } from '@nte/components/components.module';
 import { MessagingPage } from './messaging';
+import { ComponentsModule } from '@nte/components/components.module';
+import { MessagesPage } from '@nte/pages/messages/messages';
+
+const routes: Routes = [
+  {
+    path: 'app/messages',
+    component: MessagingPage,
+    children: [
+      {
+        path: ':id',
+        component: MessagesPage
+      }
+    ]
+  }
+];
 
 @NgModule({
   declarations: [
     MessagingPage
   ],
-  exports: [
-    MessagingPage
-  ],
   imports: [
+    CommonModule,
+    FormsModule,
+    IonicModule,
+    RouterModule.forChild(routes),
     ComponentsModule,
-    IonicPageModule.forChild(MessagingPage)
   ]
 })
 export class MessagingPageModule { }

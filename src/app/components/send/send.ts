@@ -1,17 +1,19 @@
-import { Component } from '@angular/core';
-import { NavParams, ViewController } from '@ionic/angular';
+import { Component, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
+import { ModalController, NavParams, ToastController } from '@ionic/angular';
 
-import { ConnectionProvider } from '@nte/services/connection.service';
-import { KeyboardProvider } from '@nte/services/keyboard.service';
-import { MessageProvider } from '@nte/services/message.service';
-import { StakeholderProvider } from '@nte/services/stakeholder.service';
-import { UrlProvider } from '@nte/services/url.service';
+import { ConnectionService } from '@nte/services/connection.service';
+import { KeyboardService } from '@nte/services/keyboard.service';
+import { MessageService } from '@nte/services/message.service';
+import { StakeholderService } from '@nte/services/stakeholder.service';
+import { UrlService } from '@nte/services/url.service';
 
 @Component({
   selector: `send`,
-  templateUrl: `send.html`
+  templateUrl: `send.html`,
+  styleUrls: [`send.scss`],
+  encapsulation: ViewEncapsulation.None
 })
-export class SendComponent {
+export class SendComponent implements OnInit, OnDestroy {
   public connections: any[];
   public imageUrl: string;
   public isSent: boolean = false;
@@ -21,12 +23,12 @@ export class SendComponent {
   public selectedConnections;
 
   get isSending() {
-    return this.messageProvider.isSending;
+    return this.messageService.isSending;
   }
 
   get shareUrl() {
     if (this.itemType === `Task`) {
-      const stakeholder = this.stakeholderProvider.stakeholder;
+      const stakeholder = this.stakeholderService.stakeholder;
       const timeStamp = new Date().getTime();
       const name = encodeURI(`${stakeholder.first_name} ` + stakeholder.last_name);
       const taskName = encodeURI(this.item.task.name);
@@ -43,12 +45,13 @@ export class SendComponent {
     }
   }
 
-  constructor(public viewCtrl: ViewController,
-    public connectionProvider: ConnectionProvider,
-    private keyboard: KeyboardProvider,
-    private messageProvider: MessageProvider,
-    private urlProvider: UrlProvider,
-    private stakeholderProvider: StakeholderProvider,
+  constructor(public connectionService: ConnectionService,
+    private keyboard: KeyboardService,
+    private messageService: MessageService,
+    private modalCtrl: ModalController,
+    private stakeholderService: StakeholderService,
+    private toastCtrl: ToastController,
+    private urlService: UrlService,
     params: NavParams) {
     this.imageUrl = params.get(`imageUrl`);
     this.item = params.get(`item`);
@@ -56,28 +59,30 @@ export class SendComponent {
     this.selectedConnections = new Set();
   }
 
-  ionViewDidLeave() {
-    this.connectionProvider.unselectAll();
+  ngOnInit() {
+    this.connectionService.initialize();
   }
 
-  ionViewDidLoad() {
-    this.connectionProvider.initialize();
+  ngOnDestroy() {
+    this.connectionService.unselectAll();
   }
 
   public closeShareModal() {
-    this.viewCtrl.dismiss();
+    this.modalCtrl.dismiss();
   }
 
   public send() {
     this.keyboard.close();
     if (this.isSent) { return; }
-    const message = `${this.message} ${this.urlProvider.getDomain()}${this.shareUrl}`;
+    const message = `${this.message} ${this.urlService.getDomain()}${this.shareUrl}`;
     let messagesSent = 0;
     this.selectedConnections.forEach((id) => {
-      this.messageProvider.send(id, message);
+      this.messageService.send(id, message, false);
       messagesSent++;
       if (messagesSent === this.selectedConnections.size) {
         this.isSent = true;
+        this.openSentToast(messagesSent);
+        this.modalCtrl.dismiss();
       }
     });
   }
@@ -89,6 +94,14 @@ export class SendComponent {
     } else {
       this.selectedConnections.add(connection.id);
     }
+  }
+
+  private async openSentToast(numberSent: number) {
+    const toast = await this.toastCtrl.create({
+      duration: 3000,
+      message: `${this.itemType} sent to ${numberSent} connections.`
+    });
+    toast.present();
   }
 
 }

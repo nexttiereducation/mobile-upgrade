@@ -1,32 +1,55 @@
-import { Component } from '@angular/core';
-import { IonicPage, NavController, NavParams } from '@ionic/angular';
+import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
+import { AlertController } from '@ionic/angular';
 
+import { CollegeTabsService } from '@nte/services/college-tabs.service';
 import { CollegeService } from '@nte/services/college.service';
 
-@IonicPage({
-  name: `college-financial-page`
-})
 @Component({
   selector: `college-financial`,
   templateUrl: `college-financial.html`
 })
-export class CollegeFinancialPage {
-  public college: any;
+export class CollegeFinancialPage implements OnInit {
   public undergradFinAidChart: any;
 
-  constructor(public navCtrl: NavController,
-    public params: NavParams,
-    public collegeService: CollegeService) {
-    this.college = params.data;
+  get college() {
+    return this.collegeTabsService.activeCollege;
+  }
+
+  get details() {
+    return this.college ? this.college.details : null;
+  }
+
+  constructor(
+    public alertCtrl: AlertController,
+    public collegeService: CollegeService,
+    public collegeTabsService: CollegeTabsService,
+    public route: ActivatedRoute,
+    public router: Router) { }
+
+  ngOnInit() {
     this.setupUndergradFinAidChart();
   }
 
+  public async openAlert(type: string) {
+    let msg;
+    switch (type) {
+      case 'need blind':
+        msg = `This institution does not consider an applicant's financial situation when deciding admission`;
+        break;
+    }
+    const alert = await this.alertCtrl.create({
+      message: msg
+    });
+    return await alert.present();
+  }
+
   public setupUndergradFinAidChart() {
-    if (this.college.details.initial_financial_aid) {
+    if (this.details && this.details.initial_financial_aid) {
       this.undergradFinAidChart = {
         values: [
-          this.college.details.initial_financial_aid,
-          (100 - this.college.details.initial_financial_aid)
+          this.details.initial_financial_aid,
+          (100 - this.details.initial_financial_aid)
         ]
       };
     }

@@ -1,50 +1,38 @@
 import { Component } from '@angular/core';
-import { IonicPage, NavController, NavParams } from '@ionic/angular';
+import { ActivatedRoute, Router } from '@angular/router';
 
+import { CollegeTabsService } from '@nte/services/college-tabs.service';
 import { CollegeService } from '@nte/services/college.service';
 
-@IonicPage({
-  name: `college-general-page`
-})
 @Component({
   selector: `college-general`,
   templateUrl: `college-general.html`
 })
 export class CollegeGeneralPage {
-  public college: any;
-  public diversityChart: any;
-  public maleFemaleChart: any;
-
-  constructor(public navCtrl: NavController,
-    public params: NavParams,
-    public collegeService: CollegeService) {
-    this.college = params.data;
-    this.setupMaleFemaleChart();
-    this.setupDiversityChart();
+  get college() {
+    return this.collegeTabsService.activeCollege;
   }
 
-  public getDiversityValues(percents: any) {
-    const vals = [];
-    for (let i = 0; i < percents.length; i++) {
-      const val = percents[i] * .1 * this.college.details.undergrad_population;
-      vals.push(val);
-    }
-    return vals;
+  get details() {
+    return this.college ? this.college.details : null;
   }
 
-  public setupDiversityChart() {
-    if (this.college.details.undergrad_white && this.college.details.undergrad_asian &&
-      this.college.details.undergrad_hispanic && this.college.details.undergrad_black) {
-      const diversityOther = 100 - +this.college.details.undergrad_white - +this.college.details.undergrad_asian
-        - +this.college.details.undergrad_hispanic - +this.college.details.undergrad_black;
+  get diversityChart() {
+    if (this.details
+      && this.details.undergrad_white
+      && this.details.undergrad_asian
+      && this.details.undergrad_hispanic
+      && this.details.undergrad_black) {
+      const diversityOther = 100 - +this.details.undergrad_white - +this.details.undergrad_asian
+        - +this.details.undergrad_hispanic - +this.details.undergrad_black;
       const diversityPercents = [
-        this.college.details.undergrad_white,
-        this.college.details.undergrad_asian,
-        this.college.details.undergrad_hispanic,
-        this.college.details.undergrad_black,
+        this.details.undergrad_white,
+        this.details.undergrad_asian,
+        this.details.undergrad_hispanic,
+        this.details.undergrad_black,
         diversityOther
       ];
-      this.diversityChart = {
+      return {
         colors: [
           `#3692cc`,
           `#1b1464`,
@@ -61,12 +49,16 @@ export class CollegeGeneralPage {
         ],
         values: this.getDiversityValues(diversityPercents)
       };
+    } else {
+      return null;
     }
   }
 
-  public setupMaleFemaleChart() {
-    if (this.college.details.female_enrollment && this.college.details.male_enrollment) {
-      this.maleFemaleChart = {
+  get maleFemaleChart() {
+    if (this.details
+      && this.details.female_enrollment
+      && this.details.male_enrollment) {
+      return {
         colors: [
           `#3692cc`,
           `#1b1464`
@@ -76,11 +68,28 @@ export class CollegeGeneralPage {
           `Male`
         ],
         values: [
-          this.college.details.female_enrollment,
-          this.college.details.male_enrollment
+          this.details.female_enrollment,
+          this.details.male_enrollment
         ]
       };
+    } else {
+      return null;
     }
+  }
+
+  constructor(
+    public collegeService: CollegeService,
+    public collegeTabsService: CollegeTabsService,
+    public route: ActivatedRoute,
+    public router: Router) { }
+
+  public getDiversityValues(percents: any) {
+    const vals = [];
+    percents.forEach(percent => {
+      const val = percent * .1 * this.details.undergrad_population;
+      vals.push(val);
+    });
+    return vals;
   }
 
 }

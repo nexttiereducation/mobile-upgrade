@@ -37,7 +37,7 @@
 
   ion-label,
   ion-icon {
-    color: $blue;
+    color: var(--blue);
     transition: 0.4s transform ease-in-out;
   }
 

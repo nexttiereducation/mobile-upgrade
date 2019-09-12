@@ -1,18 +1,13 @@
 import { Injectable } from '@angular/core';
-import { Response } from '@angular/http';
 import { AlertController } from '@ionic/angular';
 import { find, flatten, isArray, sortBy, uniqBy } from 'lodash';
-import { BehaviorSubject } from 'rxjs/BehaviorSubject';
-import { Observable } from 'rxjs/Observable';
-import { Subject } from 'rxjs/Subject';
-
-import 'rxjs/add/operator/do';
-import 'rxjs/add/operator/map';
+import { BehaviorSubject, Observable, Subject } from 'rxjs';
+import { map, tap } from 'rxjs/operators';
 
 import { TASK_BUCKETS, TaskStatus } from '@nte/constants/task.constants';
+import { INote } from '@nte/interfaces/note.interface';
+import { IStudent } from '@nte/interfaces/student.interface';
 import { BackEndPrompt } from '@nte/models/back-end-prompt.model';
-import { INote } from '@nte/models/note.interface';
-import { IStudent } from '@nte/models/student.interface';
 import { TaskTrackerChange } from '@nte/models/task-tracker-change.model';
 import { TaskTracker } from '@nte/models/task-tracker.model';
 import { ApiService } from '@nte/services/api.service';
@@ -69,7 +64,9 @@ export class TaskService {
   get notes() {
     return this._notes.getValue();
   }
-
+  set notes(notes: any[]) {
+    this._notes.next(notes);
+  }
   get notes$() {
     return this._notes.asObservable();
   }
@@ -90,10 +87,6 @@ export class TaskService {
     return this._userTaskTrackers.asObservable();
   }
 
-  set notes(notes: any[]) {
-    this._notes.next(notes);
-  }
-
   constructor(private apiService: ApiService,
     private alertCtrl: AlertController,
     private mixpanel: MixpanelService) { }
@@ -105,13 +98,13 @@ export class TaskService {
   }
 
   public createNote(taskTracker: TaskTracker, note: string) {
-    this.apiService.post(`/tasks/${taskTracker.id}/note/`, { note })
-      .subscribe(() => {
+    return this.apiService.post(`/tasks/${taskTracker.id}/note/`, { note })
+      .pipe(tap(() => {
         this.mixpanel.event(`task_note_added`, {
           'task title': taskTracker.task.name
         });
-        this.getNotes(taskTracker.id).subscribe();
-      });
+        this.getNotes(taskTracker.id);
+      }));
   }
 
   public deleteNote(taskTrackerId: number, noteId: number) {
@@ -120,7 +113,7 @@ export class TaskService {
 
   public downloadTaskFile(taskId: number): void {
     this.apiService.get(`/task_list/${taskId}/attachment`)
-      .map((response) => response.json())
+      .pipe(map((response) => response.json()))
       .subscribe(
         (data) => {
           const link = document.createElement(`a`);
@@ -144,7 +137,7 @@ export class TaskService {
 
   public getArchivedTasks(url: string, isAbsoluteUrl?: boolean): void {
     this.apiService.get(url, isAbsoluteUrl)
-      .map((response) => {
+      .pipe(map((response) => {
         const data = response.json();
         if (isAbsoluteUrl) {
           this.archivedTaskData.tasks = this.archivedTaskData.tasks.concat(data.results);
@@ -153,7 +146,7 @@ export class TaskService {
         }
         this.archivedTaskData.nextPage = data.next;
         this.archivedTaskData.count = data.results.length;
-      })
+      }))
       .subscribe(
         () => {
           this._archivedTasks.next(this.archivedTaskData.tasks);
@@ -172,10 +165,10 @@ export class TaskService {
 
   public getNextTask(path: string, type?: string) {
     this.apiService.get(path)
-      .map((response) => {
+      .pipe(map((response) => {
         const tasks = response.json();
         return tasks;
-      })
+      }))
       .subscribe(
         (tasks) => {
           const next = tasks.results[0];
@@ -210,7 +203,7 @@ export class TaskService {
       this.activeTaskId = taskId;
     }
     return this.apiService.get(url, hasNextPage)
-      .map((response) => {
+      .pipe(map((response) => {
         const resObj = response.json();
         let notes = resObj.results;
         this.nextNotesPage = resObj.next;
@@ -224,16 +217,16 @@ export class TaskService {
           count: resObj.count,
           notes: this.notes
         };
-      });
+      }));
   }
 
   public getTasks(type, path) {
     const taskPath = path.replace(`status=NS`, `status=NS&status=C`);
     this.apiService.get(taskPath)
-      .map((response) => {
+      .pipe(map((response) => {
         const tasks = response.json();
         return tasks;
-      })
+      }))
       .subscribe(
         (tasks) => {
           this.setupTaskBuckets(type, tasks);
@@ -243,15 +236,15 @@ export class TaskService {
 
   public getTaskTrackerById(id: number) {
     return this.apiService.get(`/task_list/${id}`)
-      .map((response) => response.json());
+      .pipe(map((response) => response.json()));
   }
 
   public getUnverifiedTasks(impersonationId: number) {
     let tasks = new Array<TaskTracker>();
     this.apiService.get(`/task_list/?status=C&student_id=${impersonationId}`)
-      .map((response) => {
+      .pipe(map((response) => {
         tasks = response.json().results;
-      })
+      }))
       .subscribe(() => {
         const unverifiedTasks = tasks.filter((task) => !task.verified_by);
         this._unverifiedTaskTrackers.next(unverifiedTasks);
@@ -265,7 +258,7 @@ export class TaskService {
     if (isInitialLoad) { this._userTaskTrackers.next([]); }
     let sortedTasks = new Array<TaskTracker>();
     const all = this.apiService.get(url, isAbsoluteUrl)
-      .map((response) => {
+      .pipe(map((response) => {
         const data = response.json();
         if (this.nextPage === data.next) {
           this.nextPage = null;
@@ -292,7 +285,7 @@ export class TaskService {
         if (openFirstTask) {
           this.allUserTaskTrackers[0].isExpanded = true;
         }
-      })
+      }))
       .subscribe(
         () => {
           this._userTaskTrackers.next(sortedTasks);
@@ -303,14 +296,7 @@ export class TaskService {
           this.initializingTasks = false;
           all.unsubscribe();
         },
-        (err) => {
-          const alert = this.alertCtrl.create({
-            buttons: [`Dismiss`],
-            subHeader: `An error has occurred. Please try again. ${err}`,
-            header: `Error`
-          });
-          alert.present();
-        }
+        (err) => this.showErrorAlert(err)
       );
   }
 
@@ -344,7 +330,7 @@ export class TaskService {
     this.taskBuckets[type] = tasks;
   }
 
-  public updateNote(taskId: number, note: INote): Observable<Response> {
+  public updateNote(taskId: number, note: INote): Observable<any> {
     return this.apiService.patch(`/tasks/${taskId}/note/${note.id}`, { note: note.note });
   }
 
@@ -361,7 +347,7 @@ export class TaskService {
   public updateTaskStatus(id: number, status: TaskStatus):
     Observable<TaskTrackerChange<TaskTracker | BackEndPrompt<any>>> {
     return this.apiService.patch(`/task_list/${id}`, { status })
-      .map((response) => {
+      .pipe(map((response) => {
         if (response.status !== 299) {
           const newTaskTracker = new TaskTrackerChange<TaskTracker>(new TaskTracker(response.json()));
           const mixpanelData = {
@@ -378,22 +364,24 @@ export class TaskService {
         } else {
           return new TaskTrackerChange<BackEndPrompt<any>>(null);
         }
-      });
+      }));
   }
 
   public uploadFile(id: number, file: File): Observable<TaskTracker> {
     return this.apiService.patchFile(`/task_list/${id}`, file)
-      .map((response: any) => new TaskTracker(response.json()))
-      .do((taskTracker) => {
-        const tracker: any = taskTracker;
-        const trackerIndex = this.allUserTaskTrackers.findIndex((tt) => tt.id === tracker.id);
-        this.allUserTaskTrackers[trackerIndex] = tracker;
-      });
+      .pipe(
+        map((response: any) => new TaskTracker(response.json())),
+        tap((taskTracker) => {
+          const tracker: any = taskTracker;
+          const trackerIndex = this.allUserTaskTrackers.findIndex((tt) => tt.id === tracker.id);
+          this.allUserTaskTrackers[trackerIndex] = tracker;
+        })
+      );
   }
 
   public verifyStudentTask(taskTracker: TaskTracker): void {
     this.apiService.patch(`/task_list/${taskTracker.id}/verify/`)
-      .map((response) => response.json())
+      .pipe(map((response) => response.json()))
       .subscribe(
         (newTaskTracker) => {
           const taskTrackerIndex = this._unverifiedTaskTrackers.value.indexOf(taskTracker);
@@ -404,11 +392,15 @@ export class TaskService {
   }
 
   private createTaskObjects(tasks: TaskTracker[]): TaskTracker[] {
-    const instantiatedTasks = new Array<TaskTracker>();
-    for (let i = 0, task: TaskTracker; task = tasks[i]; ++i) {
-      const newTask = new TaskTracker(task);
-      instantiatedTasks.push(newTask);
-    }
-    return instantiatedTasks;
+    return [...tasks].map(t => new TaskTracker(t));
+  }
+
+  private async showErrorAlert(err) {
+    const alert = await this.alertCtrl.create({
+      buttons: [`Dismiss`],
+      subHeader: `An error has occurred. Please try again. ${err}`,
+      header: `Error`
+    });
+    alert.present();
   }
 }

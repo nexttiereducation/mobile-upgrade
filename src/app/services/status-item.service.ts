@@ -1,6 +1,11 @@
 import { Injectable } from '@angular/core';
 
-import { ICollegeStatusItem, IScholarshipStatusItem, IStatusItem, StatusItem } from '@nte/models/status-item.interface';
+import {
+  ICollegeStatusItem,
+  IScholarshipStatusItem,
+  IStatusItem,
+  StatusItem
+} from '@nte/interfaces/status-item.interface';
 
 @Injectable({ providedIn: 'root' })
 export class StatusItemService {

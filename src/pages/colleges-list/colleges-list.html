@@ -1,5 +1,8 @@
 <ion-header mode="ios">
   <ion-toolbar mode="ios">
+    <ion-buttons slot="start">
+      <ion-back-button></ion-back-button>
+    </ion-buttons>
     <ion-title mode="ios"
                tappable>
       <div class="subhead text-grayDark50"
@@ -40,10 +43,10 @@
   <!-- <ng-template [ngIf]="(colleges$ | async)
                        && (colleges$ | async)?.length
                        && !(collegeService.isInitializing$ | async)"> -->
-  <ion-list approxItemHeight="245px"
-            buffer="5"
-            card-list
-            [virtualScroll]="colleges$ | async">
+  <ion-virtual-scroll approxItemHeight="245px"
+                      buffer="5"
+                      card-list
+                      [items]="colleges$ | async">
     <ion-card virtualTrackBy="collegeService.getIdFromCollege"
               *virtualItem="let college; let index = index">
       <ion-item tappable
@@ -55,11 +58,13 @@
                width="40"
                [src]="getLogo(college)" />
         </ion-avatar>
-        <h3 class="truncate"> {{ college | collegeName }} </h3>
-        <div class="subhead"
-             *ngIf="getCollegeObj(college)?.city && getCollegeObj(college)?.state">
-          <ion-icon name="pin"></ion-icon> {{ getCollegeObj(college)?.city + ', ' + getCollegeObj(college)?.state }}
-        </div>
+        <ion-label>
+          <h3 class="truncate"> {{ college | collegeName }} </h3>
+          <div class="subhead"
+               *ngIf="getCollegeObj(college)?.city && getCollegeObj(college)?.state">
+            <ion-icon name="pin"></ion-icon> {{ getCollegeObj(college)?.city + ', ' + getCollegeObj(college)?.state }}
+          </div>
+        </ion-label>
       </ion-item>
       <img alt="College Image"
            cache="true"
@@ -142,7 +147,7 @@
         </ion-row>
       </ion-grid>
     </ion-card>
-  </ion-list>
+  </ion-virtual-scroll>
   <ion-infinite-scroll threshold="20%"
                        (ionInfinite)="infiniteScrollLoad($event)">
     <ion-infinite-scroll-content loadingSpinner="bubbles"
@@ -162,6 +167,7 @@
       <ion-card class="placeholder"
                 *ngFor="let placeholder of placeholders">
         <ion-item>
+          <ion-label></ion-label>
           <ion-avatar class="grey-gradient"
                       item-left></ion-avatar>
           <div class="grey-gradient"></div>

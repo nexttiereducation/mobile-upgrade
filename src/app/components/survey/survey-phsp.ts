@@ -1,21 +1,23 @@
 import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { Events } from '@ionic/angular';
-import { Subscription } from 'rxjs/Subscription';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 
 import { militaryBranches, plans } from '@nte/constants/phsp-form.constants';
 import { PLAN_DESCRIPTIONS, SURVEY_NAMES } from '@nte/constants/survey.constants';
-import { ICollegeStatusItem, IScholarshipStatusItem } from '@nte/models/status-item.interface';
+import { ICollegeStatusItem, IScholarshipStatusItem } from '@nte/interfaces/status-item.interface';
 import { TaskTracker } from '@nte/models/task-tracker.model';
-import { DatetimeProvider } from '@nte/services/datetime.service';
-import { ScholarshipProvider } from '@nte/services/scholarship.service';
-import { SurveyProvider } from '@nte/services/survey.service';
+import { DatetimeService } from '@nte/services/datetime.service';
+import { ScholarshipService } from '@nte/services/scholarship.service';
+import { SurveyService } from '@nte/services/survey.service';
 
 @Component({
   selector: `survey-phsp`,
-  templateUrl: `survey-phsp.html`
+  templateUrl: `survey-phsp.html`,
+  styleUrls: [`survey-phsp.scss`]
 })
 export class SurveyPhspComponent implements OnDestroy, OnInit {
-  @Input() public taskTracker: TaskTracker;
+  @Input() taskTracker: TaskTracker;
 
   public datePickerOptions: any;
   public isInvalid = false;
@@ -31,50 +33,51 @@ export class SurveyPhspComponent implements OnDestroy, OnInit {
   };
   public surveyResults: any;
 
-  private collegeValidSub: Subscription;
-  private scholarshipValidSub: Subscription;
-  private surveyDataSub: Subscription;
+  private ngUnsubscribe: Subject<any> = new Subject();
 
   get acceptedColleges() {
-    if (!this.studentAnswers.institutions_followed) { return []; }
-    const colleges = this.studentAnswers.institutions_followed.filter((institution) => institution.decision === `A`);
-    return colleges;
+    if (!this.studentAnswers.institutions_followed) {
+      return [];
+    } else {
+      return this.studentAnswers.institutions_followed.filter(c => c.decision === `A`);
+    }
   }
 
   get hideFormNavButtons(): boolean {
-    const isHidden = this.isUniversityPlan &&
-      (this.studentAnswers.page === 2 || this.studentAnswers.page === 4 || this.isConfirmationPage);
-    return isHidden;
+    return this.isUniversityPlan &&
+      (this.studentAnswers.page === 2
+        || this.studentAnswers.page === 4
+        || this.isConfirmationPage);
   }
 
   get isCollegeOrScholarshipPage(): boolean {
-    return (this.isUniversityPlan && (this.studentAnswers.page === 2 || this.studentAnswers.page === 4));
+    return this.isUniversityPlan &&
+      (this.studentAnswers.page === 2 || this.studentAnswers.page === 4);
   }
 
   get isConfirmationPage(): boolean {
-    const lastPageOfTwoOrFourYear = (this.studentAnswers.page === 5 &&
-      (this.studentAnswers.plan === `four_year` || this.studentAnswers.plan === `two_year`));
-    const lastPageOfNonSchool = this.studentAnswers.page === 3 && !this.isUniversityPlan;
-    return lastPageOfNonSchool || lastPageOfTwoOrFourYear;
+    const lastSchoolPage = this.studentAnswers.page === 5 && this.isUniversityPlan;
+    const lastOtherPage = this.studentAnswers.page === 3 && !this.isUniversityPlan;
+    return lastOtherPage || lastSchoolPage;
   }
 
   get isLastQuestion(): boolean {
-    const lastPageOfTwoOrFourYear = (this.studentAnswers.page === 4 && this.isUniversityPlan);
-    const lastPageOfNonSchool = this.studentAnswers.page === 2 && !this.isUniversityPlan;
-    return lastPageOfNonSchool || lastPageOfTwoOrFourYear;
+    const lastSchoolQ = this.studentAnswers.page === 4 && this.isUniversityPlan;
+    const lastOtherQ = this.studentAnswers.page === 2 && !this.isUniversityPlan;
+    return lastOtherQ || lastSchoolQ;
   }
 
   get isUniversityPlan(): boolean {
     return this.studentAnswers.plan === `four_year` || this.studentAnswers.plan === `two_year`;
   }
 
-  constructor(private datetimeProvider: DatetimeProvider,
+  constructor(private datetimeService: DatetimeService,
     private events: Events,
-    private scholarshipProvider: ScholarshipProvider,
-    private surveyProvider: SurveyProvider) {
-    this.maxYear = this.datetimeProvider.maxYear();
-    this.minYear = this.datetimeProvider.minYear();
-    this.datePickerOptions = this.datetimeProvider.pickerOptions;
+    private scholarshipService: ScholarshipService,
+    private surveyService: SurveyService) {
+    this.maxYear = this.datetimeService.maxYear();
+    this.minYear = this.datetimeService.minYear();
+    this.datePickerOptions = this.datetimeService.pickerOptions;
   }
 
   ngOnInit() {
@@ -84,15 +87,8 @@ export class SurveyPhspComponent implements OnDestroy, OnInit {
   }
 
   ngOnDestroy() {
-    if (this.collegeValidSub) {
-      this.collegeValidSub.unsubscribe();
-    }
-    if (this.scholarshipValidSub) {
-      this.scholarshipValidSub.unsubscribe();
-    }
-    if (this.surveyDataSub) {
-      this.surveyDataSub.unsubscribe();
-    }
+    this.ngUnsubscribe.next();
+    this.ngUnsubscribe.complete();
   }
 
   public nextPage() {
@@ -104,6 +100,7 @@ export class SurveyPhspComponent implements OnDestroy, OnInit {
       this.isInvalid = false;
     }
     this.saveSurvey()
+      .pipe(takeUntil(this.ngUnsubscribe))
       .subscribe(
         () => { /* success */ },
         err => console.error(err)
@@ -141,10 +138,10 @@ export class SurveyPhspComponent implements OnDestroy, OnInit {
   }
 
   public onScholarshipListUpdated(scholarships: IScholarshipStatusItem[]) {
-    for (let i = 0, scholarship; scholarship = scholarships[i]; ++i) {
-      scholarship.amount_awarded = +scholarship.amount_awarded;
-    }
-    this.studentAnswers.scholarships_followed = scholarships;
+    this.studentAnswers.scholarships_followed = scholarships.map(s => {
+      s.amount_awarded = +s.amount_awarded;
+      return s;
+    });
   }
 
   public previousPage() {
@@ -157,6 +154,7 @@ export class SurveyPhspComponent implements OnDestroy, OnInit {
       this.startOnLastSlide = false;
     }
     this.saveSurvey()
+      .pipe(takeUntil(this.ngUnsubscribe))
       .subscribe(
         () => { /* success */ },
         err => console.error(err)
@@ -165,39 +163,39 @@ export class SurveyPhspComponent implements OnDestroy, OnInit {
 
   public saveSurvey() {
     this.setCollegeAttending();
-    return this.surveyProvider.saveSurveyData(this.taskTracker.task.id, { answers: this.studentAnswers });
+    return this.surveyService.saveSurveyData(this.taskTracker.task.id, { answers: this.studentAnswers });
   }
 
   public setCollegeAttending() {
-    if (!this.studentAnswers.college_attending || this.studentAnswers.college_attending_id === -1) {
-      this.studentAnswers.college_attending = {};
-      this.studentAnswers.college_attending.enrolling = false;
-    } else if (this.studentAnswers.college_attending_id) {
-      this.studentAnswers.college_attending = this.studentAnswers.institutions_followed
-        .find((college) => college.id === this.studentAnswers.college_attending_id);
-      if (!this.studentAnswers.college_attending) {
-        this.studentAnswers.college_attending = {};
+    const answers = this.studentAnswers;
+    if (!answers.college_attending || answers.college_attending_id === -1) {
+      answers.college_attending = {};
+      answers.college_attending.enrolling = false;
+    } else if (answers.college_attending_id) {
+      answers.college_attending = answers.institutions_followed
+        .find((college) => college.id === answers.college_attending_id);
+      if (!answers.college_attending) {
+        answers.college_attending = {};
       }
-      this.studentAnswers.college_attending.enrolling = true;
+      answers.college_attending.enrolling = true;
     }
-    if (this.studentAnswers.financial_aid) {
-      this.studentAnswers.college_attending.financial_aid = this.studentAnswers.financial_aid;
+    if (answers.financial_aid) {
+      answers.college_attending.financial_aid = answers.financial_aid;
     }
-    if (this.studentAnswers.start_date) {
-      this.studentAnswers.college_attending.start_date = this.studentAnswers.start_date;
+    if (answers.start_date) {
+      answers.college_attending.start_date = answers.start_date;
     }
-    if (this.studentAnswers.major) {
-      this.studentAnswers.college_attending.major = this.studentAnswers.major;
+    if (answers.major) {
+      answers.college_attending.major = answers.major;
     }
   }
 
   public surveyComplete() {
     if (this.isShortSurvey) {
       this.saveSurvey()
+        .pipe(takeUntil(this.ngUnsubscribe))
         .subscribe(
-          () => {
-            this.studentAnswers.page++;
-          },
+          () => this.studentAnswers.page++,
           err => console.error(err)
         );
     }
@@ -207,16 +205,16 @@ export class SurveyPhspComponent implements OnDestroy, OnInit {
 
   public viewConfirmation() {
     this.saveSurvey()
+      .pipe(takeUntil(this.ngUnsubscribe))
       .subscribe(
-        () => {
-          this.getResults();
-        },
+        () => this.getResults(),
         err => console.error(err)
       );
   }
 
   private getResults() {
-    this.surveyProvider.getSurveyData(this.taskTracker.task.id)
+    this.surveyService.getSurveyData(this.taskTracker.task.id)
+      .pipe(takeUntil(this.ngUnsubscribe))
       .subscribe(
         (data) => {
           this.surveyResults = data;
@@ -229,7 +227,8 @@ export class SurveyPhspComponent implements OnDestroy, OnInit {
   }
 
   private setupSurvey() {
-    this.surveyDataSub = this.surveyProvider.getSurveyData(this.taskTracker.task.id)
+    this.surveyService.getSurveyData(this.taskTracker.task.id)
+      .pipe(takeUntil(this.ngUnsubscribe))
       .subscribe(
         (data) => {
           this.isShortSurvey = data.survey_name === SURVEY_NAMES.phsp_short;
@@ -243,27 +242,38 @@ export class SurveyPhspComponent implements OnDestroy, OnInit {
         },
         err => console.error(err)
       );
-    this.scholarshipProvider.getStudentScholarships();
+    this.scholarshipService.getStudentScholarships();
   }
 
   private setupUpdateSubs() {
-    this.events.subscribe(`changeSurveyPage`, (params) => this.onChangeSurveyPage(params));
-    this.events.subscribe(`collegeListUpdated`, (colleges) => this.onCollegeListUpdated(colleges));
-    this.events.subscribe(`scholarshipListUpdated`, (scholarships) => this.onScholarshipListUpdated(scholarships));
-    this.events.subscribe(`previousPage`, () => this.previousPage());
-    this.events.subscribe(`surveyComplete`, () => this.surveyComplete());
+    this.events.subscribe(
+      `changeSurveyPage`,
+      params => this.onChangeSurveyPage(params)
+    );
+    this.events.subscribe(
+      `collegeListUpdated`,
+      colleges => this.onCollegeListUpdated(colleges)
+    );
+    this.events.subscribe(
+      `previousPage`,
+      () => this.previousPage()
+    );
+    this.events.subscribe(
+      `scholarshipListUpdated`,
+      ships => this.onScholarshipListUpdated(ships)
+    );
+    this.events.subscribe(
+      `surveyComplete`,
+      () => this.surveyComplete()
+    );
   }
 
   private setupValidSubs() {
-    this.collegeValidSub = this.surveyProvider.isCollegeStatusSectionValid.subscribe(
-      (isValid) => {
-        this.isInvalid = !isValid;
-      }
-    );
-    this.scholarshipValidSub = this.surveyProvider.isScholarshipStatusSectionValid.subscribe(
-      (isValid) => {
-        this.isInvalid = !isValid;
-      }
-    );
+    this.surveyService.isCollegeStatusSectionValid
+      .pipe(takeUntil(this.ngUnsubscribe))
+      .subscribe(isValid => this.isInvalid = !isValid);
+    this.surveyService.isScholarshipStatusSectionValid
+      .pipe(takeUntil(this.ngUnsubscribe))
+      .subscribe(isValid => this.isInvalid = !isValid);
   }
 }
