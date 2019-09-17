@@ -26,11 +26,11 @@
       </ion-col>
     </ion-row>
   </ion-grid>
-  <ng-container *ngIf="user">
-    <notification-settings [userOverview]="user"></notification-settings>
-    <general-settings [currentUser]="user"></general-settings>
-    <contact-settings [currentUser]="user"></contact-settings>
-    <password-settings [currentUser]="user"></password-settings>
+  <ng-container *ngIf="userOverview">
+    <notification-settings [userOverview]="userOverview"></notification-settings>
+    <general-settings [userOverview]="userOverview"></general-settings>
+    <contact-settings [userOverview]="userOverview"></contact-settings>
+    <password-settings [userOverview]="userOverview"></password-settings>
   </ng-container>
 </ion-content>
 <ion-footer>

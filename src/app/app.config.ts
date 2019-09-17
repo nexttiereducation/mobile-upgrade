@@ -34,20 +34,6 @@ export const ionicStorageConfig = {
 
 export const ionicConfig = {
   backButtonText: ``
-  // backButtonIcon: `nt-up`,
-  // // locationStrategy: 'path',
-  // mode: `md`,
-  // platforms: {
-  //   android: {
-  //     statusbarPadding: true
-  //   }
-  // },
-  // preloadModules: true,
-  // preserveSymlinks: true,
-  // spinner: `bubbles`,
-  // swipeBackEnabled: false,
-  // tabsHideOnSubPages: true
-  // , tabsLayout: `title-hide`
 };
 
 export const mixpanelConfig = {

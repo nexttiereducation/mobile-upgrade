@@ -8,10 +8,9 @@ import { COLLEGE_NON_PROFIT_QUERY, CREATE_LIST_IMAGES } from '@nte/constants/col
 import { Filter } from '@nte/models/filter.model';
 import { QueryObject } from '@nte/models/queryobject.model';
 import { CollegeListTileService } from '@nte/services/college.list-tile.service';
-import { CollegeService } from '@nte/services/college.service';
+import { CollegesService } from '@nte/services/colleges.service';
 import { FilterService } from '@nte/services/filter.service';
 import { NavStateService } from '@nte/services/nav-state.service';
-import { ParamService } from '@nte/services/param.service';
 import { ScholarshipListTileService } from '@nte/services/scholarship.list-tile.service';
 import { ScholarshipService } from '@nte/services/scholarship.service';
 
@@ -49,12 +48,11 @@ export class ListTileCreatePage implements OnInit, OnDestroy {
       || (!this.showSummary && this.filterOptions && this.filterOptions.isActive);
   }
 
-  constructor(paramService: ParamService,
-    public filterService: FilterService,
+  constructor(public filterService: FilterService,
     private collegeListTileService: CollegeListTileService,
     private scholarshipListTileService: ScholarshipListTileService,
     private router: Router,
-    private collegeService: CollegeService,
+    private collegesService: CollegesService,
     private scholarshipService: ScholarshipService,
     navStateService: NavStateService) {
     const params: any = navStateService.data;
@@ -170,7 +168,7 @@ export class ListTileCreatePage implements OnInit, OnDestroy {
     const providerPrefix = trimEnd(this.page.toLowerCase(), `s`);
     switch (providerPrefix) {
       case `college`:
-        this.pageItemService = this.collegeService;
+        this.pageItemService = this.collegesService;
         this.listTileService = this.collegeListTileService;
         break;
       case `scholarship`:

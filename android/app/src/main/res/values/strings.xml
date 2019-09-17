@@ -1,0 +1,8 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">NextTier</string>
+    <string name="title_activity_main">NextTier</string>
+    <string name="package_name">com.NextTierEducation.NextTierEducation</string>
+    <string name="fileprovider_authority">com.NextTierEducation.NextTierEducation.fileprovider</string>
+    <string name="custom_url_scheme">com.NextTierEducation.NextTierEducation</string>
+</resources>

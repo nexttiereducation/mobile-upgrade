@@ -10,7 +10,7 @@ import { COLLEGE_NON_PROFIT_QUERY, COLLEGE_TILES, EMPTY_STATES } from '@nte/cons
 import { IListTile } from '@nte/interfaces/list-tile.interface';
 import { Filter } from '@nte/models/filter.model';
 import { CollegeListTileService } from '@nte/services/college.list-tile.service';
-import { CollegeService } from '@nte/services/college.service';
+import { CollegesService } from '@nte/services/colleges.service';
 import { EnvironmentService } from '@nte/services/environment.service';
 import { FilterService } from '@nte/services/filter.service';
 import { MessageService } from '@nte/services/message.service';
@@ -68,9 +68,9 @@ export class CollegesPage implements OnInit, OnDestroy {
   }
 
   constructor(
+    public collegesService: CollegesService,
     public messageService: MessageService,
     public router: Router,
-    private collegeService: CollegeService,
     private environment: EnvironmentService,
     private filterService: FilterService,
     private listTileService: CollegeListTileService,
@@ -99,7 +99,7 @@ export class CollegesPage implements OnInit, OnDestroy {
 
   ionViewDidEnter() {
     this.mixpanel.event(`navigated_to-Colleges`);
-    this.collegeService.initRecs(
+    this.collegesService.initRecs(
       this.user.id,
       this.user.isParent
     );
@@ -183,10 +183,10 @@ export class CollegesPage implements OnInit, OnDestroy {
       [`app/colleges/list/create`],
       {
         state: {
-      cyol: true,
-      filter: collegeFilters,
-      listType: `Colleges`,
-      title: `Create Your Own List!`
+          cyol: true,
+          filter: collegeFilters,
+          listType: `Colleges`,
+          title: `Create Your Own List!`
         }
       }
     );
@@ -229,21 +229,21 @@ export class CollegesPage implements OnInit, OnDestroy {
     this.listTileService.activeList = null;
   }
 
-  public viewList(tile: IListTile) {
-    if (this.mixpanelEvents[tile.name]) {
-      this.mixpanel.event(this.mixpanelEvents[tile.name]);
+  public viewList(listTile: IListTile) {
+    if (this.mixpanelEvents[listTile.name]) {
+      this.mixpanel.event(this.mixpanelEvents[listTile.name]);
     }
-    if (tile.name === `Create Your Own List!`) {
+    if (listTile.name === `Create Your Own List!`) {
       this.openCreateModal();
     } else {
-      this.listTileService.activeList = tile;
-      if (tile.name !== `Near You`) {
-        if (tile.filter) {
-          this.collegeService.setBaseFilter(tile.filter);
+      this.listTileService.activeList = listTile;
+      if (listTile.name !== `Near You`) {
+        if (listTile.filter) {
+          this.collegesService.setBaseFilter(listTile.filter);
         }
         this.filterService.filter = new Filter(
           this.filterCategories,
-          tile.filter
+          listTile.filter
         );
       }
       // this.navCtrl.navigateForward(
@@ -252,14 +252,14 @@ export class CollegesPage implements OnInit, OnDestroy {
           `app`,
           `colleges`,
           `list`,
-          tile.iconFileName
+          listTile.iconFileName
         ],
         {
           // relativeTo: this.route,
           state: {
-        connections: this.connections,
-        filter: this.filterService.filter,
-        list: tile
+            connections: this.connections,
+            filter: this.filterService.filter,
+            list: listTile
           }
         }
       );
@@ -267,18 +267,18 @@ export class CollegesPage implements OnInit, OnDestroy {
   }
 
   private deleteCustomList(tile: any) {
-    this.collegeService.deleteCustomList(tile.id)
+    this.collegesService.deleteCustomList(tile.id)
       .pipe(takeUntil(this.ngUnsubscribe))
       .subscribe(
         _response => {
-        this.tiles = this.tiles.filter(t => t.id !== tile.id);
+          this.tiles = this.tiles.filter(t => t.id !== tile.id);
           this.openHideTileToast(tile);
         }
       );
   }
 
   private getFilters() {
-    this.collegeService.getFilter()
+    this.collegesService.getFilter()
       .pipe(takeUntil(this.ngUnsubscribe))
       .subscribe(
         response => {
@@ -297,15 +297,15 @@ export class CollegesPage implements OnInit, OnDestroy {
 
   private initialize() {
     this.getFilters();
-    this.collegeService.initColleges();
-    this.collegeService.initSaved(this.user.id, this.user.isParent);
+    this.collegesService.initColleges();
+    this.collegesService.initSaved(this.user.id, this.user.isParent);
     if (!this.user.isParent) {
-      this.collegeService.getMatching();
+      this.collegesService.getMatching();
     }
   }
 
   private setupCustomListTiles() {
-    this.collegeService.getCustomLists()
+    this.collegesService.getCustomLists()
       .pipe(takeUntil(this.ngUnsubscribe))
       .subscribe(lists => lists.forEach(list => this.setupNewTile(list)));
   }
@@ -326,15 +326,15 @@ export class CollegesPage implements OnInit, OnDestroy {
   }
 
   private setupPremadeListTiles() {
-    this.collegeService.getPremadeLists()
+    this.collegesService.getPremadeLists()
       .pipe(takeUntil(this.ngUnsubscribe))
       .subscribe(
         (lists: any[]) => {
           if (lists && lists.length) {
             lists.forEach((list: any) => {
-                const tileObj = this.tiles.find(t => t.name === list.name);
-                if (tileObj) {
-                  tileObj.filter += `&tag=${list.id}`;
+              const tileObj = this.tiles.find(t => t.name === list.name);
+              if (tileObj) {
+                tileObj.filter += `&tag=${list.id}`;
               }
             });
           }
@@ -343,7 +343,7 @@ export class CollegesPage implements OnInit, OnDestroy {
   }
 
   private setupRecSub() {
-    this.collegeService.recommendationsCount
+    this.collegesService.recommendationsCount
       .pipe(takeUntil(this.ngUnsubscribe))
       .subscribe(
         count => {
@@ -439,7 +439,7 @@ export class CollegesPage implements OnInit, OnDestroy {
               _error => {
                 this.showTileLoadingErrorToast();
               }
-              );
+            );
           },
           _error => {
             this.showTileLoadingErrorToast();

@@ -8,7 +8,7 @@ import { ApplicationDatesComponent } from '@nte/components/application-dates/app
 import { TASK_LIST_EMPTY_STATES, TASK_TILES } from '@nte/constants/task.constants';
 import { ICollegeTracker } from '@nte/interfaces/college-tracker.interface';
 import { IStudent } from '@nte/interfaces/student.interface';
-import { CollegeService } from '@nte/services/college.service';
+import { CollegesService } from '@nte/services/colleges.service';
 import { MessageService } from '@nte/services/message.service';
 import { MixpanelService } from '@nte/services/mixpanel.service';
 import { StakeholderService } from '@nte/services/stakeholder.service';
@@ -63,7 +63,7 @@ export class TasksPage implements OnInit, OnDestroy {
     return this.stakeholderService.stakeholder;
   }
 
-  constructor(public collegeService: CollegeService,
+  constructor(public collegeService: CollegesService,
     public messageService: MessageService,
     public modalCtrl: ModalController,
     public route: ActivatedRoute,

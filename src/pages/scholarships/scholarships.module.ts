@@ -19,8 +19,8 @@ import { ComponentsModule } from '@nte/components/components.module';
     CommonModule,
     FormsModule,
     IonicModule,
-    ComponentsModule,
-    ScholarshipsListPageModule
+    ScholarshipsListPageModule,
+    ComponentsModule
   ]
 })
 export class ScholarshipsPageModule { }

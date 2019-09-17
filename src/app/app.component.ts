@@ -3,8 +3,6 @@ import { CallNumber } from '@ionic-native/call-number/ngx';
 import { Device } from '@ionic-native/device/ngx';
 import { EmailComposer } from '@ionic-native/email-composer/ngx';
 import { Mixpanel } from '@ionic-native/mixpanel/ngx';
-import { SplashScreen } from '@ionic-native/splash-screen/ngx';
-import { StatusBar } from '@ionic-native/status-bar/ngx';
 import { Platform } from '@ionic/angular';
 import { Subject } from 'rxjs';
 
@@ -65,16 +63,14 @@ export class NteAppComponent implements AfterViewInit {
     private mixpanel: Mixpanel,
     private notificationService: NotificationService,
     private platform: Platform,
-    private splashScreen: SplashScreen,
-    private stakeholderService: StakeholderService,
-    private statusBar: StatusBar) {
+    private stakeholderService: StakeholderService) {
     this.platform
       .ready()
       .then(() => {
         console.log(`Platform ready`);
-        if (this.splashScreen) {
-          this.splashScreen.hide();
-        }
+        // if (this.splashScreen) {
+        //   this.splashScreen.hide();
+        // }
         this.setupAppListeners();
         this.setupComponents();
         this.setupKeyboardListeners();
@@ -178,29 +174,29 @@ export class NteAppComponent implements AfterViewInit {
   }
 
   private setupComponents() {
-    if (this.platform && this.statusBar) {
-      if (this.platform.is(`android`)) {
-        this.statusBar.overlaysWebView(true);
-        this.statusBar.backgroundColorByHexString(`#3693cc`);
-      } else {
-        this.statusBar.styleDefault();
-      }
-    }
+    // if (this.platform && this.statusBar) {
+    //   if (this.platform.is(`android`)) {
+    //     this.statusBar.overlaysWebView(true);
+    //     this.statusBar.backgroundColorByHexString(`#3693cc`);
+    //   } else {
+    //     this.statusBar.styleDefault();
+    //   }
+    // }
   }
 
   private setupKeyboardListeners() {
-    if (this.platform && this.platform.is(`android`)) {
-      (this.appEl = document.getElementsByTagName(`ION-APP`)[0] as HTMLElement),
-        (this.bodyEl = document.getElementsByTagName(`body`)[0] as HTMLElement),
-        window.addEventListener(`keyboardWillShow`, e => {
-          e.preventDefault();
-          this.appEl.style.height = this.bodyElHeight - (e as any).keyboardHeight + `px`;
-        });
-      window.addEventListener(`keyboardWillHide`, e => {
-        e.preventDefault();
-        this.appEl.style.height = `100%`;
-      });
-    }
+    // if (this.platform && this.platform.is(`android`)) {
+    //   (this.appEl = document.getElementsByTagName(`ION-APP`)[0] as HTMLElement),
+    //     (this.bodyEl = document.getElementsByTagName(`body`)[0] as HTMLElement),
+    //     window.addEventListener(`keyboardWillShow`, e => {
+    //       e.preventDefault();
+    //       this.appEl.style.height = this.bodyElHeight - (e as any).keyboardHeight + `px`;
+    //     });
+    //   window.addEventListener(`keyboardWillHide`, e => {
+    //     e.preventDefault();
+    //     this.appEl.style.height = `100%`;
+    //   });
+    // }
   }
 
   private setupLinkSub() {
@@ -251,6 +247,7 @@ export class NteAppComponent implements AfterViewInit {
     if (this.stakeholderService.loggedIn) {
       this.initForUser();
     } else {
+      this.stakeholderService.checkStorage();
       this.stakeholderService.loginSuccess
         // .pipe(takeUntil(this.ngUnsubscribe)
         .subscribe((isLoggedIn: boolean) => {

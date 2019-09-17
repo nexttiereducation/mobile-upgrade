@@ -1,27 +1,28 @@
 <ion-content>
+  <ion-spinner *ngIf="!(college$ | async)"></ion-spinner>
   <div class="gray-sections"
-       *ngIf="college">
+       *ngIf="(college$ | async)">
     <ng-template [ngIf]="graduationChart || retentionChart || admissionChart">
       <div>Academic Statistics</div>
       <ion-grid no-padding>
         <ion-row justify-content-center
                  align-items-center>
           <ion-col *ngIf="graduationChart">
-            <pie-chart [series]="graduationChart"
-                       label="Graduation"></pie-chart>
+            <radial-chart [label]="graduationChart.label"
+                          [value]="graduationChart.value"></radial-chart>
           </ion-col>
           <ion-col *ngIf="retentionChart">
-            <pie-chart [series]="retentionChart"
-                       label="Retention"></pie-chart>
+            <radial-chart [label]="retentionChart.label"
+                          [value]="retentionChart.value"></radial-chart>
           </ion-col>
           <ion-col *ngIf="admissionChart">
-            <pie-chart [series]="admissionChart"
-                       label="Admission"></pie-chart>
+            <radial-chart [label]="admissionChart.label"
+                          [value]="admissionChart.value"></radial-chart>
           </ion-col>
         </ion-row>
       </ion-grid>
     </ng-template>
-    <ng-template [ngIf]="college.details?.avg_gpa">
+    <ng-template [ngIf]="(college$ | async).details?.avg_gpa">
       <div>Average GPA of Current Freshman Class</div>
       <ion-range mode="ios"
                  min="0"
@@ -30,7 +31,7 @@
                  pin="true"
                  disabled
                  step="0.1"
-                 [(value)]="college.details.avg_gpa">
+                 [value]="(college$ | async).details.avg_gpa">
         <ion-label slot="start">0.0</ion-label>
         <ion-label slot="end">5.0</ion-label>
       </ion-range>
@@ -87,83 +88,83 @@
         <ion-label slot="end">800</ion-label>
       </ion-range>
     </ng-template>
-    <ng-template [ngIf]="college.details?.most_popular_major_1
-                         || college.details?.most_popular_major_2
-                         || college.details?.most_popular_major_3">
+    <ng-template [ngIf]="(college$ | async).details?.most_popular_major_1
+                         || (college$ | async).details?.most_popular_major_2
+                         || (college$ | async).details?.most_popular_major_3">
       <div>Top Majors</div>
       <ion-grid>
         <ion-row>
-          <ion-col *ngIf="college.details?.most_popular_major_1">
+          <ion-col *ngIf="(college$ | async).details?.most_popular_major_1">
             <div class="body"
-                 text-center>{{ college.details?.most_popular_major_1 }}</div>
+                 text-center>{{ (college$ | async).details?.most_popular_major_1 }}</div>
           </ion-col>
-          <ion-col *ngIf="college.details?.most_popular_major_2">
+          <ion-col *ngIf="(college$ | async).details?.most_popular_major_2">
             <div class="body"
-                 text-center>{{ college.details?.most_popular_major_2 }}</div>
+                 text-center>{{ (college$ | async).details?.most_popular_major_2 }}</div>
           </ion-col>
-          <ion-col *ngIf="college.details?.most_popular_major_3">
+          <ion-col *ngIf="(college$ | async).details?.most_popular_major_3">
             <div class="body"
-                 text-center>{{ college.details?.most_popular_major_3 }}</div>
+                 text-center>{{ (college$ | async).details?.most_popular_major_3 }}</div>
           </ion-col>
         </ion-row>
       </ion-grid>
     </ng-template>
-    <ng-template [ngIf]="college.details?.pre_dentistry
-                         || college.details?.pre_law
-                         || college.details?.pre_medicine
-                         || college.details?.pre_optometry
-                         || college.details?.pre_pharmacy
-                         || college.details?.pre_theology
-                         || college.details?.pre_veterinary">
+    <ng-template [ngIf]="(college$ | async).details?.pre_dentistry
+                         || (college$ | async).details?.pre_law
+                         || (college$ | async).details?.pre_medicine
+                         || (college$ | async).details?.pre_optometry
+                         || (college$ | async).details?.pre_pharmacy
+                         || (college$ | async).details?.pre_theology
+                         || (college$ | async).details?.pre_veterinary">
       <div>Pre-Professional Programs</div>
       <ion-grid class="pre-pro">
         <ion-row justify-content-center>
           <ion-col text-center
-                   *ngIf="college.details?.pre_dentistry">
+                   *ngIf="(college$ | async).details?.pre_dentistry">
             <img src="assets/image/college/detail_pre-dentistry.svg" />
             <div class="body">Pre-Dentistry</div>
           </ion-col>
           <ion-col text-center
-                   *ngIf="college.details?.pre_law">
+                   *ngIf="(college$ | async).details?.pre_law">
             <img src="assets/image/college/detail_pre-law.svg" />
             <div class="body">Pre-Law</div>
           </ion-col>
           <ion-col text-center
-                   *ngIf="college.details?.pre_medicine">
+                   *ngIf="(college$ | async).details?.pre_medicine">
             <img src="assets/image/college/detail_pre-medicine.svg" />
             <div class="body">Pre-Medicine</div>
           </ion-col>
           <ion-col text-center
-                   *ngIf="college.details?.pre_optometry">
+                   *ngIf="(college$ | async).details?.pre_optometry">
             <img src="assets/image/college/detail_pre-optometry.svg" />
             <div class="body">Pre-Optometry</div>
           </ion-col>
           <ion-col text-center
-                   *ngIf="college.details?.pre_pharmacy">
+                   *ngIf="(college$ | async).details?.pre_pharmacy">
             <img src="assets/image/college/detail_pre-pharmacy.svg" />
             <div class="body">Pre-Pharmacy</div>
           </ion-col>
           <ion-col text-center
-                   *ngIf="college.details?.pre_theology">
+                   *ngIf="(college$ | async).details?.pre_theology">
             <img src="assets/image/college/detail_pre-theology.svg" />
             <div class="body">Pre-Theology</div>
           </ion-col>
           <ion-col text-center
-                   *ngIf="college.details?.pre_veterinary">
+                   *ngIf="(college$ | async).details?.pre_veterinary">
             <img src="assets/image/college/detail_pre-veterinary.svg" />
             <div class="body">Pre-Veterinary</div>
           </ion-col>
         </ion-row>
       </ion-grid>
     </ng-template>
-    <ng-template [ngIf]="college.details?.army_offcamp
-                         || college.details?.navy_offcamp
-                         || college.details?.af_offcamp">
+    <ng-template [ngIf]="(college$ | async).details?.army_offcamp
+                         || (college$ | async).details?.navy_offcamp
+                         || (college$ | async).details?.af_offcamp">
       <div>Reserve Officers' Training Corps (ROTC)</div>
       <ion-grid>
         <ion-row>
           <ion-col align-self-center
-                   *ngIf="college.details?.army_offcamp">
+                   *ngIf="(college$ | async).details?.army_offcamp">
             <div text-center
                  margin-bottom>
               <img height="60"
@@ -173,7 +174,7 @@
                  text-center>Army</div>
           </ion-col>
           <ion-col align-self-center
-                   *ngIf="college.details?.navy_offcamp">
+                   *ngIf="(college$ | async).details?.navy_offcamp">
             <div text-center
                  margin-bottom>
               <img height="60"
@@ -183,7 +184,7 @@
                  text-center>Navy</div>
           </ion-col>
           <ion-col align-self-center
-                   *ngIf="college.details?.af_offcamp">
+                   *ngIf="(college$ | async).details?.af_offcamp">
             <div text-center
                  margin-bottom>
               <img height="60"
@@ -201,12 +202,12 @@
         <ion-row justify-content-center
                  align-items-center>
           <ion-col *ngIf="furtherStudyChart">
-            <pie-chart [series]="furtherStudyChart"
-                       label="Pursuing Further Study"></pie-chart>
+            <radial-chart [label]="furtherStudyChart.label"
+                          [value]="furtherStudyChart.value"></radial-chart>
           </ion-col>
           <ion-col *ngIf="jobMarketChart">
-            <pie-chart [series]="jobMarketChart"
-                       label="Entering Job Market"></pie-chart>
+            <radial-chart [label]="jobMarketChart.label"
+                          [value]="jobMarketChart.value"></radial-chart>
           </ion-col>
         </ion-row>
       </ion-grid>

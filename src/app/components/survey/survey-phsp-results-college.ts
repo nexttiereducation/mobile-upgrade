@@ -27,55 +27,30 @@ export class SurveyPhspResultsCollegeComponent implements OnInit {
     const chartData = this.surveyResults.results;
     this.collegeCharts = {
       accepted: {
-        colors: [
-          `#30B982`,
-          `#e1e1e1`
-        ],
-        values: [
-          chartData.percentage_institutions_accepted,
-          (100 - chartData.percentage_institutions_accepted)
-        ]
+        color: `#30B982`,
+        label: `Accepted`,
+        value: chartData.percentage_institutions_accepted
       },
       declined: {
-        colors: [
-          `#F63B07`,
-          `#e1e1e1`
-        ],
-        values: [
-          chartData.percentage_institutions_declined,
-          (100 - chartData.percentage_institutions_declined)
-        ]
+        color: `#F63B07`,
+        label: `Declined`,
+        value: chartData.percentage_institutions_declined
       },
       pending: {
-        colors: [
-          `#3692CC`,
-          `#e1e1e1`
-        ],
-        values: [
-          chartData.percentage_institutions_deferred + chartData.percentage_institutions_waitlisted,
-          (100 - chartData.percentage_institutions_deferred + chartData.percentage_institutions_waitlisted)
-        ]
+        color: `#3692CC`,
+        label: `Pending`,
+        value: chartData.percentage_institutions_deferred + chartData.percentage_institutions_waitlisted
       },
       waiting: {
-        colors: [
-          `#717273`,
-          `#e1e1e1`
-        ],
-        values: [
-          chartData.percentage_institutions_waiting,
-          (100 - chartData.percentage_institutions_waiting)
-        ]
+        color: `#717273`,
+        label: `Waiting`,
+        value: chartData.percentage_institutions_waiting
       }
     };
     this.scholarshipChart = {
-      colors: [
-        `#30B982`,
-        `#e1e1e1`
-      ],
-      values: [
-        chartData.percentage_scholarships_won,
-        (100 - chartData.percentage_scholarships_won)
-      ]
+      color: `#30B982`,
+      label: `Scholarships won`,
+      value: chartData.percentage_scholarships_won
     };
   }
 

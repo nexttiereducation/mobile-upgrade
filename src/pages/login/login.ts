@@ -105,8 +105,14 @@ export class LoginPage implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.loggingIn = false;
-    this.stakeholderService.loggedIn = false;
+    this.stakeholderService.checkStorage().then(
+      loggedIn => {
+        this.loggingIn = !loggedIn;
+        if (loggedIn) {
+          this.router.navigateByUrl(`app/tasks`);
+        }
+      }
+    );
     this.mixpanel.event(`$app_open`);
     this.mixpanel.event(`navigated_to-Login`);
     // this.setupLoginSub();

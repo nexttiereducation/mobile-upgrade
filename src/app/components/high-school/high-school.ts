@@ -5,7 +5,6 @@ import { takeUntil } from 'rxjs/operators';
 
 import { IHighSchool } from '@nte/interfaces/high-school.interface';
 import { HighSchoolService } from '@nte/services/high-school.service';
-import { KeyboardService } from '@nte/services/keyboard.service';
 
 @Component({
   selector: `high-school`,
@@ -15,7 +14,8 @@ import { KeyboardService } from '@nte/services/keyboard.service';
 export class HighSchoolComponent implements OnDestroy {
   @Input() isNewUser: boolean;
   @Input() isPrompt: boolean;
-  @Output() public highSchoolChanged = new EventEmitter<IHighSchool>();
+
+  @Output() highSchoolChanged = new EventEmitter<IHighSchool>();
 
   public highSchools: IHighSchool[];
   public searchValue: string;
@@ -26,8 +26,7 @@ export class HighSchoolComponent implements OnDestroy {
   private zipCodeQueryParam: string = `zipcode=`;
 
   constructor(private events: Events,
-    private highSchoolService: HighSchoolService,
-    private keyboard: KeyboardService) { }
+    private highSchoolService: HighSchoolService) { }
 
   ngOnDestroy() {
     this.ngUnsubscribe.next();
@@ -35,7 +34,7 @@ export class HighSchoolComponent implements OnDestroy {
   }
 
   public closeKeyboard() {
-    this.keyboard.close();
+    // this.keyboard.close();
   }
 
   public deselectHighSchool() {

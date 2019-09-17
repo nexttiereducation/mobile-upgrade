@@ -151,23 +151,31 @@ export class ScholarshipsPage implements OnInit, OnDestroy {
     );
   }
 
-  public viewList(tile: IListTile) {
+  public viewList(listTile: IListTile) {
     // if (this.mixpanelEvents[name]) {
     //   this.mixpanel.event(this.mixpanelEvents[name]);
     // }
-    if (tile.name === `Create Your Own List!`) {
+    if (listTile.name === `Create Your Own List!`) {
       this.openCreateModal();
     } else {
-      this.listTileService.activeList = tile;
-      this.scholarshipService.setBaseFilter(tile.filter);
-      this.filterService.filter = new Filter(this.filterCategories, tile.filter);
+      this.listTileService.activeList = listTile;
+      this.scholarshipService.setBaseFilter(listTile.filter);
+      this.filterService.filter = new Filter(
+        this.filterCategories,
+        listTile.filter
+      );
       this.router.navigate(
-        [`app/scholarships/list/${tile.iconFileName}`],
+        [
+          `app`,
+          `scholarships`,
+          `list`,
+          listTile.iconFileName
+        ],
         {
           state: {
-        connections: this.connections,
-        filter: this.filterService.filter,
-        list: tile
+            connections: this.connections,
+            filter: this.filterService.filter,
+            list: listTile
           }
         }
       );
@@ -208,7 +216,7 @@ export class ScholarshipsPage implements OnInit, OnDestroy {
       .subscribe(
         data => data.custom_scholarship_queries.forEach(t => this.setupNewTile(t)),
         () => this.openTileLoadingErrorToast()
-    );
+      );
   }
 
   private setupNewTile(tile: ICustomListTile | any) {

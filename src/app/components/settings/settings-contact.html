@@ -31,7 +31,7 @@
                                   placeholder="Enter phone number"
                                   #phoneNumber="ngModel"
                                   [maxlength]="20"
-                                  [(ngModel)]="currentUser.phone_number">
+                                  [(ngModel)]="userOverview.phone_number">
       </international-phone-number>
     </div> -->
   </ion-list>
@@ -45,7 +45,7 @@
           <ion-label position="floating">Phone number</ion-label>
           <ion-input name="phoneNumber"
                      type="tel"
-                     (ionBlur)="setPhone(currentUser.phone_number, false)"
+                     (ionBlur)="setPhone(userOverview.phone_number, false)"
                      (keyup.enter)="updatePhone(true)"
                      [formControl]="phoneControl"></ion-input>
           <div *ngIf="phoneControl?.invalid"> Please enter a valid phone number </div>
@@ -57,7 +57,7 @@
           <ion-select name="phoneType"
                       placeholder="Phone type"
                       (ionChange)="updatePhone(true)"
-                      [(value)]="currentUser.phone_type">
+                      [(value)]="userOverview.phone_type">
             <ion-select-option value="MP">Mobile</ion-select-option>
             <ion-select-option value="HP">Home</ion-select-option>
           </ion-select>
@@ -73,7 +73,7 @@
                                   placeholder="Enter phone number"
                                   #altPhoneNumber="ngModel"
                                   [maxlength]="20"
-                                  [(ngModel)]="currentUser.alternate_contact_information.phone_number">
+                                  [(ngModel)]="userOverview.alternate_contact_information.phone_number">
       </international-phone-number>
     </div>-->
     <!-- <ion-row>
@@ -93,8 +93,8 @@
           <ion-label floating>Alt. Phone type</ion-label>
           <ion-select name="altPhoneType"
                       okText="Save"
-                      (ionChange)="setPhone(currentUser.alternate_contact_information.phone_number, true)"
-                      [(ngModel)]="currentUser.alternate_contact_information.phone_type">
+                      (ionChange)="setPhone(userOverview.alternate_contact_information.phone_number, true)"
+                      [(ngModel)]="userOverview.alternate_contact_information.phone_type">
             <ion-option value="MP">Mobile</ion-option>
             <ion-option value="HP">Home</ion-option>
           </ion-select>
@@ -107,8 +107,8 @@
           <ion-label>Allow SMS</ion-label>
           <ion-toggle color="primary"
                       (change)="updateNotificationSettings()"
-                      [disabled]="!currentUser.phone_number"
-                      [(value)]="currentUser.notification_settings?.sms.isEnabled">
+                      [disabled]="!userOverview.phone_number"
+                      [(value)]="userOverview.notification_settings?.sms.isEnabled">
           </ion-toggle>
         </ion-item>
       </ion-col>
@@ -116,8 +116,8 @@
     <ion-row>
       <ion-col>
         <div class="mat-caption mat-font-medium"
-             *ngIf="currentUser.notification_settings?.sms.isEnabled
-                          && currentUser.phone_number?.length"> Check your phone for a text message with the
+             *ngIf="userOverview.notification_settings?.sms.isEnabled
+                          && userOverview.phone_number?.length"> Check your phone for a text message with the
           verification code. </div>
         <div *ngIf="showVerificationForm">
           <ion-label position="floating">Verification code</ion-label>

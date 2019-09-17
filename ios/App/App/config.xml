@@ -1,0 +1,135 @@
+<?xml version='1.0' encoding='utf-8'?>
+  <widget version="1.0.0" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
+  <access origin="*" />
+  
+  <feature name="CallNumber">
+    <param name="ios-package" value="CFCallNumber"/>
+  </feature>
+
+
+  <feature name="FabricPlugin">
+    <param name="ios-package" value="FabricPlugin"/>
+    <param name="onload" value="true"/>
+  </feature>
+
+
+  <feature name="Device">
+    <param name="ios-package" value="CDVDevice"/>
+  </feature>
+
+
+  <feature name="EmailComposer">
+    <param name="ios-package" value="APPEmailComposer"/>
+  </feature>
+
+
+  <feature name="FCMPlugin">
+    <param name="ios-package" value="FCMPlugin"/>
+  </feature>
+
+
+  <feature name="Geolocation">
+    <param name="ios-package" value="CDVLocation"/>
+  </feature>
+
+
+  <feature name="InAppBrowser">
+    <param name="ios-package" value="CDVInAppBrowser"/>
+    <param name="onload" value="true"/>
+  </feature>
+  <feature name="UIInAppBrowser">
+    <param name="ios-package" value="CDVUIInAppBrowser"/>
+    <param name="onload" value="true"/>
+  </feature>
+  <feature name="WKInAppBrowser">
+    <param name="ios-package" value="CDVWKInAppBrowser"/>
+    <param name="onload" value="true"/>
+  </feature>
+
+
+  <feature name="NativeStorage">
+    <param name="ios-package" value="NativeStorage"/>
+  </feature>
+
+
+  <feature name="RequestLocationAccuracy">
+    <param name="ios-package" value="RequestLocationAccuracy"/>
+  </feature>
+
+
+  <feature name="ThemeableBrowser">
+    <param name="ios-package" value="CDVThemeableBrowser"/>
+  </feature>
+
+
+  <feature name="Diagnostic">
+    <param name="ios-package" value="Diagnostic"/>
+    <param name="onload" value="true"/>
+  </feature>
+
+
+  <feature name="Diagnostic_Location">
+    <param name="ios-package" value="Diagnostic_Location"/>
+    <param name="onload" value="true"/>
+  </feature>
+
+
+  <feature name="Diagnostic_Bluetooth">
+    <param name="ios-package" value="Diagnostic_Bluetooth"/>
+    <param name="onload" value="true"/>
+  </feature>
+
+
+  <feature name="Diagnostic_Wifi">
+    <param name="ios-package" value="Diagnostic_Wifi"/>
+    <param name="onload" value="true"/>
+  </feature>
+
+
+  <feature name="Diagnostic_Camera">
+    <param name="ios-package" value="Diagnostic_Camera"/>
+    <param name="onload" value="true"/>
+  </feature>
+
+
+  <feature name="Diagnostic_Notifications">
+    <param name="ios-package" value="Diagnostic_Notifications"/>
+    <param name="onload" value="true"/>
+  </feature>
+
+
+  <feature name="Diagnostic_Microphone">
+    <param name="ios-package" value="Diagnostic_Microphone"/>
+    <param name="onload" value="true"/>
+  </feature>
+
+
+  <feature name="Diagnostic_Contacts">
+    <param name="ios-package" value="Diagnostic_Contacts"/>
+    <param name="onload" value="true"/>
+  </feature>
+
+
+  <feature name="Diagnostic_Calendar">
+    <param name="ios-package" value="Diagnostic_Calendar"/>
+    <param name="onload" value="true"/>
+  </feature>
+
+
+  <feature name="Diagnostic_Reminders">
+    <param name="ios-package" value="Diagnostic_Reminders"/>
+    <param name="onload" value="true"/>
+  </feature>
+
+
+  <feature name="Diagnostic_Motion">
+    <param name="ios-package" value="Diagnostic_Motion"/>
+    <param name="onload" value="true"/>
+  </feature>
+
+
+  <feature name="IonicDeeplinkPlugin">
+    <param name="ios-package" value="IonicDeeplinkPlugin" onload="true"/>
+  </feature>
+
+  </widget>

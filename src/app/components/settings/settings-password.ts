@@ -2,9 +2,9 @@ import { Component, Input, OnDestroy } from '@angular/core';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
-import { ToastService } from './../../services/toast.service';
 import { IUserOverview } from '@nte/interfaces/user-overview.interface';
 import { StakeholderService } from '@nte/services/stakeholder.service';
+import { ToastService } from '@nte/services/toast.service';
 
 @Component({
   selector: `password-settings`,
@@ -12,7 +12,7 @@ import { StakeholderService } from '@nte/services/stakeholder.service';
 })
 export class PasswordSettingsComponent implements OnDestroy {
   @Input() canEdit: boolean;
-  @Input() currentUser: IUserOverview;
+  @Input() userOverview: IUserOverview;
 
   public confirmedPassword: string;
   public currentPassword: string;

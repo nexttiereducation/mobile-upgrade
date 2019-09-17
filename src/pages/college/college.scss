@@ -1,4 +1,4 @@
-college {
+:host {
   ion-header .avatar-shadow {
     margin-right: 5px;
   }
@@ -9,6 +9,10 @@ college {
 
   .scroll-content .scroll-content {
     padding-top: 0 !important;
+  }
+
+  ion-col>img {
+    max-height: 200px;
   }
 
   button.changing {
@@ -44,8 +48,8 @@ college {
 
   .gray-sections ion-col.col {
     >a:first-child:last-child {
-      // height: 132px;
 
+      // height: 132px;
       .button-inner {
         justify-content: space-between;
         font-weight: 400;

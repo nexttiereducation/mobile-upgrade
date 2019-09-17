@@ -1,13 +1,21 @@
-<div *ngIf="tinyHeader"
+<!-- <div *ngIf="tinyHeader"
      class="tinyHeader"
      [ngClass]="'text-' + labelColor">{{ tinyHeader }}</div>
-<!-- <nvd3 #pieChart
+<nvd3 #pieChart
       config="newConfig"
       [data]="newData"
       [ngClass]="'label-' + labelColor"
-      [options]="newOptions"></nvd3> -->
+      [options]="newOptions"></nvd3>
 <div *ngIf="label"
      [ngClass]="subLabel ? 'body bold uppercase text-' + labelColor : 'body'"
      text-center>{{ label }}</div>
 <div *ngIf="subLabel"
-     class="subhead">{{ subLabel }}</div>
+     class="subhead">{{ subLabel }}</div> -->
+<apx-chart *ngIf="values?.length > 0"
+           [chart]="chart"
+           [colors]="colors"
+           [dataLabels]="dataLabels"
+           [labels]="labels"
+           [legend]="legend"
+           [series]="series"
+           [title]="title"></apx-chart>

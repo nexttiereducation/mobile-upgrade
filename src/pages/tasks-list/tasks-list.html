@@ -61,25 +61,20 @@
           </ion-item-options>
           <ion-item tappable
                     (click)="openTaskDetail(taskTracker)">
-            <ion-label></ion-label>
-            <ion-card-content no-padding>
-              <ion-item>
-                <ion-label>
-                  <div class="body truncate">{{ taskTracker.task.name }}</div>
-                  <div class="subhead">
-                    <ion-icon name="calendar"></ion-icon> Due by
-                    {{ (taskTracker.dueDate || taskTracker.task.get_deadline) | date }}
-                  </div>
-                </ion-label>
-                <ion-avatar item-end>
-                  <img [class.avatar-shadow]="taskTracker.task.task_type == 'CS'"
-                       [class.bg-white]="list.iconUrl"
-                       [src]="isSearchAll
-                              ? (taskTracker.iconUrl || collegeImgUrls[taskTracker.institution])
-                              : iconUrl">
-                </ion-avatar>
-              </ion-item>
-            </ion-card-content>
+            <ion-label>
+              <div class="body truncate">{{ taskTracker.task.name }}</div>
+              <div class="subhead">
+                <ion-icon name="calendar"></ion-icon> Due by
+                {{ (taskTracker.dueDate || taskTracker.task.get_deadline) | date }}
+              </div>
+            </ion-label>
+            <ion-avatar item-end>
+              <img [class.avatar-shadow]="taskTracker.task.task_type == 'CS'"
+                   [class.bg-white]="list.iconUrl"
+                   [src]="isSearchAll
+                          ? (taskTracker.iconUrl || collegeImgUrls[taskTracker.institution])
+                          : iconUrl">
+            </ion-avatar>
           </ion-item>
           <ion-item-options class="bg-blue"
                             side="end">

@@ -42,12 +42,12 @@
 <ion-content class="bg-grayLight">
   <!-- <ng-template [ngIf]="(colleges$ | async)
                        && (colleges$ | async)?.length
-                       && !(collegeService.isInitializing$ | async)"> -->
+                       && !(collegesService.isInitializing$ | async)"> -->
   <ion-virtual-scroll approxItemHeight="245px"
                       buffer="5"
                       card-list
                       [items]="colleges$ | async">
-    <ion-card virtualTrackBy="collegeService.getIdFromCollege"
+    <ion-card virtualTrackBy="collegesService.getIdFromCollege"
               *virtualItem="let college; let index = index">
       <ion-item tappable
                 (click)="viewCollege(college)">
@@ -66,71 +66,62 @@
           </div>
         </ion-label>
       </ion-item>
-      <img alt="College Image"
-           cache="true"
-           class="img-block"
-           height="150"
-           tappable
-           (click)="viewCollege(college)"
-           [src]="college | collegeBgUrl"
-           [width]="platform.width()" />
+      <div class="card-img-wrapper">
+        <img alt="College Image"
+             cache="true"
+             class="img-block"
+             height="150"
+             tappable
+             (click)="viewCollege(college)"
+             [src]="college | collegeBgUrl"
+             [width]="platform.width()" />
+      </div>
       <ion-grid no-padding>
-        <ion-row align-items-center
-                 justify-content-start
+        <ion-row class="ion-align-items-center ion-justify-content-start"
                  nowrap>
-          <ion-col size="auto"
-                   *ngIf="!isSaved(college)"
+          <ion-col *ngIf="!isSaved(college)"
                    [ngSwitch]="isSavingIndex === index">
             <ion-button class="lowercase"
-                        fill="clear"
                         color="primary"
                         slot="start"
-                        size="small"
                         (click)="setSavingIndex(index); followCollege(college)"
                         *ngSwitchCase="false">
-              <ion-icon name="nt-save"></ion-icon>
+              <!-- <ion-icon name="nt-save"></ion-icon> -->
+              <ion-icon name="star-outline"></ion-icon>
               <span>Save</span>
             </ion-button>
             <ion-button class="lowercase"
-                        fill="clear"
                         color="primary"
                         slot="start"
-                        size="small"
                         *ngSwitchCase="true">
-              <ion-icon name="nt-saving"></ion-icon>
+              <ion-icon name="star-half"></ion-icon>
+              <!-- <ion-icon name="nt-saving"></ion-icon> -->
               <span>Saving...</span>
             </ion-button>
           </ion-col>
-          <ion-col size="auto"
-                   *ngIf="isSaved(college)">
+          <ion-col *ngIf="isSaved(college)">
             <ion-button class="lowercase"
-                        fill="clear"
                         color="green"
                         slot="start"
-                        size="small"
                         (click)="unsaveCollege(college)">
-              <ion-icon name="nt-saved"></ion-icon>
+              <ion-icon name="star"></ion-icon>
+              <!-- <ion-icon name="nt-saved"></ion-icon> -->
               <span>Saved</span>
             </ion-button>
           </ion-col>
-          <ion-col size="auto"
-                   *ngIf="list?.name === 'Recommended' && user.isStudent">
+          <ion-col *ngIf="list?.name === 'Recommended' && user.isStudent">
             <ion-button class="lowercase"
-                        fill="clear"
                         color="primary"
                         slot="start"
-                        size="small"
                         (click)="removeRec(college)">
               <ion-icon name="nt-unsave"></ion-icon>
               <span>Remove</span>
             </ion-button>
           </ion-col>
-          <ion-col size="auto">
+          <ion-col>
             <ion-button class="lowercase"
-                        fill="clear"
                         color="primary"
                         slot="start"
-                        size="small"
                         *ngIf="(connectionService.all$ | async)?.length"
                         (click)="openSendModal(college)">
               <ion-icon name="send"></ion-icon>
@@ -157,12 +148,12 @@
   <!-- </ng-template> -->
   <ng-template [ngIf]="(colleges$ | async)
                        && !(colleges$ | async).length
-                       && !(collegeService.isInitializing$ | async)">
+                       && !(collegesService.isInitializing$ | async)">
     <empty-state *ngIf="emptyState"
                  [emptyState]="emptyState"></empty-state>
   </ng-template>
   <ng-template [ngIf]="!(colleges$ | async)
-                       && (collegeService.isInitializing$ | async)">
+                       && (collegesService.isInitializing$ | async)">
     <ion-list>
       <ion-card class="placeholder"
                 *ngFor="let placeholder of placeholders">

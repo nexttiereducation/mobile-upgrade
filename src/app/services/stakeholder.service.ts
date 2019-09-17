@@ -84,10 +84,12 @@ export class StakeholderService {
               .then(token => {
                 if (token && token.length) {
                   const currentUser = JSON.parse(stakeholder);
-                  this.setStakeholder({
-                    id: currentUser.id,
-                    token
-                  }, true);
+                  this.setStakeholder(
+                    {
+                      id: currentUser.id,
+                      token
+                    }, true
+                  );
                 }
               });
             return true;

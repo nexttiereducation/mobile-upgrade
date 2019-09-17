@@ -1,10 +1,10 @@
 import { animate, state, style, transition, trigger } from '@angular/animations';
-import { Component } from '@angular/core';
+import { Component, ViewEncapsulation } from '@angular/core';
 import { GoogleMap, GoogleMaps, GoogleMapsAnimation, GoogleMapsEvent } from '@ionic-native/google-maps/ngx';
 import { BehaviorSubject } from 'rxjs';
 
-import { DonutChart } from '@nte/models/donut-chart.model';
 import { CollegeService } from '@nte/services/college.service';
+import { CollegesService } from '@nte/services/colleges.service';
 
 @Component({
   selector: `college-campus`,
@@ -23,15 +23,22 @@ import { CollegeService } from '@nte/services/college.service';
         // cubic-bezier(0.4,0.0,0.2,1)
       ])
     ])
-  ]
+  ],
+  encapsulation: ViewEncapsulation.None
 })
 export class CollegeCampusPage {
   public animation = GoogleMapsAnimation;
-  public college: any;
   public event = GoogleMapsEvent;
   public map: GoogleMap;
 
   private _mapReady: BehaviorSubject<boolean> = new BehaviorSubject(null);
+
+  get college() {
+    return this.collegeService.active;
+  }
+  get college$() {
+    return this.collegeService.active$;
+  }
 
   get details() {
     if (this.college && this.college.details) {
@@ -43,26 +50,36 @@ export class CollegeCampusPage {
 
   get fraternityChart() {
     if (this.details.percent_in_fraternity) {
-      return new DonutChart(this.details.percent_in_fraternity);
+      return {
+        label: `Join a fraternity`,
+        value: this.details.percent_in_fraternity
+      };
     } else {
       return null;
     }
   }
 
   get latitude() {
-    return +this.college.latitude;
+    if (this.college) {
+      return +this.college.latitude;
+    }
   }
 
   get liveOnCampusChart() {
-    if (this.details.percent_in_sorority) {
-      return new DonutChart(this.details.percent_in_sorority);
+    if (this.details.fresman_perecent_on_campus) {
+      return {
+        label: `Live on campus`,
+        value: this.details.fresman_perecent_on_campus
+      };
     } else {
       return null;
     }
   }
 
   get longitude() {
-    return +this.college.longitude;
+    if (this.college) {
+      return +this.college.longitude;
+    }
   }
 
   get mapReady$() {
@@ -73,8 +90,11 @@ export class CollegeCampusPage {
   }
 
   get outOfStateChart() {
-    if (this.details.perecentage_fresh_out) {
-      return new DonutChart(this.details.perecentage_fresh_out);
+    if (this.details.percentage_fresh_out) {
+      return {
+        label: `From out-of-state`,
+        value: this.details.percentage_fresh_out
+      };
     } else {
       return null;
     }
@@ -82,20 +102,27 @@ export class CollegeCampusPage {
 
   get sororityChart() {
     if (this.details.percent_in_sorority) {
-      return new DonutChart(this.details.in_sorority);
+      return {
+        label: `Join a sorority`,
+        value: this.details.percent_in_sorority
+      };
     } else {
       return null;
     }
   }
   get workOnCampusChart() {
     if (this.details.percent_working_students) {
-      return new DonutChart(this.details.percent_working_students);
+      return {
+        label: `Work on campus`,
+        value: this.details.percent_working_students
+      };
     } else {
       return null;
     }
   }
 
   constructor(public collegeService: CollegeService,
+    public collegesService: CollegesService,
     private googleMaps: GoogleMaps) { }
 
   public ionViewDidLoad() {

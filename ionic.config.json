@@ -1,5 +1,8 @@
 {
   "name": "mobile-upgrade",
-  "integrations": {},
+  "integrations": {
+    "cordova": {},
+    "capacitor": {}
+  },
   "type": "angular"
 }

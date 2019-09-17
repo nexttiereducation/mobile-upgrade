@@ -3,6 +3,7 @@ import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
 
+import { ChartsModule } from './../charts.module';
 import { ComponentsModule } from '@nte/components/components.module';
 import { SurveyCcComponent } from '@nte/components/survey/survey-cc';
 import { SurveyCustomComponent } from '@nte/components/survey/survey-custom';
@@ -36,7 +37,8 @@ const components = [
     ReactiveFormsModule,
     IonicModule,
     PipesModule,
-    ComponentsModule
+    ComponentsModule,
+    ChartsModule
   ]
 })
 export class SurveyModule { }

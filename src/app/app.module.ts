@@ -13,23 +13,21 @@ import { EmailComposer } from '@ionic-native/email-composer/ngx';
 import { File } from '@ionic-native/file/ngx';
 import { Geolocation } from '@ionic-native/geolocation/ngx';
 import { GoogleMaps } from '@ionic-native/google-maps/';
-import { Keyboard } from '@ionic-native/keyboard/ngx';
 import { LocationAccuracy } from '@ionic-native/location-accuracy/ngx';
 import { Mixpanel, MixpanelPeople } from '@ionic-native/mixpanel/ngx';
 import { NativeStorage } from '@ionic-native/native-storage/ngx';
-import { SplashScreen } from '@ionic-native/splash-screen/ngx';
-import { StatusBar } from '@ionic-native/status-bar/ngx';
 import { ThemeableBrowser } from '@ionic-native/themeable-browser/ngx';
 import { IonicModule, IonicRouteStrategy } from '@ionic/angular';
 import { IonicStorageModule } from '@ionic/storage';
 import { MaterialIconsModule } from 'ionic2-material-icons';
+import { NgApexchartsModule } from 'ng-apexcharts';
 
+import { AppRoutingModule } from './app-routing.module';
 import { NteAppComponent } from './app.component';
 import { agmConfig, ionicConfig, ionicStorageConfig } from './app.config';
-import { SettingsModule } from './components/settings/settings.module';
-import { ToastService } from './services/toast.service';
 import { AuthGuard } from '@nte/app/guards/auth.guard';
 import { ComponentsModule } from '@nte/components/components.module';
+import { SettingsModule } from '@nte/components/settings/settings.module';
 import { SurveyModule } from '@nte/components/survey/survey.module';
 import { CollegeAcademicPageModule } from '@nte/pages/college-academic/college-academic.module';
 import { CollegeApplicationPageModule } from '@nte/pages/college-application/college-application.module';
@@ -72,9 +70,9 @@ import { ApiTokenService } from '@nte/services/api-token.service';
 import { ApiService } from '@nte/services/api.service';
 import { AuthService } from '@nte/services/auth.service';
 import { CategoryService } from '@nte/services/category.service';
-import { CollegeTabsService } from '@nte/services/college-tabs.service';
 import { CollegeListTileService } from '@nte/services/college.list-tile.service';
 import { CollegeService } from '@nte/services/college.service';
+import { CollegesService } from '@nte/services/colleges.service';
 import { ConnectionService } from '@nte/services/connection.service';
 import { DatetimeService } from '@nte/services/datetime.service';
 import { DeepLinksService } from '@nte/services/deep-links.service';
@@ -105,6 +103,7 @@ import { StudentService } from '@nte/services/student.service';
 import { SurveyIpService } from '@nte/services/survey-ip.service';
 import { SurveyService } from '@nte/services/survey.service';
 import { TaskService } from '@nte/services/task.service';
+import { ToastService } from '@nte/services/toast.service';
 import { UrlService } from '@nte/services/url.service';
 
 // import { NvD3Module } from 'ngx-nvd3';
@@ -122,8 +121,10 @@ import { UrlService } from '@nte/services/url.service';
     IonicModule.forRoot(ionicConfig),
     IonicStorageModule.forRoot(ionicStorageConfig),
     // NvD3Module,
+    NgApexchartsModule,
     MaterialIconsModule,
     // ---------------------
+    AppRoutingModule,
     ComponentsModule,
     PipesModule,
 
@@ -186,13 +187,13 @@ import { UrlService } from '@nte/services/url.service';
     File,
     Geolocation,
     GoogleMaps,
-    Keyboard,
+    // Keyboard,
     LocationAccuracy,
     Mixpanel,
     MixpanelPeople,
     NativeStorage,
-    SplashScreen,
-    StatusBar,
+    // SplashScreen,
+    // StatusBar,
     ThemeableBrowser,
     // InfiniteScroll,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
@@ -207,7 +208,8 @@ import { UrlService } from '@nte/services/url.service';
     CategoryService,
     CollegeListTileService,
     CollegeService,
-    CollegeTabsService,
+    CollegesService,
+    CollegeService,
     ConnectionService,
     DatetimeService,
     DeepLinksService,

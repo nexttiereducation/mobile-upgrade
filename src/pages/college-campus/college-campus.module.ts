@@ -5,6 +5,7 @@ import { RouterModule, Routes } from '@angular/router';
 import { GoogleMaps } from '@ionic-native/google-maps/ngx';
 import { IonicModule } from '@ionic/angular';
 
+import { ChartsModule } from './../../app/components/charts.module';
 import { CollegeCampusPage } from './college-campus';
 import { ComponentsModule } from '@nte/components/components.module';
 
@@ -27,7 +28,8 @@ const routes: Routes = [
     FormsModule,
     IonicModule,
     RouterModule.forChild(routes),
-    ComponentsModule
+    ComponentsModule,
+    ChartsModule
   ],
   providers: [
     GoogleMaps

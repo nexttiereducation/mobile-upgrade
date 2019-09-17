@@ -11,16 +11,14 @@ export class PushNotificationService {
   get fcmToken() {
     return this._fcmToken.getValue();
   }
-
-  get fcmToken$() {
-    return this._fcmToken.asObservable();
-  }
-
   set fcmToken(token: string) {
     if (!this.fcmToken || token !== this.fcmToken) {
       this._fcmToken.next(token);
       this.setToken();
     }
+  }
+  get fcmToken$() {
+    return this._fcmToken.asObservable();
   }
 
   constructor(private api: ApiService) { }

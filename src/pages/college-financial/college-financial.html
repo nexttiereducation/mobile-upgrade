@@ -1,71 +1,90 @@
 <ion-content>
-  <div class="gray-sections" *ngIf="college">
-    <ng-template [ngIf]="college.total_costs_in_state || college.details.total_costs_in_state_off_campus ||
-                         college.total_costs_out_of_state || college.details.total_costs_out_of_state_off_campus">
+  <div class="gray-sections"
+       *ngIf="college">
+    <ng-template [ngIf]="(college$ | async).total_costs_in_state
+                         || details?.total_costs_in_state_off_campus
+                         || (college$ | async).total_costs_out_of_state
+                         || details?.total_costs_out_of_state_off_campus">
       <div>Cost of Attendance</div>
       <ion-grid>
         <ion-row>
-          <ion-col [attr.col-6]="college.total_costs_out_of_state || college.details.out_of_state_tuition"
-                   *ngIf="college.total_costs_in_state || college.details.in_state_tuition">
+          <ion-col [attr.col-6]="(college$ | async).total_costs_out_of_state
+                                 || details?.out_of_state_tuition"
+                   *ngIf="(college$ | async).total_costs_in_state
+                          || details?.in_state_tuition">
             <ion-slides pager>
               <ion-slide>
                 <div class="tinyHeader">In State</div>
-                <div class="displayHeader">{{ college.total_costs_in_state | currency:'USD':'symbol':'1.0-0' }}</div>
-                <div class="body" margin-bottom>Total Cost</div>
+                <div class="displayHeader">
+                  {{ (college$ | async).total_costs_in_state | currency:'USD':'symbol':'1.0-0' }}</div>
+                <div class="body"
+                     margin-bottom>Total Cost</div>
               </ion-slide>
               <ion-slide>
                 <div class="tinyHeader">In State</div>
-                <div class="displayHeader">{{ college.details.in_state_tuition | currency:'USD':'symbol':'1.0-0' }}</div>
-                <div class="body" margin-bottom>Tuition</div>
+                <div class="displayHeader">{{ details?.in_state_tuition | currency:'USD':'symbol':'1.0-0' }}</div>
+                <div class="body"
+                     margin-bottom>Tuition</div>
               </ion-slide>
             </ion-slides>
           </ion-col>
-          <ion-col [attr.col-6]="college.total_costs_in_state || college.details.in_state_tuition"
-                   *ngIf="college.total_costs_out_of_state || college.details.out_of_state_tuition">
+          <ion-col [attr.col-6]="(college$ | async).total_costs_in_state
+                                 || details?.in_state_tuition"
+                   *ngIf="(college$ | async).total_costs_out_of_state
+                          || details?.out_of_state_tuition">
             <ion-slides pager>
               <ion-slide>
                 <div class="tinyHeader">Out of State</div>
-                <div class="displayHeader">{{ college.total_costs_out_of_state | currency:'USD':'symbol':'1.0-0' }}</div>
-                <div class="body" margin-bottom>Total Cost</div>
+                <div class="displayHeader">
+                  {{ (college$ | async).total_costs_out_of_state | currency:'USD':'symbol':'1.0-0' }} </div>
+                <div class="body"
+                     margin-bottom>Total Cost</div>
               </ion-slide>
               <ion-slide>
                 <div class="tinyHeader">Out of State</div>
-                <div class="displayHeader">{{ college.details.out_of_state_tuition | currency:'USD':'symbol':'1.0-0' }}</div>
-                <div class="body" margin-bottom>Tuition</div>
+                <div class="displayHeader">{{ details?.out_of_state_tuition | currency:'USD':'symbol':'1.0-0' }}</div>
+                <div class="body"
+                     margin-bottom>Tuition</div>
               </ion-slide>
             </ion-slides>
           </ion-col>
         </ion-row>
       </ion-grid>
     </ng-template>
-    <ng-template [ngIf]="college.net_price">
+    <ng-template [ngIf]="(college$ | async).net_price">
       <div>Average Net Price</div>
       <ion-grid>
-        <ion-row justify-content-center align-items-center>
-          <ion-col size="12" align-self-center>
-            <div class="displayHeader">{{ college.net_price | currency:'USD':'symbol':'1.0-0' }}</div>
-            </ion-col>
-        </ion-row>
-      </ion-grid>
-    </ng-template>
-    <ng-template [ngIf]="college.details.need_blind || undergradFinAidChart">
-      <div>Financial Aid</div>
-      <ion-grid no-padding>
-        <ion-row justify-content-center align-items-center>
-          <ion-col *ngIf="college.details.need_blind">Need Blind</ion-col>
-          <ion-col *ngIf="undergradFinAidChart">
-            <pie-chart [series]="undergradFinAidChart" unit="undergrad"
-                      tinyHeader="Undergrads"
-                      label="Receiving Financial Aid"></pie-chart>
+        <ion-row justify-content-center
+                 align-items-center>
+          <ion-col size="12"
+                   align-self-center>
+            <div class="displayHeader">{{ (college$ | async).net_price | currency:'USD':'symbol':'1.0-0' }}</div>
           </ion-col>
         </ion-row>
       </ion-grid>
     </ng-template>
-    <ng-template [ngIf]="college.details.average_debt">
+    <ng-template [ngIf]="details?.need_blind
+                         || finAidChart">
+      <div>Financial Aid</div>
+      <ion-grid no-padding>
+        <ion-row justify-content-center
+                 align-items-center>
+          <ion-col *ngIf="details?.need_blind">Need Blind</ion-col>
+          <ion-col *ngIf="finAidChart">
+            <radial-chart [label]="finAidChart.label"
+                          [value]="finAidChart.value"></radial-chart>
+          </ion-col>
+        </ion-row>
+      </ion-grid>
+    </ng-template>
+    <ng-template [ngIf]="details?.average_debt">
       <div>Average Student Debt upon Graduation</div>
       <ion-grid>
-        <ion-row justify-content-center align-items-center>
-          <ion-col size="12"><div class="displayHeader">{{ college.details.average_debt | currency:'USD':'symbol':'1.0-0' }}</div></ion-col>
+        <ion-row justify-content-center
+                 align-items-center>
+          <ion-col size="12">
+            <div class="displayHeader">{{ details?.average_debt | currency:'USD':'symbol':'1.0-0' }}</div>
+          </ion-col>
         </ion-row>
       </ion-grid>
     </ng-template>

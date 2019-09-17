@@ -7,11 +7,21 @@ import { IonicModule } from '@ionic/angular';
 import { ScholarshipsListPage } from './scholarships-list';
 import { ComponentsModule } from '@nte/components/components.module';
 import { SendComponent } from '@nte/components/send/send';
+import { FilterPage } from '@nte/pages/filter/filter';
 
 const routes: Routes = [
   {
     path: 'app/scholarships/list/:id',
-    component: ScholarshipsListPage
+    children: [
+      {
+        path: '',
+        component: ScholarshipsListPage
+      },
+      {
+        path: 'filter',
+        component: FilterPage
+      }
+    ]
   }
 ];
 

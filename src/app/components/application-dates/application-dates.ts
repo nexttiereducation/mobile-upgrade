@@ -5,7 +5,7 @@ import { takeUntil } from 'rxjs/operators';
 
 import { IApplicationDate } from '@nte/interfaces/application-date.interface';
 import { ICollege } from '@nte/interfaces/college.interface';
-import { CollegeService } from '@nte/services/college.service';
+import { CollegesService } from '@nte/services/colleges.service';
 import { MixpanelService } from '@nte/services/mixpanel.service';
 import { NavStateService } from '@nte/services/nav-state.service';
 import { StakeholderService } from '@nte/services/stakeholder.service';
@@ -35,7 +35,7 @@ export class ApplicationDatesComponent implements OnInit, OnDestroy {
     return this.stakeholderService.stakeholder;
   }
 
-  constructor(private collegeService: CollegeService,
+  constructor(private collegeService: CollegesService,
     private mixpanel: MixpanelService,
     private modalCtrl: ModalController,
     private stakeholderService: StakeholderService,
@@ -93,47 +93,47 @@ export class ApplicationDatesComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.ngUnsubscribe))
       .subscribe(
         (data: any) => {
-        if (!data) { return; }
-        this.admissionTypeInfo = {
-          'Early Action': {
-            details: data.earlyAction,
-            showDetails: false
-          },
-          'Early Action 2': {
-            details: data.earlyAction,
-            showDetails: false
-          },
-          'Early Decision': {
-            details: data.earlyDecision,
-            showDetails: false
-          },
-          'Early Decision 2': {
-            details: data.earlyDecision,
-            showDetails: false
-          },
-          'Priority Decision': {
-            details: data.priorityDecision,
-            showDetails: false
-          },
-          'Priority Decision 2': {
-            details: data.priorityDecision,
-            showDetails: false
-          },
-          'Regular Decision': {
-            details: data.regularDecision,
-            showDetails: false
-          },
-          'Regular Decision 2': {
-            details: data.regularDecision,
-            showDetails: false
-          },
-          'Rolling': {
-            details: data.rolling,
-            showDetails: false
-          }
-        };
-        this.parseDetails();
-      },
+          if (!data) { return; }
+          this.admissionTypeInfo = {
+            'Early Action': {
+              details: data.earlyAction,
+              showDetails: false
+            },
+            'Early Action 2': {
+              details: data.earlyAction,
+              showDetails: false
+            },
+            'Early Decision': {
+              details: data.earlyDecision,
+              showDetails: false
+            },
+            'Early Decision 2': {
+              details: data.earlyDecision,
+              showDetails: false
+            },
+            'Priority Decision': {
+              details: data.priorityDecision,
+              showDetails: false
+            },
+            'Priority Decision 2': {
+              details: data.priorityDecision,
+              showDetails: false
+            },
+            'Regular Decision': {
+              details: data.regularDecision,
+              showDetails: false
+            },
+            'Regular Decision 2': {
+              details: data.regularDecision,
+              showDetails: false
+            },
+            Rolling: {
+              details: data.rolling,
+              showDetails: false
+            }
+          };
+          this.parseDetails();
+        },
         err => console.error(err)
       );
   }

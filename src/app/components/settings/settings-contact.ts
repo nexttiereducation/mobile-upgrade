@@ -19,7 +19,7 @@ import { SettingsService } from '@nte/services/settings.service';
 })
 export class ContactSettingsComponent implements OnInit, OnDestroy {
   @Input() canEdit: boolean;
-  @Input() currentUser: IUserOverview;
+  @Input() userOverview: IUserOverview;
 
   public alternateEmailControl: FormControl = new FormControl();
   public altPhoneControl: FormControl = new FormControl();
@@ -33,22 +33,22 @@ export class ContactSettingsComponent implements OnInit, OnDestroy {
   private ngUnsubscribe: Subject<any> = new Subject();
 
   get showVerificationForm() {
-    return this.phoneValid(this.currentUser)
-      && !this.currentUser.is_phone_verified
-      && this.currentUser.notification_settings.sms.isEnabled;
+    return this.phoneValid(this.userOverview)
+      && !this.userOverview.is_phone_verified
+      && this.userOverview.notification_settings.sms.isEnabled;
   }
 
   constructor(private settingsService: SettingsService,
     private toastService: ToastService) { }
 
   ngOnInit() {
-    this.primaryEmailControl.setValue(this.currentUser.email);
-    const altInfo = this.currentUser.alternate_contact_information;
+    this.primaryEmailControl.setValue(this.userOverview.email);
+    const altInfo = this.userOverview.alternate_contact_information;
     if (altInfo) {
       if (altInfo.email) {
-        this.alternateEmailControl.setValue(this.currentUser.alternate_contact_information.email);
+        this.alternateEmailControl.setValue(this.userOverview.alternate_contact_information.email);
       }
-      this.initialUser = cloneDeep(this.currentUser);
+      this.initialUser = cloneDeep(this.userOverview);
     } else {
       this.setAlternateContact();
     }
@@ -60,7 +60,7 @@ export class ContactSettingsComponent implements OnInit, OnDestroy {
   }
 
   getUpdatedEmail(isAlternate?: boolean, removeValue?: boolean) {
-    const baseProperty = isAlternate ? this.currentUser.alternate_contact_information : this.currentUser;
+    const baseProperty = isAlternate ? this.userOverview.alternate_contact_information : this.userOverview;
     return {
       email: (removeValue && isAlternate) ? null : baseProperty.email,
       isAlternate
@@ -68,7 +68,7 @@ export class ContactSettingsComponent implements OnInit, OnDestroy {
   }
 
   getUpdatedPhone(isAlternate?: boolean, removeValue?: boolean) {
-    const baseProperty = isAlternate ? this.currentUser.alternate_contact_information : this.currentUser;
+    const baseProperty = isAlternate ? this.userOverview.alternate_contact_information : this.userOverview;
     return {
       isAlternate,
       phoneNumber: removeValue ? null : baseProperty.phone_number,
@@ -78,9 +78,9 @@ export class ContactSettingsComponent implements OnInit, OnDestroy {
 
   isEdited(propName: string, subPropName?: string) {
     if (subPropName) {
-      return this.currentUser[propName][subPropName] !== this.initialUser[propName][subPropName];
+      return this.userOverview[propName][subPropName] !== this.initialUser[propName][subPropName];
     } else {
-      return this.currentUser[propName] !== this.initialUser[propName];
+      return this.userOverview[propName] !== this.initialUser[propName];
     }
   }
 
@@ -90,23 +90,23 @@ export class ContactSettingsComponent implements OnInit, OnDestroy {
 
   reset(propName: string, subPropName?: string) {
     if (subPropName) {
-      this.currentUser[propName][subPropName] = this.initialUser[propName][subPropName];
+      this.userOverview[propName][subPropName] = this.initialUser[propName][subPropName];
     } else {
-      this.currentUser[propName] = this.initialUser[propName];
+      this.userOverview[propName] = this.initialUser[propName];
     }
   }
 
   resetUser(updatedUser: IUserOverview) {
-    this.currentUser = updatedUser;
-    if (!this.currentUser.alternate_contact_information) {
+    this.userOverview = updatedUser;
+    if (!this.userOverview.alternate_contact_information) {
       this.setAlternateContact();
     } else {
-      this.initialUser = cloneDeep(this.currentUser);
+      this.initialUser = cloneDeep(this.userOverview);
     }
   }
 
   setAlternateContact() {
-    this.currentUser.alternate_contact_information = {
+    this.userOverview.alternate_contact_information = {
       email: null,
       id: null,
       is_phone_verified: null,
@@ -114,7 +114,7 @@ export class ContactSettingsComponent implements OnInit, OnDestroy {
       phone_type: null,
       phone_verification_code: null
     };
-    this.initialUser = cloneDeep(this.currentUser);
+    this.initialUser = cloneDeep(this.userOverview);
   }
 
   setPhone(phone: string, isAlternate: boolean) {
@@ -131,7 +131,7 @@ export class ContactSettingsComponent implements OnInit, OnDestroy {
   updateEmail(isAlternate: boolean, hasValue: boolean = true) {
     const updatedEmail: IContactEmail = this.getUpdatedEmail(isAlternate, !hasValue);
     if (updatedEmail.email && updatedEmail.email.length) {
-      this.settingsService.updateEmail(this.currentUser.id, updatedEmail)
+      this.settingsService.updateEmail(this.userOverview.id, updatedEmail)
         .pipe(takeUntil(this.ngUnsubscribe))
         .subscribe(
           response => {
@@ -145,14 +145,14 @@ export class ContactSettingsComponent implements OnInit, OnDestroy {
 
   updatePhone(isAlternate: boolean, hasValue: boolean = true) {
     if (hasValue
-      && (this.phoneValid(this.currentUser)
+      && (this.phoneValid(this.userOverview)
         || (isAlternate
-          && !this.phoneValid(this.currentUser.alternate_contact_information)))) {
+          && !this.phoneValid(this.userOverview.alternate_contact_information)))) {
       return;
     }
     const updatedPhone: IContactPhone = this.getUpdatedPhone(isAlternate, !hasValue);
     if (updatedPhone.phoneNumber && updatedPhone.phoneNumber.length) {
-      this.settingsService.updatePhone(this.currentUser.id, updatedPhone)
+      this.settingsService.updatePhone(this.userOverview.id, updatedPhone)
         .pipe(takeUntil(this.ngUnsubscribe))
         .subscribe(
           response => {
@@ -165,7 +165,7 @@ export class ContactSettingsComponent implements OnInit, OnDestroy {
   }
 
   updateNotificationSettings() {
-    this.settingsService.updateNotificationSettings(this.currentUser)
+    this.settingsService.updateNotificationSettings(this.userOverview)
       .pipe(takeUntil(this.ngUnsubscribe))
       .subscribe(
         response => this.resetUser(response),
@@ -175,10 +175,10 @@ export class ContactSettingsComponent implements OnInit, OnDestroy {
 
   verifyPhone() {
     const verificationInfo: IPhoneVerification = {
-      phoneNumber: this.currentUser.phone_number,
+      phoneNumber: this.userOverview.phone_number,
       verificationCode: this.verificationCode
     };
-    this.settingsService.verifyPhone(this.currentUser.id, verificationInfo)
+    this.settingsService.verifyPhone(this.userOverview.id, verificationInfo)
       .pipe(takeUntil(this.ngUnsubscribe))
       .subscribe(
         response => {

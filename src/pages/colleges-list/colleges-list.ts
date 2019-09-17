@@ -15,9 +15,9 @@ import { ICollegeTracker } from '@nte/interfaces/college-tracker.interface';
 import { ICollege } from '@nte/interfaces/college.interface';
 import { IEmptyState } from '@nte/interfaces/empty-state.interface';
 import { Filter } from '@nte/models/filter.model';
-import { CollegeTabsService } from '@nte/services/college-tabs.service';
 import { CollegeListTileService } from '@nte/services/college.list-tile.service';
 import { CollegeService } from '@nte/services/college.service';
+import { CollegesService } from '@nte/services/colleges.service';
 import { ConnectionService } from '@nte/services/connection.service';
 import { FilterService } from '@nte/services/filter.service';
 import { KeyboardService } from '@nte/services/keyboard.service';
@@ -42,7 +42,7 @@ export class CollegesListPage implements OnInit, OnDestroy {
   public isSavingIndex: number;
   public list: any;
   public listName: string;
-  public nonProfitQuery = COLLEGE_NON_PROFIT_QUERY;
+  public nonProfitQuery: string = COLLEGE_NON_PROFIT_QUERY;
   public placeholders: any[] = [null, null, null];
   public searchControl: AbstractControl = new FormControl(``);
   public searchTerm: string = ``;
@@ -50,7 +50,7 @@ export class CollegesListPage implements OnInit, OnDestroy {
   private ngUnsubscribe: Subject<any> = new Subject();
 
   get colleges$() {
-    return this.collegeService[this.list.serviceVariable];
+    return this.collegesService[this.list.serviceVariable];
   }
 
   get isNearby() {
@@ -71,7 +71,7 @@ export class CollegesListPage implements OnInit, OnDestroy {
 
   constructor(
     public collegeService: CollegeService,
-    public collegeTabsService: CollegeTabsService,
+    public collegesService: CollegesService,
     public connectionService: ConnectionService,
     public filterService: FilterService,
     public keyboard: KeyboardService,
@@ -111,13 +111,13 @@ export class CollegesListPage implements OnInit, OnDestroy {
 
   public closeKeyboard(event: Event) {
     if (event) { event.stopPropagation(); }
-    this.keyboard.close();
+    // this.keyboard.close();
   }
 
   public followCollege(college: ICollege | ICollegeRecommendation | ICollegeTracker | any,
     fromToast?: boolean, id?: number) {
-    const collegeId = id || this.collegeService.getIdFromCollege(college);
-    const collegeName = this.collegeService.getNameFromCollege(college);
+    const collegeId = id || this.collegesService.getIdFromCollege(college);
+    const collegeName = this.collegesService.getNameFromCollege(college);
     const isRec = this.list.name === `Recommended`;
     const collegeInfo = {
       fromToast,
@@ -130,7 +130,7 @@ export class CollegesListPage implements OnInit, OnDestroy {
       if (college && college.institution) {
         college = isNumber(college.institution) ? college : college.institution;
       }
-      this.collegeService.getDetails(collegeId)
+      this.collegesService.getDetails(collegeId)
         .pipe(takeUntil(this.ngUnsubscribe))
         .subscribe(details => this.openApplyModal(details, collegeInfo));
     } else {
@@ -153,11 +153,11 @@ export class CollegesListPage implements OnInit, OnDestroy {
   }
 
   public infiniteScrollLoad(infiniteScroll: any) {
-    if (!this.collegeService.nextPage) {
+    if (!this.collegesService.nextPage) {
       infiniteScroll.enable(false);
       return;
     }
-    this.collegeService.moreToScroll
+    this.collegesService.moreToScroll
       .pipe(takeUntil(this.ngUnsubscribe))
       .subscribe((more) => {
         if (!more) {
@@ -165,12 +165,12 @@ export class CollegesListPage implements OnInit, OnDestroy {
         }
         infiniteScroll.complete();
       });
-    this.collegeService.getMore(this.isNearby);
+    this.collegesService.getMore(this.isNearby);
   }
 
   public isSaved(college: any) {
-    return this.collegeService.isSaved(college.id)
-      || this.collegeService.isSaved(college.institution);
+    return this.collegesService.isSaved(college.id)
+      || this.collegesService.isSaved(college.institution);
   }
 
   public onFilterOpen(event: Event) {
@@ -269,7 +269,7 @@ export class CollegesListPage implements OnInit, OnDestroy {
   }
 
   public removeRec(rec: ICollegeRecommendation) {
-    this.collegeService.declineRec(rec)
+    this.collegesService.declineRec(rec)
       .pipe(takeUntil(this.ngUnsubscribe))
       .subscribe(() => {
         this.mixpanel.event(`recommended_school_rejected`, {
@@ -285,7 +285,7 @@ export class CollegesListPage implements OnInit, OnDestroy {
   }
 
   public saveCollege(college: any, fromToast?: boolean, applicationData?: any, isRec?: boolean) {
-    this.collegeService.save(college, this.user, applicationData, isRec)
+    this.collegesService.save(college, this.user, applicationData, isRec)
       .pipe(takeUntil(this.ngUnsubscribe))
       .subscribe(
         () => {
@@ -320,9 +320,9 @@ export class CollegesListPage implements OnInit, OnDestroy {
   }
 
   public unsaveCollege(college: ICollege | ICollegeTracker, fromToast?: boolean, id?: number) {
-    const collegeId = id ? id : this.collegeService.getIdFromCollege(college);
-    const collegeName = this.collegeService.getNameFromCollege(college);
-    this.collegeService.unsave(collegeId, this.user.isParent)
+    const collegeId = id ? id : this.collegesService.getIdFromCollege(college);
+    const collegeName = this.collegesService.getNameFromCollege(college);
+    this.collegesService.unsave(collegeId, this.user.isParent)
       .pipe(takeUntil(this.ngUnsubscribe))
       .subscribe(
         () => {
@@ -339,8 +339,8 @@ export class CollegesListPage implements OnInit, OnDestroy {
   }
 
   public viewCollege(college: any) {
-    this.collegeTabsService.activeCollege = college;
-    const id = this.collegeService.getIdFromCollege(college);
+    this.collegeService.active = college;
+    const id = this.collegesService.getIdFromCollege(college);
     this.router.navigateByUrl(
       `app/colleges/${id}/general`,
       {
@@ -348,8 +348,8 @@ export class CollegesListPage implements OnInit, OnDestroy {
         state: {
           college,
           id,
-          isRecd: this.collegeService.isRecd(id) || this.isRecd,
-          isSaved: this.collegeService.isSaved(id)
+          isRecd: this.collegesService.isRecd(id) || this.isRecd,
+          isSaved: this.collegesService.isSaved(id)
         }
       }
     );
@@ -376,7 +376,7 @@ export class CollegesListPage implements OnInit, OnDestroy {
             this.location.showPosition(pos);
             this.filterService.filter = new Filter(
               this.filterService.filter.categories,
-              this.collegeService.getNearbyQueryFromPosition(pos)
+              this.collegesService.getNearbyQueryFromPosition(pos)
             );
           }
         }
@@ -407,7 +407,7 @@ export class CollegesListPage implements OnInit, OnDestroy {
       query += `&search=${this.searchTerm}`;
     }
     query = this.filterService.trimQuery(query);
-    this.collegeService.initList(query, this.isNearby);
+    this.collegesService.initList(query, this.isNearby);
     if (this.isNearby) {
       this.getLocation();
     }

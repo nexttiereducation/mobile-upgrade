@@ -1,4 +1,4 @@
-colleges-list {
+:host {
   display: block;
 
   ion-card {
@@ -10,11 +10,20 @@ colleges-list {
     min-width: 100%;
   }
 
+  .card-img-wrapper {
+    height: 150px;
+    max-height: 150px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+  }
+
   img.img-block {
     display: block;
-    height: 150px;
     width: 100%;
-    object-fit: fill;
+    height: auto;
   }
 
   .chip-container {

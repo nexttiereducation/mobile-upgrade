@@ -8,7 +8,7 @@ import { ALPHABET } from '@nte/constants/filter.constants';
 import { Category } from '@nte/models/category.model';
 import { Option } from '@nte/models/option.model';
 import { ListTileCreatePage } from '@nte/pages/list-tile-create/list-tile-create';
-import { CollegeService } from '@nte/services/college.service';
+import { CollegesService } from '@nte/services/colleges.service';
 import { FilterService } from '@nte/services/filter.service';
 import { MixpanelService } from '@nte/services/mixpanel.service';
 import { NavStateService } from '@nte/services/nav-state.service';
@@ -54,10 +54,10 @@ export class FilterChecklistPage implements OnInit, OnDestroy {
   }
 
   constructor(
+    public collegesService: CollegesService,
     public events: Events,
     public filterService: FilterService,
     public router: Router,
-    private collegeService: CollegeService,
     private mixpanel: MixpanelService,
     navStateService: NavStateService) {
     const params: any = navStateService.data;
@@ -110,17 +110,17 @@ export class FilterChecklistPage implements OnInit, OnDestroy {
     if (val && val.trim() !== ``) {
       if (this.isColleges) {
         // get institutions based on searchQuery
-        this.collegeService.search(`?sector=1&sector=2&sector=4&sector=5&search=${val}`, true)
+        this.collegesService.search(`?sector=1&sector=2&sector=4&sector=5&search=${val}`, true)
           .pipe(takeUntil(this.ngUnsubscribe))
           .subscribe(
-          (response) => {
-            this.options = response.map(
-              (college) => new Option({
-                id: college.id,
-                value: college.name
-              }));
-          }
-        );
+            (response) => {
+              this.options = response.map(
+                (college) => new Option({
+                  id: college.id,
+                  value: college.name
+                }));
+            }
+          );
       } else {
         // Reset items back to all of the items
         this.options = this.categoryOptions;
@@ -155,9 +155,9 @@ export class FilterChecklistPage implements OnInit, OnDestroy {
       [ListTileCreatePage],
       {
         state: {
-        filter: this.filterService.filter,
-        page: this.listType
-      }
+          filter: this.filterService.filter,
+          page: this.listType
+        }
       }
     );
   }

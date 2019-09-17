@@ -10,7 +10,6 @@ import { Category } from '@nte/models/category.model';
 import { Option } from '@nte/models/option.model';
 import { ListTileCreatePage } from '@nte/pages/list-tile-create/list-tile-create';
 import { FilterService } from '@nte/services/filter.service';
-import { KeyboardService } from '@nte/services/keyboard.service';
 import { MixpanelService } from '@nte/services/mixpanel.service';
 import { NavStateService } from '@nte/services/nav-state.service';
 import { ParamService } from '@nte/services/param.service';
@@ -60,7 +59,6 @@ export class FilterProgramPage implements OnInit, OnDestroy {
     public filterService: FilterService,
     public router: Router,
     private events: Events,
-    private keyboard: KeyboardService,
     private mixpanel: MixpanelService,
     navStateService: NavStateService) {
     const params: any = navStateService.data;
@@ -104,7 +102,7 @@ export class FilterProgramPage implements OnInit, OnDestroy {
   }
 
   public closeKeyboard() {
-    this.keyboard.close();
+    // this.keyboard.close();
   }
 
   public search(ev: any) {

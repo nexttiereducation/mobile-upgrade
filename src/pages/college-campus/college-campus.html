@@ -1,8 +1,10 @@
 <ion-content>
   <div class="gray-sections"
        *ngIf="college">
-    <ng-template [ngIf]="(latitude && longitude) || details?.major_city ||
-                         details?.airport_distance || details?.public_transit">
+    <ng-template [ngIf]="(latitude && longitude)
+                         || details?.major_city
+                         || details?.airport_distance
+                         || details?.public_transit">
       <div>Location</div>
       <div>
         <div class="map-wrapper">
@@ -16,7 +18,9 @@
           <agm-marker [latitude]="latitude"
                       [longitude]="longitude"></agm-marker>
         </agm-map> -->
-        <ion-grid *ngIf="details?.major_city || details?.airport_distance || details?.public_transit">
+        <ion-grid *ngIf="details?.major_city
+                         || details?.airport_distance
+                         || details?.public_transit">
           <ion-row justify-content-start>
             <ion-col text-center
                      *ngIf="details?.major_city">
@@ -46,35 +50,34 @@
         <ion-row align-items-center
                  justify-content-center>
           <ion-col *ngIf="fraternityChart">
-            <pie-chart label="Join Fraternities"
-                       [series]="fraternityChart"></pie-chart>
+            <radial-chart [label]="fraternityChart.label"
+                          [value]="fraternityChart.value"></radial-chart>
           </ion-col>
           <ion-col *ngIf="sororityChart">
-            <pie-chart label="Join Sororities"
-                       [series]="sororityChart"></pie-chart>
+            <radial-chart [label]="sororityChart.label"
+                          [value]="sororityChart.value"></radial-chart>
           </ion-col>
         </ion-row>
       </ion-grid>
     </ng-template>
-    <ng-template [ngIf]="outOfStateChart || liveOnCampusChart || workOnCampusChart">
+    <ng-template [ngIf]="outOfStateChart
+                         || liveOnCampusChart
+                         || workOnCampusChart">
       <div>Student Life</div>
       <ion-grid no-padding>
         <ion-row align-items-center
                  justify-content-center>
           <ion-col *ngIf="outOfStateChart">
-            <pie-chart label="Out-of-State"
-                       tinyHeader="Freshmen"
-                       [series]="outOfStateChart"></pie-chart>
+            <radial-chart [label]="outOfStateChart.label"
+                          [value]="outOfStateChart.value"></radial-chart>
           </ion-col>
           <ion-col *ngIf="liveOnCampusChart">
-            <pie-chart label="Live on Campus"
-                       tinyHeader="Freshmen"
-                       [series]="liveOnCampusChart"></pie-chart>
+            <radial-chart [label]="liveOnCampusChart.label"
+                          [value]="liveOnCampusChart.value"></radial-chart>
           </ion-col>
           <ion-col *ngIf="workOnCampusChart">
-            <pie-chart label="Work on Campus"
-                       tinyHeader="Freshmen"
-                       [series]="workOnCampusChart"></pie-chart>
+            <radial-chart [label]="workOnCampusChart.label"
+                          [value]="workOnCampusChart.value"></radial-chart>
           </ion-col>
         </ion-row>
       </ion-grid>

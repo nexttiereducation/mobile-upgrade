@@ -13,7 +13,7 @@
                  messaging-button></ion-buttons>
   </ion-toolbar>
   <ion-toolbar no-padding
-               *ngIf="list.name !== 'Applying' && list.name !== 'Recommended' && list.name !== 'Saved'">
+               *ngIf="list?.name !== 'Applying' && list?.name !== 'Recommended' && list?.name !== 'Saved'">
     <ion-grid no-padding>
       <ion-row align-items-start>
         <ion-col>
@@ -40,8 +40,8 @@
 </ion-header>
 <ion-content class="bg-grayLight">
   <ion-list card-list
-            [hidden]="!(scholarshipService[list.serviceVariable] | async).length">
-    <ion-card *ngFor="let scholarship of (scholarshipService[list.serviceVariable] | async); let index = index">
+            *ngIf="(scholarshipService[list?.serviceVariable] | async)?.length > 0">
+    <ion-card *ngFor="let scholarship of (scholarshipService[list?.serviceVariable] | async); let index = index">
       <ion-item class="scholarship-title"
                 detail-none
                 (click)="viewScholarship(scholarship)">
@@ -89,7 +89,7 @@
             </ion-button>
           </ion-col>
           <ion-col size="auto"
-                   *ngIf="list.name === 'Recommended'">
+                   *ngIf="list?.name === 'Recommended'">
             <ion-button class="lowercase"
                         fill="clear"
                         color="primary"
@@ -113,7 +113,7 @@
           <ion-col class="chip-container truncate fit"
                    margin-right
                    text-right
-                   *ngIf="list.name === 'Recommended' && scholarship.recommender">
+                   *ngIf="list?.name === 'Recommended' && scholarship.recommender">
             <ion-chip class="truncate fit recommender"
                       color="green">
               <ion-label>{{ scholarship.recommender.get_full_name }}</ion-label>
@@ -123,9 +123,9 @@
       </ion-grid>
     </ion-card>
   </ion-list>
-  <ng-container *ngIf="(scholarshipService[list.serviceVariable] | async).length > 0
+  <ng-container *ngIf="(scholarshipService[list?.serviceVariable] | async).length > 0
                        && scholarshipService.nextPage
-                       && list.name === 'Search All'">
+                       && list?.name === 'Search All'">
     <ion-infinite-scroll threshold="20%"
                          (ionInfinite)="loadMore($event)">
       <ion-infinite-scroll-content loadingSpinner="bubbles"
@@ -133,14 +133,14 @@
     </ion-infinite-scroll>
   </ng-container>
   <ng-template
-               [ngIf]="!(scholarshipService[list.serviceVariable] | async).length
-                       && ((scholarshipService[list.serviceVariable] | async) || !scholarshipService.fetchingScholarships)">
+               [ngIf]="!(scholarshipService[list?.serviceVariable] | async).length
+                       && ((scholarshipService[list?.serviceVariable] | async) || !scholarshipService.fetchingScholarships)">
     <empty-state *ngIf="emptyState"
                  [emptyState]="emptyState"></empty-state>
   </ng-template>
   <ng-template
-               [ngIf]="!(scholarshipService[list.serviceVariable] | async).length
-                       && (!(scholarshipService[list.serviceVariable] | async) || scholarshipService.fetchingScholarships)">
+               [ngIf]="!(scholarshipService[list?.serviceVariable] | async).length
+                       && (!(scholarshipService[list?.serviceVariable] | async) || scholarshipService.fetchingScholarships)">
     <ion-list>
       <ion-card class="placeholder"
                 *ngFor="let placeholder of placeholders">

@@ -164,7 +164,7 @@
                     item-end
                     name="information-circle"
                     *ngIf="scholarship.renewable && scholarship.renew_details?.length"
-                    (click)="showMoreInfo(scholarship.renew_details)"></ion-icon>
+                    (click)="openAlert(scholarship.renew_details)"></ion-icon>
           <ion-icon color="primary"
                     item-end
                     name="checkmark">
@@ -177,7 +177,7 @@
                     item-end
                     name="information-circle"
                     *ngIf="scholarship.repay_detail"
-                    (click)="showMoreInfo(scholarship.repay_detail)"></ion-icon>
+                    (click)="openAlert(scholarship.repay_detail)"></ion-icon>
           <ion-icon color="primary"
                     item-end
                     name="checkmark"></ion-icon>

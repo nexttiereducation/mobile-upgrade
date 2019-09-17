@@ -20,7 +20,9 @@ export class ListService {
   get all() {
     return this._all.getValue();
   }
-
+  set all(all: any[]) {
+    this._all.next(all);
+  }
   get all$() {
     return this._all.asObservable();
   }
@@ -28,7 +30,9 @@ export class ListService {
   get baseUrl() {
     return this._baseUrl.getValue();
   }
-
+  set baseUrl(baseUrl: string) {
+    this._baseUrl.next(baseUrl);
+  }
   get baseUrl$() {
     return this._baseUrl.asObservable();
   }
@@ -36,7 +40,9 @@ export class ListService {
   get count() {
     return this._count.getValue();
   }
-
+  set count(count: number) {
+    this._count.next(count);
+  }
   get count$() {
     return this._count.asObservable();
   }
@@ -44,7 +50,9 @@ export class ListService {
   get expandedItem() {
     return this._expandedItem.getValue();
   }
-
+  set expandedItem(expandedItem: any) {
+    this._expandedItem.next(expandedItem);
+  }
   get expandedItem$() {
     return this._expandedItem.asObservable();
   }
@@ -52,7 +60,9 @@ export class ListService {
   get filter() {
     return this._filter.getValue();
   }
-
+  set filter(filter: Filter) {
+    this._filter.next(filter);
+  }
   get filter$() {
     return this._filter.asObservable();
   }
@@ -60,7 +70,9 @@ export class ListService {
   get filterQuery() {
     return this._filterQuery.getValue();
   }
-
+  set filterQuery(filterQuery: string) {
+    this._filterQuery.next(filterQuery);
+  }
   get filterQuery$() {
     return this._filterQuery.asObservable();
   }
@@ -68,7 +80,9 @@ export class ListService {
   get isInitializing() {
     return this._isInitializing.getValue();
   }
-
+  set isInitializing(isInitializing: boolean) {
+    this._isInitializing.next(isInitializing);
+  }
   get isInitializing$() {
     return this._isInitializing.asObservable();
   }
@@ -76,7 +90,9 @@ export class ListService {
   get isLoadingMore() {
     return this._isLoadingMore.getValue();
   }
-
+  set isLoadingMore(isLoadingMore: boolean) {
+    this._isLoadingMore.next(isLoadingMore);
+  }
   get isLoadingMore$() {
     return this._isLoadingMore.asObservable();
   }
@@ -84,7 +100,9 @@ export class ListService {
   get nextPage() {
     return this._nextPage.getValue();
   }
-
+  set nextPage(nextPage: string) {
+    this._nextPage.next(nextPage);
+  }
   get nextPage$() {
     return this._nextPage.asObservable();
   }
@@ -92,7 +110,9 @@ export class ListService {
   get prevPage() {
     return this._prevPage.getValue();
   }
-
+  set prevPage(prevPage: string) {
+    this._prevPage.next(prevPage);
+  }
   get prevPage$() {
     return this._prevPage.asObservable();
   }
@@ -101,6 +121,9 @@ export class ListService {
     return this._sortBy.getValue();
   }
 
+  set sortBy(sortBy: string) {
+    this._sortBy.next(sortBy);
+  }
   get sortBy$() {
     return this._sortBy.asObservable();
   }
@@ -108,57 +131,11 @@ export class ListService {
   get total() {
     return this._total.getValue();
   }
-
-  get total$() {
-    return this._total.asObservable();
-  }
-
-  set all(all: any[]) {
-    this._all.next(all);
-  }
-
-  set baseUrl(baseUrl: string) {
-    this._baseUrl.next(baseUrl);
-  }
-
-  set count(count: number) {
-    this._count.next(count);
-  }
-
-  set expandedItem(expandedItem: any) {
-    this._expandedItem.next(expandedItem);
-  }
-
-  set filter(filter: Filter) {
-    this._filter.next(filter);
-  }
-
-  set filterQuery(filterQuery: string) {
-    this._filterQuery.next(filterQuery);
-  }
-
-  set isInitializing(isInitializing: boolean) {
-    this._isInitializing.next(isInitializing);
-  }
-
-  set isLoadingMore(isLoadingMore: boolean) {
-    this._isLoadingMore.next(isLoadingMore);
-  }
-
-  set nextPage(nextPage: string) {
-    this._nextPage.next(nextPage);
-  }
-
-  set prevPage(prevPage: string) {
-    this._prevPage.next(prevPage);
-  }
-
-  set sortBy(sortBy: string) {
-    this._sortBy.next(sortBy);
-  }
-
   set total(total: number) {
     this._total.next(total);
+  }
+  get total$() {
+    return this._total.asObservable();
   }
 
 }

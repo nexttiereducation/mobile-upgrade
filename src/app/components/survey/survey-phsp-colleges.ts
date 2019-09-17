@@ -6,7 +6,7 @@ import { takeUntil } from 'rxjs/operators';
 import { ICollegeTracker } from '@nte/interfaces/college-tracker.interface';
 import { ICollege } from '@nte/interfaces/college.interface';
 import { CollegeStatusItem, ICollegeStatusItem } from '@nte/interfaces/status-item.interface';
-import { CollegeService } from '@nte/services/college.service';
+import { CollegesService } from '@nte/services/colleges.service';
 import { StakeholderService } from '@nte/services/stakeholder.service';
 import { SurveyService } from '@nte/services/survey.service';
 
@@ -22,7 +22,11 @@ export class SurveyPhspCollegesComponent implements OnInit, OnDestroy {
 
   private ngUnsubscribe: Subject<any> = new Subject();
 
-  constructor(private collegeService: CollegeService,
+  get user() {
+    return this.stakeholderService.stakeholder;
+  }
+
+  constructor(private collegeService: CollegesService,
     private events: Events,
     private surveyService: SurveyService,
     private stakeholderService: StakeholderService) { }
@@ -30,7 +34,7 @@ export class SurveyPhspCollegesComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.events.subscribe(`search`, query => this.onSearch(query));
     if (!this.list) {
-      this.list = this.formatColleges(this.stakeholderService.stakeholder.institution_trackers);
+      this.list = this.formatColleges(this.user.institution_trackers);
     }
     this.surveyService.hideButtons = true;
   }

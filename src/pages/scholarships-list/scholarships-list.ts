@@ -11,7 +11,6 @@ import { EMPTY_STATES } from '@nte/constants/scholarship.constants';
 import { FilterPage } from '@nte/pages/filter/filter';
 import { ConnectionService } from '@nte/services/connection.service';
 import { FilterService } from '@nte/services/filter.service';
-import { KeyboardService } from '@nte/services/keyboard.service';
 import { MixpanelService } from '@nte/services/mixpanel.service';
 import { NavStateService } from '@nte/services/nav-state.service';
 import { ScholarshipListTileService } from '@nte/services/scholarship.list-tile.service';
@@ -80,7 +79,6 @@ export class ScholarshipsListPage implements OnInit, OnDestroy {
 
   constructor(public connectionService: ConnectionService,
     public filterService: FilterService,
-    public keyboard: KeyboardService,
     public modalCtrl: ModalController,
     public router: Router,
     public scholarshipService: ScholarshipService,
@@ -112,7 +110,7 @@ export class ScholarshipsListPage implements OnInit, OnDestroy {
 
   public closeKeyboard(event: any) {
     if (event) { event.stopPropagation(); }
-    this.keyboard.close();
+    // this.keyboard.close();
   }
 
   public loadMore(_event: Event) {
@@ -260,8 +258,8 @@ export class ScholarshipsListPage implements OnInit, OnDestroy {
         scholarship
       };
     }
-    this.router.navigate(
-      [`app/scholarships/${scholarship.id}`],
+    this.router.navigateByUrl(
+      `app/scholarships/${scholarship.id}`,
       { state: params }
     );
   }

@@ -53,33 +53,25 @@
            class="displayHeader bold">{{ surveyResults.results.total_colleges_applied_for }}</div>
       <div text-center
            class="emptyStateTitle">{{ planDisplayValues[surveyResults.answers.plan] }} colleges</div>
-      <pie-chart *ngIf="surveyResults.results.percentage_institutions_accepted"
-                 [label]="surveyResults.results.institutions_accepted + ' colleges'"
-                 [series]="collegeCharts.accepted"
-                 labelColor="green"
-                 size="large"
-                 subLabel="Accepted"
-                 margin-bottom></pie-chart>
-      <pie-chart *ngIf="surveyResults.results.percentage_institutions_waiting"
-                 [label]="surveyResults.results.institutions_waiting + ' colleges'"
-                 [series]="collegeCharts.waiting"
-                 labelColor="steel"
-                 size="large"
-                 subLabel="Waiting for Response"
-                 margin-bottom></pie-chart>
-      <pie-chart *ngIf="surveyResults.results.percentage_institutions_deferred || surveyResults.results.percentage_institutions_waitlisted"
-                 [label]="surveyResults.results.institutions_deferred + surveyResults.results.institutions_waitlisted + ' colleges'"
-                 [series]="collegeCharts.pending"
-                 labelColor="blue"
-                 size="large"
-                 subLabel="Deferred/Waitlisted"
-                 margin-bottom></pie-chart>
-      <pie-chart *ngIf="surveyResults.results.percentage_institutions_declined"
-                 [label]="surveyResults.results.institutions_declined + ' colleges'"
-                 [series]="collegeCharts.declined"
-                 labelColor="red"
-                 size="large"
-                 subLabel="Declined"></pie-chart>
+      <radial-chart *ngIf="surveyResults.results.percentage_institutions_accepted"
+                    [color]="collegeCharts.accepted.color"
+                    [label]="collegeCharts.accepted.label"
+                    [value]="collegeCharts.accepted.value"
+                    margin-bottom></radial-chart>
+      <radial-chart *ngIf="surveyResults.results.percentage_institutions_waiting"
+                    [color]="collegeCharts.waiting.color"
+                    [label]="collegeCharts.waiting.label"
+                    [value]="collegeCharts.waiting.value"
+                    margin-bottom></radial-chart>
+      <radial-chart *ngIf="surveyResults.results.percentage_institutions_deferred || surveyResults.results.percentage_institutions_waitlisted"
+                    [color]="collegeCharts.pending.color"
+                    [label]="collegeCharts.pending.label"
+                    [value]="collegeCharts.pending.value"
+                    margin-bottom></radial-chart>
+      <radial-chart *ngIf="surveyResults.results.percentage_institutions_declined"
+                    [color]="collegeCharts.declined.color"
+                    [label]="collegeCharts.declined.label"
+                    [value]="collegeCharts.declined.value"></radial-chart>
     </ion-card-content>
   </ion-card>
   <ion-card *ngIf="surveyResults.results.total_scholarships_applied_for > 0">
@@ -91,13 +83,11 @@
            class="displayHeader bold">{{ surveyResults.results.total_scholarships_applied_for }}</div>
       <div text-center
            class="emptyStateTitle bold">scholarships</div>
-      <pie-chart *ngIf="scholarshipChart"
-                 [label]="surveyResults.results.scholarships_won + ' scholarships'"
-                 [series]="scholarshipChart"
-                 labelColor="green"
-                 size="large"
-                 subLabel="Awarded"
-                 margin-bottom></pie-chart>
+      <radial-chart *ngIf="scholarshipChart"
+                    [color]="scholarshipChart.color"
+                    [label]="scholarshipChart.label"
+                    [value]="scholarshipChart.value"
+                    margin-bottom></radial-chart>
       <div text-center
            class="emptyStateTitle bold">You have been awarded</div>
       <div text-center

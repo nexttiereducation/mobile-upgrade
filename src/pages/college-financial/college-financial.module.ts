@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { RouterModule, Routes } from '@angular/router';
 import { IonicModule } from '@ionic/angular';
 
+import { ChartsModule } from './../../app/components/charts.module';
 import { CollegeFinancialPage } from './college-financial';
 import { ComponentsModule } from '@nte/components/components.module';
 
@@ -26,7 +27,8 @@ const routes: Routes = [
     FormsModule,
     IonicModule,
     RouterModule.forChild(routes),
-    ComponentsModule
+    ComponentsModule,
+    ChartsModule
   ]
 })
 

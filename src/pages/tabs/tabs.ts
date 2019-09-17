@@ -1,5 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { Plugins, PushNotification, PushNotificationActionPerformed, PushNotificationToken } from '@capacitor/core';
 import { NativeStorage } from '@ionic-native/native-storage/ngx';
 import { StatusBar } from '@ionic-native/status-bar/ngx';
 import { Platform } from '@ionic/angular';
@@ -16,6 +17,7 @@ import { ApiService } from '@nte/services/api.service';
 import { MixpanelService } from '@nte/services/mixpanel.service';
 import { StakeholderService } from '@nte/services/stakeholder.service';
 
+const { PushNotifications } = Plugins;
 @Component({
   templateUrl: `tabs.html`,
   styleUrls: [`tabs.scss`]
@@ -61,6 +63,7 @@ export class TabsPage implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+    this.initPushNotifications();
     this.checkAuthentication();
     this.checkCoachAnimation();
     this.setupRecSub();
@@ -122,6 +125,41 @@ export class TabsPage implements OnInit, OnDestroy {
 
   private getRecommendations() {
     return this.api.get(`/student/${this.user.id}/recommendation`);
+  }
+
+  private initPushNotifications() {
+    console.log('Initializing Push Notifications');
+
+    // Register with Apple / Google to receive push via APNS/FCM
+    PushNotifications.register();
+
+    // On succcess, we should be able to receive notifications
+    PushNotifications.addListener('registration',
+      (token: PushNotificationToken) => {
+        alert('Push registration success, token: ' + token.value);
+      }
+    );
+
+    // Some issue with our setup and push will not work
+    PushNotifications.addListener('registrationError',
+      (error: any) => {
+        alert('Error on registration: ' + JSON.stringify(error));
+      }
+    );
+
+    // Show us the notification payload if the app is open on our device
+    PushNotifications.addListener('pushNotificationReceived',
+      (notification: PushNotification) => {
+        alert('Push received: ' + JSON.stringify(notification));
+      }
+    );
+
+    // Method called when tapping on a notification
+    PushNotifications.addListener('pushNotificationActionPerformed',
+      (notification: PushNotificationActionPerformed) => {
+        alert('Push action performed: ' + JSON.stringify(notification));
+      }
+    );
   }
 
   private setupRecSub() {

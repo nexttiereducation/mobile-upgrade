@@ -22,7 +22,6 @@ import { IStudent } from '@nte/interfaces/student.interface';
 import { BackEndPrompt } from '@nte/models/back-end-prompt.model';
 import { TaskTracker } from '@nte/models/task-tracker.model';
 import { ConnectionService } from '@nte/services/connection.service';
-import { KeyboardService } from '@nte/services/keyboard.service';
 import { MixpanelService } from '@nte/services/mixpanel.service';
 import { NavStateService } from '@nte/services/nav-state.service';
 import { StakeholderService } from '@nte/services/stakeholder.service';
@@ -66,7 +65,6 @@ export class TasksListPage implements OnInit, OnDestroy {
 
   constructor(public connectionService: ConnectionService,
     public events: Events,
-    public keyboard: KeyboardService,
     public nativeStorage: NativeStorage,
     public route: ActivatedRoute,
     public router: Router,
@@ -126,7 +124,7 @@ export class TasksListPage implements OnInit, OnDestroy {
 
   public closeKeyboard(event: Event) {
     if (event) { event.stopPropagation(); }
-    this.keyboard.close();
+    // this.keyboard.close();
   }
 
   public getTasks(impersonationId?: number) {

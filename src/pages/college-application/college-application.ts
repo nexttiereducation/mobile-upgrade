@@ -1,22 +1,25 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Platform } from '@ionic/angular';
 import { join, padStart, split } from 'lodash';
 
-import { CollegeTabsService } from '@nte/services/college-tabs.service';
 import { CollegeService } from '@nte/services/college.service';
 import { LinkService } from '@nte/services/link.service';
 
 @Component({
   selector: `college-application`,
   templateUrl: `college-application.html`,
-  styleUrls: [`college-application.scss`]
+  styleUrls: [`college-application.scss`],
+  encapsulation: ViewEncapsulation.None
 })
 export class CollegeApplicationPage implements OnInit {
   public importanceValues: any;
 
   get college() {
-    return this.collegeTabsService.activeCollege;
+    return this.collegeService.active;
+  }
+  get college$() {
+    return this.collegeService.active$;
   }
 
   get details() {
@@ -25,7 +28,6 @@ export class CollegeApplicationPage implements OnInit {
 
   constructor(
     public collegeService: CollegeService,
-    public collegeTabsService: CollegeTabsService,
     public linkService: LinkService,
     public platform: Platform,
     public route: ActivatedRoute,

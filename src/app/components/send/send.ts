@@ -2,7 +2,6 @@ import { Component, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { ModalController, NavParams, ToastController } from '@ionic/angular';
 
 import { ConnectionService } from '@nte/services/connection.service';
-import { KeyboardService } from '@nte/services/keyboard.service';
 import { MessageService } from '@nte/services/message.service';
 import { StakeholderService } from '@nte/services/stakeholder.service';
 import { UrlService } from '@nte/services/url.service';
@@ -46,7 +45,6 @@ export class SendComponent implements OnInit, OnDestroy {
   }
 
   constructor(public connectionService: ConnectionService,
-    private keyboard: KeyboardService,
     private messageService: MessageService,
     private modalCtrl: ModalController,
     private stakeholderService: StakeholderService,
@@ -72,7 +70,7 @@ export class SendComponent implements OnInit, OnDestroy {
   }
 
   public send() {
-    this.keyboard.close();
+    // this.keyboard.close();
     if (this.isSent) { return; }
     const message = `${this.message} ${this.urlService.getDomain()}${this.shareUrl}`;
     let messagesSent = 0;

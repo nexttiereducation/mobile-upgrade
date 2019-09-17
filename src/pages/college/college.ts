@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { IonTabs, ModalController, ToastController } from '@ionic/angular';
 import { OverlayEventDetail } from '@ionic/core';
@@ -14,8 +14,8 @@ import { CollegeApplicationPage } from '@nte/pages/college-application/college-a
 import { CollegeCampusPage } from '@nte/pages/college-campus/college-campus';
 import { CollegeFinancialPage } from '@nte/pages/college-financial/college-financial';
 import { CollegeGeneralPage } from '@nte/pages/college-general/college-general';
-import { CollegeTabsService } from '@nte/services/college-tabs.service';
 import { CollegeService } from '@nte/services/college.service';
+import { CollegesService } from '@nte/services/colleges.service';
 import { MixpanelService } from '@nte/services/mixpanel.service';
 import { NavStateService } from '@nte/services/nav-state.service';
 import { StakeholderService } from '@nte/services/stakeholder.service';
@@ -23,7 +23,8 @@ import { StakeholderService } from '@nte/services/stakeholder.service';
 @Component({
   selector: `college`,
   templateUrl: `college.html`,
-  styleUrls: [`college.scss`]
+  styleUrls: [`college.scss`],
+  encapsulation: ViewEncapsulation.None
 })
 export class CollegePage implements OnInit, OnDestroy {
   @ViewChild(`collegeTabs`, { static: false }) tabs: IonTabs;
@@ -61,11 +62,18 @@ export class CollegePage implements OnInit, OnDestroy {
   private ngUnsubscribe: Subject<any> = new Subject();
 
   get college() {
-    return this.collegeTabsService.activeCollege;
+    if (this.collegeService.active) {
+      return this.collegeService.active;
+    }
+  }
+  get college$() {
+    if (this.collegeService.active$) {
+      return this.collegeService.active$;
+    }
   }
 
   get id() {
-    return this.collegeService.getIdFromCollege(this.college) || this.activeCollegeId;
+    return this.collegesService.getIdFromCollege(this.college) || this.activeCollegeId;
   }
 
   get savedStatus() {
@@ -81,7 +89,7 @@ export class CollegePage implements OnInit, OnDestroy {
   }
 
   constructor(private collegeService: CollegeService,
-    private collegeTabsService: CollegeTabsService,
+    private collegesService: CollegesService,
     private mixpanel: MixpanelService,
     private modalCtrl: ModalController,
     private route: ActivatedRoute,
@@ -95,39 +103,26 @@ export class CollegePage implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    if (this.college) {
-      if (!this.activeCollegeId) {
-        this.activeCollegeId = this.college.id;
-      }
-      this.init();
-    } else {
-      if (this.collegeTabsService.activeCollege) {
-        this.activeCollegeId = this.college.id;
-        this.init();
-      } else {
-        this.activeCollegeId = +this.route.snapshot.paramMap.get('id');
-        this.init();
-      }
-    }
     if (this.isRecd) {
-      this.collegeService.recommendations$
+      this.collegesService.recommendations$
         .pipe(takeUntil(this.ngUnsubscribe))
         .subscribe((recs: ICollegeRecommendation[]) => {
-          if (this.collegeService.recommendations$ && this.collegeService.recommendations.length) {
+          if (this.collegesService.recommendations && this.collegesService.recommendations.length) {
             const rec = recs.find(
               c => c.id === this.activeCollegeId || c.id === (this.activeCollegeId + 1)
             );
             if (rec) {
-              this.collegeTabsService.activeCollege = rec.institution;
+              this.collegeService.active = rec.institution;
               this.recommender = rec.recommender;
-              this.activeCollegeId = rec.institution.id;
-              this.init();
+              this.getCollegeDetails(rec.institution.id);
             }
           }
         });
       if (!this.college) {
-        this.collegeService.initRecs(this.user.id);
+        this.collegesService.initRecs(this.user.id);
       }
+    } else {
+      this.init();
     }
   }
 
@@ -151,13 +146,13 @@ export class CollegePage implements OnInit, OnDestroy {
       id: this.id,
       name: this.college.name
     };
-    const isRec = this.collegeService.isRecd(this.id);
+    const isRec = this.collegesService.isRecd(this.id);
     if (this.user.phase === `Senior`) {
       const isNewAdd = true;
       if (college) {
         college = college.institution ? college.institution : college;
       }
-      this.collegeService.getDetails(this.id)
+      this.collegesService.getDetails(this.id)
         .pipe(takeUntil(this.ngUnsubscribe))
         .subscribe(async (collegeDetails) => {
           const applyModal = await this.modalCtrl.create({
@@ -193,14 +188,11 @@ export class CollegePage implements OnInit, OnDestroy {
   }
 
   private getCollegeDetails(id: number) {
-    this.collegeService.getDetails(id)
+    this.collegesService.getDetails(id)
       .pipe(takeUntil(this.ngUnsubscribe))
       .subscribe((college) => {
-        this.collegeTabsService.activeCollege = college;
-        this.collegeService.setSelected(college);
-        if (!this.activeCollegeId) {
-          this.activeCollegeId = this.collegeService.getIdFromCollege(this.college);
-        }
+        this.collegeService.active = college;
+        this.activeCollegeId = this.collegesService.getIdFromCollege(this.college);
         // mixpanel
         // const mixpanelData = { 'institution_name': institution.name };
         // this.mixpanel.event('details_scrolled', mixpanelData);
@@ -208,7 +200,12 @@ export class CollegePage implements OnInit, OnDestroy {
   }
 
   private init() {
-    this.getCollegeDetails(this.activeCollegeId);
+    if (this.college) {
+      this.getCollegeDetails(this.id);
+    } else {
+      const id = this.activeCollegeId || +this.route.snapshot.paramMap.get('id');
+      this.getCollegeDetails(id);
+    }
     this.mixpanel.event(`navigated_to-College-Detail`,
       { institution_name: this.college.name }
     );
@@ -228,11 +225,10 @@ export class CollegePage implements OnInit, OnDestroy {
   }
 
   private async openUnsaveModal(college: any) {
-    const isRec = this.collegeService.isRecd(this.id);
     const toast = await this.toastCtrl.create({
       buttons: [{
         handler: () => {
-          if (!isRec) {
+          if (!this.isRecd) {
             this.follow(college, true, this.id);
           }
         },
@@ -246,7 +242,7 @@ export class CollegePage implements OnInit, OnDestroy {
   }
 
   private save(college: any, fromToast?: boolean, applicationData?: any, isRec?: boolean) {
-    this.collegeService.save(college, this.user, applicationData, isRec)
+    this.collegesService.save(college, this.user, applicationData, isRec)
       .pipe(takeUntil(this.ngUnsubscribe))
       .subscribe(
         (collegeTracker) => {
@@ -272,7 +268,7 @@ export class CollegePage implements OnInit, OnDestroy {
   }
 
   private unsave(college: ICollege | ICollegeTracker, fromToast?: boolean, _id?: number) {
-    this.collegeService.unsave(this.id, this.user.isParent)
+    this.collegesService.unsave(this.id, this.user.isParent)
       .pipe(takeUntil(this.ngUnsubscribe))
       .subscribe(
         () => {
