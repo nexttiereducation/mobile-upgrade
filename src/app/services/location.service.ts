@@ -1,10 +1,8 @@
 import { Injectable } from '@angular/core';
-import { Diagnostic } from '@ionic-native/diagnostic/ngx';
 import { Geolocation } from '@ionic-native/geolocation/ngx';
 import { AlertController } from '@ionic/angular';
 import { Observable, Subject } from 'rxjs';
 
-import { PERMISSION } from '@nte/constants/location.constants';
 import { ApiService } from '@nte/services/api.service';
 
 @Injectable({ providedIn: 'root' })
@@ -53,7 +51,6 @@ export class LocationService {
   constructor(
     private alertCtrl: AlertController,
     private apiService: ApiService,
-    private diagnostic: Diagnostic,
     private geolocation: Geolocation
   ) { }
 
@@ -103,62 +100,62 @@ export class LocationService {
   public checkIfLocationAuthorized() {
     // Checks if the NextTier app is authorized to use this device's location.
     //   Note for Android: this is intended for Android 6 + / API 23 +.
-    return this.diagnostic
-      .isLocationAuthorized()
-      .then(isAuthorized => {
-        if (isAuthorized) {
-          this._isAuthorized.next(true);
-          this.geoAuthorized = true;
-          return this.getCurrentPosition();
-        } else {
-          return this.getLocationAuthStatus();
-        }
-      })
-      .catch(e => {
-        console.error(e);
-        if (e === `cordova_not_available`) {
-          return this.getCurrentPosition(true);
-        }
-        return;
-      });
+    // return this.diagnostic
+    //   .isLocationAuthorized()
+    //   .then(isAuthorized => {
+    //     if (isAuthorized) {
+    //       this._isAuthorized.next(true);
+    //       this.geoAuthorized = true;
+    //       return this.getCurrentPosition();
+    //     } else {
+    //       return this.getLocationAuthStatus();
+    //     }
+    //   })
+    //   .catch(e => {
+    //     console.error(e);
+    //     if (e === `cordova_not_available`) {
+    //       return this.getCurrentPosition(true);
+    //     }
+    //     return;
+    //   });
   }
 
   public checkIfLocationAvailable() {
     // Checks if the NextTier app is able to access this device's location.
-    return this.diagnostic
-      .isLocationAvailable()
-      .then(isAvailable => {
-        this._isAvailable.next(isAvailable);
-        if (isAvailable) {
-          return this.checkIfLocationAuthorized();
-        } else {
-          return this.checkIfLocationEnabled();
-        }
-      })
-      .catch(error => {
-        console.error(`Location is: ${error}`);
-        return;
-      });
+    // return this.diagnostic
+    //   .isLocationAvailable()
+    //   .then(isAvailable => {
+    //     this._isAvailable.next(isAvailable);
+    //     if (isAvailable) {
+    //       return this.checkIfLocationAuthorized();
+    //     } else {
+    //       return this.checkIfLocationEnabled();
+    //     }
+    //   })
+    //   .catch(error => {
+    //     console.error(`Location is: ${error}`);
+    //     return;
+    //   });
   }
 
   public checkIfLocationEnabled() {
     // Returns true if the device setting for location is on.
     //   Android: Location Mode
     //   iOS: Location Services
-    return this.diagnostic
-      .isLocationEnabled()
-      .then(isEnabled => {
-        this._isEnabled.next(isEnabled);
-        if (isEnabled) {
-          return this.checkIfLocationAuthorized();
-        } else {
-          return;
-        }
-      })
-      .catch(e => {
-        console.error(e);
-        return;
-      });
+    // return this.diagnostic
+    //   .isLocationEnabled()
+    //   .then(isEnabled => {
+    //     this._isEnabled.next(isEnabled);
+    //     if (isEnabled) {
+    //       return this.checkIfLocationAuthorized();
+    //     } else {
+    //       return;
+    //     }
+    //   })
+    //   .catch(e => {
+    //     console.error(e);
+    //     return;
+    //   });
   }
 
   public clearAll() {
@@ -184,7 +181,7 @@ export class LocationService {
         {
           handler: () => {
             // Displays the device location settings so user can enable location services/change location mode.
-            this.diagnostic.switchToLocationSettings();
+            // this.diagnostic.switchToLocationSettings();
           },
           text: `Sure!`
         }
@@ -248,38 +245,38 @@ export class LocationService {
 
   public getLocationAuthStatus() {
     // Returns the location auth status for the NextTier app on this device.
-    return this.diagnostic
-      .getLocationAuthorizationStatus()
-      .then(status => {
-        switch (this.getPermissionForStatus(status)) {
-          case PERMISSION.denied:
-            return this._isAuthorized.next(false);
-          case PERMISSION.granted:
-            return this._isAuthorized.next(true);
-          case PERMISSION.request:
-          default:
-            return this.requestLocationAuth();
-        }
-      })
-      .catch(e => {
-        console.error(e);
-        return;
-      });
+    // return this.diagnostic
+    //   .getLocationAuthorizationStatus()
+    //   .then(status => {
+    //     switch (this.getPermissionForStatus(status)) {
+    //       case PERMISSION.denied:
+    //         return this._isAuthorized.next(false);
+    //       case PERMISSION.granted:
+    //         return this._isAuthorized.next(true);
+    //       case PERMISSION.request:
+    //       default:
+    //         return this.requestLocationAuth();
+    //     }
+    //   })
+    //   .catch(e => {
+    //     console.error(e);
+    //     return;
+    //   });
   }
 
   public getPermissionForStatus(status) {
-    const permStatus = this.diagnostic.permissionStatus;
-    switch (status) {
-      case permStatus.GRANTED:
-      case permStatus.GRANTED_WHEN_IN_USE:
-        return PERMISSION.granted;
-      case permStatus.NOT_REQUESTED:
-        return PERMISSION.request;
-      case permStatus.DENIED_ONCE:
-      case permStatus.DENIED_ALWAYS:
-      case permStatus.RESTRICTED:
-        return PERMISSION.denied;
-    }
+    // const permStatus = this.diagnostic.permissionStatus;
+    // switch (status) {
+    //   case permStatus.GRANTED:
+    //   case permStatus.GRANTED_WHEN_IN_USE:
+    //     return PERMISSION.granted;
+    //   case permStatus.NOT_REQUESTED:
+    //     return PERMISSION.request;
+    //   case permStatus.DENIED_ONCE:
+    //   case permStatus.DENIED_ALWAYS:
+    //   case permStatus.RESTRICTED:
+    //     return PERMISSION.denied;
+    // }
   }
 
   public getZipcode(coords) {
@@ -290,26 +287,26 @@ export class LocationService {
   public requestLocationAuth() {
     // Asks for, then returns the location auth status chosen for the NextTier app on this device.
     //   Note for Android: this is intended for Android 6 / API 23 and above.
-    return this.diagnostic
-      .requestLocationAuthorization()
-      .then(status => {
-        const perm = this.getPermissionForStatus(status);
-        if (perm === PERMISSION.granted) {
-          this._isAuthorized.next(true);
-          this.geoAuthorized = true;
-          return this.getCurrentPosition();
-        } else if (perm === PERMISSION.denied) {
-          this._isAuthorized.next(false);
-          this.geoAuthorized = false;
-          return;
-        } else {
-          return this.requestLocationAuth();
-        }
-      })
-      .catch(e => {
-        console.error(e);
-        return;
-      });
+    // return this.diagnostic
+    //   .requestLocationAuthorization()
+    //   .then(status => {
+    //     const perm = this.getPermissionForStatus(status);
+    //     if (perm === PERMISSION.granted) {
+    //       this._isAuthorized.next(true);
+    //       this.geoAuthorized = true;
+    //       return this.getCurrentPosition();
+    //     } else if (perm === PERMISSION.denied) {
+    //       this._isAuthorized.next(false);
+    //       this.geoAuthorized = false;
+    //       return;
+    //     } else {
+    //       return this.requestLocationAuth();
+    //     }
+    //   })
+    //   .catch(e => {
+    //     console.error(e);
+    //     return;
+    //   });
   }
 
   public showPosition(position: any) {

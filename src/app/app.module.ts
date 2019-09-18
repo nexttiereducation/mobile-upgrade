@@ -8,7 +8,6 @@ import { RouteReuseStrategy } from '@angular/router';
 import { CallNumber } from '@ionic-native/call-number/ngx';
 import { Deeplinks } from '@ionic-native/deeplinks/ngx';
 import { Device } from '@ionic-native/device/ngx';
-import { Diagnostic } from '@ionic-native/diagnostic/ngx';
 import { EmailComposer } from '@ionic-native/email-composer/ngx';
 import { File } from '@ionic-native/file/ngx';
 import { Geolocation } from '@ionic-native/geolocation/ngx';
@@ -181,7 +180,7 @@ import { UrlService } from '@nte/services/url.service';
     CallNumber,
     Deeplinks,
     Device,
-    Diagnostic,
+    // Diagnostic,
     EmailComposer,
     // FCMNG,
     File,

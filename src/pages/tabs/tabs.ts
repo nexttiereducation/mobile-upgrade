@@ -2,7 +2,6 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { Plugins, PushNotification, PushNotificationActionPerformed, PushNotificationToken } from '@capacitor/core';
 import { NativeStorage } from '@ionic-native/native-storage/ngx';
-import { StatusBar } from '@ionic-native/status-bar/ngx';
 import { Platform } from '@ionic/angular';
 import { partition } from 'lodash';
 import { BehaviorSubject, Subject } from 'rxjs';
@@ -52,14 +51,13 @@ export class TabsPage implements OnInit, OnDestroy {
     private mixpanel: MixpanelService,
     private nativeStorage: NativeStorage,
     private platform: Platform,
-    private router: Router,
-    private statusBar: StatusBar) {
-    if (this.platform.is(`android`)) {
-      this.statusBar.overlaysWebView(true);
-      this.statusBar.backgroundColorByHexString(`#3693cc`);
-    } else {
-      this.statusBar.styleDefault();
-    }
+    private router: Router) {
+    // if (this.platform.is(`android`)) {
+    //   this.statusBar.overlaysWebView(true);
+    //   this.statusBar.backgroundColorByHexString(`#3693cc`);
+    // } else {
+    //   this.statusBar.styleDefault();
+    // }
   }
 
   ngOnInit() {

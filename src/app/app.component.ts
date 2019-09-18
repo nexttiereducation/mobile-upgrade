@@ -1,4 +1,5 @@
 import { AfterViewInit, Component } from '@angular/core';
+import { Plugins } from '@capacitor/core';
 import { CallNumber } from '@ionic-native/call-number/ngx';
 import { Device } from '@ionic-native/device/ngx';
 import { EmailComposer } from '@ionic-native/email-composer/ngx';
@@ -14,6 +15,8 @@ import { LinkService } from '@nte/services/link.service';
 import { MessageService } from '@nte/services/message.service';
 import { NotificationService } from '@nte/services/notification.service';
 import { StakeholderService } from '@nte/services/stakeholder.service';
+
+const { SplashScreen, StatusBar } = Plugins;
 
 @Component({
   selector: `app-root`,
@@ -68,9 +71,9 @@ export class NteAppComponent implements AfterViewInit {
       .ready()
       .then(() => {
         console.log(`Platform ready`);
-        // if (this.splashScreen) {
-        //   this.splashScreen.hide();
-        // }
+        if (SplashScreen) {
+          SplashScreen.hide();
+        }
         this.setupAppListeners();
         this.setupComponents();
         this.setupKeyboardListeners();
@@ -174,14 +177,12 @@ export class NteAppComponent implements AfterViewInit {
   }
 
   private setupComponents() {
-    // if (this.platform && this.statusBar) {
-    //   if (this.platform.is(`android`)) {
-    //     this.statusBar.overlaysWebView(true);
-    //     this.statusBar.backgroundColorByHexString(`#3693cc`);
-    //   } else {
-    //     this.statusBar.styleDefault();
-    //   }
-    // }
+    if (this.platform && StatusBar) {
+      if (this.platform.is(`android`)) {
+        StatusBar.setBackgroundColor({ color: `#3693cc` });
+      }
+      StatusBar.show();
+    }
   }
 
   private setupKeyboardListeners() {

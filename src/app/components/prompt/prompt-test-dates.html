@@ -17,10 +17,9 @@
     </ion-radio-group>
   </ion-list>
   <div [hidden]="!isTakingTest.value">
-    <div class="medium"
-         padding>{{ prompt.question }}</div>
+    <div class="medium ion-padding ion-">{{ prompt.question }}</div>
     <ion-list formArrayName="knownDatesArray"
-              no-margin>
+              class=" ion-no-margin ion-">
       <ion-item *ngFor="let choiceGroup of knownDateControls; let i = index"
                 [formGroupName]="i">
         <ion-checkbox formControlName="checked"
@@ -64,8 +63,7 @@
       </ion-item>
     </ion-list>
     <ion-button color="primary"
-                margin-horizontal
-                margin-bottom
+                class=" ion-margin-horizontal ion-margin-bottom"
                 [disabled]="customDates.invalid"
                 [hidden]="!lastChoiceSelected"
                 (click)="addCustomDeadline()"> Add date </ion-button>

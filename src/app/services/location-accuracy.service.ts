@@ -1,5 +1,4 @@
 import { Injectable } from '@angular/core';
-import { Diagnostic } from '@ionic-native/diagnostic/ngx';
 import { LocationAccuracy } from '@ionic-native/location-accuracy/ngx';
 import { AlertController, Platform } from '@ionic/angular';
 
@@ -7,7 +6,6 @@ import { AlertController, Platform } from '@ionic/angular';
 export class LocationAccuracyService {
 
   constructor(private alertCtrl: AlertController,
-    private diagnostic: Diagnostic,
     private locationAccuracy: LocationAccuracy,
     private platform: Platform) {
     this.requestLocationAccuracy();
@@ -24,47 +22,47 @@ export class LocationAccuracyService {
   }
 
   handleLocationAuthorizationStatus(status) {
-    switch (status) {
-      case this.diagnostic.permissionStatus.GRANTED:
-        if (this.platform.is(`ios`)) {
-          this.onError(`Location services is already switched ON`);
-        } else {
-          this._makeRequest();
-        }
-        break;
-      case this.diagnostic.permissionStatus.NOT_REQUESTED:
-        this.requestLocationAuthorization();
-        break;
-      case this.diagnostic.permissionStatus.DENIED_ONCE:
-        if (this.platform.is(`android`)) {
-          this.onError(`User denied permission to use location`);
-        } else {
-          this._makeRequest();
-        }
-        break;
-      case this.diagnostic.permissionStatus.DENIED_ALWAYS:
-        // Android only
-        this.onError(`User denied permission to use location`);
-        break;
-      case this.diagnostic.permissionStatus.GRANTED_WHEN_IN_USE:
-        // iOS only
-        this.onError(`Location services is already switched ON`);
-        break;
-    }
+    // switch (status) {
+    //   case this.diagnostic.permissionStatus.GRANTED:
+    //     if (this.platform.is(`ios`)) {
+    //       this.onError(`Location services is already switched ON`);
+    //     } else {
+    //       this._makeRequest();
+    //     }
+    //     break;
+    //   case this.diagnostic.permissionStatus.NOT_REQUESTED:
+    //     this.requestLocationAuthorization();
+    //     break;
+    //   case this.diagnostic.permissionStatus.DENIED_ONCE:
+    //     if (this.platform.is(`android`)) {
+    //       this.onError(`User denied permission to use location`);
+    //     } else {
+    //       this._makeRequest();
+    //     }
+    //     break;
+    //   case this.diagnostic.permissionStatus.DENIED_ALWAYS:
+    //     // Android only
+    //     this.onError(`User denied permission to use location`);
+    //     break;
+    //   case this.diagnostic.permissionStatus.GRANTED_WHEN_IN_USE:
+    //     // iOS only
+    //     this.onError(`Location services is already switched ON`);
+    //     break;
+    // }
   }
 
   requestLocationAuthorization() {
-    this.diagnostic.requestLocationAuthorization().then(
-      this.handleLocationAuthorizationStatus,
-      this.onError
-    );
+    // this.diagnostic.requestLocationAuthorization().then(
+    //   this.handleLocationAuthorizationStatus,
+    //   this.onError
+    // );
   }
 
   requestLocationAccuracy() {
-    this.diagnostic.getLocationAuthorizationStatus().then(
-      this.handleLocationAuthorizationStatus,
-      this.onError
-    );
+    // this.diagnostic.getLocationAuthorizationStatus().then(
+    //   this.handleLocationAuthorizationStatus,
+    //   this.onError
+    // );
   }
 
   async goToLocationSettingsConfirm() {
@@ -83,7 +81,7 @@ export class LocationAccuracyService {
           text: `Agree`,
           handler: () => {
             console.log(`Agree clicked`);
-            this.diagnostic.switchToLocationSettings();
+            // this.diagnostic.switchToLocationSettings();
           }
         }
       ]

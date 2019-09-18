@@ -1,16 +1,16 @@
 <ion-header mode="ios">
   <ion-toolbar mode="ios">
     <ion-buttons slot="secondary">
-      <ion-button icon-only
-                  color="black"
+      <ion-button color="black"
+                  icon-only
                   (click)="closeModal()">
         <ion-icon name="ios-arrow-up"></ion-icon>
       </ion-button>
     </ion-buttons>
-    <ion-title mode="ios"
-               class="avatar-title"
+    <ion-title class="avatar-title"
+               mode="ios"
                *ngIf="college && college.name">
-      <ion-avatar item-left>
+      <ion-avatar item-left="">
         <img class="avatar-shadow"
              [src]="college?.photo_url">
       </ion-avatar>
@@ -35,9 +35,9 @@
            margin-top
            padding-horizontal>How are you applying?</div>
       <ng-template [ngIf]="applicationDates?.length">
-        <div padding
-             class="medium">Application Deadline</div>
-        <ion-list no-lines>
+        <div class="medium"
+             padding>Application Deadline</div>
+        <ion-list no-lines="">
           <ion-radio-group [(value)]="selectedDate">
             <ion-item *ngFor="let date of applicationDates">
               <ion-label>
@@ -48,17 +48,17 @@
                 </div>
                 <div class="application-date-type text-black">{{ date.application_type }} </div>
               </ion-label>
-              <ion-radio slot="start"
-                         [value]="date"
-                         item-end></ion-radio>
+              <ion-radio item-end
+                         slot="start"
+                         [value]="date"></ion-radio>
             </ion-item>
           </ion-radio-group>
         </ion-list>
       </ng-template>
       <ng-template [ngIf]="college.is_form || college.is_account || college.details.groups.length">
-        <div padding
-             class="medium">Application Type</div>
-        <ion-list no-lines>
+        <div class="medium"
+             padding>Application Type</div>
+        <ion-list no-lines="">
           <ion-radio-group>
             <ion-item *ngIf="college.is_form">
               <ion-radio slot="start"
@@ -74,8 +74,8 @@
             </ion-item>
             <ion-item *ngFor="let group of college.details.groups">
               <ion-radio slot="start"
-                         [value]="group.id"
-                         (ionSelect)="applicationMethodChange($event)"></ion-radio>
+                         (ionSelect)="applicationMethodChange($event)"
+                         [value]="group.id"></ion-radio>
               <ion-label class="text-black">{{ group.name }}</ion-label>
             </ion-item>
           </ion-radio-group>
@@ -98,16 +98,16 @@
 </ion-content>
 <ion-footer *ngIf="(selectedDate && applicationMethod) || !applicationDates?.length">
   <ion-toolbar [color]="(user.isSenior && selectedDate && applicationMethod) || !user.isSenior ? 'green' : 'primary'">
-    <ion-button expand="full"
+    <ion-button color="white"
+                expand="full"
                 fill="clear"
-                color="white"
                 *ngIf="(user.isSenior && selectedDate && applicationMethod) || !user.isSenior"
-                [disabled]="isSaving"
-                (click)="save()">
+                (click)="save()"
+                [disabled]="isSaving">
       {{ isSaving ? 'Saving' : (selectedDate && applicationMethod) ? 'Save' : 'Skip for now' }} </ion-button>
-    <ion-button expand="full"
+    <ion-button color="white"
+                expand="full"
                 fill="clear"
-                color="white"
                 *ngIf="user.isSenior && !applicationDates?.length"
                 (click)="closeNoDeadlines()"> Close </ion-button>
   </ion-toolbar>

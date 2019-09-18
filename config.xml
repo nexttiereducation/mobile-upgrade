@@ -95,10 +95,8 @@
     </platform>
     <plugin name="cordova-plugin-whitelist" spec="1.3.3" />
     <plugin name="cordova-plugin-device" spec="2.0.2" />
-    <plugin name="cordova-plugin-ionic-webview" spec="^4.0.0" />
     <engine name="browser" spec="~5.0.4" />
     <plugin name="mx.ferreyra.callnumber" spec="~0.0.2" />
-    <plugin name="cordova.plugins.diagnostic" spec="^5.0.0" />
     <plugin name="ionic-plugin-deeplinks" spec="^1.0.20">
         <variable name="URL_SCHEME" value="nte" />
         <variable name="DEEPLINK_SCHEME" value="https" />
@@ -115,8 +113,4 @@
     <plugin name="cordova-plugin-nativestorage" spec="^2.3.2" />
     <plugin name="cordova-plugin-request-location-accuracy" spec="^2.3.0" />
     <plugin name="cordova-plugin-themeablebrowser" spec="^0.2.18" />
-    <plugin name="cordova-fabric-plugin" spec="^1.1.14-dev">
-        <variable name="FABRIC_API_KEY" value="c6221f8016571378aeb4b0246bf08265b2c1afb0" />
-        <variable name="FABRIC_API_SECRET" value="e8dd70cfdfdddf77a33bfa200eea305fbf509a7e80db7864775cc116995b1838" />
-    </plugin>
 </widget>
