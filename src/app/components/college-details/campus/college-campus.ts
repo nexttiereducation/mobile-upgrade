@@ -1,7 +1,5 @@
 import { animate, state, style, transition, trigger } from '@angular/animations';
 import { Component, ViewEncapsulation } from '@angular/core';
-import { GoogleMap, GoogleMaps, GoogleMapsAnimation, GoogleMapsEvent } from '@ionic-native/google-maps/ngx';
-import { BehaviorSubject } from 'rxjs';
 
 import { CollegeService } from '@nte/services/college.service';
 import { CollegesService } from '@nte/services/colleges.service';
@@ -9,7 +7,10 @@ import { CollegesService } from '@nte/services/colleges.service';
 @Component({
   selector: `college-campus`,
   templateUrl: `college-campus.html`,
-  styleUrls: [`college-campus.scss`],
+  styleUrls: [
+    `./../college-details.scss`,
+    `college-campus.scss`
+  ],
   animations: [
     trigger(`mapState`, [
       state(`ready`,
@@ -26,13 +27,7 @@ import { CollegesService } from '@nte/services/colleges.service';
   ],
   encapsulation: ViewEncapsulation.None
 })
-export class CollegeCampusPage {
-  public animation = GoogleMapsAnimation;
-  public event = GoogleMapsEvent;
-  public map: GoogleMap;
-
-  private _mapReady: BehaviorSubject<boolean> = new BehaviorSubject(null);
-
+export class CollegeCampusComponent {
   get college() {
     return this.collegeService.active;
   }
@@ -59,34 +54,15 @@ export class CollegeCampusPage {
     }
   }
 
-  get latitude() {
-    if (this.college) {
-      return +this.college.latitude;
-    }
-  }
-
   get liveOnCampusChart() {
-    if (this.details.fresman_perecent_on_campus) {
+    if (this.details.freshman_perecent_on_campus) {
       return {
         label: `Live on campus`,
-        value: this.details.fresman_perecent_on_campus
+        value: this.details.freshman_perecent_on_campus
       };
     } else {
       return null;
     }
-  }
-
-  get longitude() {
-    if (this.college) {
-      return +this.college.longitude;
-    }
-  }
-
-  get mapReady$() {
-    return this._mapReady.asObservable();
-  }
-  set mapReady(ready: boolean) {
-    this._mapReady.next(ready);
   }
 
   get outOfStateChart() {
@@ -110,6 +86,7 @@ export class CollegeCampusPage {
       return null;
     }
   }
+
   get workOnCampusChart() {
     if (this.details.percent_working_students) {
       return {
@@ -122,45 +99,6 @@ export class CollegeCampusPage {
   }
 
   constructor(public collegeService: CollegeService,
-    public collegesService: CollegesService,
-    private googleMaps: GoogleMaps) { }
+    public collegesService: CollegesService) { }
 
-  public ionViewDidLoad() {
-    this.loadMap();
-  }
-
-  private loadMap() {
-    // Create a map after the view is loaded.
-    // (platform is already ready in app.component.ts)
-    // var div = document.getElementById("map_canvas");
-    // // Create a Google Maps native view under the map_canvas div.
-    // var map = plugin.google.maps.Map.getMap(div);
-    const latLng = {
-      lat: this.latitude,
-      lng: this.longitude
-    };
-    this.map = this.googleMaps.create(`map_canvas`, {
-      camera: {
-        target: latLng,
-        zoom: 5
-      }
-    });
-    this.map.on(this.event.MAP_READY)
-      .subscribe(() => {
-        console.log(`[MAP] Ready event.`);
-        this.mapReady = true;
-      });
-    this.map.animateCamera({
-      // bearing: 140,
-      duration: 3000,
-      target: latLng,
-      tilt: 60,
-      zoom: 10
-    });
-    this.map.addMarker({
-      animation: this.animation.BOUNCE,
-      position: latLng
-    });
-
-  }
 }

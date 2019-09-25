@@ -2,24 +2,21 @@
   <div class="backsplash">
     <div class="bg-image"></div>
   </div>
-  <div class="landing-content bg-blue"
-       text-center>
+  <div class="landing-content bg-blue ion-text-center">
     <img class="stacked-logo"
          src="assets/image/logo/stacked.svg">
-    <div class="text-white staging-build"
-         padding-10
+    <div class="text-white staging-build ion-padding-10"
          *ngIf="environmentService.isLocal">STAGING BUILD</div>
   </div>
 </ion-content>
-<ion-footer class="no-border bg-blue"
-            padding-10>
+<ion-footer class="no-border bg-blue ion-padding-10">
   <ion-button color="white"
               expand="full"
               size="large"
               (click)="goToRegistration()"> Create an account </ion-button>
-  <ion-button fill="clear"
-              color="white"
+  <ion-button color="white"
               expand="full"
+              fill="clear"
               size="large"
               (click)="goToLogin()">
     <span class="not-bold">Already have an account?</span>&nbsp;Log in </ion-button>

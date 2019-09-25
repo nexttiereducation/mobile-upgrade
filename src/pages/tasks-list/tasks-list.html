@@ -1,33 +1,22 @@
-<ion-header mode="ios">
-  <ion-toolbar mode="ios">
+<ion-header>
+  <ion-toolbar>
     <ion-buttons slot="start">
       <ion-back-button></ion-back-button>
     </ion-buttons>
-    <ion-title mode="ios"
-               tappable
+    <ion-title tappable
                (click)="scrollToTop()">
       <div class="subhead text-grayDark50"> {{ impersonatedStudent ? impersonatedStudent.full_name : 'Tasks' }} </div>
       {{ isSearchAll ? listName : ((listName + ' Tasks') || 'Tasks') }}
     </ion-title>
-    <ion-buttons slot="primary"
-                 messaging-button></ion-buttons>
+    <ion-buttons messaging-button
+                 slot="end"></ion-buttons>
   </ion-toolbar>
-  <ion-toolbar class="collapse-expand"
-               no-padding
+  <ion-toolbar class="collapse-expand ion-no-padding"
                *ngIf="(taskService.userTaskTrackers | async)?.length > 0">
-    <ion-grid no-padding>
-      <ion-row align-items-start>
-        <ion-col>
-          <ion-searchbar debounce="1000"
-                         mode="ios"
-                         type="search"
-                         (ionClear)="clearSearch($event)"
-                         (ionInput)="search($event)"
-                         (keyup.enter)="keyboard.close()"
-                         [(ngModel)]="searchTerm"></ion-searchbar>
-        </ion-col>
-      </ion-row>
-    </ion-grid>
+    <ion-searchbar debounce="1000"
+                   type="search"
+                   (ionClear)="clearSearch($event)"
+                   (ionChange)="search($event)"></ion-searchbar>
   </ion-toolbar>
 </ion-header>
 <ion-content class="bg-grayLight">
@@ -62,13 +51,13 @@
           <ion-item tappable
                     (click)="openTaskDetail(taskTracker)">
             <ion-label>
-              <div class="body truncate">{{ taskTracker.task.name }}</div>
-              <div class="subhead">
+              <h2 class="truncate">{{ taskTracker.task.name }}</h2>
+              <p>
                 <ion-icon name="calendar"></ion-icon> Due by
                 {{ (taskTracker.dueDate || taskTracker.task.get_deadline) | date }}
-              </div>
+              </p>
             </ion-label>
-            <ion-avatar item-end>
+            <ion-avatar slot="end">
               <img [class.avatar-shadow]="taskTracker.task.task_type == 'CS'"
                    [class.bg-white]="list.iconUrl"
                    [src]="isSearchAll
@@ -78,21 +67,21 @@
           </ion-item>
           <ion-item-options class="bg-blue"
                             side="end">
-            <ion-button fill="clear"
-                        color="white"
+            <ion-button color="white"
+                        fill="clear"
                         *ngIf="(connectionService.all$ | async)?.length"
                         (click)="openSendModal(taskTracker)">
               <ion-icon name="send"></ion-icon>
               <span class="no-caps">Send</span>
             </ion-button>
-            <ion-button fill="clear"
-                        color="white"
+            <ion-button color="white"
+                        fill="clear"
                         (click)="openTaskDetail(taskTracker, null, 'attach')">
               <ion-icon name="attach"></ion-icon>
               <span class="no-caps">Files</span>
             </ion-button>
-            <ion-button fill="clear"
-                        color="white"
+            <ion-button color="white"
+                        fill="clear"
                         (click)="openTaskDetail(taskTracker, null, 'notes')">
               <ion-icon md-name="chat_bubble">chat_bubble</ion-icon>
               <span class="no-caps">Notes</span>

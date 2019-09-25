@@ -1,37 +1,36 @@
-<ion-header mode="ios">
-  <ion-toolbar mode="ios">
+<ion-header>
+  <ion-toolbar>
     <ion-buttons notifications-button
                  slot="secondary"></ion-buttons>
-    <ion-title mode="ios">Colleges</ion-title>
-    <ion-buttons slot="primary"
-                 messaging-button></ion-buttons>
+    <ion-title>Colleges</ion-title>
+    <ion-buttons messaging-button
+                 slot="primary"></ion-buttons>
   </ion-toolbar>
 </ion-header>
 <ion-content class="bg-grayLight">
-  <ion-grid no-padding
+  <ion-grid class="ion-no-padding"
             tiles>
     <ion-row>
       <ion-col *ngFor="let tile of tiles; let i = index"
+               [attr.col-12]="determineColumns(tile, i, 12)"
                [attr.col-4]="determineColumns(tile, i, 4)
                              && !(shouldHide(tiles[i+1]) || shouldHide(tiles[i+2])) ? true : null"
                [attr.col-6]="determineColumns(tile, i, 6)"
                [attr.col-8]="determineColumns(tile, i, 8)"
-               [attr.col-12]="determineColumns(tile, i, 12)"
                [hidden]="shouldHide(tile) || hiddenTiles[tile.name]">
         <ion-card class="tile"
                   [class.recommended]="tile.name === 'Recommended' && recommendations > 0"
                   [ngClass]="tile.inverse ? 'bg-blue50' : 'bg-white'">
-          <ion-button class="tile-button"
-                      text-center
+          <ion-button class="tile-button ion-text-center"
                       *ngIf="tile.isLocked"
+                      (click)="viewList(tile)"
                       [class.text-white]="tile.inverse"
-                      [color]="tile.inverse ? 'blue50' : 'white'"
-                      (click)="viewList(tile)">
+                      [color]="tile.inverse ? 'blue50' : 'white'">
             <ion-badge class="tile-badge"
                        color="green"
                        *ngIf="tile.name === 'Recommended' && recommendations >= 1 && !user.isParent">
               {{ recommendations }} </ion-badge>
-            <img [src]="tile.iconUrl" />
+            <img [src]="tile.iconUrl">
             <div class="tile-label">{{ tile.name }}</div>
           </ion-button>
           <ion-list *ngIf="!tile.isLocked">
@@ -46,11 +45,10 @@
               </ion-item-options>
               <ion-item>
                 <ion-label></ion-label>
-                <ion-button class="tile-button"
+                <ion-button class="tile-button ion-text-center"
                             color="white"
-                            text-center
                             (click)="viewList(tile)">
-                  <img [src]="tile.iconUrl" />
+                  <img [src]="tile.iconUrl">
                   <ion-label class="tile-label">{{ tile.name }}</ion-label>
                 </ion-button>
               </ion-item>

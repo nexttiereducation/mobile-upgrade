@@ -1,14 +1,14 @@
-<ion-header mode="ios">
-  <ion-toolbar mode="ios">
+<ion-header>
+  <ion-toolbar>
     <ion-buttons slot="secondary">
-      <ion-button fill="clear"
-                  color="black"
+      <ion-button color="black"
+                  fill="clear"
                   icon-only
                   (click)="closeShareModal()">
         <ion-icon name="close"></ion-icon>
       </ion-button>
     </ion-buttons>
-    <ion-title mode="ios"> Send {{ itemType }} </ion-title>
+    <ion-title> Send {{ itemType }} </ion-title>
   </ion-toolbar>
 </ion-header>
 <ion-content expand="full"
@@ -18,7 +18,7 @@
   <ion-item no-lines
             *ngSwitchCase="'Scholarship'">
     <ion-label></ion-label>
-    <ion-avatar item-left
+    <ion-avatar slot="start"
                 *ngIf="imageUrl">
       <img class="avatar-shadow bg-white"
            [src]="imageUrl">
@@ -34,7 +34,7 @@
   <!-- COLLEGE -->
   <ion-item no-lines
             *ngSwitchCase="'College'">
-    <ion-avatar item-left>
+    <ion-avatar slot="start">
       <img class="avatar-shadow"
            [src]="item.photo_url || item.institution.photo_url">
     </ion-avatar>
@@ -53,7 +53,7 @@
   <ion-item no-lines
             *ngSwitchCase="'Task'">
     <ion-label></ion-label>
-    <ion-avatar item-left>
+    <ion-avatar slot="start">
       <img class="bg-white"
            [class.avatar-shadow]="item.task?.task_type == 'CS'"
            [src]="imageUrl">
@@ -68,16 +68,11 @@
   </ion-item>
   <!-- CONNECTIONS -->
   <div class="connections horizontal-scroll">
-    <ion-grid no-padding>
-      <ion-row align-items-between
-               justify-content-start
-               margin-horizontal
+    <ion-grid class="ion-no-padding">
+      <ion-row class="ion-align-items-between ion-justify-content-start ion-margin-horizontal"
                nowrap>
-        <ion-col align-self-stretch
-                 justify-content-start
-                 margin-right
+        <ion-col class="ion-align-self-stretch ion-justify-content-start ion-margin-right ion-text-center"
                  tappable
-                 text-center
                  *ngFor="let connection of (connectionService.all$ | async)"
                  (click)="toggleSelection(connection)">
           <ion-icon class="selected-check"
@@ -85,15 +80,14 @@
                     [class.checked]="connection?.isSelected"></ion-icon>
           <img class="img-avatar"
                [src]="connection?.profile_photo || 'assets/image/contact/avatar-gray.svg'">
-          <div class="chartPercentage"
-               text-center
+          <div class="chartPercentage ion-text-center"
                [style.margin-top.px]="6">{{ connection?.get_full_name || connection?.full_name }}</div>
         </ion-col>
       </ion-row>
     </ion-grid>
   </div>
   <form (ngSubmit)="send()">
-    <ion-item padding>
+    <ion-item class="ion-padding">
       <ion-label></ion-label>
       <ion-input name="message"
                  [disabled]="!selectedConnections.size"
@@ -105,17 +99,17 @@
 <ion-footer>
   <ion-toolbar [color]="(isSent || isSending) ? 'green' : (selectedConnections.size ? 'primary' : 'white')">
     <ion-button class="bold"
-                fill="clear"
                 color="white"
                 expand="full"
+                fill="clear"
                 type="submit"
                 *ngIf="selectedConnections.size"
                 (click)="send()"
                 [disabled]="isSending"> {{ isSent ? 'Sent!' : (isSending ? 'Sending...' : 'Send') }} </ion-button>
     <ion-button class="bold"
-                fill="clear"
                 color="primary"
                 expand="full"
+                fill="clear"
                 type="button"
                 *ngIf="!selectedConnections.size"
                 (click)="closeShareModal()"> Cancel </ion-button>

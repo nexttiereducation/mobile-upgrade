@@ -1,20 +1,4 @@
 :host {
-  ion-header .avatar-shadow {
-    margin-right: 5px;
-  }
-
-  >ion-content>.scroll-content {
-    overflow: hidden;
-  }
-
-  .scroll-content .scroll-content {
-    padding-top: 0 !important;
-  }
-
-  ion-col>img {
-    max-height: 200px;
-  }
-
   button.changing {
     transform: opacity display 500ms ease-in-out;
 
@@ -46,19 +30,8 @@
     }
   }
 
-  .gray-sections ion-col.col {
-    >a:first-child:last-child {
-
-      // height: 132px;
-      .button-inner {
-        justify-content: space-between;
-        font-weight: 400;
-      }
-    }
-
-    // &:last-of-type img:first-child:last-child {
-    //   max-height: 80px;
-    // }
+  ion-header .avatar-shadow {
+    margin-right: 5px;
   }
 }
 

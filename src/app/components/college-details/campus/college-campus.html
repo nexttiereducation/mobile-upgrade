@@ -1,0 +1,104 @@
+<ion-content>
+  <ion-card *ngIf="(latitude && longitude)
+                        || details?.major_city
+                        || details?.airport_distance
+                        || details?.public_transit">
+    <ion-card-header>Location</ion-card-header>
+    <div>
+      <agm-map *ngIf="latitude && longitude"
+               [latitude]="latitude"
+               [longitude]="longitude">
+        <agm-marker [latitude]="latitude"
+                    [longitude]="longitude"></agm-marker>
+      </agm-map>
+      <div class="flex-row"
+           margin
+           *ngIf="details?.major_city">
+        <ion-thumbnail>
+          <img src="/assets/image/college/setting_city.svg">
+        </ion-thumbnail>
+        <div>
+          <div class="tinyText">Nearest Major City</div>
+          <div class="displayTitle text-blue">{{ details?.major_city }}</div>
+        </div>
+      </div>
+      <div class="flex-row"
+           margin
+           *ngIf="details?.airport_distance">
+        <ion-thumbnail>
+          <img src="/assets/image/college/detail_airport.svg">
+        </ion-thumbnail>
+        <div>
+          <div class="tinyText">Distance to Major Airport</div>
+          <div class="displayTitle text-blue">{{ details?.airport_distance + ' miles' }}</div>
+        </div>
+      </div>
+      <div class="flex-row"
+           margin
+           *ngIf="details?.public_transit">
+        <ion-thumbnail>
+          <img src="/assets/image/college/detail_public-transportation.svg">
+        </ion-thumbnail>
+        <div>
+          <div class="tinyText">Public Transit</div>
+          <div class="displayTitle text-blue">Available</div>
+        </div>
+      </div>
+    </div>
+  </ion-card>
+  <ion-card *ngIf="fraternityChart
+                   || sororityChart">
+    <ion-card-header>Greek Life</ion-card-header>
+    <ion-grid>
+      <ion-row class="ion-align-items-center ion-justify-content-center">
+        <ion-col *ngIf="fraternityChart">
+          <radial-chart [label]="fraternityChart.label"
+                        [value]="fraternityChart.value"></radial-chart>
+        </ion-col>
+        <ion-col *ngIf="sororityChart">
+          <radial-chart [label]="sororityChart.label"
+                        [value]="sororityChart.value"></radial-chart>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </ion-card>
+  <ion-card *ngIf="outOfStateChart
+                   || liveOnCampusChart
+                   || workOnCampusChart">
+    <ion-card-header>Freshman Student Life</ion-card-header>
+    <ion-grid>
+      <ion-row class="ion-align-items-center ion-justify-content-center">
+        <ion-col *ngIf="outOfStateChart">
+          <radial-chart [label]="outOfStateChart.label"
+                        [value]="outOfStateChart.value"></radial-chart>
+        </ion-col>
+        <ion-col *ngIf="liveOnCampusChart">
+          <radial-chart [label]="liveOnCampusChart.label"
+                        [value]="liveOnCampusChart.value"></radial-chart>
+        </ion-col>
+        <ion-col *ngIf="workOnCampusChart">
+          <radial-chart [label]="workOnCampusChart.label"
+                        [value]="workOnCampusChart.value"></radial-chart>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </ion-card>
+  <ion-card *ngIf="details?.team_nickname
+                   || conferences">
+    <ion-card-header>Athletics</ion-card-header>
+    <ion-list>
+      <ion-item *ngIf="details?.team_nickname">
+        <ion-label>Mascot</ion-label>
+        <ion-note slot="end">{{ details?.team_nickname }}</ion-note>
+      </ion-item>
+      <ng-template [ngIf]="conferences">
+        <ion-list-header *ngIf="conferences?.length > 1">Conferences</ion-list-header>
+        <ion-item *ngFor="let conference of conferences">
+          <ion-label>{{ (conferences?.length > 1) ? conference : 'Conference' }}</ion-label>
+          <ion-note slot="end"
+                    *ngIf="conferences?.length === 1">{{ conference }}</ion-note>
+        </ion-item>
+      </ng-template>
+    </ion-list>
+  </ion-card>
+</ion-content>

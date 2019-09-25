@@ -1,18 +1,14 @@
-<ion-header mode="ios">
-  <ion-toolbar mode="ios"
-               color="primary">
-    <ion-title mode="ios">Create an account</ion-title>
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-title>Create an account</ion-title>
   </ion-toolbar>
 </ion-header>
 <ion-content class="bg-blue external-page">
   <ion-grid>
-    <ion-row align-items-center
-             justify-content-start>
-      <ion-col text-center
-               margin-bottom
-               padding-bottom>
+    <ion-row class="ion-align-items-center ion-justify-content-start">
+      <ion-col class="ion-margin-bottom ion-padding-bottom ion-text-center">
         <img class="nte-logo"
-             src="assets/image/logo/circle.svg" />
+             src="assets/image/logo/circle.svg">
         <div class="blue-divider"></div>
         <div class="text-white bold external-header">Connect with your students!</div>
         <div class="text-white body spaced"> Let us know your students' email addresses,<br> so we can connect you to
@@ -21,39 +17,38 @@
     </ion-row>
   </ion-grid>
   <form [formGroup]="studentsForm">
-    <ion-list no-lines
-              no-padding
-              formArrayName="students">
+    <ion-list class="ion-no-padding"
+              formArrayName="students"
+              no-lines>
       <ion-item class="bg-white10 border-white50"
                 *ngFor="let student of students; let i = index"
                 [class.border-white-bold]="student['controls'].email.valid"
                 [formGroupName]="i">
         <ion-label [color]="student['controls'].email.value ? 'white' : 'white50'">
-          <ion-icon name="mail"
-                    class="form-icon"></ion-icon>
+          <ion-icon class="form-icon"
+                    name="mail"></ion-icon>
         </ion-label>
-        <ion-input type="email"
+        <ion-input formControlName="email"
                    placeholder="Student's email address"
-                   formControlName="email">
+                   type="email">
         </ion-input>
       </ion-item>
     </ion-list>
   </form>
-  <div text-right>
-    <ion-button item-end
+  <div class="ion-text-right">
+    <ion-button color="white"
                 fill="clear"
-                color="white"
+                slot="end"
+                (click)="addStudent()"
                 [disabled]="!students[students.length - 1].controls.email.value.length ||
                         studentsForm.invalid"
-                [hidden]="studentsForm.pristine"
-                (click)="addStudent()"> Add Another </ion-button>
+                [hidden]="studentsForm.pristine"> Add Another </ion-button>
   </div>
 </ion-content>
-<ion-footer padding-10
-            class="no-border">
-  <ion-button expand="full"
+<ion-footer class="no-border ion-padding-10">
+  <ion-button color="white"
+              expand="full"
               size="large"
-              color="white"
-              [disabled]="studentsForm.invalid"
-              (click)="next()"> Next </ion-button>
+              (click)="next()"
+              [disabled]="studentsForm.invalid"> Next </ion-button>
 </ion-footer>

@@ -5,9 +5,9 @@
       <ion-label position="floating">Email</ion-label>
       <ion-input name="emailAddress"
                  type="email"
+                 [formControl]="primaryEmailControl"
                  (ionBlur)="updateEmail(false)"
                  (keyup.enter)="updateEmail(false)"
-                 [formControl]="primaryEmailControl"
                  [pattern]="emailRegex"
                  [readonly]="!canEdit"></ion-input>
       <div *ngIf="primaryEmailControl?.invalid"> Please enter a valid email address </div>
@@ -16,9 +16,9 @@
       <ion-label position="floating">Alternate Email</ion-label>
       <ion-input name="emailAddress"
                  type="email"
+                 [formControl]="alternateEmailControl"
                  (ionBlur)="updateEmail(true)"
                  (keyup.enter)="updateEmail(true)"
-                 [formControl]="alternateEmailControl"
                  [pattern]="emailRegex"></ion-input>
       <div *ngIf="alternateEmailControl?.invalid"> Please enter a valid email address </div>
     </ion-item>
@@ -38,16 +38,16 @@
 </ion-card>
 <ion-card>
   <ion-card-header>Phone</ion-card-header>
-  <ion-grid no-padding>
+  <ion-grid class="ion-no-padding">
     <ion-row>
       <ion-col>
         <ion-item>
           <ion-label position="floating">Phone number</ion-label>
           <ion-input name="phoneNumber"
                      type="tel"
+                     [formControl]="phoneControl"
                      (ionBlur)="setPhone(userOverview.phone_number, false)"
-                     (keyup.enter)="updatePhone(true)"
-                     [formControl]="phoneControl"></ion-input>
+                     (keyup.enter)="updatePhone(true)"></ion-input>
           <div *ngIf="phoneControl?.invalid"> Please enter a valid phone number </div>
         </ion-item>
       </ion-col>
@@ -126,8 +126,8 @@
                      [(value)]="verificationCode"></ion-input>
           <ion-button color="primary"
                       matSuffix
-                      [disabled]="!verificationCode"
-                      (click)="verifyPhone()">Verify</ion-button>
+                      (click)="verifyPhone()"
+                      [disabled]="!verificationCode">Verify</ion-button>
         </div>
       </ion-col>
     </ion-row>

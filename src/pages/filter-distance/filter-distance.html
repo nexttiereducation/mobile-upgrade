@@ -1,51 +1,49 @@
-<ion-header mode="ios">
-  <ion-toolbar mode="ios">
+<ion-header>
+  <ion-toolbar>
     <ion-buttons slot="start">
       <ion-back-button></ion-back-button>
     </ion-buttons>
-    <ion-title mode="ios">
+    <ion-title>
       <div class="subhead">{{ title }}</div> {{ category.name }}
     </ion-title>
     <ion-buttons slot="primary">
-      <ion-button [color]="category.isActive ? 'primary' : 'steel'"
-                  [disabled]="!category.isActive"
-                  (click)="clear()">Clear</ion-button>
+      <ion-button (click)="clear()"
+                  [color]="category.isActive ? 'primary' : 'steel'"
+                  [disabled]="!category.isActive">Clear</ion-button>
     </ion-buttons>
   </ion-toolbar>
 </ion-header>
 <ion-content>
-  <ion-list no-margin>
-    <ion-item text-center
-              no-padding
+  <ion-list class="ion-no-margin">
+    <ion-item class="ion-no-padding ion-text-center"
               [class.bg-blue10]="location.distance"
               [class.text-steel50]="!category.isActive">
       <ion-label> Within <span [class.text-blue]="location.distance">{{ location.distance || '0' }}</span> miles of
       </ion-label>
     </ion-item>
-    <ion-item no-lines
-              class="range-values text-steel50">
+    <ion-item class="range-values text-steel50"
+              no-lines>
       <ion-label></ion-label>
-      <span item-start>5</span>
-      <span item-end>100</span>
+      <span slot="start">5</span>
+      <span slot="end">100</span>
     </ion-item>
-    <ion-range mode="ios"
-               min="5"
+    <ion-range debounce="250"
                max="100"
-               debounce="250"
-               [(value)]="location.distance"
-               (ionChange)="setFilter()">
+               min="5"
+               (ionChange)="setFilter()"
+               [(value)]="location.distance">
     </ion-range>
   </ion-list>
   <ion-list>
     <ion-radio-group [(value)]="location.method">
-      <ion-item padding-left>
+      <ion-item class="ion-padding-left">
         <ion-label>My current location</ion-label>
         <ion-radio slot="start"
                    value="my"
-                   (ionSelect)="setFilter()"
-                   [disabled]="(location.isAuthorized | async) === false"></ion-radio>
+                   [disabled]="(location.isAuthorized | async) === false"
+                   (ionSelect)="setFilter()"></ion-radio>
       </ion-item>
-      <ion-item padding-left>
+      <ion-item class="ion-padding-left">
         <ion-label>{{ location.zipOrAddress || 'Another location' }}</ion-label>
         <ion-radio slot="start"
                    value="other"
@@ -56,19 +54,19 @@
 </ion-content>
 <ion-footer *ngIf="(location.distance && location.method) || filterService.filter?.activeChildCount">
   <ion-toolbar color="primary">
-    <ion-button fill="clear"
+    <ion-button color="white"
                 expand="full"
+                fill="clear"
                 slot="end"
-                color="white"
                 *ngIf="filterService.isCyol"
                 (click)="viewSummary()"> Next <ion-icon name="arrow-forward"></ion-icon>
     </ion-button>
-    <ion-button fill="clear"
+    <ion-button color="white"
                 expand="full"
-                color="white"
+                fill="clear"
                 *ngIf="!filterService.isCyol"
-                (click)="applyFilters()"> Apply Filters <ion-badge margin-left
-                 class="text-blue bg-white">{{ filterService.filter?.activeChildCount }}</ion-badge>
+                (click)="applyFilters()"> Apply Filters <ion-badge class="text-blue bg-white ion-margin-left">
+        {{ filterService.filter?.activeChildCount }}</ion-badge>
     </ion-button>
   </ion-toolbar>
 </ion-footer>

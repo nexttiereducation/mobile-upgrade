@@ -37,39 +37,39 @@ export class CollegesService extends ListService {
   public selectedRecommendation: ICollegeRecommendation;
 
   private _allSchoolTags: BehaviorSubject<any[]> = new BehaviorSubject<any[]>(null);
-  private _bookmarkedColleges: BehaviorSubject<ICollege[]> = new BehaviorSubject<ICollege[]>([]);
+  private _bookmarked: BehaviorSubject<ICollege[]> = new BehaviorSubject<ICollege[]>([]);
   private _collegeChanges: Subject<any> = new Subject<any>();
-  private _matchingColleges: BehaviorSubject<ICollege[]> = new BehaviorSubject<ICollege[]>([]);
+  private _matching: BehaviorSubject<ICollege[]> = new BehaviorSubject<ICollege[]>([]);
   private _moreToScroll: Subject<boolean> = new Subject<boolean>();
-  private _nearbyColleges: BehaviorSubject<ICollege[]> = new BehaviorSubject<ICollege[]>([]);
+  private _nearby: BehaviorSubject<ICollege[]> = new BehaviorSubject<ICollege[]>([]);
   private _nextTierApplicationId: BehaviorSubject<number> = new BehaviorSubject<number>(null);
   private _recommendations: BehaviorSubject<ICollegeRecommendation[]> = new BehaviorSubject<ICollegeRecommendation[]>([]);
   private _recommendationsCount: BehaviorSubject<number> = new BehaviorSubject<number>(null);
   private _showApplications: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(null);
-  private _trackedColleges: BehaviorSubject<ICollegeTracker[]> = new BehaviorSubject<ICollegeTracker[]>(null);
+  private _tracked: BehaviorSubject<ICollegeTracker[]> = new BehaviorSubject<ICollegeTracker[]>(null);
 
   get allSchoolTags() {
     return this._allSchoolTags.asObservable();
   }
 
-  get bookmarkedColleges$() {
-    return this._bookmarkedColleges.asObservable();
+  get bookmarked$() {
+    return this._bookmarked.asObservable();
   }
 
   get collegeChanges() {
     return this._collegeChanges.asObservable();
   }
 
-  get matchingColleges$() {
-    return this._matchingColleges.asObservable();
+  get matching$() {
+    return this._matching.asObservable();
   }
 
   get moreToScroll() {
     return this._moreToScroll.asObservable();
   }
 
-  get nearbyColleges$() {
-    return this._nearbyColleges.asObservable();
+  get nearby$() {
+    return this._nearby.asObservable();
   }
 
   get recommendations() {
@@ -84,16 +84,16 @@ export class CollegesService extends ListService {
     return this._recommendationsCount.asObservable();
   }
 
-  get savedColleges$() {
+  get saved$() {
     if (this.user.isParent) {
-      return this._bookmarkedColleges.asObservable();
+      return this._bookmarked.asObservable();
     } else {
-      return this._trackedColleges.asObservable();
+      return this._tracked.asObservable();
     }
   }
 
-  get trackedColleges$() {
-    return this._trackedColleges.asObservable();
+  get tracked$() {
+    return this._tracked.asObservable();
   }
 
   get user() {
@@ -146,14 +146,12 @@ export class CollegesService extends ListService {
 
   public createList(list: ITileList): Observable<any> {
     return this.api
-      .post(`/custom_institutions_list/`, list)
-      .pipe(map(response => response.json()));
+      .post(`/custom_institutions_list/`, list);
   }
 
   public createNote(id: number, note: string): Observable<INote> {
     return this.api
-      .post(`${this.baseUrl}${id}/note`, { note })
-      .pipe(map(response => response.json()));
+      .post(`${this.baseUrl}${id}/note`, { note });
   }
 
   public declineRec(rec: ICollegeRecommendation) {
@@ -178,13 +176,12 @@ export class CollegesService extends ListService {
     } else {
       appData = { institution: id };
     }
-    const existingTracked = this._trackedColleges.getValue();
     return this.api
       .post(`/institution_tracker/`, appData)
-      .pipe(map(response => {
-        const tracker = response.json();
+      .pipe(map(tracker => {
+        const existingTracked = this._tracked.getValue() ? this._tracked.getValue() : [];
         existingTracked.push(tracker);
-        this._trackedColleges.next(existingTracked);
+        this._tracked.next(existingTracked);
         this.checkNextTierApplications(existingTracked);
         return tracker;
       }));
@@ -194,14 +191,13 @@ export class CollegesService extends ListService {
     const url =
       `https://next-tier.s3.amazonaws.com/externalized-strings/admission-deadline-information.json`;
     return this.api
-      .getNoHeaders(url, true)
-      .pipe(map(response => response.json()));
+      .getNoHeaders(url, true);
   }
 
   public getAppDates(id: number): Observable<IApplicationDate[]> {
     return this.api
       .get(`${this.baseUrl}${id}/dates/`)
-      .pipe(map(response => response.json().results));
+      .pipe(map(response => response.results));
   }
 
   public getDeadlines(id: number): Observable<Response> {
@@ -211,8 +207,7 @@ export class CollegesService extends ListService {
 
   public getDetails(id: number): Observable<ICollege> {
     return this.api
-      .get(`${this.baseUrl}${id}/`)
-      .pipe(map(response => response.json()));
+      .get(`${this.baseUrl}${id}/`);
   }
 
   public getFilter(): Observable<Response> {
@@ -222,15 +217,13 @@ export class CollegesService extends ListService {
 
   public getScattergram(id: number): Observable<any> {
     return this.api
-      .get(`${this.baseUrl}${id}/scattergrams/`)
-      .pipe(map(response => response.json()));
+      .get(`${this.baseUrl}${id}/scattergrams/`);
   }
 
   public getCustomLists(): Observable<any> {
     return this.api
       .get(`/custom_institutions_list/`)
-      .pipe(map(response => {
-        const data = response.json();
+      .pipe(map(data => {
         return data.results;
       }));
   }
@@ -258,7 +251,6 @@ export class CollegesService extends ListService {
   public getMatching(): void {
     this.isInitializing = true;
     this.getFollowed()
-      .pipe(map(response => response.json()))
       .subscribe((saved: any[]) => {
         let query = `?`;
         saved.forEach(s => query += `id=${s.institution}&`);
@@ -268,7 +260,7 @@ export class CollegesService extends ListService {
           .get(url)
           .subscribe(
             response => {
-              this._matchingColleges.next(response.json().results);
+              this._matching.next(response.results);
               this.nextPage = null;
               this.isInitializing = false;
             },
@@ -287,8 +279,7 @@ export class CollegesService extends ListService {
     this.api
       .get(this.nextPage, true)
       .subscribe(
-        response => {
-          const data = response.json();
+        data => {
           this.joinCollegeList(data.results, isNearby);
           if (data.next === this.nextPage) {
             this.nextPage = null;
@@ -337,7 +328,7 @@ export class CollegesService extends ListService {
     return this.api
       .get(`/group/`)
       .pipe(map(response => {
-        const groups = response.json().results;
+        const groups = response.results;
         let nextTierApplicationId: number;
         groups.forEach(group => {
           if (group.name === `NextTier Application`) {
@@ -350,14 +341,13 @@ export class CollegesService extends ListService {
 
   public getNotes(id: number, url?: string, isAbsoluteUrl?: boolean) {
     return this.api
-      .get(url || `${this.baseUrl}${id}/note`, isAbsoluteUrl)
-      .pipe(map(response => response.json()));
+      .get(url || `${this.baseUrl}${id}/note`, isAbsoluteUrl);
   }
 
   public getPremadeLists(): Observable<any[]> {
     return this.api
       .get(`/admin/tag/institution/`)
-      .pipe(map(response => response.json().results));
+      .pipe(map(response => response.results));
   }
 
   public getRecs(): ICollege[] {
@@ -370,16 +360,15 @@ export class CollegesService extends ListService {
 
   public getTags(userId: number, collegeId: number) {
     return this.api
-      .get(`/stakeholder/${userId}/tag/institution/${collegeId}`)
-      .pipe(map(response => response.json()));
+      .get(`/stakeholder/${userId}/tag/institution/${collegeId}`);
   }
 
   public initBookmarked(userId: number) {
     this.isInitializing = true;
-    // this._bookmarkedColleges.next([]);
+    // this._bookmarked.next([]);
     this.api
       .get(`/stakeholder/${userId}/institution/tags/`)
-      .pipe(map(response => response.json().results))
+      .pipe(map(response => response.results))
       .subscribe(
         (results: any[]) => {
           let bookmarkId;
@@ -394,15 +383,14 @@ export class CollegesService extends ListService {
             url += `?tag=${bookmarkId}`;
             this.api
               .get(url)
-              .pipe(map(data => data.json()))
               .subscribe(data => {
                 this.count = data.count;
                 this.previousPage = url;
                 this.nextPage = data.next;
-                this._bookmarkedColleges.next(data.results);
+                this._bookmarked.next(data.results);
               });
           } else {
-            this._bookmarkedColleges.next([]);
+            this._bookmarked.next([]);
           }
           this.isInitializing = false;
         },
@@ -420,8 +408,7 @@ export class CollegesService extends ListService {
     this.api
       .get(url)
       .subscribe(
-        response => {
-          const data = response.json();
+        data => {
           this.count = data.count;
           this.previousPage = url;
           this.nextPage = data.next;
@@ -443,13 +430,12 @@ export class CollegesService extends ListService {
 
   public initTrackers(): void {
     this.isInitializing = true;
-    // this._trackedColleges.next([]);
+    // this._tracked.next([]);
     this.getFollowed()
-      .pipe(map(response => response.json()))
       .subscribe(
         (trackers: any) => {
           this.nextPage = null;
-          this._trackedColleges.next(trackers);
+          this._tracked.next(trackers);
           this.checkNextTierApplications(trackers);
           this.isInitializing = false;
         },
@@ -485,7 +471,7 @@ export class CollegesService extends ListService {
       .get(url)
       .subscribe(
         (data) => {
-          const recs = data.json().results;
+          const recs = data.results;
           this.nextPage = null;
           this._moreToScroll.next(false);
           this._recommendationsCount.next(recs.length);
@@ -509,20 +495,19 @@ export class CollegesService extends ListService {
 
   public initList(queryString: string, isNearby: boolean) {
     if (isNearby) {
-      if (!this._nearbyColleges.getValue() || !this._nearbyColleges.getValue().length) {
+      if (!this._nearby.getValue() || !this._nearby.getValue().length) {
         this.initNearby(queryString);
       }
     } else {
-      if (!this.all || !this.all.length) {
-        this.initColleges(queryString);
-      }
+      // if (!this.all || !this.all.length) {
+      this.initColleges(queryString);
+      // }
     }
   }
 
   public isFollowing(id: number): Observable<boolean> {
     return this.api.get(`/institution_tracker/`)
-      .pipe(map(response => {
-        const collegeTrackers = response.json();
+      .pipe(map(collegeTrackers => {
         return (
           collegeTrackers.findIndex((collegeTracker: any) => {
             return collegeTracker.college === id;
@@ -548,8 +533,8 @@ export class CollegesService extends ListService {
   public isSaved(id: number): boolean {
     const isParent = this.user.isParent;
     const list: any[] = isParent
-      ? this._bookmarkedColleges.getValue()
-      : this._trackedColleges.getValue();
+      ? this._bookmarked.getValue()
+      : this._tracked.getValue();
     let listMatch = null;
     if (list && list.length) {
       listMatch = list.find((c: any) => c[isParent ? `id` : `institution`] === id);
@@ -558,8 +543,8 @@ export class CollegesService extends ListService {
   }
 
   public removeBookmark(id: number) {
-    const existing = this._bookmarkedColleges.getValue();
-    this._bookmarkedColleges.next(existing.filter(school => school.id !== id));
+    const existing = this._bookmarked.getValue();
+    this._bookmarked.next(existing.filter(school => school.id !== id));
   }
 
   public removeRec(id: number) {
@@ -571,8 +556,8 @@ export class CollegesService extends ListService {
   }
 
   public removeTracked(id: number) {
-    const existing = this._trackedColleges.getValue();
-    this._trackedColleges.next(
+    const existing = this._tracked.getValue();
+    this._tracked.next(
       existing.filter(tracker => tracker.institution !== id)
     );
   }
@@ -589,7 +574,7 @@ export class CollegesService extends ListService {
     const url = fullUrl ? query : this.baseUrl + query;
     return this.api
       .get(url)
-      .pipe(map(response => response.json().results));
+      .pipe(map(response => response.results));
   }
 
   public setBaseFilter(query: string) {
@@ -617,11 +602,10 @@ export class CollegesService extends ListService {
     };
     return this.api
       .post(`/stakeholder/${userId}/tag/institution/`, data)
-      .pipe(map(response => {
-        const result = response.json();
-        const bookmarkedColleges = this._bookmarkedColleges.value;
-        bookmarkedColleges.push(college);
-        this._bookmarkedColleges.next(bookmarkedColleges);
+      .pipe(map(result => {
+        const bookmarked = this._bookmarked.value;
+        bookmarked.push(college);
+        this._bookmarked.next(bookmarked);
         return result;
       }));
   }
@@ -655,14 +639,12 @@ export class CollegesService extends ListService {
 
   public updateTracker(id: number, collegeData: any) {
     return this.api
-      .patch(`/institution_tracker/${id}`, collegeData)
-      .pipe(map(response => response.json()));
+      .patch(`/institution_tracker/${id}`, collegeData);
   }
 
   public updateList(list: any, id: number): Observable<any> {
     return this.api
-      .patch(`/custom_institutions_list/${id}`, list)
-      .pipe(map(response => response.json()));
+      .patch(`/custom_institutions_list/${id}`, list);
   }
 
   public updateSelected(college: ICollege) {
@@ -702,13 +684,12 @@ export class CollegesService extends ListService {
   private getNearby(url: string) {
     this.api
       .get(url)
-      .pipe(map(response => response.json()))
       .subscribe(
         (data: any) => {
           this.count = data.count;
           this.previousPage = url;
           this.nextPage = data.next;
-          this._nearbyColleges.next(data.results);
+          this._nearby.next(data.results);
           this.isInitializing = false;
         },
         async err => {
@@ -725,11 +706,11 @@ export class CollegesService extends ListService {
   }
 
   private joinCollegeList(newColleges: ICollege[], isNearby: boolean = false) {
-    const existingColleges = isNearby ? this._nearbyColleges.getValue() : this.all;
+    const existingColleges = isNearby ? this._nearby.getValue() : this.all;
     existingColleges.push.apply(existingColleges, newColleges);
     const uniq = uniqBy(existingColleges, (college: any) => college.id);
     if (isNearby) {
-      this._nearbyColleges.next(uniq);
+      this._nearby.next(uniq);
     } else {
       this.all = uniq;
     }

@@ -1,5 +1,5 @@
 import { Component, OnDestroy } from '@angular/core';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { AlertController, ToastController } from '@ionic/angular';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
@@ -7,7 +7,6 @@ import { takeUntil } from 'rxjs/operators';
 import { IRecommendedScholarship, ISavedScholarship, IScholarship } from '@nte/interfaces/scholarship.interface';
 import { LinkService } from '@nte/services/link.service';
 import { MixpanelService } from '@nte/services/mixpanel.service';
-import { NavStateService } from '@nte/services/nav-state.service';
 import { ScholarshipService } from '@nte/services/scholarship.service';
 import { StakeholderService } from '@nte/services/stakeholder.service';
 
@@ -23,6 +22,7 @@ export class ScholarshipPage implements OnDestroy {
   public recommendationId: number;
   public scholarship: IScholarship;
   public tracker: ISavedScholarship;
+
   private ngUnsubscribe: Subject<any> = new Subject();
 
   get criteria() {
@@ -44,18 +44,11 @@ export class ScholarshipPage implements OnDestroy {
     private scholarshipService: ScholarshipService,
     private stakeholderService: StakeholderService,
     private toastCtrl: ToastController,
-    navStateService: NavStateService) {
-    const params: any = navStateService.data;
-    this.recommendation = params.recommendation;
-    this.tracker = params.tracker;
-    const scholarship = params.scholarship;
-    if (scholarship) {
-      this.scholarship = scholarship;
-    } else {
-      this.scholarshipService.getById(params.id)
-        .pipe(takeUntil(this.ngUnsubscribe))
-        .subscribe(s => this.scholarship = s);
-    }
+    route: ActivatedRoute) {
+    const params: any = route.snapshot.params;
+    this.scholarshipService.getById(params.id)
+      .pipe(takeUntil(this.ngUnsubscribe))
+      .subscribe(s => this.scholarship = s);
   }
 
   ngOnDestroy() {
@@ -124,13 +117,13 @@ export class ScholarshipPage implements OnDestroy {
     this.scholarshipService.saveScholarship(this.scholarship.id, isExisting, isApplying)
       .pipe(takeUntil(this.ngUnsubscribe))
       .subscribe(
-      () => {
-        if (this.recommendation && this.recommendation.id) {
-          this.removeRecommendation();
-        }
+        () => {
+          if (this.recommendation && this.recommendation.id) {
+            this.removeRecommendation();
+          }
           this.openSaveToast();
-      }
-    );
+        }
+      );
     // }
   }
 

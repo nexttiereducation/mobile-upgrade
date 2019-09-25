@@ -79,7 +79,7 @@ export class ConnectionService extends ListService {
     return this.apiService.get(`/stakeholder/connections/all`)
       .subscribe(
         response => {
-          connections = response.json().results
+          connections = response.results
             .sort((a, b) => (a.get_full_name > b.get_full_name) ? 1 : -1);
           this.all = connections;
         },
@@ -91,8 +91,7 @@ export class ConnectionService extends ListService {
     this.isLoadingMore = true;
     this.apiService.get(`/stakeholder/connections/pending/`)
       .subscribe(
-        response => {
-          const data = response.json();
+        data => {
           this._invites.next(this.parseInvites(data.results));
           this.count = data.count;
           this.isLoadingMore = false;
@@ -104,7 +103,7 @@ export class ConnectionService extends ListService {
       );
   }
 
-  public initialize() {
+  public init() {
     this.getAllConnections();
   }
 
@@ -149,7 +148,7 @@ export class ConnectionService extends ListService {
 
   public searchConnections(name: string) {
     return this.apiService.get(`/stakeholder/connections/all?search=${name}`)
-      .pipe(map((response) => response.json().results));
+      .pipe(map((response) => response.results));
   }
 
   public unselectAll() {

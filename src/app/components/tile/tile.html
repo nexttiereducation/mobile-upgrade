@@ -1,9 +1,9 @@
 <ion-card class="tile">
   <ion-button class="tile-button"
               *ngIf="!isCustom"
+              (click)="tileClick.emit($event)"
               [class.bg-blue50]="inverse"
-              [color]="inverse ? 'blue' : 'white'"
-              (click)="tileClick.emit($event)">
+              [color]="inverse ? 'blue' : 'white'">
     <div class="tile-content-wrapper">
       <img class="logo"
            [src]="tile.iconUrl">
@@ -18,19 +18,18 @@
         <ion-item-option class="lowercase"
                          color="primary"
                          (click)="edit(tile, slidingItem)">
-          <ion-icon name="create"></ion-icon>
-          Edit
+          <ion-icon name="create"></ion-icon> Edit
         </ion-item-option>
       </ion-item-options>
       <ion-item button
                 class="ion-text-center tile-button"
                 detail="false"
                 lines="none"
+                (click)="tileClick.emit($event)"
                 [class.bg-blue50]="inverse"
-                [color]="inverse ? null : 'white'"
-                (click)="tileClick.emit($event)">
+                [color]="inverse ? null : 'white'">
         <div class="tile-content-wrapper">
-          <img [src]="tile.iconUrl" />
+          <img [src]="tile.iconUrl">
           <ion-label class="tile-label"
                      [ngClass]="inverse ? 'text-white' : 'text-blue'">{{ tile.name }}</ion-label>
         </div>
@@ -39,8 +38,7 @@
         <ion-item-option class="lowercase"
                          color="red"
                          (click)="hide(tile, slidingItem)">
-          <ion-icon name="close"></ion-icon>
-          Delete
+          <ion-icon name="close"></ion-icon> Delete
         </ion-item-option>
       </ion-item-options>
     </ion-item-sliding>

@@ -9,7 +9,7 @@ export const SCHOLARSHIP_TILES: IListTile[] = [
     isLocked: true,
     name: `Saved`,
     order: 0,
-    serviceVariable: `savedScholarships`
+    serviceVariable: `saved$`
   },
   {
     colSpan: 4,
@@ -17,7 +17,7 @@ export const SCHOLARSHIP_TILES: IListTile[] = [
     isLocked: true,
     name: `Recommended`,
     order: 1,
-    serviceVariable: `recommendedScholarships`
+    serviceVariable: `recommended$`
   },
   {
     colSpan: 4,
@@ -26,7 +26,7 @@ export const SCHOLARSHIP_TILES: IListTile[] = [
     name: `Applying`,
     order: 2,
     phase: `Senior`,
-    serviceVariable: `applyingScholarships`
+    serviceVariable: `applying$`
   },
   {
     colSpan: 6,
@@ -34,7 +34,7 @@ export const SCHOLARSHIP_TILES: IListTile[] = [
     isLocked: true,
     name: `Search All`,
     order: 3,
-    serviceVariable: `scholarships`
+    serviceVariable: `scholarships$`
   },
   {
     colSpan: 6,

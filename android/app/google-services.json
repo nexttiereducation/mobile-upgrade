@@ -1,0 +1,56 @@
+{
+  "project_info": {
+    "project_number": "74097461173",
+    "firebase_url": "https://nexttier-1499438524372.firebaseio.com",
+    "project_id": "nexttier-1499438524372",
+    "storage_bucket": "nexttier-1499438524372.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:74097461173:android:a60a0bfcf8277aa5",
+        "android_client_info": {
+          "package_name": "com.apply.nte.apply"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "74097461173-hb79744lcid256sckmm2gr3pvh7amqk8.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.apply.nte.apply",
+            "certificate_hash": "84819d23c7a5cadbb33c19b7cb26377c074a8fb9"
+          }
+        },
+        {
+          "client_id": "74097461173-bre86bvjh20m5n514utmovs0ge0e0k7d.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCZ5nXEV51xHiMLfsSvvAufzbo-e3RI234"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "74097461173-bre86bvjh20m5n514utmovs0ge0e0k7d.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "74097461173-4fft36o5ntujsi9cjlvce5ebk5d6bu2p.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.NextTierEducation.NextTierEducation",
+                "app_store_id": "912817589"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

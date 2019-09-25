@@ -1,0 +1,20 @@
+college {
+  ion-col {
+    >a:first-child:last-child {
+
+      // height: 132px;
+      .button-inner {
+        justify-content: space-between;
+        font-weight: 400;
+      }
+    }
+
+    >img {
+      max-height: 100px;
+    }
+  }
+}
+
+// &:last-of-type img:first-child:last-child {
+//   max-height: 80px;
+// }

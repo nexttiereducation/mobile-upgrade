@@ -1,9 +1,8 @@
-<ion-slides #ccSlider
-            [options]="{initialSlide: studentAnswers.page}"
-            *ngIf="!isSurveyComplete && isLoaded">
+<ion-slides *ngIf="!isSurveyComplete && isLoaded"
+            #ccSlider
+            [options]="{initialSlide: studentAnswers.page}">
   <ion-slide>
-    <div padding
-         text-center>
+    <div class="ion-padding ion-text-center">
       <div class="surveyQuestion">Which of these subject areas do&nbsp;you&nbsp;like?</div>
       <div class="subhead">Check all that apply.</div>
     </div>
@@ -21,21 +20,20 @@
     <ion-grid>
       <ion-row>
         <ion-col>
-          <ion-button expand="block"
-                      color="orange"
-                      [disabled]="!areSubjectsSelected"
-                      (click)="saveSubjects()">Continue</ion-button>
+          <ion-button color="orange"
+                      expand="block"
+                      (click)="saveSubjects()"
+                      [disabled]="!areSubjectsSelected">Continue</ion-button>
         </ion-col>
       </ion-row>
     </ion-grid>
   </ion-slide>
-  <ng-template ngFor
-               let-cluster
-               [ngForOf]="questions.clusters"
-               let-clusterIndex="index">
+  <ng-template let-cluster
+               let-clusterIndex="index"
+               ngFor
+               [ngForOf]="questions.clusters">
     <ion-slide>
-      <div padding
-           text-center>
+      <div class="ion-padding ion-text-center">
         <div class="surveyQuestion">Which of these activities do&nbsp;you&nbsp;like?</div>
         <div class="subhead">Check any/all that apply.</div>
       </div>
@@ -51,22 +49,21 @@
       <ion-grid>
         <ion-row>
           <ion-col>
-            <ion-button expand="block"
+            <ion-button color="orange"
+                        expand="block"
                         fill="outline"
-                        color="orange"
                         (click)="saveItems(cluster.cluster_code, 'activities', false, true)">Back</ion-button>
           </ion-col>
           <ion-col>
-            <ion-button expand="block"
-                        color="orange"
+            <ion-button color="orange"
+                        expand="block"
                         (click)="saveItems(cluster.cluster_code, 'activities')">Continue</ion-button>
           </ion-col>
         </ion-row>
       </ion-grid>
     </ion-slide>
     <ion-slide>
-      <div padding
-           text-center>
+      <div class="ion-padding ion-text-center">
         <div class="surveyQuestion">Which of these personal qualities describe&nbsp;you?</div>
         <div class="subhead">Check any/all that apply.</div>
       </div>
@@ -82,18 +79,18 @@
       <ion-grid>
         <ion-row>
           <ion-col>
-            <ion-button expand="block"
+            <ion-button color="orange"
+                        expand="block"
                         fill="outline"
-                        color="orange"
                         (click)="saveItems(cluster.cluster_code, 'personal_qualities', false, true)">Back</ion-button>
           </ion-col>
           <ion-col>
-            <ion-button expand="block"
-                        color="orange"
+            <ion-button color="orange"
+                        expand="block"
                         *ngIf="clusterIndex < (questions.clusters.length - 1)"
                         (click)="saveItems(cluster.cluster_code, 'personal_qualities')">Continue</ion-button>
-            <ion-button expand="block"
-                        color="orange"
+            <ion-button color="orange"
+                        expand="block"
                         *ngIf="clusterIndex === (questions.clusters.length - 1)"
                         (click)="saveItems(cluster.cluster_code, 'personal_qualities', true)">Submit</ion-button>
           </ion-col>
@@ -102,31 +99,27 @@
     </ion-slide>
   </ng-template>
 </ion-slides>
-<div *ngIf="isSurveyComplete && isLoaded"
-     padding>
-  <div class="subhead"
-       text-center>Your answers were submitted successfully.</div>
-  <p class="emptyStateTitle bold"
-     text-center>We think you'll enjoy careers in the following Career&nbsp;Clusters:</p>
+<div class="ion-padding"
+     *ngIf="isSurveyComplete && isLoaded">
+  <div class="subhead ion-text-center">Your answers were submitted successfully.</div>
+  <p class="emptyStateTitle bold ion-text-center">We think you'll enjoy careers in the following Career&nbsp;Clusters:</p>
   <ion-grid>
-    <ng-template ngFor
-                 let-cluster
+    <ng-template let-cluster
+                 ngFor
                  [ngForOf]="suggestedClusters">
-      <ion-row align-items-center>
+      <ion-row class="ion-align-items-center">
         <ion-col size="auto">
-          <div [style.background-color]="careerClusters[cluster.title].color"
-               class="avatar-shadow career-avatar"
-               padding-8>
-            <ion-icon name="briefcase"
-                      class="text-white"></ion-icon>
+          <div class="avatar-shadow career-avatar ion-padding-8"
+               [style.background-color]="careerClusters[cluster.title].color">
+            <ion-icon class="text-white"
+                      name="briefcase"></ion-icon>
           </div>
         </ion-col>
         <ion-col class="topbar action"
                  [style.color]="careerClusters[cluster.title].color"> {{ cluster.title }} </ion-col>
       </ion-row>
       <ion-row>
-        <ion-col class="body spaced"
-                 margin-bottom> {{ careerClusters[cluster.title].description }} </ion-col>
+        <ion-col class="body spaced ion-margin-bottom"> {{ careerClusters[cluster.title].description }} </ion-col>
       </ion-row>
     </ng-template>
   </ion-grid>

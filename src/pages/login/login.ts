@@ -4,7 +4,6 @@ import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms'
 import { Router } from '@angular/router';
 import { EmailComposer } from '@ionic-native/email-composer/ngx';
 import { AlertController, Platform } from '@ionic/angular';
-import { Storage } from '@ionic/storage';
 import { BehaviorSubject, Subject } from 'rxjs';
 
 import { emailRegex, registerMessage } from '@nte/constants/stakeholder.constants';
@@ -54,8 +53,8 @@ export class LoginPage implements OnInit, OnDestroy {
   private ngUnsubscribe: Subject<any> = new Subject();
 
   get emailCtrl() {
-    if (this.loginForm.contains('email')) {
-      return this.loginForm.get('email');
+    if (this.loginForm.controls.email) {
+      return this.loginForm.controls.email;
     }
   }
 
@@ -63,17 +62,13 @@ export class LoginPage implements OnInit, OnDestroy {
     return this._keyboardShowing.asObservable();
   }
 
-  get loggingIn() {
-    return this.stakeholderService.loggingIn;
-  }
-
-  set loggingIn(loggingIn: boolean) {
-    this.stakeholderService.loggingIn = loggingIn;
+  get loggingIn$() {
+    return this.stakeholderService.loggingIn$;
   }
 
   get passwordCtrl() {
-    if (this.loginForm.contains('password')) {
-      return this.loginForm.get('password');
+    if (this.loginForm.controls.password) {
+      return this.loginForm.controls.password;
     }
   }
   constructor(
@@ -84,8 +79,7 @@ export class LoginPage implements OnInit, OnDestroy {
     private formBuilder: FormBuilder,
     private mixpanel: MixpanelService,
     private router: Router,
-    private stakeholderService: StakeholderService,
-    private storage: Storage) {
+    private stakeholderService: StakeholderService) {
     this.loginForm = this.formBuilder.group({
       email: new FormControl(
         ``,
@@ -107,8 +101,8 @@ export class LoginPage implements OnInit, OnDestroy {
   ngOnInit() {
     this.stakeholderService.checkStorage().then(
       loggedIn => {
-        this.loggingIn = !loggedIn;
         if (loggedIn) {
+          this.stakeholderService.loggingIn = true;
           this.router.navigateByUrl(`app/tasks`);
         }
       }
@@ -117,7 +111,6 @@ export class LoginPage implements OnInit, OnDestroy {
     this.mixpanel.event(`navigated_to-Login`);
     // this.setupLoginSub();
     this.setupKeyboardListeners();
-    this.stakeholderService.checkStorage();
   }
 
   ngOnDestroy() {

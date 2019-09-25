@@ -1,0 +1,94 @@
+<ion-content>
+  <ion-spinner *ngIf="!college"></ion-spinner>
+  <ng-template [ngIf]="college">
+    <div class="surveyQuestion ion-padding ion-text-center">{{ college?.name }}</div>
+    <ion-card *ngIf="(college?.is_public
+                            || details?.is_four_year)
+                           || college?.school_setting
+                           || (college?.religious_affil
+                               && college?.religious_affil !== 'Not applicable')">
+      <ion-card-header>Overview</ion-card-header>
+      <ion-grid>
+        <ion-row class="ion-align-items-center ion-justify-content-center">
+          <ion-col class="ion-align-self-center"
+                   *ngIf="college?.is_public || details?.is_four_year">
+            <div class="ion-text-center">
+              {{ (college?.is_public ? 'Public, ' : 'Private, ') + (details?.is_four_year ? '4 year' : '2 year') }}
+            </div>
+          </ion-col>
+          <ion-col class="ion-align-self-center ion-text-center"
+                   *ngIf="college?.school_setting">
+            <img src="assets/image/college/setting_city.svg"
+                 *ngIf="college?.school_setting[0] === 'C'">
+            <img src="assets/image/college/setting_rural.svg"
+                 *ngIf="college?.school_setting[0] === 'R'">
+            <img src="assets/image/college/setting_suburb.svg"
+                 *ngIf="college?.school_setting[0] === 'S'">
+            <img src="assets/image/college/setting_town.svg"
+                 *ngIf="college?.school_setting[0] === 'T'">
+            <div>{{ college?.school_setting }}</div>
+          </ion-col>
+          <ion-col class="ion-align-self-center"
+                   *ngIf="college?.religious_affil
+                     && college?.religious_affil !== 'Not applicable'">
+            <div class="ion-text-center">{{ college?.religious_affil }}</div>
+          </ion-col>
+        </ion-row>
+      </ion-grid>
+    </ion-card>
+    <ion-card *ngIf="(college?.population
+                            || details?.undergrad_population
+                            || details?.grad_population)
+                           || maleFemaleChart
+                           || diversityChart">
+      <ion-card-header>Demographics</ion-card-header>
+      <ion-grid *ngIf="college?.population
+                          || details?.undergrad_population
+                          || details?.grad_population">
+        <ion-row>
+          <ion-col class="ion-align-self-center ion-text-center"
+                   *ngIf="college?.population">
+            <ion-text class="displayHeader"
+                      color="primary">{{ college?.population | number:'1.0-0' }}</ion-text>
+            <div>Total Students</div>
+          </ion-col>
+          <ion-col class="ion-align-self-center ion-text-center"
+                   *ngIf="details?.undergrad_population">
+            <ion-text class="displayHeader"
+                      color="dark">{{ details?.undergrad_population | number:'1.0-0' }}</ion-text>
+            <div>Undergrad</div>
+          </ion-col>
+          <ion-col class="ion-align-self-center ion-text-center"
+                   *ngIf="details?.grad_population">
+            <ion-text class="displayHeader"
+                      color="dark">{{ details?.grad_population | number:'1.0-0' }}</ion-text>
+            <div>Graduate</div>
+          </ion-col>
+        </ion-row>
+      </ion-grid>
+      <ion-grid class="ion-no-padding"
+                *ngIf="maleFemaleChart || diversityChart">
+        <ion-row class="ion-align-items-center ion-justify-content-center"
+                 *ngIf="maleFemaleChart">
+          <ion-col size="12">
+            <pie-chart showLegend="true"
+                       [colors]="maleFemaleChart.colors"
+                       [series]="maleFemaleChart.series"></pie-chart>
+          </ion-col>
+        </ion-row>
+        <ion-row class="ion-align-items-center ion-justify-content-center"
+                 *ngIf="diversityChart">
+          <ion-col size="12">
+            <pie-chart showLegend="true"
+                       [colors]="diversityChart.colors"
+                       [series]="diversityChart.series"></pie-chart>
+          </ion-col>
+        </ion-row>
+      </ion-grid>
+    </ion-card>
+    <ion-card *ngIf="details?.mission_statement">
+      <ion-card-header>Description</ion-card-header>
+      <ion-card-content class="body spaced">{{ details?.mission_statement }}</ion-card-content>
+    </ion-card>
+  </ng-template>
+</ion-content>

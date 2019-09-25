@@ -4,26 +4,26 @@
     <ion-radio-group>
       <ion-item>
         <ion-radio slot="start"
-                   item-start
+                   slot="start"
                    [value]="false"></ion-radio>
         <ion-label>I'm not taking it</ion-label>
       </ion-item>
       <ion-item>
         <ion-radio slot="start"
-                   item-start
+                   slot="start"
                    [value]="true"></ion-radio>
         <ion-label>I am taking it</ion-label>
       </ion-item>
     </ion-radio-group>
   </ion-list>
   <div [hidden]="!isTakingTest.value">
-    <div class="medium ion-padding ion-">{{ prompt.question }}</div>
-    <ion-list formArrayName="knownDatesArray"
-              class=" ion-no-margin ion-">
+    <div class="medium ion-padding">{{ prompt.question }}</div>
+    <ion-list class="ion-no-margin"
+              formArrayName="knownDatesArray">
       <ion-item *ngFor="let choiceGroup of knownDateControls; let i = index"
                 [formGroupName]="i">
         <ion-checkbox formControlName="checked"
-                      item-start
+                      slot="start"
                       [checked]="knownDateControls[i].controls.date.value.isChosen"
                       (ionChange)="markSelected(knownDateControls[i].controls.date.value)"></ion-checkbox>
         <ion-label>{{knownDateControls[i].controls.date.value.id === 0 ?
@@ -37,9 +37,9 @@
                 *ngFor="let deadline of customDateControls; let i = index"
                 [formGroupName]="i">
         <ion-label></ion-label>
-        <ion-icon item-start
-                  name="calendar"
-                  color="grayDark50"></ion-icon>
+        <ion-icon color="grayDark50"
+                  slot="start"
+                  name="calendar"></ion-icon>
         <ion-datetime displayFormat="MM/DD/YYYY"
                       formControlName="date"
                       name="start_date"
@@ -51,10 +51,10 @@
                       [pickerOptions]="datePickerOptions"
                       [required]="lastChoiceSelected && !simplifiedForm">
         </ion-datetime>
-        <ion-button fill="clear"
+        <ion-button color="red"
+                    fill="clear"
                     icon-only
-                    item-end
-                    color="red"
+                    slot="end"
                     type="button"
                     *ngIf="customDateControls.length > 1"
                     (click)="removeCustomDate(i)">
@@ -62,19 +62,19 @@
         </ion-button>
       </ion-item>
     </ion-list>
-    <ion-button color="primary"
-                class=" ion-margin-horizontal ion-margin-bottom"
+    <ion-button class="ion-margin-horizontal ion-margin-bottom"
+                color="primary"
+                (click)="addCustomDeadline()"
                 [disabled]="customDates.invalid"
-                [hidden]="!lastChoiceSelected"
-                (click)="addCustomDeadline()"> Add date </ion-button>
+                [hidden]="!lastChoiceSelected"> Add date </ion-button>
   </div>
 </form>
 <ion-footer>
   <ion-toolbar color="green">
-    <ion-button fill="clear"
+    <ion-button color="white"
                 expand="full"
-                color="white"
-                [disabled]="testPromptForm.invalid"
-                (click)="submit()"> Save </ion-button>
+                fill="clear"
+                (click)="submit()"
+                [disabled]="testPromptForm.invalid"> Save </ion-button>
   </ion-toolbar>
 </ion-footer>

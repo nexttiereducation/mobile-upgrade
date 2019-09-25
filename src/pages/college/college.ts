@@ -1,19 +1,19 @@
 import { Component, OnDestroy, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { IonTabs, ModalController, ToastController } from '@ionic/angular';
 import { OverlayEventDetail } from '@ionic/core';
-import { Subject } from 'rxjs';
+import { BehaviorSubject, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
 import { ApplicationDatesComponent } from '@nte/components/application-dates/application-dates';
+import { CollegeAcademicComponent } from '@nte/components/college-details/academic/college-academic';
+import { CollegeApplicationComponent } from '@nte/components/college-details/application/college-application';
+import { CollegeCampusComponent } from '@nte/components/college-details/campus/college-campus';
+import { CollegeFinancialComponent } from '@nte/components/college-details/financial/college-financial';
+import { CollegeGeneralComponent } from '@nte/components/college-details/general/college-general';
 import { ICollegeRecommendation } from '@nte/interfaces/college-recommendation.interface';
 import { ICollegeTracker } from '@nte/interfaces/college-tracker.interface';
 import { ICollege } from '@nte/interfaces/college.interface';
-import { CollegeAcademicPage } from '@nte/pages/college-academic/college-academic';
-import { CollegeApplicationPage } from '@nte/pages/college-application/college-application';
-import { CollegeCampusPage } from '@nte/pages/college-campus/college-campus';
-import { CollegeFinancialPage } from '@nte/pages/college-financial/college-financial';
-import { CollegeGeneralPage } from '@nte/pages/college-general/college-general';
 import { CollegeService } from '@nte/services/college.service';
 import { CollegesService } from '@nte/services/colleges.service';
 import { MixpanelService } from '@nte/services/mixpanel.service';
@@ -38,28 +38,39 @@ export class CollegePage implements OnInit, OnDestroy {
   public tabDetails: any[] = [
     {
       icon: `information-circle`,
-      page: CollegeGeneralPage
+      page: CollegeGeneralComponent
     },
     {
       icon: `school`,
-      page: CollegeAcademicPage
+      page: CollegeAcademicComponent
     },
     {
       icon: `nt-scholarships`,
-      page: CollegeFinancialPage
+      page: CollegeFinancialComponent
     },
     {
       icon: `nt-colleges`,
-      page: CollegeCampusPage
+      page: CollegeCampusComponent
     },
     {
       icon: `document`,
-      page: CollegeApplicationPage
+      page: CollegeApplicationComponent
     }
   ];
   public title: string;
 
+  private _activeView: BehaviorSubject<string> = new BehaviorSubject<string>('general');
   private ngUnsubscribe: Subject<any> = new Subject();
+
+  get activeView() {
+    return this._activeView.getValue();
+  }
+  set activeView(view: string) {
+    this._activeView.next(view);
+  }
+  get activeView$() {
+    return this._activeView.asObservable();
+  }
 
   get college() {
     if (this.collegeService.active) {
@@ -69,6 +80,12 @@ export class CollegePage implements OnInit, OnDestroy {
   get college$() {
     if (this.collegeService.active$) {
       return this.collegeService.active$;
+    }
+  }
+
+  get collegeUrl() {
+    if (this.id) {
+      return `app/colleges/${this.id}`;
     }
   }
 
@@ -93,6 +110,7 @@ export class CollegePage implements OnInit, OnDestroy {
     private mixpanel: MixpanelService,
     private modalCtrl: ModalController,
     private route: ActivatedRoute,
+    private router: Router,
     private stakeholderService: StakeholderService,
     private toastCtrl: ToastController,
     navStateService: NavStateService) {
@@ -129,6 +147,10 @@ export class CollegePage implements OnInit, OnDestroy {
   ngOnDestroy() {
     this.ngUnsubscribe.next();
     this.ngUnsubscribe.complete();
+  }
+
+  public switchView(ev: any) {
+    this.activeView = ev.detail.value;
   }
 
   public toggleSaved() {

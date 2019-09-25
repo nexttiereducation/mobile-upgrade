@@ -8,9 +8,10 @@ import { CollegeService } from '@nte/services/college.service';
 @Component({
   selector: `college-financial`,
   templateUrl: `college-financial.html`,
+  styleUrls: [`./../college-details.scss`],
   encapsulation: ViewEncapsulation.None
 })
-export class CollegeFinancialPage {
+export class CollegeFinancialComponent {
   get college() {
     return this.collegeService.active;
   }

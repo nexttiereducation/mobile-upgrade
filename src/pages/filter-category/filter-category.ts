@@ -14,7 +14,6 @@ import { FilterRangePage } from '@nte/pages/filter-range/filter-range';
 import { CategoryService } from '@nte/services/category.service';
 import { FilterService } from '@nte/services/filter.service';
 import { MixpanelService } from '@nte/services/mixpanel.service';
-
 import { NavStateService } from '@nte/services/nav-state.service';
 
 @Component({
@@ -46,9 +45,9 @@ export class FilterCategoryPage implements OnInit, OnDestroy {
     public router: Router,
     private mixpanel: MixpanelService,
     navStateService: NavStateService) {
-    const params: any = navStateService.data;
-    this.index = params.index;
-    this.title = params.title;
+    // const params: any = navStateService.data || this.router.currentNavigation.extras.state;
+    // this.index = params.index;
+    // this.title = params.title;
   }
 
   ngOnInit() {
@@ -79,11 +78,11 @@ export class FilterCategoryPage implements OnInit, OnDestroy {
               (dependencyFilterArray) => {
                 this.categoryService.filterArray = dependencyFilterArray;
                 if (dependencyFilterArray.length) {
-                    this.filterByDependency(dependencyFilterArray, subcat);
+                  this.filterByDependency(dependencyFilterArray, subcat);
                 }
               }
             );
-          }
+        }
       });
     }
   }

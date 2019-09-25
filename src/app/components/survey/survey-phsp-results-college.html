@@ -1,24 +1,23 @@
 <ng-template [ngIf]="surveyResults">
-  <div padding>
-    <div class="subhead"
-         *ngIf="!taskIsComplete"
-         text-center
-         margin-bottom>Here are your results! Make sure everything looks right before hitting submit.</div>
-    <div class="displayHeader not-bold">You plan to <span class="bold">attend a
-        {{ planDisplayValues[surveyResults.results.plan] }} college.</span></div>
+  <div class="ion-padding">
+    <div class="subhead ion-margin-bottom ion-text-center"
+         *ngIf="!taskIsComplete">Here are your results! Make sure everything looks right before hitting submit.</div>
+    <ion-text class="displayHeader not-bold"
+              color="primary">You plan to <span class="bold">attend a
+        {{ planDisplayValues[surveyResults.results.plan] }} college.</span></ion-text>
   </div>
   <ion-card class="collegeNameCard">
     <ion-card-header>COLLEGE</ion-card-header>
     <ion-item>
-      <ion-avatar item-start
-                  class="avatar-shadow">
+      <ion-avatar class="avatar-shadow"
+                  slot="start">
         <img [src]="surveyResults.results.college_attending.college_logo || surveyResults.results.college_attending.photo_url ||
                     'assets/image/avatar/school.svg'">
       </ion-avatar>
       <ion-label class="text-black bold">{{ surveyResults.results.college_attending.name || 'Undecided' }}</ion-label>
     </ion-item>
   </ion-card>
-  <ion-grid no-padding>
+  <ion-grid class="ion-no-padding">
     <ion-row>
       <ion-col>
         <ion-card>
@@ -46,28 +45,26 @@
   </ion-grid>
   <ion-card>
     <ion-card-header>COLLEGE APPLICATIONS OVERVIEW</ion-card-header>
-    <ion-card-content text-center>
-      <div text-center
-           class="emptyStateTitle bold">You applied to</div>
-      <div text-center
-           class="displayHeader bold">{{ surveyResults.results.total_colleges_applied_for }}</div>
-      <div text-center
-           class="emptyStateTitle">{{ planDisplayValues[surveyResults.answers.plan] }} colleges</div>
-      <radial-chart *ngIf="surveyResults.results.percentage_institutions_accepted"
+    <ion-card-content class="ion-text-center">
+      <div class="emptyStateTitle bold ion-text-center">You applied to</div>
+      <ion-text class="displayHeader bold ion-text-center"
+                color="primary">{{ surveyResults.results.total_colleges_applied_for }}</ion-text>
+      <div class="emptyStateTitle ion-text-center">{{ planDisplayValues[surveyResults.answers.plan] }} colleges</div>
+      <radial-chart class="ion-margin-bottom"
+                    *ngIf="surveyResults.results.percentage_institutions_accepted"
                     [color]="collegeCharts.accepted.color"
                     [label]="collegeCharts.accepted.label"
-                    [value]="collegeCharts.accepted.value"
-                    margin-bottom></radial-chart>
-      <radial-chart *ngIf="surveyResults.results.percentage_institutions_waiting"
+                    [value]="collegeCharts.accepted.value"></radial-chart>
+      <radial-chart class="ion-margin-bottom"
+                    *ngIf="surveyResults.results.percentage_institutions_waiting"
                     [color]="collegeCharts.waiting.color"
                     [label]="collegeCharts.waiting.label"
-                    [value]="collegeCharts.waiting.value"
-                    margin-bottom></radial-chart>
-      <radial-chart *ngIf="surveyResults.results.percentage_institutions_deferred || surveyResults.results.percentage_institutions_waitlisted"
+                    [value]="collegeCharts.waiting.value"></radial-chart>
+      <radial-chart class="ion-margin-bottom"
+                    *ngIf="surveyResults.results.percentage_institutions_deferred || surveyResults.results.percentage_institutions_waitlisted"
                     [color]="collegeCharts.pending.color"
                     [label]="collegeCharts.pending.label"
-                    [value]="collegeCharts.pending.value"
-                    margin-bottom></radial-chart>
+                    [value]="collegeCharts.pending.value"></radial-chart>
       <radial-chart *ngIf="surveyResults.results.percentage_institutions_declined"
                     [color]="collegeCharts.declined.color"
                     [label]="collegeCharts.declined.label"
@@ -76,41 +73,36 @@
   </ion-card>
   <ion-card *ngIf="surveyResults.results.total_scholarships_applied_for > 0">
     <ion-card-header>SCHOLARSHIP APPLICATIONS OVERVIEW</ion-card-header>
-    <ion-card-content text-center>
-      <div text-center
-           class="emptyStateTitle bold">You applied to</div>
-      <div text-center
-           class="displayHeader bold">{{ surveyResults.results.total_scholarships_applied_for }}</div>
-      <div text-center
-           class="emptyStateTitle bold">scholarships</div>
-      <radial-chart *ngIf="scholarshipChart"
+    <ion-card-content class="ion-text-center">
+      <div class="emptyStateTitle bold ion-text-center">You applied to</div>
+      <ion-text class="displayHeader bold ion-text-center"
+                color="primary">{{ surveyResults.results.total_scholarships_applied_for }}</ion-text>
+      <div class="emptyStateTitle bold ion-text-center">scholarships</div>
+      <radial-chart class="ion-margin-bottom"
+                    *ngIf="scholarshipChart"
                     [color]="scholarshipChart.color"
                     [label]="scholarshipChart.label"
-                    [value]="scholarshipChart.value"
-                    margin-bottom></radial-chart>
-      <div text-center
-           class="emptyStateTitle bold">You have been awarded</div>
-      <div text-center
-           class="displayHeader bold text-green">
-        {{ surveyResults.results.total_amount_awarded | currency:'USD':'symbol': '1.0-0' }}</div>
-      <div text-center
-           class="emptyStateTitle bold"
-           margin-bottom>in scholarship money</div>
+                    [value]="scholarshipChart.value"></radial-chart>
+      <div class="emptyStateTitle bold ion-text-center">You have been awarded</div>
+      <ion-text class="displayHeader bold ion-text-center"
+                color="success"> {{ surveyResults.results.total_amount_awarded | currency:'USD':'symbol': '1.0-0' }}
+      </ion-text>
+      <div class="emptyStateTitle bold ion-margin-bottom ion-text-center">in scholarship money</div>
     </ion-card-content>
   </ion-card>
   <ion-row *ngIf="!taskIsComplete">
     <ion-col>
-      <ion-button expand="block"
+      <ion-button color="steel"
+                  expand="block"
                   fill="clear"
-                  color="steel"
-                  (click)="previousPage()"
-                  type="button">Back </ion-button>
+                  type="button"
+                  (click)="previousPage()">Back </ion-button>
     </ion-col>
     <ion-col>
-      <ion-button expand="block"
-                  color="orange"
-                  (click)="surveyComplete()"
-                  type="submit">Submit </ion-button>
+      <ion-button color="orange"
+                  expand="block"
+                  type="submit"
+                  (click)="surveyComplete()">Submit </ion-button>
     </ion-col>
   </ion-row>
 </ng-template>

@@ -4,18 +4,18 @@
   <ion-radio-group>
     <ion-item *ngFor="let choice of prompt.options.choices">
       <ion-radio slot="start"
-                 [value]="choice.id"
-                 item-start></ion-radio>
+                 slot="start"
+                 [value]="choice.id"></ion-radio>
       <ion-label>{{ choice.value }}</ion-label>
     </ion-item>
   </ion-radio-group>
 </ion-list>
 <ion-footer>
   <ion-toolbar color="green">
-    <ion-button expand="full"
+    <ion-button color="white"
+                expand="full"
                 fill="clear"
-                color="white"
-                [disabled]="!promptCompleted"
-                (click)="submitNewPrompt()">Save</ion-button>
+                (click)="submitNewPrompt()"
+                [disabled]="!promptCompleted">Save</ion-button>
   </ion-toolbar>
 </ion-footer>

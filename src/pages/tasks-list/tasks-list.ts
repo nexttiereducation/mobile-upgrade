@@ -190,8 +190,8 @@ export class TasksListPage implements OnInit, OnDestroy {
     //     taskTypeImg: imgUrl
     //   }]);
     // } else {
-    this.router.navigate(
-      [`app/tasks/${task.id}`],
+    this.router.navigateByUrl(
+      `app/tasks/${task.id}`,
       {
         state: {
           isParent: this.impersonatedStudent,
@@ -214,19 +214,21 @@ export class TasksListPage implements OnInit, OnDestroy {
     this.content.scrollToTop();
   }
 
-  public search(event: Event) {
-    if (event) { event.stopPropagation(); }
-    if (this.searchTerm === ``) {
-      this.hasSearchTerm = false;
-      this.taskService.getUserTasks(this.query);
-    } else {
-      this.hasSearchTerm = true;
-      this.mixpanel.event(`search_entered`, {
-        'search term entered': this.searchTerm,
-        page: `Tasks`
-      });
-      const query = `${this.query}${this.isSearchAll && this.user.isStudent ? '?' : '&'}search=${this.searchTerm}`;
-      this.taskService.getUserTasks(query);
+  public search(event: any) {
+    if (event) {
+      this.searchTerm = event.detail.value;
+      if (this.searchTerm === ``) {
+        this.hasSearchTerm = false;
+        this.taskService.getUserTasks(this.query);
+      } else {
+        this.hasSearchTerm = true;
+        this.mixpanel.event(`search_entered`, {
+          'search term entered': this.searchTerm,
+          page: `Tasks`
+        });
+        const query = `${this.query}${this.isSearchAll && this.user.isStudent ? '?' : '&'}search=${this.searchTerm}`;
+        this.taskService.getUserTasks(query);
+      }
     }
   }
 

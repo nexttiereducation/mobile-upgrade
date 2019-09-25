@@ -19,7 +19,6 @@ import { TaskService } from '@nte/services/task.service';
 })
 export class PromptComponent implements OnInit, OnDestroy {
   // @Output() promptCompleted = new EventEmitter<null>();
-
   public chosenOption = null;
   public chosenOptions = [];
   public inProgress: boolean = true;
@@ -74,6 +73,10 @@ export class PromptComponent implements OnInit, OnDestroy {
           this.modalCtrl.dismiss();
         }
       });
+  }
+
+  public dismiss() {
+    this.modalCtrl.dismiss();
   }
 
 

@@ -44,8 +44,7 @@ export class FilterService {
   public search(query: string, itemType: string) {
     let path = itemType === `program` ? `/program_code` : `/${itemType}`;
     path += `s/?name=${query}`;
-    return this.apiService.get(path)
-      .pipe(map(response => response.json()));
+    return this.apiService.get(path);
   }
 
   public setCyol(isCyol: boolean) {

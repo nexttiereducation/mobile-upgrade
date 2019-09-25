@@ -1,6 +1,6 @@
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { AbstractControl, FormControl } from '@angular/forms';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { IonInfiniteScroll, ModalController, ToastController } from '@ionic/angular';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
@@ -8,7 +8,6 @@ import { takeUntil } from 'rxjs/operators';
 import { SendComponent } from '@nte/components/send/send';
 import { COLLEGE_NON_PROFIT_QUERY } from '@nte/constants/college.constants';
 import { EMPTY_STATES } from '@nte/constants/scholarship.constants';
-import { FilterPage } from '@nte/pages/filter/filter';
 import { ConnectionService } from '@nte/services/connection.service';
 import { FilterService } from '@nte/services/filter.service';
 import { MixpanelService } from '@nte/services/mixpanel.service';
@@ -73,6 +72,12 @@ export class ScholarshipsListPage implements OnInit, OnDestroy {
     }
   }
 
+  get ships$() {
+    if (this.list && this.list.providerVariable) {
+      return this.scholarshipService[this.list.providerVariable];
+    }
+  }
+
   get user() {
     return this.stakeholderService.stakeholder;
   }
@@ -84,6 +89,7 @@ export class ScholarshipsListPage implements OnInit, OnDestroy {
     public scholarshipService: ScholarshipService,
     private listTileService: ScholarshipListTileService,
     private mixpanel: MixpanelService,
+    private route: ActivatedRoute,
     private stakeholderService: StakeholderService,
     private toastCtrl: ToastController,
     navStateService: NavStateService) {
@@ -130,12 +136,12 @@ export class ScholarshipsListPage implements OnInit, OnDestroy {
     }
   }
 
-  public openFilters(event: any) {
-    if (event) { event.stopPropagation(); }
+  public openFilters() {
     this.filtering = true;
     this.router.navigate(
-      [FilterPage],
+      [`filter`],
       {
+        relativeTo: this.route,
         state: {
           cyol: false,
           filter: this.filterService.filter,
@@ -225,15 +231,17 @@ export class ScholarshipsListPage implements OnInit, OnDestroy {
   }
 
   public search(event: any) {
-    if (event) { event.stopPropagation(); }
-    this.mixpanel.event(
-      `search_entered`,
-      {
-        'search term entered': this.searchTerm,
-        page: `Scholarships`
-      }
-    );
-    this.updateList();
+    if (event) {
+      this.searchTerm = event.detail.value;
+      this.mixpanel.event(
+        `search_entered`,
+        {
+          'search term entered': this.searchTerm,
+          page: `Scholarships`
+        }
+      );
+      this.updateList();
+    }
   }
 
   public setSavingIndex(savingIndex: number) {

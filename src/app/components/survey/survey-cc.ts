@@ -110,7 +110,7 @@ export class SurveyCcComponent {
       .pipe(
         map(response => {
           if (isFinalPage) {
-            return response.json();
+            return response;
           } else {
             return null;
           }

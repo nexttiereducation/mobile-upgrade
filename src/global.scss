@@ -31,9 +31,36 @@
   src: local("Material Icons"), local("MaterialIcons-Regular"), url("assets/fonts/MaterialIcons-Regular.ttf") format("ttf");
 }
 
+.text-xlarge {
+  font-size: 1.75rem;
+}
+
+.text-large {
+  font-size: 1.25rem;
+}
+
+.text-default {
+  font-size: 1rem;
+}
+
+.text-small {
+  font-size: 0.75rem;
+}
+
+.text-xsmall {
+  font-size: 0.5rem;
+}
+
 // @import "../theme/icons";
 hr {
   height: 1px !important;
+}
+
+img.img-block {
+  display: block;
+  width: auto;
+  height: 100%;
+  min-width: 100%;
 }
 
 ion-icon.icon-60 {
@@ -76,9 +103,8 @@ ion-icon.icon-60 {
 }
 
 .avatar-title {
-  &:not(.not-centered)>.toolbar-title.toolbar-title-md {
-    justify-content: center;
-  }
+  display: flex;
+  flex-direction: row;
 
   >.toolbar-title.toolbar-title-md {
     align-items: center;
@@ -105,6 +131,11 @@ ion-icon.icon-60 {
     justify-content: center;
     overflow: visible;
   }
+}
+
+.avatar-title-image {
+  height: 48px;
+  width: 48px;
 }
 
 .avatar-title-text {
@@ -400,7 +431,7 @@ html {
   font-size: 3rem;
   font-weight: bold;
   text-align: center;
-  color: var(--blue);
+  display: block;
 }
 
 .displayTitle {

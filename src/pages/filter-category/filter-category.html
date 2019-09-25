@@ -1,43 +1,46 @@
-<ion-header mode="ios">
-  <ion-toolbar mode="ios">
-    <ion-title mode="ios">
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button></ion-back-button>
+    </ion-buttons>
+    <ion-title>
       <div class="subhead">{{ title }}</div> {{ category.name }}
     </ion-title>
-    <ion-buttons slot="primary">
-      <ion-button [color]="category.isActive ? 'primary' : 'steel'"
-                  [disabled]="!category.isActive"
-                  (click)="clear()">Clear</ion-button>
+    <ion-buttons slot="end">
+      <ion-button (click)="clear()"
+                  [color]="category.isActive ? 'primary' : 'steel'"
+                  [disabled]="!category.isActive">Clear</ion-button>
     </ion-buttons>
   </ion-toolbar>
 </ion-header>
 <ion-content>
   <ion-list>
     <ion-item *ngFor="let subCategory of category.subCategories"
+              (click)="viewDetail(subCategory)"
               [class.bg-blue10]="subCategory.isActive"
-              [hidden]="subCategory.dependency && categoryService.filterArray?.length < 1"
-              (click)="viewDetail(subCategory)">
+              [hidden]="subCategory.dependency && categoryService.filterArray?.length < 1">
       <ion-label> {{ subCategory.name || subCategory.displayName }} </ion-label>
-      <ion-badge item-end
+      <ion-badge slot="end"
                  *ngIf="subCategory.isActive">{{ subCategory.activeChildCount }}</ion-badge>
     </ion-item>
   </ion-list>
 </ion-content>
 <ion-footer *ngIf="category.isActive">
   <ion-toolbar color="primary">
-    <ion-button fill="clear"
+    <ion-button color="white"
                 expand="full"
+                fill="clear"
                 slot="end"
-                color="white"
                 *ngIf="title"
                 (click)="viewSummary()"> Next <ion-icon name="arrow-forward"></ion-icon>
     </ion-button>
-    <ion-button fill="clear"
+    <ion-button color="white"
                 expand="full"
+                fill="clear"
                 slot="end"
-                color="white"
                 *ngIf="!title"
-                (click)="applyFilters()"> Apply Filters <ion-badge margin-left
-                 class="text-blue bg-white">{{ filterService.filter?.activeChildCount }}</ion-badge>
+                (click)="applyFilters()"> Apply Filters <ion-badge class="text-blue bg-white ion-margin-left">
+        {{ filterService.filter?.activeChildCount }}</ion-badge>
     </ion-button>
   </ion-toolbar>
 </ion-footer>

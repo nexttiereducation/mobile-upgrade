@@ -58,7 +58,7 @@ export class SendComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.connectionService.initialize();
+    this.connectionService.init();
   }
 
   ngOnDestroy() {

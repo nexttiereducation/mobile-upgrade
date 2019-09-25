@@ -1,4 +1,4 @@
-import { Component, ViewEncapsulation } from '@angular/core';
+import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { mean } from 'lodash';
 
@@ -8,10 +8,15 @@ import { CollegeService } from '@nte/services/college.service';
 @Component({
   selector: `college-academic`,
   templateUrl: `college-academic.html`,
-  styleUrls: [`college-academic.scss`],
+  styleUrls: [
+    `./../college-details.scss`,
+    `college-academic.scss`
+  ],
   encapsulation: ViewEncapsulation.None
 })
-export class CollegeAcademicPage {
+export class CollegeAcademicComponent implements OnInit {
+  public charts: any[];
+
   get college() {
     return this.collegeService.active;
   }
@@ -93,6 +98,34 @@ export class CollegeAcademicPage {
     public collegeService: CollegeService,
     public route: ActivatedRoute,
     public router: Router) { }
+
+  ngOnInit() {
+    this.charts = [{
+      name: 'GPA',
+      range: [0, 5],
+      value: this.details.avg_gpa
+    },
+    {
+      name: 'ACT',
+      range: [0, 36],
+      value: this.averageAct
+    },
+    {
+      name: 'SAT Math',
+      range: [200, 800],
+      value: this.averageSatMath
+    },
+    {
+      name: 'SAT Reading',
+      range: [200, 800],
+      value: this.averageSatReading
+    },
+    {
+      name: 'SAT Writing',
+      range: [200, 800],
+      value: this.averageSatWriting
+    }];
+  }
 
   private getRoundedMean(firstValue: number, secondValue: number) {
     return Math.round(mean([firstValue, secondValue]));

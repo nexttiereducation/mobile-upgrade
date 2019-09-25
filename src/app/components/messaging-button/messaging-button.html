@@ -1,9 +1,9 @@
-<ion-button fill="clear"
-            color="black"
+<ion-button color="black"
+            fill="clear"
             icon-only
             mode="md"
             (click)="goToMessaging()">
   <ion-icon name="nt-messaging"></ion-icon>
-  <ion-badge item-end
+  <ion-badge slot="end"
              *ngIf="(messageService.unreadCount$ | async) > 0"> {{ messageService.unreadCount$ | async }} </ion-badge>
 </ion-button>

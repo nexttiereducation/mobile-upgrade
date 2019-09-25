@@ -1,6 +1,6 @@
-<div padding
+<div class="ion-padding"
      *ngIf="isPrompt">
-  <div padding-bottom>Search for your high school by name or ZIP code.</div>
+  <div class="ion-padding-bottom">Search for your high school by name or ZIP code.</div>
   <div class="tinyText bold">If no matches are found, email <a class="external-link external-link-email"
        href="mailto:info@nexttiereducation.com">info@nexttiereducation.com</a> for assistance.</div>
 </div>
@@ -8,9 +8,9 @@
      *ngIf="!selectedHighSchool">
   <ion-searchbar color="positive"
                  placeholder="Search by name or ZIP code"
+                 (ionInput)="search()"
                  [mode]="isPrompt ? 'ios' : 'md'"
                  [ngClass]="{'bg-white10 border-white50 register': isNewUser}"
-                 (ionInput)="search()"
                  (search)="closeKeyboard()"
                  [(value)]="searchValue">
   </ion-searchbar>
@@ -27,10 +27,10 @@
 </div>
 <ng-template [ngIf]="selectedHighSchool">
   <ion-card>
-    <ion-row align-items-center>
+    <ion-row class="ion-align-items-center">
       <ion-col size="auto">
         <img class="school"
-             src="assets/image/college/tile_all.svg" />
+             src="assets/image/college/tile_all.svg">
       </ion-col>
       <ion-col>
         <div class="body bold">{{ selectedHighSchool.name | titlecase }}</div>
@@ -39,9 +39,9 @@
         </div>
       </ion-col>
       <ion-col size="auto">
-        <ion-button icon-only
+        <ion-button color="primary"
                     fill="clear"
-                    color="primary"
+                    icon-only
                     (click)="deselectHighSchool()">
           <ion-icon name="close"></ion-icon>
         </ion-button>
@@ -50,9 +50,9 @@
   </ion-card>
   <ion-footer *ngIf="!isNewUser">
     <ion-toolbar color="green">
-      <ion-button expand="full"
+      <ion-button color="white"
+                  expand="full"
                   fill="clear"
-                  color="white"
                   (click)="saveHighSchool()">Save</ion-button>
     </ion-toolbar>
   </ion-footer>

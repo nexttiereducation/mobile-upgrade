@@ -11,23 +11,22 @@ export class HighSchoolService {
   }
 
   public getDetails(highSchoolId): Observable<string> {
-    return this.apiService.get(`/highschool/${highSchoolId}/`)
-      .pipe(map((response) => response.json()));
+    return this.apiService.get(`/highschool/${highSchoolId}/`);
   }
 
   public searchSchools(query: string, newUser?: boolean): Observable<any> {
     if (newUser) {
       return this.apiService.getNoHeaders(`/highschool/${query}`)
-        .pipe(map((response) => response.json().results));
+        .pipe(map((response) => response.results));
     } else {
       return this.apiService.get(`/highschool/${query}`)
-        .pipe(map((response) => response.json().results));
+        .pipe(map((response) => response.results));
     }
   }
 
   public updateHighSchool(highSchoolId: any): Observable<any> {
     return this.apiService.patch(`/stakeholder/`, { highschool: highSchoolId })
-      .pipe(map((response) => response.json()));
+      .pipe(map((response) => response));
   }
 
 }

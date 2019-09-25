@@ -1,9 +1,14 @@
 <ng-template [ngIf]="answers">
-  <div padding>
-    <div class="subhead" *ngIf="!taskIsComplete" text-center margin-bottom>Here are your answers! Make sure they're correct before hitting submit.</div>
-    <div class="displayHeader not-bold">You plan to <span class="bold">{{ answerProperties[answers.plan].title }}.</span></div>
+  <div class="ion-padding">
+    <div class="subhead ion-margin-bottom ion-text-center"
+         *ngIf="!taskIsComplete">Here are your answers! Make sure they're correct before hitting submit.</div>
+    <ion-text class="displayHeader not-bold"
+              color="primary">You plan to <span class="bold">{{ answerProperties[answers.plan].title }}.</span>
+    </ion-text>
   </div>
-  <ng-template ngFor let-property [ngForOf]="answerProperties[answers.plan] | keyValue">
+  <ng-template let-property
+               ngFor
+               [ngForOf]="answerProperties[answers.plan] | keyValue">
     <ion-card *ngIf="property.key !== 'title'">
       <ion-card-header>{{ property.value | uppercase }}</ion-card-header>
       <ion-card-content>{{ branchDisplay || answers[property.key] }}</ion-card-content>

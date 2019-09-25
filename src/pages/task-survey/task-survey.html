@@ -1,15 +1,18 @@
-<ion-header mode="ios">
-  <ion-toolbar mode="ios" [color]="taskStatus.color">
-    <ion-title mode="ios">
+<ion-header>
+  <ion-toolbar [color]="taskStatus.color">
+    <ion-title>
       <div class="subhead text-white50">{{ taskTracker.task.name }}</div>
       {{ taskTracker.status === 'C' ? 'Survey results' : 'Survey in progress...' }}
     </ion-title>
   </ion-toolbar>
 </ion-header>
-
 <ion-content>
-  <survey-ip *ngIf="surveyService.isInterestProfiler" [taskTracker]="taskTracker"></survey-ip>
-  <survey-cc *ngIf="surveyService.isCareerCluster" [taskTracker]="taskTracker"></survey-cc>
-  <survey-custom *ngIf="surveyService.isCustom" [taskTracker]="taskTracker"></survey-custom>
-  <survey-phsp *ngIf="surveyService.isPHSP" [taskTracker]="taskTracker"></survey-phsp>
+  <survey-ip *ngIf="surveyService.isInterestProfiler"
+             [taskTracker]="taskTracker"></survey-ip>
+  <survey-cc *ngIf="surveyService.isCareerCluster"
+             [taskTracker]="taskTracker"></survey-cc>
+  <survey-custom *ngIf="surveyService.isCustom"
+                 [taskTracker]="taskTracker"></survey-custom>
+  <survey-phsp *ngIf="surveyService.isPHSP"
+               [taskTracker]="taskTracker"></survey-phsp>
 </ion-content>

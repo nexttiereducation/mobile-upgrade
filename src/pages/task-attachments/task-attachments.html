@@ -1,47 +1,40 @@
-<ion-header mode="ios">
-  <ion-toolbar mode="ios"
-               color="primary"
-               hideBackButton="true">
-    <ion-buttons slot="secondary">
-      <ion-button icon-only
-                  fill="clear"
-                  color="white"
-                  (click)="back()">
-        <ion-icon name="ios-arrow-back"></ion-icon>
-      </ion-button>
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button></ion-back-button>
     </ion-buttons>
-    <ion-title mode="ios">
+    <ion-title>
       <div class="subhead text-white50">{{ taskTracker.task.name }}</div> Attachments
     </ion-title>
   </ion-toolbar>
 </ion-header>
 <ion-content>
-  <ion-item no-lines
-            detail-none
-            class="bg-grayLight"
+  <ion-item class="bg-grayLight"
+            lines="none"
+            no-lines
             *ngIf="hasAttachment"
             (click)="download()">
-    <img item-start
-         src="assets/image/task/detail_attachments.svg"
-         class="attach-icon">
+    <img class="attach-icon"
+         slot="start"
+         src="assets/image/task/detail_attachments.svg">
     <ion-label class="body truncate">{{ attachmentName }}</ion-label>
-    <ion-icon item-end
-              name="download"
-              color="primary"></ion-icon>
+    <ion-icon color="primary"
+              slot="end"
+              name="download"></ion-icon>
   </ion-item>
   <div [hidden]="!isLoading">
     <loading></loading>
   </div>
-  <empty-state [emptyState]="attachmentsEmptyState"
-               *ngIf="!hasAttachment && !isLoading"></empty-state>
+  <empty-state *ngIf="!hasAttachment && !isLoading"
+               [emptyState]="attachmentsEmptyState"></empty-state>
 </ion-content>
 <ion-footer class="no-footer-border">
   <ion-toolbar color="primary">
-    <input type="file"
-           class="file-input"
-           (change)="upload($event)" />
-    <ion-button expand="full"
-                fill="clear"
-                color="white">Attach a File</ion-button>
+    <input class="file-input"
+           type="file"
+           (change)="upload($event)">
+    <ion-button color="white"
+                expand="full"
+                fill="clear">Attach a File</ion-button>
   </ion-toolbar>
 </ion-footer>

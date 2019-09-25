@@ -1,7 +1,6 @@
 import { AgmCoreModule } from '@agm/core';
 import { HttpClientModule } from '@angular/common/http';
 import { NgModule } from '@angular/core';
-import { HttpModule } from '@angular/http';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { RouteReuseStrategy } from '@angular/router';
@@ -11,7 +10,6 @@ import { Device } from '@ionic-native/device/ngx';
 import { EmailComposer } from '@ionic-native/email-composer/ngx';
 import { File } from '@ionic-native/file/ngx';
 import { Geolocation } from '@ionic-native/geolocation/ngx';
-import { GoogleMaps } from '@ionic-native/google-maps/';
 import { LocationAccuracy } from '@ionic-native/location-accuracy/ngx';
 import { Mixpanel, MixpanelPeople } from '@ionic-native/mixpanel/ngx';
 import { NativeStorage } from '@ionic-native/native-storage/ngx';
@@ -21,18 +19,13 @@ import { IonicStorageModule } from '@ionic/storage';
 import { MaterialIconsModule } from 'ionic2-material-icons';
 import { NgApexchartsModule } from 'ng-apexcharts';
 
-import { AppRoutingModule } from './app-routing.module';
 import { NteAppComponent } from './app.component';
 import { agmConfig, ionicConfig, ionicStorageConfig } from './app.config';
+import { AppRoutingModule } from '@nte/app/app-routing.module';
 import { AuthGuard } from '@nte/app/guards/auth.guard';
 import { ComponentsModule } from '@nte/components/components.module';
 import { SettingsModule } from '@nte/components/settings/settings.module';
 import { SurveyModule } from '@nte/components/survey/survey.module';
-import { CollegeAcademicPageModule } from '@nte/pages/college-academic/college-academic.module';
-import { CollegeApplicationPageModule } from '@nte/pages/college-application/college-application.module';
-import { CollegeCampusPageModule } from '@nte/pages/college-campus/college-campus.module';
-import { CollegeFinancialPageModule } from '@nte/pages/college-financial/college-financial.module';
-import { CollegeGeneralPageModule } from '@nte/pages/college-general/college-general.module';
 import { CollegePageModule } from '@nte/pages/college/college.module';
 import { CollegesListPageModule } from '@nte/pages/colleges-list/colleges-list.module';
 import { CollegesPageModule } from '@nte/pages/colleges/colleges.module';
@@ -67,6 +60,7 @@ import { PipesModule } from '@nte/pipes/pipes.module';
 import { NodeApiService } from '@nte/services/api-node.service';
 import { ApiTokenService } from '@nte/services/api-token.service';
 import { ApiService } from '@nte/services/api.service';
+import { AppStateService } from '@nte/services/app-state.service';
 import { AuthService } from '@nte/services/auth.service';
 import { CategoryService } from '@nte/services/category.service';
 import { CollegeListTileService } from '@nte/services/college.list-tile.service';
@@ -98,6 +92,7 @@ import { ScholarshipService } from '@nte/services/scholarship.service';
 import { SettingsService } from '@nte/services/settings.service';
 import { StakeholderService } from '@nte/services/stakeholder.service';
 import { StatusItemService } from '@nte/services/status-item.service';
+import { StorageService } from '@nte/services/storage.service';
 import { StudentService } from '@nte/services/student.service';
 import { SurveyIpService } from '@nte/services/survey-ip.service';
 import { SurveyService } from '@nte/services/survey.service';
@@ -114,7 +109,6 @@ import { UrlService } from '@nte/services/url.service';
   imports: [
     BrowserModule,
     BrowserAnimationsModule,
-    HttpModule,
     HttpClientModule,
     AgmCoreModule.forRoot(agmConfig),
     IonicModule.forRoot(ionicConfig),
@@ -123,15 +117,10 @@ import { UrlService } from '@nte/services/url.service';
     NgApexchartsModule,
     MaterialIconsModule,
     // ---------------------
+    // AppRoutingModule,
     AppRoutingModule,
     ComponentsModule,
     PipesModule,
-
-    CollegeAcademicPageModule,
-    CollegeApplicationPageModule,
-    CollegeCampusPageModule,
-    CollegeFinancialPageModule,
-    CollegeGeneralPageModule,
 
     CollegePageModule,
     CollegesListPageModule,
@@ -185,7 +174,6 @@ import { UrlService } from '@nte/services/url.service';
     // FCMNG,
     File,
     Geolocation,
-    GoogleMaps,
     // Keyboard,
     LocationAccuracy,
     Mixpanel,
@@ -200,6 +188,7 @@ import { UrlService } from '@nte/services/url.service';
     // ---------------------
     ApiTokenService,
     ApiService,
+    AppStateService,
     NodeApiService,
     AuthGuard,
     ListService,
@@ -234,6 +223,7 @@ import { UrlService } from '@nte/services/url.service';
     SettingsService,
     StakeholderService,
     StatusItemService,
+    StorageService,
     StudentService,
     SurveyIpService,
     SurveyService,

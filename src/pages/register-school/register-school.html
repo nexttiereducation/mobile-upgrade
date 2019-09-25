@@ -1,18 +1,14 @@
-<ion-header mode="ios">
-  <ion-toolbar mode="ios"
-               color="primary">
-    <ion-title mode="ios">Create an account</ion-title>
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-title>Create an account</ion-title>
   </ion-toolbar>
 </ion-header>
 <ion-content class="bg-blue external-page">
   <ion-grid>
-    <ion-row align-items-center
-             justify-content-start>
-      <ion-col text-center
-               margin-bottom
-               padding-bottom>
+    <ion-row class="ion-align-items-center ion-justify-content-start">
+      <ion-col class="ion-margin-bottom ion-padding-bottom ion-text-center">
         <img class="nte-logo"
-             src="assets/image/logo/circle.svg" />
+             src="assets/image/logo/circle.svg">
         <div class="blue-divider"></div>
         <div class="text-white bold external-header">Almost done!</div>
         <div class="text-white body spaced"> Which high school do you attend? You can skip this question for now, but
@@ -21,24 +17,23 @@
     </ion-row>
     <ion-row>
       <ion-col>
-        <high-school [isNewUser]="true"
-                     (highSchoolChanged)="onHighSchoolChanged($event)"></high-school>
+        <high-school (highSchoolChanged)="onHighSchoolChanged($event)"
+                     [isNewUser]="true"></high-school>
       </ion-col>
     </ion-row>
   </ion-grid>
-  <ion-button expand="full"
+  <ion-button color="white"
+              expand="full"
               size="large"
               type="button"
-              color="white"
               *ngIf="!selectedHighSchool"
               (click)="skip()"> Skip for now </ion-button>
 </ion-content>
-<ion-footer padding-10
-            class="no-border">
-  <ion-button expand="full"
+<ion-footer class="no-border ion-padding-10">
+  <ion-button color="white"
+              expand="full"
               size="large"
               type="button"
-              color="white"
               *ngIf="selectedHighSchool"
               (click)="saveSchool()"> Next </ion-button>
 </ion-footer>

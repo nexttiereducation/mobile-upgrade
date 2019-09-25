@@ -1,5 +1,5 @@
 export const agmConfig = {
-  apiKey: `AIzaSyBhWfAjzx5TEtlXpCReVPipztZj60ltk48`
+  apiKey: `AIzaSyC6Ys-8cn0CLSU7_sQLvtz9QvTiJ6Ik1hQ`
 };
 
 export const fabricConfig = {

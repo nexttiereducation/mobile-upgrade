@@ -1,0 +1,167 @@
+<ion-content>
+  <ion-card *ngIf="details?.application_fee">
+    <ion-card-header>Application Fee</ion-card-header>
+    <ion-text class="displayHeader ion-margin-bottom ion-text-center"
+              color="primary">{{ details?.application_fee | currency:'USD':'symbol':'1.0-0' }}</ion-text>
+  </ion-card>
+  <ion-card *ngIf="details?.application_dates.length
+                   || details?.scholarship_deadlines.length
+                   || details?.financial_aid_deadlines.length">
+    <ion-card-header>Deadlines</ion-card-header>
+    <ion-list>
+      <ng-template [ngIf]="details?.application_dates.length">
+        <ion-list-header color="primary">Application</ion-list-header>
+        <ion-item class="body"
+                  *ngFor="let app of details?.application_dates">
+          <ion-icon color="primary"
+                    name="calendar"
+                    slot="start"></ion-icon>
+          <ion-label>{{ app.application_type }}</ion-label>
+          <ion-note slot="end">{{ app.deadline | date:'shortDate' }}</ion-note>
+        </ion-item>
+      </ng-template>
+      <ng-template [ngIf]="details?.scholarship_deadlines.length">
+        <ion-list-header color="primary">Scholarship</ion-list-header>
+        <ion-item class="body"
+                  *ngFor="let deadline of details?.scholarship_deadlines; let i = index">
+          <ion-icon color="primary"
+                    name="calendar"
+                    slot="start"></ion-icon>
+          <ion-label>{{ 'Scholarship Deadline' + (details?.scholarship_deadlines.length > 1 ? (' ' + (i + 1)) : '')}}
+          </ion-label>
+          <ion-note slot="end">{{ deadline | date:'shortDate' }}</ion-note>
+        </ion-item>
+      </ng-template>
+      <ng-template [ngIf]="details?.financial_aid_deadlines.length">
+        <ion-list-header color="primary">Financial Aid</ion-list-header>
+        <ion-item class="body"
+                  *ngFor="let deadline of details?.financial_aid_deadlines; let i = index">
+          <ion-icon color="primary"
+                    name="calendar"
+                    slot="start"></ion-icon>
+          <ion-label>
+            {{ 'Financial Aid Deadline' + (details?.financial_aid_deadlines.length > 1 ? (' ' + (i + 1)) : '')}}
+          </ion-label>
+          <ion-note slot="end">{{ deadline | date:'shortDate' }}</ion-note>
+        </ion-item>
+      </ng-template>
+    </ion-list>
+  </ion-card>
+  <ion-card *ngIf="details?.importance['very important']?.length > 0
+                   || details?.importance.important?.length > 0
+                   || details?.importance.considered?.length > 0
+                   || details?.importance['not considered']?.length > 0">
+    <ion-card-header>Application Importance</ion-card-header>
+    <ion-list class="importance-section">
+      <ng-template [ngIf]="details?.importance['very important']?.length > 0">
+        <ion-list-header color="success">Very Important</ion-list-header>
+        <ion-item class="body"
+                  *ngFor="let item of details?.importance['very important']">
+          <ion-label>{{ item }}</ion-label>
+        </ion-item>
+      </ng-template>
+      <ng-template [ngIf]="details?.importance.important?.length > 0">
+        <ion-list-header color="secondary">Important</ion-list-header>
+        <ion-item class="body"
+                  *ngFor="let item of details?.importance.important">
+          <ion-label>{{ item }}</ion-label>
+        </ion-item>
+      </ng-template>
+      <ng-template [ngIf]="details?.importance.considered?.length > 0">
+        <ion-list-header color="primary">Considered</ion-list-header>
+        <ion-item class="body"
+                  *ngFor="let item of details?.importance.considered">
+          <ion-label>{{ item }}</ion-label>
+        </ion-item>
+      </ng-template>
+      <ng-template [ngIf]="details?.importance['not considered']?.length > 0">
+        <ion-list-header color="medium">Not Considered</ion-list-header>
+        <ion-item class="body"
+                  *ngFor="let item of details?.importance['not considered']">
+          <ion-label>{{ item }}</ion-label>
+        </ion-item>
+      </ng-template>
+    </ion-list>
+    <!-- <div class="importance-section">
+      <div class="bg-green10"
+           padding
+           *ngIf="details?.importance['very important']?.length > 0">
+        <div class="tinyHeader text-green"
+             text-left>Very Important</div>
+        <ul class="body spaced">
+          <li *ngFor="let item of details?.importance['very important']">{{ item }}</li>
+        </ul>
+      </div>
+      <div class="bg-green10"
+           padding
+           *ngIf="details?.importance.important.length > 0">
+        <div class="tinyHeader text-green"
+             text-left>Important</div>
+        <ul class="body spaced">
+          <li *ngFor="let item of details?.importance.important">{{ item }}</li>
+        </ul>
+      </div>
+      <div class="bg-blue10"
+           padding
+           *ngIf="details?.importance.considered.length > 0">
+        <div class="tinyHeader text-blue"
+             text-left>Considered</div>
+        <ul class="body spaced">
+          <li *ngFor="let item of details?.importance.considered">{{ item }}</li>
+        </ul>
+      </div>
+      <div class="bg-grayLightest-1"
+           padding
+           *ngIf="details?.importance['not considered'].length > 0">
+        <div class="tinyHeader text-grayDark50"
+             text-left>Not Considered</div>
+        <ul class="body spaced">
+          <li *ngFor="let item of details?.importance['not considered']">{{ item }}</li>
+        </ul>
+      </div>
+    </div> -->
+  </ion-card>
+  <ion-card>
+    <ion-card-header>Contact</ion-card-header>
+    <ion-list>
+      <ion-item button
+                class="external-link"
+                *ngIf="details?.financial_aid_url"
+                (click)="linkService.open(details.financial_aid_url)">
+        <ion-avatar slot="start">
+          <img src="/assets/image/contact/website.svg" />
+        </ion-avatar>
+        <ion-label>
+          <h4>Financial Aid Website</h4>
+          <div class="chartLabel"
+               [innerHTML]="details?.financial_aid_url | link:{truncateOnly: true}"></div>
+        </ion-label>
+      </ion-item>
+      <ion-item button
+                class="external-link"
+                *ngIf="college?.admissions_url"
+                (click)="linkService.open(college.admissions_url)">
+        <ion-avatar slot="start">
+          <img src="/assets/image/contact/website.svg" />
+        </ion-avatar>
+        <ion-label>
+          <h4>Admissions Website</h4>
+          <div class="chartLabel"
+               [innerHTML]="college?.admissions_url | link:{truncateOnly: true}"></div>
+        </ion-label>
+      </ion-item>
+      <ion-item button
+                class="external-link external-link-phone"
+                *ngIf="details?.admissions_telephone"
+                [href]="'tel:' + details?.admissions_telephone">
+        <ion-avatar slot="start">
+          <img src="/assets/image/contact/phone.svg" />
+        </ion-avatar>
+        <ion-label>
+          <h4>Admissions Phone</h4>
+          <div class="chartLabel">{{ details?.admissions_telephone | phone }}</div>
+        </ion-label>
+      </ion-item>
+    </ion-list>
+  </ion-card>
+</ion-content>

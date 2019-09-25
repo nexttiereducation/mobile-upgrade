@@ -21,7 +21,10 @@ import { StakeholderService } from '@nte/services/stakeholder.service';
 @Component({
   selector: `colleges`,
   templateUrl: `colleges.html`,
-  styleUrls: [`colleges.scss`]
+  styleUrls: [
+    `colleges.scss`,
+    `../../app/components/tiles/tiles.scss`
+  ]
 })
 export class CollegesPage implements OnInit, OnDestroy {
   public connections: any;
@@ -89,15 +92,6 @@ export class CollegesPage implements OnInit, OnDestroy {
     this.setupTiles();
     this.setupRecSub();
     this.initialize();
-  }
-
-  ngOnDestroy() {
-    this.ngUnsubscribe.next();
-    this.ngUnsubscribe.complete();
-    this.tiles = new Array();
-  }
-
-  ionViewDidEnter() {
     this.mixpanel.event(`navigated_to-Colleges`);
     this.collegesService.initRecs(
       this.user.id,
@@ -110,6 +104,12 @@ export class CollegesPage implements OnInit, OnDestroy {
         this.updateTile(this.params.data);
       }
     }
+  }
+
+  ngOnDestroy() {
+    this.ngUnsubscribe.next();
+    this.ngUnsubscribe.complete();
+    this.tiles = new Array();
   }
 
   public determineColumns(tile: IListTile, index: number, colNum: number) {
@@ -266,6 +266,44 @@ export class CollegesPage implements OnInit, OnDestroy {
     }
   }
 
+  private checkStoredTileData() {
+    this.nativeStorage
+      .getItem(this.userId)
+      .then(
+        storedItems => {
+          const tilesToHide = {};
+          if (storedItems.hiddenTiles && storedItems.hiddenTiles.length > 0) {
+            storedItems.hiddenTiles.forEach((val, key) => {
+              if (val) {
+                tilesToHide[key] = val;
+              }
+            });
+          }
+          const tileNamesToHide = Object.keys(tilesToHide);
+          if (tileNamesToHide.length > 0) {
+            this.hiddenTiles = tilesToHide;
+            pullAll(this.tileNames, tileNamesToHide);
+          } else {
+            this.hiddenTiles = {};
+            this.tileNames.forEach(t => this.hiddenTiles[t] = false);
+            this.updateHiddenTiles(this.hiddenTiles);
+          }
+        },
+        err => {
+          if (err.code === 2) {
+            this.hiddenTiles = zipObject(
+              this.tileNames,
+              this.tileNames.map(() => false)
+            );
+            this.updateHiddenTiles(this.hiddenTiles, true);
+          } else {
+            this.showTileLoadingErrorToast();
+          }
+        }
+      )
+      .catch(err => console.error(err));
+  }
+
   private deleteCustomList(tile: any) {
     this.collegesService.deleteCustomList(tile.id)
       .pipe(takeUntil(this.ngUnsubscribe))
@@ -281,8 +319,7 @@ export class CollegesPage implements OnInit, OnDestroy {
     this.collegesService.getFilter()
       .pipe(takeUntil(this.ngUnsubscribe))
       .subscribe(
-        response => {
-          const filter = response.json();
+        filter => {
           this.defaultFilterCategories = filter[0].subCategories;
           this.defaultFilters = new Filter(
             this.defaultFilterCategories,
@@ -366,41 +403,7 @@ export class CollegesPage implements OnInit, OnDestroy {
     });
     if (this.user && this.user.id) {
       this.userId = this.user.id.toString();
-      this.nativeStorage
-        .getItem(this.userId)
-        .then(
-          storedItems => {
-            const tilesToHide = {};
-            if (storedItems.hiddenTiles && storedItems.hiddenTiles.length > 0) {
-              storedItems.hiddenTiles.forEach((val, key) => {
-                if (val) {
-                  tilesToHide[key] = val;
-                }
-              });
-            }
-            const tileNamesToHide = Object.keys(tilesToHide);
-            if (tileNamesToHide.length > 0) {
-              this.hiddenTiles = tilesToHide;
-              pullAll(this.tileNames, tileNamesToHide);
-            } else {
-              this.hiddenTiles = {};
-              this.tileNames.forEach(t => this.hiddenTiles[t] = false);
-              this.updateHiddenTiles(this.hiddenTiles);
-            }
-          },
-          err => {
-            if (err.code === 2) {
-              this.hiddenTiles = zipObject(
-                this.tileNames,
-                this.tileNames.map(() => false)
-              );
-              this.updateHiddenTiles(this.hiddenTiles, true);
-            } else {
-              this.showTileLoadingErrorToast();
-            }
-          }
-        )
-        .catch(err => console.error(err));
+      this.checkStoredTileData();
       this.tiles.forEach(tile => {
         const fileWords = words(tile.name);
         tile.iconFileName = fileWords[0].toLowerCase();

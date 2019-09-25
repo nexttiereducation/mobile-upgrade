@@ -1,5 +1,4 @@
 import { Injectable } from '@angular/core';
-import { Storage } from '@ionic/storage';
 import { merge } from 'lodash';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import { map } from 'rxjs/internal/operators/map';
@@ -13,13 +12,14 @@ import { PushNotificationService } from './push-notification.service';
 import { ToastService } from './toast.service';
 import { INewUser } from '@nte/interfaces/new-user.interface';
 import { IStudent } from '@nte/interfaces/student.interface';
+import { IUserOverview } from '@nte/interfaces/user-overview.interface';
 import { IResult } from '@nte/models/interest-profiler.models';
 import { Stakeholder } from '@nte/models/stakeholder.model';
 import { ApiTokenService } from '@nte/services/api-token.service';
+import { StorageService } from '@nte/services/storage.service';
 
 @Injectable({ providedIn: 'root' })
 export class StakeholderService {
-  public loggingIn: boolean = false;
   public newUser: INewUser = {
     email: null,
     first_name: null,
@@ -28,38 +28,56 @@ export class StakeholderService {
     stakeholder_type: null
   };
 
+  private _loggingIn: BehaviorSubject<boolean> = new BehaviorSubject(false);
   private _loggedIn: BehaviorSubject<boolean> = new BehaviorSubject(false);
   private _loginSuccess: Subject<any> = new Subject<any>();
   private _logoutSuccess: Subject<any> = new Subject<any>();
+  private _overview: BehaviorSubject<IUserOverview> = new BehaviorSubject<IUserOverview>(null);
   private _stakeholder: BehaviorSubject<Stakeholder> = new BehaviorSubject<Stakeholder>(null);
-  set loggedIn(isLoggedIn: boolean) {
-    this._loggedIn.next(isLoggedIn);
-  }
 
   get loggedIn(): boolean {
     return this._loggedIn.getValue();
   }
-
+  set loggedIn(isLoggedIn: boolean) {
+    this._loggedIn.next(isLoggedIn);
+  }
   get loggedIn$(): Observable<boolean> {
     return this._loggedIn.asObservable();
+  }
+
+  get loggingIn(): boolean {
+    return this._loggingIn.getValue();
+  }
+  set loggingIn(isLoggingIn: boolean) {
+    this._loggingIn.next(isLoggingIn);
+  }
+  get loggingIn$(): Observable<boolean> {
+    return this._loggingIn.asObservable();
   }
 
   get loginSuccess(): Observable<boolean> {
     return this._loginSuccess.asObservable();
   }
-
   get logoutSuccess(): Observable<boolean> {
     return this._logoutSuccess.asObservable();
   }
 
-  set stakeholder(stakeholder: Stakeholder) {
-    this._stakeholder.next(stakeholder);
+  get overview(): IUserOverview {
+    return this._overview.getValue();
+  }
+  set overview(overview: IUserOverview) {
+    this._overview.next(overview);
+  }
+  get overview$(): Observable<IUserOverview> {
+    return this._overview.asObservable();
   }
 
   get stakeholder(): Stakeholder {
     return this._stakeholder.getValue();
   }
-
+  set stakeholder(stakeholder: Stakeholder) {
+    this._stakeholder.next(stakeholder);
+  }
   get stakeholder$(): Observable<Stakeholder> {
     return this._stakeholder.asObservable();
   }
@@ -67,7 +85,7 @@ export class StakeholderService {
   constructor(public api: ApiService,
     public apiToken: ApiTokenService,
     public nodeApi: NodeApiService,
-    public storage: Storage,
+    public storage: StorageService,
     private highSchoolService: HighSchoolService,
     private mixpanel: MixpanelService,
     private pnService: PushNotificationService,
@@ -76,18 +94,18 @@ export class StakeholderService {
   }
 
   public checkStorage() {
-    return this.storage.get(`ls.stakeholder`)
+    return this.storage.getObject(`ls.stakeholder`)
       .then(
         stakeholder => {
           if (stakeholder) {
-            this.storage.get(`ls.token`)
+            this.storage.getItem(`ls.token`)
               .then(token => {
-                if (token && token.length) {
+                if (token && token.value && token.value.length) {
                   const currentUser = JSON.parse(stakeholder);
                   this.setStakeholder(
                     {
                       id: currentUser.id,
-                      token
+                      token: token.value
                     }, true
                   );
                 }
@@ -121,7 +139,7 @@ export class StakeholderService {
     return this.api
       .postWithoutAuthorization(`/clever/login/`, cleverAuthData)
       .subscribe(
-        response => this.setStakeholder(response.json(), true, `clever`),
+        response => this.setStakeholder(response, true, `clever`),
         err => console.error(err)
       );
   }
@@ -129,8 +147,7 @@ export class StakeholderService {
   public getGraduationYearOptions() {
     return this.api
       .optionsNoAuth(`/stakeholder/register/`)
-      .pipe(map((response) => {
-        const result = response.json();
+      .pipe(map(result => {
         return result.actions.POST.graduation_year;
       }));
   }
@@ -146,21 +163,20 @@ export class StakeholderService {
     return this.nodeApi
       .get(`/users/${this.stakeholder.id}/overview`)
       .pipe(map((response) => {
-        this.stakeholder = Object.assign(this.stakeholder, response.json());
-        return response.json();
+        this.overview = response;
+        return this.overview;
       }));
   }
 
   public getStakeholderInformation(isLoggingIn?: boolean, loginService?: string) {
     this.api
       .get(`/stakeholder`)
-      .subscribe((response) => {
-        const data = response.json();
+      .subscribe(data => {
         this.stakeholder = new Stakeholder(data);
         this.loggedIn = true;
         this.stakeholder.loggedIn = true;
-        this.storage.get(`ls.token`).then((val) => {
-          this.stakeholder.authToken = val;
+        this.storage.getItem(`ls.token`).then((stored) => {
+          this.stakeholder.authToken = stored.value;
         });
         this.stakeholder.id = data.id;
         this.populateEntitlements();
@@ -183,7 +199,7 @@ export class StakeholderService {
     return this.api
       .get(`/students/${queryString}`)
       .pipe(
-        map((response) => response.json().results),
+        map((response) => response.results),
         tap<IStudent[]>((students) => {
           this.stakeholder.students = students;
           return students;
@@ -197,9 +213,8 @@ export class StakeholderService {
       .postWithoutAuthorization(`/stakeholder/login/`, loginData)
       .subscribe(
         response => {
-          const data = response.json();
-          this.setStakeholder(data, true);
-          this.apiToken.token = data.token;
+          this.setStakeholder(response, true);
+          this.apiToken.token = response.token;
         },
         err => {
           this.loggingIn = false;
@@ -209,18 +224,18 @@ export class StakeholderService {
   }
 
   public loginViaStorage() {
-    this.storage.get(`ls.token`)
-      .then(token => {
-        if (token && token.length) {
-          this.setSessionStorage(token, true);
+    this.storage.getItem(`ls.token`)
+      .then(stored => {
+        if (stored && stored.value && stored.value.length) {
+          this.setSessionStorage(stored.value, true);
         }
       });
   }
 
   public logout() {
-    this.storage.remove(`ls.stakeholder`);
-    this.storage.remove(`ls.token`);
-    this.storage.remove(`ls.user.roleId`);
+    this.storage.removeItem(`ls.stakeholder`);
+    this.storage.removeItem(`ls.token`);
+    this.storage.removeItem(`ls.user.roleId`);
     this.storage.clear();
     this.stakeholder = new Stakeholder({});
     this.newUser = {
@@ -250,7 +265,7 @@ export class StakeholderService {
 
   public refreshStakeholder() {
     this.stakeholder = new Stakeholder(this.stakeholder);
-    this.storage.set(`ls.stakeholder`, JSON.stringify(this.stakeholder));
+    this.storage.setObject(`ls.stakeholder`, this.stakeholder);
   }
 
   public register(): Observable<any> {
@@ -261,7 +276,7 @@ export class StakeholderService {
       .postWithoutAuthorization(`/stakeholder/register`, this.newUser)
       .pipe(map((response) => {
         this.mixpanel.event(`user_registered`);
-        return response.json();
+        return response;
       }));
   }
 
@@ -272,8 +287,7 @@ export class StakeholderService {
 
   public sendForgotPasswordEmail(email: string): Observable<any> {
     return this.api
-      .postWithoutAuthorization(`/stakeholder/forgot`, { email })
-      .pipe(map(response => response.json()));
+      .postWithoutAuthorization(`/stakeholder/forgot`, { email });
   }
 
   public setHighSchool() {
@@ -288,11 +302,11 @@ export class StakeholderService {
 
   public setInterestProfilerResult(result: IResult[]) {
     this.stakeholder.interest_profiler_result = result;
-    this.storage.set(`ls.stakeholder`, JSON.stringify(this.stakeholder));
+    this.storage.setObject(`ls.stakeholder`, this.stakeholder);
   }
 
   public setSessionStorage(token: string, isLoggingIn?: boolean, loginService?: string) {
-    this.storage.set(`ls.token`, token);
+    this.storage.setItem(`ls.token`, token);
     this.api.setupHeaders(token).then(() => {
       this.nodeApi.setupHeaders(token);
       this.getStakeholderInformation(isLoggingIn, loginService);
@@ -309,7 +323,6 @@ export class StakeholderService {
   public updateInterestProfile(data: any) {
     this.api
       .patch(`/stakeholder`, { interest_profiler_result: data })
-      .pipe(map(response => response.json()))
       .subscribe(
         (response: any) => {
           this.setInterestProfilerResult(
@@ -333,8 +346,7 @@ export class StakeholderService {
   public updateStakeholder() {
     this.api
       .get(`/stakeholder`)
-      .pipe(map((response) => {
-        const data = response.json();
+      .pipe(map(data => {
         const updatedStakeholder = new Stakeholder(data);
         merge(this.stakeholder, updatedStakeholder);
       }));

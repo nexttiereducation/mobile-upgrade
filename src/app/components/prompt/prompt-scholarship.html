@@ -1,4 +1,4 @@
-<ion-list padding-vertical
+<ion-list class="ion-padding-vertical"
           (ionChange)="onOptionChange($event)"
           [(ngModel)]="newPrompt.choice">
   <ion-radio-group>
@@ -10,10 +10,9 @@
   </ion-radio-group>
 </ion-list>
 <ng-template [ngIf]="newPrompt.choice === 'Awarded'">
-  <div class="medium"
-       padding>Congratulations! Please enter the amount awarded to you from this scholarship.</div>
+  <div class="medium ion-padding">Congratulations! Please enter the amount awarded to you from this scholarship.</div>
   <ion-item no-lines>
-    <ion-label item-start>$</ion-label>
+    <ion-label slot="start">$</ion-label>
     <ion-input type="number"
                (ionChange)="onOptionChange($event)"
                [(ngModel)]="newPrompt.amount_awarded"></ion-input>
@@ -21,9 +20,9 @@
 </ng-template>
 <ion-footer *ngIf="promptCompleted">
   <ion-toolbar color="green">
-    <ion-button expand="full"
+    <ion-button color="white"
+                expand="full"
                 fill="clear"
-                color="white"
                 (click)="submitNewPrompt()">Save</ion-button>
   </ion-toolbar>
 </ion-footer>

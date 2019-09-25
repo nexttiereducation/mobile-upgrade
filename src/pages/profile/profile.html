@@ -1,23 +1,22 @@
-<ion-header mode="ios">
-  <ion-toolbar mode="ios">
+<ion-header>
+  <ion-toolbar>
     <ion-buttons notifications-button
                  slot="secondary"></ion-buttons>
-    <ion-title mode="ios">Profile</ion-title>
-    <ion-buttons slot="primary"
-                 messaging-button></ion-buttons>
+    <ion-title>Profile</ion-title>
+    <ion-buttons messaging-button
+                 slot="primary"></ion-buttons>
   </ion-toolbar>
 </ion-header>
 <ion-content class="bg-blue">
   <ion-grid>
     <ion-row>
-      <ion-col text-center>
+      <ion-col class="ion-text-center">
         <img class="avatar-shadow img-container"
              [src]="profilePhoto || 'assets/image/contact/avatar.svg'">
       </ion-col>
     </ion-row>
     <ion-row *ngIf="userOverview">
-      <ion-col class="text-white70"
-               text-center>
+      <ion-col class="text-white70 ion-text-center">
         <div class="displayTitle bold text-white">{{ userOverview.first_name + ' ' + userOverview.last_name }}</div>
         <div class="email">{{ userOverview.email }}</div>
         <div>
@@ -34,13 +33,12 @@
   </ng-container>
 </ion-content>
 <ion-footer>
-  <ion-button class="no-caps"
+  <ion-button class="no-caps ion-margin"
               color="white"
-              slot="end"
-              margin
               fill="outline"
-              (click)="logout()"
-              style="width: calc( 100% - 32px )"> Log out <ion-icon name="exit"></ion-icon>
+              slot="end"
+              style="width: calc( 100% - 32px )"
+              (click)="logout()"> Log out <ion-icon name="exit"></ion-icon>
   </ion-button>
   <!-- <button fill="clear" color="white" expand="full" slot="end"
           ion-button

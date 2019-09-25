@@ -1,7 +1,7 @@
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { AbstractControl, FormControl } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { ModalController, Platform, ToastController } from '@ionic/angular';
+import { ModalController, NavController, Platform, ToastController } from '@ionic/angular';
 import { OverlayEventDetail } from '@ionic/core';
 import { isNumber } from 'lodash';
 import { Subject } from 'rxjs';
@@ -45,7 +45,7 @@ export class CollegesListPage implements OnInit, OnDestroy {
   public nonProfitQuery: string = COLLEGE_NON_PROFIT_QUERY;
   public placeholders: any[] = [null, null, null];
   public searchControl: AbstractControl = new FormControl(``);
-  public searchTerm: string = ``;
+  public searchTerm: string;
 
   private ngUnsubscribe: Subject<any> = new Subject();
 
@@ -82,6 +82,7 @@ export class CollegesListPage implements OnInit, OnDestroy {
     private listTileService: CollegeListTileService,
     private location: LocationService,
     private mixpanel: MixpanelService,
+    private navCtrl: NavController,
     private stakeholderService: StakeholderService,
     private toastCtrl: ToastController,
     navStateService: NavStateService) {
@@ -174,7 +175,6 @@ export class CollegesListPage implements OnInit, OnDestroy {
   }
 
   public onFilterOpen(event: Event) {
-    if (event) { event.stopPropagation(); }
     this.filtering = true;
     this.router.navigate(
       [`filter`],
@@ -187,15 +187,6 @@ export class CollegesListPage implements OnInit, OnDestroy {
         }
       }
     );
-  }
-
-  public onSearch(event: Event) {
-    if (event) { event.stopPropagation(); }
-    this.mixpanel.event(`search_entered`, {
-      'search term entered': this.searchTerm,
-      page: `Colleges`
-    });
-    this.updateCollegeList();
   }
 
   public async openApplyModal(details: any, data: any) {
@@ -315,6 +306,17 @@ export class CollegesListPage implements OnInit, OnDestroy {
       );
   }
 
+  public search(event: any) {
+    if (event) {
+      this.searchTerm = event.detail.value;
+      this.mixpanel.event(`search_entered`, {
+        'search term entered': this.searchTerm,
+        page: `Colleges`
+      });
+      this.updateCollegeList();
+    }
+  }
+
   public setSavingIndex(savingIndex: number) {
     this.isSavingIndex = savingIndex;
   }
@@ -342,7 +344,7 @@ export class CollegesListPage implements OnInit, OnDestroy {
     this.collegeService.active = college;
     const id = this.collegesService.getIdFromCollege(college);
     this.router.navigateByUrl(
-      `app/colleges/${id}/general`,
+      `app/colleges/${id}`,
       {
         // relativeTo: this.route,
         state: {

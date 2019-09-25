@@ -113,7 +113,6 @@ export class TaskService {
 
   public downloadTaskFile(taskId: number): void {
     this.apiService.get(`/task_list/${taskId}/attachment`)
-      .pipe(map((response) => response.json()))
       .subscribe(
         (data) => {
           const link = document.createElement(`a`);
@@ -137,8 +136,7 @@ export class TaskService {
 
   public getArchivedTasks(url: string, isAbsoluteUrl?: boolean): void {
     this.apiService.get(url, isAbsoluteUrl)
-      .pipe(map((response) => {
-        const data = response.json();
+      .pipe(map(data => {
         if (isAbsoluteUrl) {
           this.archivedTaskData.tasks = this.archivedTaskData.tasks.concat(data.results);
         } else {
@@ -165,10 +163,6 @@ export class TaskService {
 
   public getNextTask(path: string, type?: string) {
     this.apiService.get(path)
-      .pipe(map((response) => {
-        const tasks = response.json();
-        return tasks;
-      }))
       .subscribe(
         (tasks) => {
           const next = tasks.results[0];
@@ -203,8 +197,7 @@ export class TaskService {
       this.activeTaskId = taskId;
     }
     return this.apiService.get(url, hasNextPage)
-      .pipe(map((response) => {
-        const resObj = response.json();
+      .pipe(map(resObj => {
         let notes = resObj.results;
         this.nextNotesPage = resObj.next;
         if (!isNewTask && this.notes && this.notes.length) {
@@ -223,10 +216,6 @@ export class TaskService {
   public getTasks(type, path) {
     const taskPath = path.replace(`status=NS`, `status=NS&status=C`);
     this.apiService.get(taskPath)
-      .pipe(map((response) => {
-        const tasks = response.json();
-        return tasks;
-      }))
       .subscribe(
         (tasks) => {
           this.setupTaskBuckets(type, tasks);
@@ -235,15 +224,14 @@ export class TaskService {
   }
 
   public getTaskTrackerById(id: number) {
-    return this.apiService.get(`/task_list/${id}`)
-      .pipe(map((response) => response.json()));
+    return this.apiService.get(`/task_list/${id}`);
   }
 
   public getUnverifiedTasks(impersonationId: number) {
     let tasks = new Array<TaskTracker>();
     this.apiService.get(`/task_list/?status=C&student_id=${impersonationId}`)
       .pipe(map((response) => {
-        tasks = response.json().results;
+        tasks = response.results;
       }))
       .subscribe(() => {
         const unverifiedTasks = tasks.filter((task) => !task.verified_by);
@@ -257,9 +245,8 @@ export class TaskService {
     this.initializingTasks = isInitialLoad;
     if (isInitialLoad) { this._userTaskTrackers.next([]); }
     let sortedTasks = new Array<TaskTracker>();
-    const all = this.apiService.get(url, isAbsoluteUrl)
-      .pipe(map((response) => {
-        const data = response.json();
+    this.apiService.get(url, isAbsoluteUrl)
+      .pipe(map(data => {
         if (this.nextPage === data.next) {
           this.nextPage = null;
           this._moreToScroll.next(false);
@@ -294,9 +281,12 @@ export class TaskService {
             this._resizeContent.next(true);
           }
           this.initializingTasks = false;
-          all.unsubscribe();
         },
-        (err) => this.showErrorAlert(err)
+        (err) => {
+          this.fetchingTasks = false;
+          this.initializingTasks = false;
+          this.showErrorAlert(err);
+        }
       );
   }
 
@@ -349,7 +339,7 @@ export class TaskService {
     return this.apiService.patch(`/task_list/${id}`, { status })
       .pipe(map((response) => {
         if (response.status !== 299) {
-          const newTaskTracker = new TaskTrackerChange<TaskTracker>(new TaskTracker(response.json()));
+          const newTaskTracker = new TaskTrackerChange<TaskTracker>(new TaskTracker(response));
           const mixpanelData = {
             'school name': newTaskTracker.data.institution_name,
             'task title': newTaskTracker.data.task.name,
@@ -370,7 +360,7 @@ export class TaskService {
   public uploadFile(id: number, file: File): Observable<TaskTracker> {
     return this.apiService.patchFile(`/task_list/${id}`, file)
       .pipe(
-        map((response: any) => new TaskTracker(response.json())),
+        map((response: any) => new TaskTracker(response)),
         tap((taskTracker) => {
           const tracker: any = taskTracker;
           const trackerIndex = this.allUserTaskTrackers.findIndex((tt) => tt.id === tracker.id);
@@ -381,7 +371,7 @@ export class TaskService {
 
   public verifyStudentTask(taskTracker: TaskTracker): void {
     this.apiService.patch(`/task_list/${taskTracker.id}/verify/`)
-      .pipe(map((response) => response.json()))
+      .pipe(map((response) => response))
       .subscribe(
         (newTaskTracker) => {
           const taskTrackerIndex = this._unverifiedTaskTrackers.value.indexOf(taskTracker);

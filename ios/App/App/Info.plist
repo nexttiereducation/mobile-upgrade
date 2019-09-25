@@ -26,7 +26,7 @@
 			<key>CFBundleURLSchemes</key>
 			<array>
 				<string>capacitor</string>
-        <string>nte</string>
+        <string>$URL_SCHEME</string>
 			</array>
 		</dict>
 	</array>

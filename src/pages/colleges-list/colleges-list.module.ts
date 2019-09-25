@@ -7,6 +7,7 @@ import { IonicModule } from '@ionic/angular';
 import { CollegesListPage } from './colleges-list';
 import { ComponentsModule } from '@nte/components/components.module';
 import { SendComponent } from '@nte/components/send/send';
+import { FilterCategoryPage } from '@nte/pages/filter-category/filter-category';
 import { FilterPage } from '@nte/pages/filter/filter';
 import { PipesModule } from '@nte/pipes/pipes.module';
 
@@ -20,7 +21,13 @@ const routes: Routes = [
       },
       {
         path: 'filter',
-        component: FilterPage
+        component: FilterPage,
+        children: [
+          {
+            path: ':category',
+            component: FilterCategoryPage
+          }
+        ]
       }
     ]
   }

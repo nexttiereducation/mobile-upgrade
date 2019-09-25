@@ -6,7 +6,7 @@ export const COLLEGE_TILES: any[] = [
     isLocked: true,
     name: `Saved`,
     order: 0,
-    serviceVariable: `savedColleges$`
+    serviceVariable: `saved$`
   },
   {
     colSpan: 4,
@@ -20,7 +20,7 @@ export const COLLEGE_TILES: any[] = [
     isLocked: true,
     name: `Matching`,
     order: 2,
-    serviceVariable: `matchingColleges$`,
+    serviceVariable: `matching$`,
     stakeholder_type: `Student`
   },
   {
@@ -52,7 +52,7 @@ export const COLLEGE_TILES: any[] = [
     isLocked: false,
     name: `Near You`,
     order: 6,
-    serviceVariable: `nearbyColleges$`
+    serviceVariable: `nearby$`
   },
   {
     colSpan: 4,

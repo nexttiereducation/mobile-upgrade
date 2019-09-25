@@ -52,19 +52,19 @@ export class SurveyCustomComponent implements OnInit, OnDestroy {
         }
       )
       .pipe(
-        map(response => response.json()),
+        map(response => response),
         takeUntil(this.ngUnsubscribe)
       )
       .subscribe(
-      () => {
-        if (this.taskTracker.isStarted) {
-          this.taskTracker.updatedStatus();
-        }
-        this.events.publish(`taskChange`, { taskTracker: this.taskTracker });
-        this.disableSubmitButton = true;
-      },
-      err => console.error(err)
-    );
+        () => {
+          if (this.taskTracker.isStarted) {
+            this.taskTracker.updatedStatus();
+          }
+          this.events.publish(`taskChange`, { taskTracker: this.taskTracker });
+          this.disableSubmitButton = true;
+        },
+        err => console.error(err)
+      );
   }
 
 }

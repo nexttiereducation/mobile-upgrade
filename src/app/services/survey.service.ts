@@ -85,16 +85,16 @@ export class SurveyService {
   public getStudentSurveyData(taskId: number, studentId: number) {
     return this.apiService.get(`/survey/${taskId}?student_pk=${studentId}`)
       .pipe(map((response) => {
-        this.currentSurvey = response.json();
-        return response.json();
+        this.currentSurvey = response;
+        return response;
       }));
   }
 
   public getSurveyData(taskId: number) {
     return this.apiService.get(`/survey/${taskId}`)
       .pipe(map((response) => {
-        this.currentSurvey = response.json();
-        return response.json();
+        this.currentSurvey = response;
+        return response;
       }));
   }
 

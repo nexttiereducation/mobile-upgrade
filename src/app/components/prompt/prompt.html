@@ -1,19 +1,18 @@
-<ion-header mode="ios">
-  <ion-toolbar mode="ios">
+<ion-header>
+  <ion-toolbar>
     <ion-buttons slot="secondary">
-      <ion-button fill="clear"
-                  color="black"
+      <ion-button color="black"
+                  fill="clear"
                   icon-only
-                  (click)="viewCtrl.dismiss()">
+                  (click)="dismiss()">
         <ion-icon name="ios-arrow-up"></ion-icon>
       </ion-button>
     </ion-buttons>
-    <ion-title mode="ios">{{ taskTracker?.task.name }}</ion-title>
+    <ion-title>{{ taskTracker?.task.name }}</ion-title>
   </ion-toolbar>
 </ion-header>
 <ion-content>
-  <div class="medium"
-       padding
+  <div class="medium ion-padding"
        *ngIf="prompt.type !== 'high-school' && prompt.type !== 'multiple-choice'">{{ prompt.question }}</div>
   <prompt-test-dates *ngIf="prompt.type === 'multiple-choice'"
                      [newPrompt]="newPrompt"

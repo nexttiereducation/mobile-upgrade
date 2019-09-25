@@ -9,16 +9,17 @@ import { Component, Input, ViewChild, ViewEncapsulation } from '@angular/core';
 export class BarChartComponent {
   @ViewChild(`barChart`, { static: false }) barChartElem;
 
-  @Input() color?: string = `#3692cc`;
+  @Input() charts?: any[];
+  @Input() color?: string = `primary`;
   @Input() label?: string;
-  @Input() labelColor?: any = `blue`;
-  @Input() name: string;
-  @Input() range;
+  @Input() name?: string;
+  @Input() range?: number[];
   @Input() size?: string = `small`;
   @Input() subLabel?: boolean = false;
-  @Input() tinyHeader?: string;
   @Input() unit?: string = `student`;
-  @Input() value: number;
+  @Input() value?: number;
+
+  constructor() { }
 
   // public newConfig: any;
   // public newData: any;

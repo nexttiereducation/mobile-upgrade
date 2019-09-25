@@ -1,5 +1,5 @@
-<form #phspSurveyForm="ngForm"
-      *ngIf="studentAnswers.page">
+<form *ngIf="studentAnswers.page"
+      #phspSurveyForm="ngForm">
   <div [class.height-100]="hideFormNavButtons">
     <ng-template [ngIf]="studentAnswers.page === 1">
       <div class="surveyQuestion small"> What is your post high school plan? <span
@@ -8,13 +8,13 @@
       <ion-list name="plan"
                 required
                 (ionChange)="onPlanChanged(plan)"
-                [(ngModel)]="studentAnswers.plan"
-                #plan="ngModel">
+                #plan="ngModel"
+                [(ngModel)]="studentAnswers.plan">
         <ion-radio-group>
           <ion-item *ngFor="let plan of plans">
             <ion-radio slot="start"
-                       [value]="plan.value"
-                       item-start></ion-radio>
+                       slot="start"
+                       [value]="plan.value"></ion-radio>
             <ion-label>{{ plan.name }}</ion-label>
           </ion-item>
         </ion-radio-group>
@@ -34,13 +34,13 @@
             </div>
             <ion-item class="no-label">
               <ion-label></ion-label>
-              <ion-select name="college_attending"
-                          interface="popover"
+              <ion-select interface="popover"
+                          name="college_attending"
                           placeholder="Select college"
                           required
-                          [(ngModel)]="studentAnswers.college_attending_id"
+                          #college_attending_id="ngModel"
                           (ionChange)="onCollegeAttendingChanged($event)"
-                          #college_attending_id="ngModel">
+                          [(ngModel)]="studentAnswers.college_attending_id">
                 <ion-select-option [value]="-1">To be decided</ion-select-option>
                 <ion-select-option *ngFor="let college of acceptedColleges"
                                    [value]="college.id"> {{ college.name }} </ion-select-option>
@@ -55,34 +55,34 @@
                          placeholder="Intended major / field of study"
                          required
                          type="text"
-                         [(ngModel)]="studentAnswers.major"
-                         #major="ngModel"></ion-input>
+                         #major="ngModel"
+                         [(ngModel)]="studentAnswers.major"></ion-input>
             </ion-item>
             <ng-template [ngIf]="studentAnswers.college_attending_id && studentAnswers.college_attending_id !== -1">
               <div class="surveyQuestion small">If any, how much financial aid are you receiving from this college?
               </div>
               <ion-item>
                 <ion-label></ion-label>
-                <span item-start>$</span>
-                <ion-input name="financial_aid"
-                           min="1"
+                <span slot="start">$</span>
+                <ion-input min="1"
+                           name="financial_aid"
                            pattern="[0-9]*"
                            placeholder="ex: 5000"
                            type="number"
-                           [(ngModel)]="studentAnswers.financial_aid"
-                           #financial_aid="ngModel"></ion-input>
-                <span item-end>.00</span>
+                           #financial_aid="ngModel"
+                           [(ngModel)]="studentAnswers.financial_aid"></ion-input>
+                <span slot="end">.00</span>
               </ion-item>
               <div class="surveyQuestion small"> What is your intended start date? <span
                       [class.text-red]="start_date.touched && start_date.invalid">*</span>
               </div>
               <ion-item class="no-label">
                 <ion-label></ion-label>
-                <ion-icon name="calendar"
-                          color="primary"
-                          item-start></ion-icon>
-                <ion-datetime name="start_date"
-                              displayFormat="MM/DD/YYYY"
+                <ion-icon color="primary"
+                          slot="start"
+                          name="calendar"></ion-icon>
+                <ion-datetime displayFormat="MM/DD/YYYY"
+                              name="start_date"
                               pickerFormat="MMMM/DD/YYYY"
                               placeholder="Start date"
                               required
@@ -90,8 +90,8 @@
                               [max]="maxYear"
                               [min]="minYear"
                               [pickerOptions]="datePickerOptions"
-                              [(ngModel)]="studentAnswers.start_date"
-                              #start_date="ngModel"></ion-datetime>
+                              #start_date="ngModel"
+                              [(ngModel)]="studentAnswers.start_date"></ion-datetime>
               </ion-item>
             </ng-template>
           </ng-template>
@@ -117,21 +117,21 @@
             </div>
             <ion-list name="branch"
                       required
-                      [(ngModel)]="studentAnswers.branch"
-                      #branch="ngModel">
+                      #branch="ngModel"
+                      [(ngModel)]="studentAnswers.branch">
               <ion-radio-group>
                 <ion-item *ngFor="let branch of militaryBranches">
                   <ion-radio slot="start"
-                             item-start
+                             slot="start"
                              [value]="branch.value"></ion-radio>
                   <ion-label>{{ branch.name }}</ion-label>
-                  <ion-avatar item-end>
-                    <img [src]="branch.logo" />
+                  <ion-avatar slot="end">
+                    <img [src]="branch.logo">
                   </ion-avatar>
                 </ion-item>
                 <ion-item style="height: 57px">
                   <ion-radio slot="start"
-                             item-start
+                             slot="start"
                              value="To be determined"></ion-radio>
                   <ion-label>To be determined</ion-label>
                 </ion-item>
@@ -148,8 +148,8 @@
                          placeholder="Employer"
                          required
                          type="text"
-                         [(ngModel)]="studentAnswers.employer"
-                         #employer="ngModel"></ion-input>
+                         #employer="ngModel"
+                         [(ngModel)]="studentAnswers.employer"></ion-input>
             </ion-item>
           </ng-template>
           <ng-template [ngIf]="studentAnswers.plan === 'other'">
@@ -162,8 +162,8 @@
                             placeholder="Take a year off, attend a college prep school, not graduating this year, not sure yet, etc..."
                             required
                             type="text"
-                            [(ngModel)]="studentAnswers.custom_plan"
-                            #custom_plan="ngModel"></ion-textarea>
+                            #custom_plan="ngModel"
+                            [(ngModel)]="studentAnswers.custom_plan"></ion-textarea>
             </ion-item>
           </ng-template>
           <ng-template [ngIf]="studentAnswers.plan === 'trade'">
@@ -176,8 +176,8 @@
                          placeholder="Trade/vocational school"
                          required
                          type="text"
-                         [(ngModel)]="studentAnswers.trade_school"
-                         #trade_school="ngModel"></ion-input>
+                         #trade_school="ngModel"
+                         [(ngModel)]="studentAnswers.trade_school"></ion-input>
             </ion-item>
             <div class="surveyQuestion small"> What trade/vocational certification will you be pursuing? <span
                     [class.text-red]="certification.touched && certification.invalid">*</span>
@@ -188,8 +188,8 @@
                          placeholder="Trade/vocational certification"
                          required
                          type="text"
-                         [(ngModel)]="studentAnswers.certification"
-                         #certification="ngModel"></ion-input>
+                         #certification="ngModel"
+                         [(ngModel)]="studentAnswers.certification"></ion-input>
             </ion-item>
           </ng-template>
           <ng-template [ngIf]="studentAnswers.plan !== 'other'">
@@ -198,11 +198,11 @@
             </div>
             <ion-item class="no-label">
               <ion-label></ion-label>
-              <ion-icon name="calendar"
-                        color="primary"
-                        item-start></ion-icon>
-              <ion-datetime name="start_date"
-                            displayFormat="MM/DD/YYYY"
+              <ion-icon color="primary"
+                        slot="start"
+                        name="calendar"></ion-icon>
+              <ion-datetime displayFormat="MM/DD/YYYY"
+                            name="start_date"
                             pickerFormat="MMMM/DD/YYYY"
                             placeholder="Start date"
                             required
@@ -210,8 +210,8 @@
                             [max]="maxYear"
                             [min]="minYear"
                             [pickerOptions]="datePickerOptions"
-                            [(ngModel)]="studentAnswers.start_date"
-                            #start_date="ngModel"></ion-datetime>
+                            #start_date="ngModel"
+                            [(ngModel)]="studentAnswers.start_date"></ion-datetime>
             </ion-item>
           </ng-template>
         </ng-template>
@@ -229,36 +229,36 @@
       </div>
     </ng-template>
   </div>
-  <ion-grid padding-10
+  <ion-grid class="ion-padding-10"
             *ngIf="!hideFormNavButtons && !taskTracker.isComplete">
     <ion-row>
       <ion-col *ngIf="studentAnswers.page > 1">
-        <ion-button expand="block"
+        <ion-button color="steel"
+                    expand="block"
                     fill="clear"
-                    color="steel"
                     type="button"
                     (click)="previousPage()"> Back </ion-button>
       </ion-col>
       <ion-col>
-        <ion-button expand="block"
-                    color="orange"
+        <ion-button color="orange"
+                    expand="block"
                     type="button"
                     *ngIf="!isLastQuestion && !isConfirmationPage && !isShortSurvey"
-                    [disabled]="phspSurveyForm.form.invalid || isInvalid"
-                    (click)="nextPage()"> Continue </ion-button>
-        <ion-button expand="block"
-                    color="orange"
+                    (click)="nextPage()"
+                    [disabled]="phspSurveyForm.form.invalid || isInvalid"> Continue </ion-button>
+        <ion-button color="orange"
+                    expand="block"
                     type="button"
                     *ngIf="isLastQuestion && !isConfirmationPage"
-                    [disabled]="phspSurveyForm.form.invalid || isInvalid"
-                    (click)="viewConfirmation()"> Finish Survey </ion-button>
-        <ion-button expand="block"
-                    color="orange"
+                    (click)="viewConfirmation()"
+                    [disabled]="phspSurveyForm.form.invalid || isInvalid"> Finish Survey </ion-button>
+        <ion-button color="orange"
+                    expand="block"
                     type="submit"
                     *ngIf="(studentAnswers.page === 1 && isShortSurvey) ||
                        (isConfirmationPage && !isLastQuestion)"
-                    [disabled]="phspSurveyForm.form.invalid || isInvalid"
-                    (click)="surveyComplete()"> Submit </ion-button>
+                    (click)="surveyComplete()"
+                    [disabled]="phspSurveyForm.form.invalid || isInvalid"> Submit </ion-button>
       </ion-col>
     </ion-row>
   </ion-grid>

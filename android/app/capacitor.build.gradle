@@ -11,14 +11,12 @@ apply from: "../capacitor-cordova-android-plugins/cordova.variables.gradle"
 dependencies {
 
     implementation "com.android.support:support-v4:27.+"
-    implementation "com.google.android.gms:play-services-maps:15.0.1"
-    implementation "com.google.android.gms:play-services-location:15.0.1"
-    implementation "com.android.support:support-core-utils:27.+"
+    implementation "com.mixpanel.android:mixpanel-android:5.6.2"
+    implementation "com.google.android.gms:play-services-base:+"
+    implementation "com.google.firebase:firebase-messaging:+"
     implementation "com.google.android.gms:play-services-location:16.+"
 }
-apply from: "../../node_modules/cordova-fabric-plugin/src/android/build-extras.gradle"
-apply from: "../../node_modules/cordova-plugin-googlemaps/src/android/frameworks/tbxml-android.gradle"
-apply from: "../../node_modules/cordova-plugin-googlemaps/src/android/frameworks/apikey.gradle"
+
 
 if (hasProperty('postBuildExtras')) {
   postBuildExtras()

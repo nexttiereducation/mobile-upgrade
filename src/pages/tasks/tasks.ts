@@ -17,7 +17,10 @@ import { TaskService } from '@nte/services/task.service';
 @Component({
   selector: `tasks`,
   templateUrl: `tasks.html`,
-  styleUrls: [`tasks.scss`]
+  styleUrls: [
+    `tasks.scss`,
+    `../../app/components/tiles/tiles.scss`
+  ]
 })
 export class TasksPage implements OnInit, OnDestroy {
   public activeStudent: IStudent;
@@ -139,8 +142,7 @@ export class TasksPage implements OnInit, OnDestroy {
       this.collegeService.getFollowed()
         .pipe(takeUntil(this.ngUnsubscribe))
         .subscribe(
-          (response: any) => {
-            const trackers: ICollegeTracker[] = response.json();
+          (trackers: ICollegeTracker[]) => {
             this.user.institution_trackers = trackers;
           }
         );
@@ -166,13 +168,13 @@ export class TasksPage implements OnInit, OnDestroy {
   }
 
   public viewList(listTile: any, collegeTracker?: ICollegeTracker) {
-    const listName = listTile.iconFileName.replace(`tile_`, ``).replace(`type_`, ``);
+    const listName = collegeTracker ? collegeTracker.institution : listTile.iconFileName.replace(`tile_`, ``).replace(`type_`, ``);
     this.router.navigate(
       [
         `app`,
         `tasks`,
         `list`,
-        collegeTracker ? collegeTracker.institution : listName
+        listName
       ],
       {
         // relativeTo: this.route,

@@ -1,23 +1,26 @@
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Headers, Http } from '@angular/http';
-import { Storage } from '@ionic/storage';
 import { extend } from 'lodash';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
 
 import { ApiTokenService } from '@nte/services/api-token.service';
+import { StorageService } from '@nte/services/storage.service';
 import { UrlService } from '@nte/services/url.service';
 
 @Injectable({ providedIn: 'root' })
 export class ApiService {
-  private _headers: BehaviorSubject<Headers> = new BehaviorSubject(null);
+  private _headers: BehaviorSubject<HttpHeaders> = new BehaviorSubject(
+    new HttpHeaders()
+      .set('Accept', `application/json`)
+      .set('Content-Type', `application/json`)
+  );
   private _pathRoot: BehaviorSubject<string> = new BehaviorSubject(null);
-  private _requestOptions: BehaviorSubject<any> = new BehaviorSubject(null);
   private _tokenPrefix: BehaviorSubject<string> = new BehaviorSubject(null);
 
-  set headers(headers: any) {
+  set headers(headers: HttpHeaders) {
     this._headers.next(headers);
   }
-  get headers() {
+  get headers(): HttpHeaders {
     return this._headers.getValue();
   }
 
@@ -28,15 +31,14 @@ export class ApiService {
     return this._pathRoot.getValue();
   }
 
-  set requestOptions(opts: any) {
-    this._requestOptions.next(opts);
-  }
   get requestOptions() {
-    return this._requestOptions.getValue();
+    return {
+      headers: this.headers
+    };
   }
 
   get storedToken() {
-    return this.storage.get(`ls.token`);
+    return this.storage.getItem(`ls.token`).then(stored => stored.value);
   }
 
   set token(token: string) {
@@ -61,8 +63,8 @@ export class ApiService {
   }
 
   constructor(private apiToken: ApiTokenService,
-    private http: Http,
-    private storage: Storage,
+    private http: HttpClient,
+    private storage: StorageService,
     private url: UrlService) {
     this.tokenPrefix = `Token `;
     this.pathRoot = this.url.getPathRoot();
@@ -78,13 +80,13 @@ export class ApiService {
   }
 
   public getNoAcceptRequestHeader(path: string, isAbsoluteUrl?: boolean): Observable<any> {
-    this.requestOptions = {
+    const requestOptions: any = {
       headers: new Headers({
         AUTHORIZATION: `${this.tokenPrefix}${this.storedToken}`,
         'Content-Type': `application/json`
       })
     };
-    return this.http.get(this.getUrl(path, isAbsoluteUrl), this.requestOptions);
+    return this.http.get(this.getUrl(path, isAbsoluteUrl), requestOptions);
   }
 
   public getNoHeaders(path: string, isAbsoluteUrl?: boolean): Observable<any> {
@@ -148,7 +150,7 @@ export class ApiService {
       this.getUrl(path),
       JSON.stringify(data),
       {
-        headers: new Headers({
+        headers: new HttpHeaders({
           Accept: `application/json`,
           'Content-Type': `application/json`
         })
@@ -165,42 +167,31 @@ export class ApiService {
   }
 
   public setupHeaders(token?: string) {
-    return this.getHeaders(token)
-      .then((headers: any) => {
-        this.headers = new Headers(headers);
-        this.requestOptions = { headers: this.headers };
-        return;
-      })
-      .catch(err => console.error(err));
-  }
-
-  private getHeaders(token?: string): Promise<Headers> {
-    const headers = new Headers({
-      Accept: `application/json`,
-      'Content-Type': `application/json`
-    });
-    if (token) {
-      return new Promise((resolve, _reject) => {
-        headers.append(`AUTHORIZATION`, `${this.tokenPrefix}${token}`);
-        if (!this.token) {
-          this.token = token;
-        }
-        resolve(headers);
-      });
-    } else if (this.storedToken) {
-      return this.storedToken.then(
-        val => {
-          if (val && val.length) {
-            headers.append(`AUTHORIZATION`, `${this.tokenPrefix}${val}`);
+    return new Promise(
+      (resolve, reject) => {
+        if (token) {
+          this.setAuthHeader(`${this.tokenPrefix}${token}`);
+          if (!this.token) {
+            this.token = token;
           }
-          return headers;
-        },
-        err => {
-          console.error(err);
-          return headers;
+          resolve();
+        } else if (this.storedToken) {
+          return this.storedToken.then(
+            val => {
+              if (val && val.length) {
+                this.setAuthHeader(`${this.tokenPrefix}${val}`);
+              }
+              resolve();
+            },
+            err => {
+              console.error(err);
+              reject();
+            }
+          );
         }
-      );
-    }
+      }
+    );
+
   }
 
   private getUrl(path: string, isAbsoluteUrl: boolean = false) {
@@ -209,8 +200,7 @@ export class ApiService {
 
   private recursiveGet(url: string, subject: Subject<any>, start: number): void {
     this.http.get(url, this.requestOptions)
-      .subscribe((response: any) => {
-        const data = response.json();
+      .subscribe((data: any) => {
         subject.next(data.results);
         if (data.next) {
           this.recursiveGet(data.next, subject, start);
@@ -219,5 +209,14 @@ export class ApiService {
           subject.unsubscribe();
         }
       });
+  }
+
+  private setAuthHeader(authValue: string) {
+    const authKey: string = `AUTHORIZATION`;
+    if (this.headers.has(authKey)) {
+      this.headers = this.headers.set(authKey, authValue);
+    } else {
+      this.headers = this.headers.append(authKey, authValue);
+    }
   }
 }

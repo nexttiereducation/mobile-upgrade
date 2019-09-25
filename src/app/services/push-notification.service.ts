@@ -1,7 +1,10 @@
 import { Injectable } from '@angular/core';
+import { Plugins, PushNotification, PushNotificationActionPerformed, PushNotificationToken } from '@capacitor/core';
 import { BehaviorSubject } from 'rxjs';
 
 import { ApiService } from '@nte/services/api.service';
+
+const { PushNotifications } = Plugins;
 
 @Injectable({ providedIn: 'root' })
 export class PushNotificationService {
@@ -22,6 +25,34 @@ export class PushNotificationService {
   }
 
   constructor(private api: ApiService) { }
+
+  public init() {
+    PushNotifications.register();
+
+    PushNotifications.addListener('registration',
+      (token: PushNotificationToken) => {
+        alert('Push registration success, token: ' + token.value);
+      }
+    );
+
+    PushNotifications.addListener('registrationError',
+      (error: any) => {
+        alert('Error on registration: ' + JSON.stringify(error));
+      }
+    );
+
+    PushNotifications.addListener('pushNotificationReceived',
+      (notification: PushNotification) => {
+        alert('Push received: ' + JSON.stringify(notification));
+      }
+    );
+
+    PushNotifications.addListener('pushNotificationActionPerformed',
+      (notification: PushNotificationActionPerformed) => {
+        alert('Push action performed: ' + JSON.stringify(notification));
+      }
+    );
+  }
 
   public setToken() {
     if (this.fcmToken && this.fcmToken.length) {

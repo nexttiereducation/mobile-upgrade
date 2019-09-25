@@ -1,17 +1,18 @@
-<ion-header mode="ios">
-  <ion-toolbar mode="ios">
+<ion-header>
+  <ion-toolbar>
     <ion-buttons notifications-button
                  slot="secondary"></ion-buttons>
-    <ion-title mode="ios">Scholarships</ion-title>
-    <ion-buttons slot="primary"
-                 messaging-button></ion-buttons>
+    <ion-title>Scholarships</ion-title>
+    <ion-buttons messaging-button
+                 slot="primary"></ion-buttons>
   </ion-toolbar>
 </ion-header>
 <ion-content class="bg-grayLight">
-  <ion-grid no-padding
+  <ion-grid class="ion-no-padding"
             tiles>
     <ion-row>
       <ion-col *ngFor="let tile of tiles; let i = index"
+               [attr.col-12]="tile.colSpan===12 ? true : null"
                [attr.col-4]="tile.colSpan === 4
                              && (tile.isCustom || (tile.phase && tile.phase === user.phase))
                              ? true : null"
@@ -19,13 +20,11 @@
                              && !tile.isCustom
                              ? true : null"
                [attr.col-8]="tile.colSpan===8 ? true : null"
-               [attr.col-12]="tile.colSpan===12 ? true : null"
                [hidden]="tile.phase && tile.phase !== user.phase">
         <ion-card class="tile"
                   [class.recommended]="tile.name === 'Recommended' && recommendations > 0"
                   [ngClass]="tile.inverse ? 'bg-blue50' : 'bg-white'">
-          <ion-button class="tile-button"
-                      text-center
+          <ion-button class="tile-button ion-text-center"
                       *ngIf="tile.isLocked"
                       (click)="viewList(tile)"
                       [class.text-white]="tile.inverse"
@@ -50,9 +49,8 @@
               </ion-item-options>
               <ion-item>
                 <ion-label></ion-label>
-                <ion-button class="tile-button"
+                <ion-button class="tile-button ion-text-center"
                             color="white"
-                            text-center
                             (click)="viewList(tile)">
                   <img [src]="tile.iconUrl">
                   <ion-label class="tile-label">{{ tile.name }}</ion-label>
@@ -69,7 +67,7 @@
           </ion-list>
         </ion-card>
         <!-- <ion-card class="tile">
-          <button ion-button text-center
+          <button class="ion-button ion-text-center"
                     class="tile-button"
                     [class.text-white]="tile.inverse"
                     [color]="tile.inverse ? 'primary' : 'white'"

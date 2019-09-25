@@ -110,8 +110,7 @@ export class MessageService extends ListService {
     this.api
       .get(url, isAbsUrl)
       .subscribe(
-        response => {
-          const data = response.json();
+        data => {
           this.nextPage = data.next;
           const formattedMessages = flatten([this.getParsedMessages(data.results), ...this.messages]);
           this.messages = orderBy(formattedMessages, [`created_on`]);
@@ -174,8 +173,7 @@ export class MessageService extends ListService {
     this.api
       .get(`/messages/unread/`)
       .subscribe(
-        data => {
-          const unreads = data.json();
+        unreads => {
           if (unreads && unreads.length) {
             this._unreadMessages.next(
               orderBy([...unreads], [`count`, `get_full_name`], [`desc`, `asc`])
@@ -222,7 +220,7 @@ export class MessageService extends ListService {
         response => {
           this.isSending = false;
           if (midChat) {
-            this.messages.push(this.getParsedMessage(response.json()));
+            this.messages.push(this.getParsedMessage(response));
             this.events.publish(`messageChange`, { messages: this.messages });
           }
           if (this.selectedTeamMember) {
@@ -244,9 +242,9 @@ export class MessageService extends ListService {
     this.api
       .post(`/messages/group/`, groupMessage)
       .subscribe(
-      () => this.showMessageSuccessToast(),
-      () => this.showMessageErrorToast()
-    );
+        () => this.showMessageSuccessToast(),
+        () => this.showMessageErrorToast()
+      );
   }
 
   public sendToStudents(
@@ -296,17 +294,17 @@ export class MessageService extends ListService {
 
   private async showMessageErrorToast() {
     const toast = await this.toastCtrl.create({
-        duration: 3000,
-        message: `Can't send message; please try again`
-      });
+      duration: 3000,
+      message: `Can't send message; please try again`
+    });
     toast.present();
   }
 
   private async showMessageSuccessToast() {
     const toast = await this.toastCtrl.create({
-        duration: 3000,
-        message: `Message sent`
-      });
+      duration: 3000,
+      message: `Message sent`
+    });
     toast.present();
   }
 

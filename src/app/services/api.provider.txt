@@ -203,7 +203,7 @@ export class ApiService {
   private recursiveGet(url: string, subject: Subject<any>, start: number): void {
     this.http.get(url, this.requestOptions)
       .subscribe((response: any) => {
-        const data = response.json();
+        const data = response;
         subject.next(data.results);
         if (data.next) {
           this.recursiveGet(data.next, subject, start);

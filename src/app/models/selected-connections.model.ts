@@ -81,7 +81,7 @@ export class SelectedConnections {
         ids_to_ignore: this.deselected
       };
       this.api.post(`/stakeholder/bulk-update/count`, body)
-        .pipe(map((response) => response.json()))
+        .pipe(map((response) => response))
         .subscribe(
           (data) => this.count = data.count,
           err => console.error(err)

@@ -1,9 +1,9 @@
-<ion-header mode="ios">
-  <ion-toolbar mode="ios">
+<ion-header>
+  <ion-toolbar>
     <ion-buttons slot="start">
       <ion-back-button></ion-back-button>
     </ion-buttons>
-    <ion-title mode="ios"> Create your own list! </ion-title>
+    <ion-title> Create your own list! </ion-title>
   </ion-toolbar>
 </ion-header>
 <!-- <filter [filter]="filterOptions"
@@ -11,7 +11,7 @@
         [listType]="page"
         [title]="'Create your own list!'"></filter> -->
 <ion-content [class.selections-complete]="selectionsMade">
-  <div padding
+  <div class="ion-padding"
        *ngIf="list?.filters">
     <h6>Active Filters</h6>
     <ng-template let-filter
@@ -26,8 +26,8 @@
             <span class="tinyText">{{ filter.displayName }}</span>
             <span class="bold">{{ value.displayValue || value.id }}</span>
           </ion-label>
-          <ion-button fill="clear"
-                      color="white"
+          <ion-button color="white"
+                      fill="clear"
                       (click)="removeFilter(filter, filterIndex, valueIndex)">
             <ion-icon name="close"></ion-icon>
           </ion-button>
@@ -37,9 +37,8 @@
     <p *ngIf="list.filters?.length < 1"><em>You don't have any filters selected!</em></p>
   </div>
   <hr>
-  <div padding>
-    <ion-item margin-bottom
-              no-padding>
+  <div class="ion-padding">
+    <ion-item class="ion-margin-bottom ion-no-padding">
       <ion-label>List Name</ion-label>
       <ion-input maxlength="15"
                  placeholder="Name your list"
@@ -48,20 +47,19 @@
     </ion-item>
   </div>
   <hr>
-  <div padding>
+  <div class="ion-padding">
     <h6>Pick an Image</h6>
-    <ion-grid class="pick-an-image"
-              no-padding>
+    <ion-grid class="pick-an-image ion-no-padding">
       <ion-radio-group [(value)]="list.image">
         <ion-row>
           <ng-template let-image
                        ngFor
                        [ngForOf]="images">
-            <ion-col size="4"
-                     text-center>
+            <ion-col class="ion-text-center"
+                     size="4">
               <ion-button class="image-button"
-                          fill="clear"
                           expand="full"
+                          fill="clear"
                           icon-only
                           (click)="list.image = image"
                           [class.selected]="list.image === image">
@@ -76,9 +74,9 @@
 </ion-content>
 <ion-footer *ngIf="selectionsMade">
   <ion-toolbar color="primary">
-    <ion-button fill="clear"
-                color="white"
+    <ion-button color="white"
                 expand="full"
+                fill="clear"
                 (click)="saveList()">Save your list</ion-button>
   </ion-toolbar>
 </ion-footer>

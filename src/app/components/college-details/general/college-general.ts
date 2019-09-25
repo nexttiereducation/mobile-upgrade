@@ -6,9 +6,10 @@ import { CollegeService } from '@nte/services/college.service';
 @Component({
   selector: `college-general`,
   templateUrl: `college-general.html`,
+  styleUrls: [`./../college-details.scss`],
   encapsulation: ViewEncapsulation.None
 })
-export class CollegeGeneralPage {
+export class CollegeGeneralComponent {
   get college() {
     return this.collegeService.active;
   }

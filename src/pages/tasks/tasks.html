@@ -1,9 +1,8 @@
-<ion-header mode="ios">
-  <ion-toolbar mode="ios"
-               [attr.no-padding]="showParentHeader && user.students.length > 1 ? true : null">
+<ion-header>
+  <ion-toolbar [attr.no-padding]="showParentHeader && user.students.length > 1 ? true : null">
     <ion-buttons notifications-button
                  slot="secondary"></ion-buttons>
-    <ion-title mode="ios">
+    <ion-title>
       <ng-template [ngIf]="!showParentHeader">Tasks</ng-template>
       <ng-template [ngIf]="showParentHeader">
         <ng-template [ngIf]="user.students && user.students.length === 1"> {{ getDisplayText(activeStudent) }}
@@ -18,17 +17,16 @@
         </ng-template>
       </ng-template>
     </ion-title>
-    <ion-buttons slot="primary"
-                 messaging-button></ion-buttons>
+    <ion-buttons messaging-button
+                 slot="primary"></ion-buttons>
   </ion-toolbar>
 </ion-header>
 <ion-content class="bg-grayLight">
   <loading *ngIf="!taskTiles || !taskTiles.length"></loading>
-  <ion-grid no-padding
+  <ion-grid class="ion-no-padding"
             tiles
             *ngIf="!user.isParent || user.students?.length">
-    <ion-row align-items-center
-             justify-content-center>
+    <ion-row class="ion-align-items-center ion-justify-content-center">
       <ion-col *ngFor="let tile of taskTiles; let i = index"
                [attr.col-4]="tile.colSpan === 4
                              && !(taskTiles[i+1]?.phase && taskTiles[i+1]?.phase !== user.phase)

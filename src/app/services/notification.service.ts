@@ -71,7 +71,7 @@ export class NotificationService extends ListService {
     this.apiService.get(getMore ? this.nextPage : this.baseUrl)
       .subscribe(
         (response: any) => {
-          response = response.json();
+          response = response;
           const notifications = getMore ? this.all.concat(response.results) : response.results;
           this.all = notifications.sort((a, b) => {
             const dateA = dayjs(a.created_on);

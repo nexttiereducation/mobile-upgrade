@@ -20,27 +20,27 @@ export class ScholarshipService {
   public showFilter = true;
   public showVaryingTotal = false;
 
-  private _applyingScholarships = new BehaviorSubject<ISavedScholarship[]>([]);
+  private _applying = new BehaviorSubject<ISavedScholarship[]>([]);
   private _count: number;
   private _filter: Filter;
   private _nextPage: string;
-  private _previousPage: string;
+  private _prevPage: string;
   private _recommendedNextPage: string;
-  private _recommendedPreviousPage: string;
-  private _recommendedScholarships = new BehaviorSubject<IScholarship[]>([]);
+  private _recommendedPrevPage: string;
+  private _recommended = new BehaviorSubject<IScholarship[]>([]);
   private _savedNextPage: string;
-  private _savedPreviousPage: string;
-  private _savedScholarships = new BehaviorSubject<ISavedScholarship[]>([]);
+  private _savedPrevPage: string;
+  private _saved = new BehaviorSubject<ISavedScholarship[]>([]);
   private _scholarships = new BehaviorSubject<IScholarship[]>([]);
-  private _selectedScholarship = new Subject<IScholarship>();
+  private _selected = new Subject<IScholarship>();
   private _studentScholarships = new BehaviorSubject<ISavedScholarship[]>([]);
 
   get applying() {
-    return this._applyingScholarships.getValue();
+    return this._applying.getValue();
   }
 
   get applying$() {
-    return this._applyingScholarships.asObservable();
+    return this._applying.asObservable();
   }
 
   get count() {
@@ -55,40 +55,40 @@ export class ScholarshipService {
     return this._nextPage;
   }
 
-  get previousPage() {
-    return this._previousPage;
+  get prevPage() {
+    return this._prevPage;
   }
 
   get recommendedNextPage() {
     return this._recommendedNextPage;
   }
 
-  get recommendedPreviousPage() {
-    return this._recommendedPreviousPage;
+  get recommendedPrevPage() {
+    return this._recommendedPrevPage;
   }
 
   get recommended() {
-    return this._recommendedScholarships.getValue();
+    return this._recommended.getValue();
   }
 
   get recommended$() {
-    return this._recommendedScholarships.asObservable();
+    return this._recommended.asObservable();
   }
 
   get savedNextPage() {
     return this._savedNextPage;
   }
 
-  get savedPreviousPage() {
-    return this._savedPreviousPage;
+  get savedPrevPage() {
+    return this._savedPrevPage;
   }
 
   get saved() {
-    return this._savedScholarships.getValue();
+    return this._saved.getValue();
   }
 
   get saved$() {
-    return this._savedScholarships.asObservable();
+    return this._saved.asObservable();
   }
 
   get scholarships() {
@@ -99,8 +99,8 @@ export class ScholarshipService {
     return this._scholarships.asObservable();
   }
 
-  get selectedScholarship() {
-    return this._selectedScholarship.asObservable();
+  get selected() {
+    return this._selected.asObservable();
   }
 
   get studentScholarships() {
@@ -115,39 +115,36 @@ export class ScholarshipService {
   }
 
   public cleanUp() {
-    this._applyingScholarships.next([]);
-    this._recommendedScholarships.next([]);
-    this._savedScholarships.next([]);
+    this._applying.next([]);
+    this._recommended.next([]);
+    this._saved.next([]);
   }
 
   public createList(listTile: ICustomListTile) {
     return this.nodeapi
-      .post(`/custom-scholarship-lists`, listTile)
-      .pipe(map(response => response.json()));
+      .post(`/custom-scholarship-lists`, listTile);
   }
 
   public deleteList(id: number) {
     return this.nodeapi
-      .delete(`/custom-scholarship-lists/${id}`)
-      .pipe(map(response => response.json()));
+      .delete(`/custom-scholarship-lists/${id}`);
   }
 
   public getById(id: number) {
     return this.api
       .get(`/scholarship/${id}`)
-      .pipe(map(response => new Scholarship(response.json())));
+      .pipe(map(response => new Scholarship(response)));
   }
 
   public getFilters() {
     return this.api
-      .get(`/meta/scholarship/`)
-      .pipe(map(response => response.json()));
+      .get(`/meta/scholarship/`);
   }
 
   // getLists() {
   //   return this.api
   //  .nodeGet('/custom-scholarship-lists')
-  //     .pipe(map(response => response.json()));
+  //     .pipe(map(response => response));
   // }
 
   public getRecommendedScholarships(userId: number) {
@@ -164,7 +161,7 @@ export class ScholarshipService {
       }))
       .subscribe(
         (recs: IScholarship[]) => {
-          this._recommendedScholarships.next(recs);
+          this._recommended.next(recs);
           this.fetchingScholarships = false;
         },
         err => {
@@ -179,16 +176,16 @@ export class ScholarshipService {
     // this.getStudentScholarships();
     // this._studentScholarships.subscribe(scholarships => {
     //     if (scholarships && scholarships.length > 0) {
-    //         const savedScholarships = scholarships.map(savedScholarship => {
+    //         const saved = scholarships.map(savedScholarship => {
     //             const isSaved = (savedScholarship.status === 'I');
     //             savedScholarship.scholarship.saved = isSaved;
     //             savedScholarship.scholarship.applying = !isSaved;
     //             savedScholarship.scholarship.status = savedScholarship.status;
     //             return savedScholarship;
     //         });
-    //         const scholarshipArray = partition(savedScholarships, {'status': 'I'});
-    //         this._savedScholarships.next(this._savedScholarships.value.concat(scholarshipArray[0]));
-    //         this._applyingScholarships.next(this._applyingScholarships.value.concat(scholarshipArray[1]));
+    //         const scholarshipArray = partition(saved, {'status': 'I'});
+    //         this._saved.next(this._saved.value.concat(scholarshipArray[0]));
+    //         this._applying.next(this._applying.value.concat(scholarshipArray[1]));
     //         this.determineFollowedScholarships();
     //     }
     // });
@@ -208,8 +205,8 @@ export class ScholarshipService {
       .subscribe(
         (data) => {
           const scholarshipArray = partition(data, { status: `I` });
-          this._savedScholarships.next(this._savedScholarships.value.concat(scholarshipArray[0]));
-          this._applyingScholarships.next(this._applyingScholarships.value.concat(scholarshipArray[1]));
+          this._saved.next(this._saved.value.concat(scholarshipArray[0]));
+          this._applying.next(this._applying.value.concat(scholarshipArray[1]));
           this.determineFollowedScholarships();
         },
         err => console.error(err),
@@ -220,15 +217,14 @@ export class ScholarshipService {
   public getScholarships(queryString = ``, isAbsolute?: boolean, _hasQuery?: boolean) {
     this.fetchingScholarships = true;
     queryString = isAbsolute ? queryString : `/scholarship/${queryString}`;
-    if (queryString === this._previousPage) { return; }
+    if (queryString === this._prevPage) { return; }
     this.fetchingTotals = true;
     this.api
       .get(queryString, isAbsolute)
-      .pipe(map(response => response.json()))
       .subscribe(
         (data) => {
           this._count = data.count;
-          this._previousPage = queryString;
+          this._prevPage = queryString;
           this._nextPage = data.next;
           const fetchedScholarships = data.results.map(s => new Scholarship(s));
           if (isAbsolute) {
@@ -290,11 +286,11 @@ export class ScholarshipService {
       .delete(`/scholarship_list/${scholarship.id}`)
       .pipe(map(
         (response) => {
-          this._savedScholarships.next(
-            this._savedScholarships.value.filter(s => s.scholarship.id !== scholarship.id)
+          this._saved.next(
+            this._saved.value.filter(s => s.scholarship.id !== scholarship.id)
           );
-          this._applyingScholarships.next(
-            this._applyingScholarships.value.filter(s => s.scholarship.id !== scholarship.id)
+          this._applying.next(
+            this._applying.value.filter(s => s.scholarship.id !== scholarship.id)
           );
           const scholarships = this._scholarships.getValue();
           const scholarshipIndex = scholarships.findIndex(s => s.id === scholarship.id);
@@ -312,19 +308,18 @@ export class ScholarshipService {
   public save(_id: number, postObj: any): Observable<ISavedScholarship> {
     return this.api
       .post(`/scholarship_list/`, postObj)
-      .pipe(map(response => {
-        const sTracker = response.json();
+      .pipe(map(sTracker => {
         const isSaved = (sTracker.status === `I`);
         sTracker.scholarship = new Scholarship(sTracker.scholarship);
         sTracker.scholarship.saved = isSaved;
         sTracker.scholarship.applying = !isSaved;
         sTracker.scholarship.status = sTracker.status;
         if (isSaved) {
-          this._savedScholarships.value.push(sTracker);
-          this._savedScholarships.next(this._savedScholarships.value);
+          this._saved.value.push(sTracker);
+          this._saved.next(this._saved.value);
         } else {
-          this._applyingScholarships.value.push(sTracker);
-          this._applyingScholarships.next(this._applyingScholarships.value);
+          this._applying.value.push(sTracker);
+          this._applying.next(this._applying.value);
         }
         return sTracker;
       }));
@@ -349,7 +344,7 @@ export class ScholarshipService {
       .get(`/scholarship/${query}`)
       .pipe(map(response => {
         this.fetchingScholarships = false;
-        return response.json().results.map(s => new Scholarship(s));
+        return response.results.map(s => new Scholarship(s));
       }));
   }
 
@@ -362,7 +357,7 @@ export class ScholarshipService {
   }
 
   public setSelectedScholarship(scholarship: IScholarship) {
-    this._selectedScholarship.next(scholarship);
+    this._selected.next(scholarship);
   }
 
   public studentRemoveRecommended(recommendationId: number, studentId: number) {
@@ -380,29 +375,27 @@ export class ScholarshipService {
   public update(id: number, postObj: any) {
     return this.api
       .patch(`/scholarship_list/${id}`, postObj)
-      .pipe(map(response => {
-        const sTracker = response.json();
+      .pipe(map(sTracker => {
         sTracker.scholarship = new Scholarship(sTracker.scholarship);
         sTracker.scholarship.saved = false;
         sTracker.scholarship.applying = true;
         sTracker.scholarship.status = sTracker.status;
-        const indx = this._savedScholarships.value.findIndex(s => s.scholarship.id === id);
-        this._savedScholarships.value.splice(indx, 1);
-        this._savedScholarships.next(this._savedScholarships.value);
-        this._applyingScholarships.value.push(sTracker);
-        this._applyingScholarships.next(this._applyingScholarships.value);
+        const indx = this._saved.value.findIndex(s => s.scholarship.id === id);
+        this._saved.value.splice(indx, 1);
+        this._saved.next(this._saved.value);
+        this._applying.value.push(sTracker);
+        this._applying.next(this._applying.value);
         return sTracker;
       }));
   }
 
   public updateList(listTile: ICustomListTile, id: number) {
-    return this.nodeapi.patch(`/custom-scholarship-lists/${id}`, listTile)
-      .pipe(map(response => response.json()));
+    return this.nodeapi.patch(`/custom-scholarship-lists/${id}`, listTile);
   }
 
   private determineFollowedScholarships() {
-    const saved = this._savedScholarships.getValue();
-    const applying = this._applyingScholarships.getValue();
+    const saved = this._saved.getValue();
+    const applying = this._applying.getValue();
     if (!saved.length && !applying.length) { return; }
     const scholarships = this._scholarships.getValue();
     for (let i = 0, scholarship: IScholarship; scholarship = scholarships[i]; ++i) {
@@ -449,7 +442,7 @@ export class ScholarshipService {
   }
 
   private removeRecommendedScholarship(recId: number, _studentId: number) {
-    const recs = this._recommendedScholarships.value.filter((rec) => rec.id !== recId);
-    this._recommendedScholarships.next(recs);
+    const recs = this._recommended.value.filter((rec) => rec.id !== recId);
+    this._recommended.next(recs);
   }
 }

@@ -36,6 +36,12 @@
   </feature>
 
 
+  <feature name="Mixpanel">
+    <param name="ios-package" value="MixpanelPlugin"/>
+    <param name="onload" value="true"/>
+  </feature>
+
+
   <feature name="NativeStorage">
     <param name="ios-package" value="NativeStorage"/>
   </feature>

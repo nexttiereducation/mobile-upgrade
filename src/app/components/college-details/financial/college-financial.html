@@ -1,0 +1,72 @@
+<ion-content>
+  <ion-card *ngIf="details?.in_state_tuition
+                   || details?.out_of_state_tuition">
+    <ion-card-header>Tuition</ion-card-header>
+    <ion-grid>
+      <ion-row>
+        <ion-col>
+          <ion-text class="displayHeader"
+                    color="primary"> {{ details?.in_state_tuition | currency:'USD':'symbol':'1.0-0' }} </ion-text>
+          <div class="chartLabel ion-text-center">In State</div>
+        </ion-col>
+        <ion-col>
+          <ion-text class="displayHeader"
+                    color="primary"> {{ details?.out_of_state_tuition | currency:'USD':'symbol':'1.0-0' }} </ion-text>
+          <div class="chartLabel ion-text-center">Out of State</div>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </ion-card>
+  <ion-card *ngIf="college?.total_costs_in_state
+                   || college?.total_costs_out_of_state">
+    <ion-card-header>Total Cost</ion-card-header>
+    <ion-grid *ngIf="college?.total_costs_out_of_state !== college?.total_costs_in_state">
+      <ion-row>
+        <ion-col *ngIf="college?.total_costs_in_state">
+          <ion-text class="displayHeader"
+                    color="primary"> {{ college?.total_costs_in_state | currency:'USD':'symbol':'1.0-0' }} </ion-text>
+          <div class="chartLabel ion-text-center">In State</div>
+        </ion-col>
+        <ion-col *ngIf="college?.total_costs_out_of_state">
+          <ion-text class="displayHeader"
+                    color="primary"> {{ college?.total_costs_out_of_state | currency:'USD':'symbol':'1.0-0' }}
+          </ion-text>
+          <div class="chartLabel ion-text-center">Out of State</div>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+    <ion-text class="displayHeader ion-margin-bottom"
+              *ngIf="college?.total_costs_out_of_state === college?.total_costs_in_state"
+              color="primary"> {{ college?.total_costs_in_state | currency:'USD':'symbol':'1.0-0' }} </ion-text>
+  </ion-card>
+  <ion-card *ngIf="college?.net_price">
+    <ion-card-header>Average Net Price</ion-card-header>
+    <ion-text class="displayHeader ion-margin-bottom"
+              color="primary">{{ college?.net_price | currency:'USD':'symbol':'1.0-0' }}</ion-text>
+  </ion-card>
+  <ion-card *ngIf="details?.need_blind || undergradFinAidChart">
+    <ion-card-header>Financial Aid</ion-card-header>
+    <ion-grid>
+      <ion-row class="ion-align-items-center">
+        <ion-col class="ion-text-center"
+                 *ngIf="details?.need_blind">
+          <span>Need Blind</span>
+          <ion-icon class="text-steel50"
+                    name="information-circle"
+                    (click)="openAlert('need blind')"></ion-icon>
+        </ion-col>
+        <ion-col *ngIf="undergradFinAidChart">
+          <pie-chart label="Receiving Financial Aid"
+                     tinyHeader="Undergrads"
+                     unit="undergrad"
+                     [series]="undergradFinAidChart"></pie-chart>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </ion-card>
+  <ion-card *ngIf="details?.average_debt">
+    <ion-card-header>Average Student Debt upon Graduation</ion-card-header>
+    <ion-text class="displayHeader ion-margin-bottom"
+              color="primary">{{ details?.average_debt | currency:'USD':'symbol':'1.0-0' }}</ion-text>
+  </ion-card>
+</ion-content>

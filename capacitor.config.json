@@ -1,7 +1,7 @@
 {
   "appId": "com.NextTierEducation.NextTierEducation",
   "appName": "NextTier",
-  "bundledWebRuntime": false,
+  "bundledWebRuntime": true,
   "npmClient": "npm",
   "webDir": "www"
 }

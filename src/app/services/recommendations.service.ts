@@ -20,8 +20,7 @@ export class RecommendationsService {
 
   public get(id: number) {
     this.api.get(`/student/${id}/recommendation`)
-      .subscribe(data => {
-        const recs = data.json();
+      .subscribe(recs => {
         if (recs.length > 0) {
           this._college.next(recs.filter(r => r.institution !== null));
           this._scholarship.next(recs.filter(r => r.scholarship !== null));

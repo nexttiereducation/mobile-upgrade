@@ -1,18 +1,14 @@
-<ion-header mode="ios">
-  <ion-toolbar mode="ios"
-               color="primary">
-    <ion-title mode="ios">Create an account</ion-title>
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-title>Create an account</ion-title>
   </ion-toolbar>
 </ion-header>
 <ion-content class="bg-blue external-page">
   <ion-grid>
-    <ion-row align-items-center
-             justify-content-start>
-      <ion-col text-center
-               margin-bottom
-               padding-bottom>
+    <ion-row class="ion-align-items-center ion-justify-content-start">
+      <ion-col class="ion-margin-bottom ion-padding-bottom ion-text-center">
         <img class="nte-logo"
-             src="assets/image/logo/circle.svg" />
+             src="assets/image/logo/circle.svg">
         <div class="blue-divider"></div>
         <div class="text-white bold external-header">Last step!</div>
       </ion-col>
@@ -25,15 +21,15 @@
            [class.hidden]="!invalid['first']">Please enter a first name</div>
       <ion-item class="bg-white10 border-white50"
                 [class.border-white-bold]="user.first_name?.length">
-        <ion-label [color]="user.first_name?.length ? 'white' : 'white50'"
-                   [class.bg-red]="invalid['first']">
+        <ion-label [class.bg-red]="invalid['first']"
+                   [color]="user.first_name?.length ? 'white' : 'white50'">
           <ion-icon class="form-icon"
                     name="person"></ion-icon>
         </ion-label>
         <ion-input formControlName="first"
                    placeholder="First name*"
-                   type="text"
                    required
+                   type="text"
                    (ionBlur)="validate('first')"
                    (ionChange)="checkValidate('first')"
                    (ionFocus)="setIsInitialEntry('first')"
@@ -43,80 +39,80 @@
            [class.hidden]="!invalid['last']">Please enter a last name</div>
       <ion-item class="bg-white10 border-white50"
                 [class.border-white-bold]="user.last_name?.length">
-        <ion-label [color]="user.last_name?.length ? 'white' : 'white50'"
-                   [class.bg-red]="invalid['last']">
+        <ion-label [class.bg-red]="invalid['last']"
+                   [color]="user.last_name?.length ? 'white' : 'white50'">
           <ion-icon class="form-icon"
                     name="person"></ion-icon>
         </ion-label>
         <ion-input formControlName="last"
-                   type="text"
+                   placeholder="Last name*"
                    required
+                   type="text"
                    (ionBlur)="validate('last')"
                    (ionChange)="checkValidate('last')"
                    (ionFocus)="setIsInitialEntry('last')"
-                   [(ngModel)]="user.last_name"
-                   placeholder="Last name*"></ion-input>
+                   [(ngModel)]="user.last_name"></ion-input>
       </ion-item>
       <div class="validation-error"
            [class.hidden]="!invalid['email']">Please enter a valid email address</div>
       <ion-item class="bg-white10 border-white50"
                 [class.border-white-bold]="user.email?.length">
-        <ion-label [color]="user.email?.length ? 'white' : 'white50'"
-                   [class.bg-red]="invalid['email']">
+        <ion-label [class.bg-red]="invalid['email']"
+                   [color]="user.email?.length ? 'white' : 'white50'">
           <ion-icon class="form-icon"
                     name="mail"></ion-icon>
         </ion-label>
         <ion-input formControlName="email"
-                   type="email"
+                   placeholder="Email*"
                    required
+                   type="email"
                    (ionBlur)="validate('email')"
                    (ionChange)="checkValidate('email')"
                    (ionFocus)="setIsInitialEntry('email')"
-                   [(ngModel)]="user.email"
-                   placeholder="Email*"></ion-input>
+                   [(ngModel)]="user.email"></ion-input>
       </ion-item>
       <div class="validation-error"
            [class.hidden]="!invalid['confirm']">Email addresses do not match</div>
       <ion-item class="bg-white10 border-white50"
                 [class.border-white-bold]="user.confirmEmail?.length">
-        <ion-label [color]="user.confirmEmail?.length ? 'white' : 'white50'"
-                   [class.bg-red]="invalid['confirm']">
+        <ion-label [class.bg-red]="invalid['confirm']"
+                   [color]="user.confirmEmail?.length ? 'white' : 'white50'">
           <ion-icon class="form-icon"
                     name="mail"></ion-icon>
         </ion-label>
         <ion-input formControlName="confirm"
-                   type="email"
+                   placeholder="Confirm email*"
                    required
-                   [pattern]="checkConfirmEmail()"
+                   type="email"
                    (ionBlur)="validate('confirm')"
                    (ionChange)="checkValidate('confirm')"
                    (ionFocus)="setIsInitialEntry('confirm')"
-                   [(ngModel)]="user.confirmEmail"
-                   placeholder="Confirm email*"></ion-input>
+                   [pattern]="checkConfirmEmail()"
+                   [(ngModel)]="user.confirmEmail"></ion-input>
       </ion-item>
       <div class="validation-error"
            [class.hidden]="!invalid['password']">Password must be at least 8 characters</div>
       <ion-item class="bg-white10 border-white50"
                 [class.border-white-bold]="user.password?.length">
-        <ion-label [color]="user.password?.length ? 'white' : 'white50'"
-                   [class.bg-red]="invalid['password']">
+        <ion-label [class.bg-red]="invalid['password']"
+                   [color]="user.password?.length ? 'white' : 'white50'">
           <ion-icon class="form-icon"
                     name="lock"></ion-icon>
         </ion-label>
         <ion-input formControlName="password"
-                   type="password"
+                   placeholder="Password*"
                    required
+                   type="password"
                    (ionBlur)="validate('password')"
                    (ionChange)="checkValidate('password')"
                    (ionFocus)="setIsInitialEntry('password')"
-                   [(ngModel)]="user.password"
-                   placeholder="Password*"></ion-input>
+                   [(ngModel)]="user.password"></ion-input>
       </ion-item>
     </ion-list>
-    <ion-button expand="block"
-                size="large"
-                class="no-caps"
+    <ion-button class="no-caps"
                 color="white"
+                expand="block"
+                size="large"
                 type="submit"
                 [disabled]="registerForm.invalid">
       <span class="text-blue bold">{{ loggingIn ? "Logging in..." : "Let's go!" }}</span>

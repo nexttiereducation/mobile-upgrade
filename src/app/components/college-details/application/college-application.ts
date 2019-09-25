@@ -9,10 +9,13 @@ import { LinkService } from '@nte/services/link.service';
 @Component({
   selector: `college-application`,
   templateUrl: `college-application.html`,
-  styleUrls: [`college-application.scss`],
+  styleUrls: [
+    `./../college-details.scss`,
+    `college-application.scss`
+  ],
   encapsulation: ViewEncapsulation.None
 })
-export class CollegeApplicationPage implements OnInit {
+export class CollegeApplicationComponent implements OnInit {
   public importanceValues: any;
 
   get college() {

@@ -26,9 +26,8 @@
                 (click)="wantsToDelete = !wantsToDelete">Delete account</ion-button>
     <ng-container *ngIf="wantsToDelete">
       <div class="surveyQuestion">Delete account</div>
-      <div class="body"
-           margin-vertical> By deleting your account, all of your personal data will be lost, and your account will be
-        permanently closed. </div>
+      <div class="body ion-margin-vertical"> By deleting your account, all of your personal data will be lost, and your account will
+        be permanently closed. </div>
       <div class="bold">
         <ion-icon color="warn"
                   name="warning"></ion-icon>
@@ -68,7 +67,7 @@
                  (onFileDrop)="fileSelected($event)"
                  [class.file-upload-hover]="fileHover"
                  [uploader]="uploader">
-              <button ion-button
+              <button class="ion-button"
                       (click)="profilePicker.click()"
                       [color]="fileHover ? 'accent' : 'primary'">
                 {{currentUser.profile_photo_url ? 'Change' : 'Upload'}} </button>

@@ -3,11 +3,20 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { IonicModule } from '@ionic/angular';
 
+import { TaskPage } from './../task/task';
 import { TabsPage } from './tabs';
+import { AuthGuard } from '@nte/app/guards/auth.guard';
 import { ComponentsModule } from '@nte/components/components.module';
+import { CollegePage } from '@nte/pages/college/college';
+import { CollegesListPage } from '@nte/pages/colleges-list/colleges-list';
 import { CollegesPage } from '@nte/pages/colleges/colleges';
+import { FilterCategoryPage } from '@nte/pages/filter-category/filter-category';
+import { FilterPage } from '@nte/pages/filter/filter';
 import { ProfilePage } from '@nte/pages/profile/profile';
+import { ScholarshipPage } from '@nte/pages/scholarship/scholarship';
+import { ScholarshipsListPage } from '@nte/pages/scholarships-list/scholarships-list';
 import { ScholarshipsPage } from '@nte/pages/scholarships/scholarships';
+import { TasksListPage } from '@nte/pages/tasks-list/tasks-list';
 import { TasksPage } from '@nte/pages/tasks/tasks';
 
 const routes: Routes = [
@@ -23,6 +32,9 @@ const routes: Routes = [
       },
       {
         path: 'tasks',
+        canActivate: [
+          AuthGuard
+        ],
         children: [
           {
             path: '',
@@ -34,17 +46,30 @@ const routes: Routes = [
             // loadChildren: '@nte/pages/tasks-list/tasks-list.module#TasksListPageModule'
             children: [{
               path: ':id',
-              loadChildren: '@nte/pages/tasks-list/tasks-list.module#TasksListPageModule'
+              component: TasksListPage,
+              // loadChildren: '@nte/pages/tasks-list/tasks-list.module#TasksListPageModule'
+              children: [{
+                path: 'filter',
+                component: FilterPage,
+                children: [{
+                  path: ':category',
+                  component: FilterCategoryPage
+                }]
+              }]
             }]
           },
           {
             path: ':id',
-            loadChildren: '@nte/pages/task/task.module#TaskPageModule'
+            component: TaskPage
+            // loadChildren: '@nte/pages/task/task.module#TaskPageModule'
           }
         ]
       },
       {
         path: 'colleges',
+        canActivate: [
+          AuthGuard
+        ],
         children: [
           {
             path: '',
@@ -55,17 +80,29 @@ const routes: Routes = [
             component: CollegesPage,
             children: [{
               path: ':id',
-              loadChildren: '@nte/pages/colleges-list/colleges-list.module#CollegesListPageModule'
+              component: CollegesListPage,
+              // loadChildren: '@nte/pages/colleges-list/colleges-list.module#CollegesListPageModule'
+              children: [{
+                path: 'filter',
+                component: FilterPage,
+                children: [{
+                  path: ':id',
+                  component: FilterCategoryPage
+                }]
+              }]
             }]
           },
           {
             path: ':id',
-            loadChildren: '@nte/pages/college/college.module#CollegePageModule'
+            component: CollegePage
           }
         ]
       },
       {
         path: 'scholarships',
+        canActivate: [
+          AuthGuard
+        ],
         children: [
           {
             path: '',
@@ -76,17 +113,30 @@ const routes: Routes = [
             component: ScholarshipsPage,
             children: [{
               path: ':id',
-              loadChildren: '@nte/pages/scholarships-list/scholarships-list.module#ScholarshipsListPageModule'
+              component: ScholarshipsListPage,
+              // loadChildren: '@nte/pages/scholarships-list/scholarships-list.module#ScholarshipsListPageModule'
+              children: [{
+                path: 'filter',
+                component: FilterPage,
+                children: [{
+                  path: ':id',
+                  component: FilterCategoryPage
+                }]
+              }]
             }]
           },
           {
             path: ':id',
-            loadChildren: '@nte/pages/scholarship/scholarship.module#ScholarshipPageModule'
+            component: ScholarshipPage
+            // loadChildren: '@nte/pages/scholarship/scholarship.module#ScholarshipPageModule'
           }
         ]
       },
       {
         path: 'profile',
+        canActivate: [
+          AuthGuard
+        ],
         component: ProfilePage
       }
     ]

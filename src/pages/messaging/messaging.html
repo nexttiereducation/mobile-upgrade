@@ -1,6 +1,5 @@
-<ion-header mode="ios">
-  <ion-toolbar hideBackButton
-               mode="ios">
+<ion-header>
+  <ion-toolbar hideBackButton>
     <ion-buttons slot="secondary">
       <ion-button fill="clear"
                   icon-only
@@ -8,7 +7,7 @@
         <ion-icon name="ios-arrow-back"></ion-icon>
       </ion-button>
     </ion-buttons>
-    <ion-title mode="ios">Messaging</ion-title>
+    <ion-title>Messaging</ion-title>
   </ion-toolbar>
 </ion-header>
 <ion-content class="bg-grayLightest">
@@ -23,7 +22,7 @@
         <ion-label class="body"> {{invite.stakeholder.first_name + ' ' + invite.stakeholder.last_name}} </ion-label>
         <ion-button fill="clear"
                     icon-only
-                    item-end
+                    slot="end"
                     style="font-size:1.4rem;margin-right:16px"
                     (click)="declineInvite(invite)">
           <ion-icon class="text-red"
@@ -31,7 +30,7 @@
         </ion-button>
         <ion-button fill="clear"
                     icon-only
-                    item-end
+                    slot="end"
                     style="font-size:1.4rem"
                     (click)="acceptInvite(invite)">
           <ion-icon color="green"
@@ -48,7 +47,7 @@
         <ion-label class="body">{{invite.invite_email}}</ion-label>
         <ion-button fill="clear"
                     icon-only
-                    item-end
+                    slot="end"
                     (click)="cancelInvite(invite)">
           <ion-icon class="text-red"
                     name="close"></ion-icon>
@@ -64,7 +63,7 @@
     <ion-item size="large"
               *ngFor="let connection of (connectionService.all$ | async)"
               (click)="selectTeamMember(connection)">
-      <ion-avatar item-left>
+      <ion-avatar slot="start">
         <img [src]="getPhoto(connection)">
       </ion-avatar>
       <ion-label>

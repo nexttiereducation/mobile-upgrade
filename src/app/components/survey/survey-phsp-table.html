@@ -1,34 +1,31 @@
 <form novalidate
       [formGroup]="phspTableForm">
   <div>
-    <div padding-10
+    <div class="ion-padding-10"
          *ngIf="list.length">
-      <div text-center
-           class="emptyStateTitle">Saved {{ isCollege ? 'Colleges' : 'Scholarships' }}</div>
-      <div text-center
-           class="tinyHeader body"
+      <div class="emptyStateTitle ion-text-center">Saved {{ isCollege ? 'Colleges' : 'Scholarships' }}</div>
+      <div class="tinyHeader body ion-text-center"
            *ngIf="isCollege"> Please (1) indicate if you were waitlisted or deferred, and <br>(2) select your current
         application status. </div>
-      <div text-center
-           class="tinyHeader body"
+      <div class="tinyHeader body ion-text-center"
            *ngIf="!isCollege"> Please (1) indicate if you applied for this scholarship, and if so,<br>(2) how much award
         money you received. </div>
     </div>
     <ion-slides formArrayName="items"
-                #phspSlider
+                (ionSlideDidChange)="slideChanged()"
                 [options]="{initialSlide: initialSlideIndex}"
-                (ionSlideDidChange)="slideChanged()">
+                #phspSlider>
       <ng-template [ngIf]="list.length">
         <ion-slide *ngFor="let item of items.controls; let itemIndex = index"
                    [formGroupName]="itemIndex">
           <ion-card>
-            <ion-list no-padding>
+            <ion-list class="ion-no-padding">
               <ion-item class="bg-grayLight">
-                <ion-avatar item-start
-                            class="avatar-shadow">
+                <ion-avatar class="avatar-shadow"
+                            slot="start">
                   <img [src]="list[itemIndex].photo_url ||
                               getItemControlValue(itemIndex, 'photo_url') ||
-                              'assets/image/avatar/scholarship-green.svg'" />
+                              'assets/image/avatar/scholarship-green.svg'">
                 </ion-avatar>
                 <ion-label class="bold truncate">{{ list[itemIndex].name }}</ion-label>
               </ion-item>
@@ -48,8 +45,8 @@
                 <ion-item>
                   <ion-label>Final decision?</ion-label>
                   <ion-select formControlName="decision"
-                              multiple="false"
                               interface="popover"
+                              multiple="false"
                               required>
                     <ion-select-option *ngFor="let option of decisionOptions"
                                        [value]="option.abbreviation"> {{ option.displayValue }} </ion-select-option>
@@ -67,7 +64,7 @@
                              [disabled]="getItemControlValue(itemIndex)"
                              [placeholder]="getItemControlValue(itemIndex) ? 'N/A' : 'ex. 5000'"
                              [required]="!getItemControlValue(itemIndex)"></ion-input>
-                  <span item-end
+                  <span slot="end"
                         [hidden]="getItemControlValue(itemIndex)">.00</span>
                 </ion-item>
                 <ion-item>
@@ -75,10 +72,10 @@
                   <ion-checkbox formControlName="isActive"
                                 (ionChange)="toggleApplyStatus(itemIndex)"></ion-checkbox>
                 </ion-item>
-                <ion-item hidden>
+                <ion-item hidden="">
                   <ion-label>Status</ion-label>
                   <ion-input formControlName="status"
-                             item-end></ion-input>
+                             slot="end"></ion-input>
                 </ion-item>
               </ng-template>
             </ion-list>
@@ -87,26 +84,23 @@
       </ng-template>
       <ion-slide>
         <ion-card>
-          <ion-item class="bg-grayLight"
-                    text-center>
+          <ion-item class="bg-grayLight ion-text-center">
             <ion-label>
-              <div class="surveyQuestion small"
-                   no-padding>Did you apply to any&nbsp;<ng-template [ngIf]="list && list.length">other&nbsp;
-                </ng-template>{{ category }}s?</div>
+              <div class="surveyQuestion small ion-no-padding">Did you apply to any&nbsp;<ng-template
+                             [ngIf]="list && list.length">other&nbsp; </ng-template>{{ category }}s?</div>
               <div class="subhead">If so, please add them here.</div>
             </ion-label>
           </ion-item>
-          <ion-searchbar mode="ios"
-                         (ionClear)="onClear($event)"
+          <ion-searchbar (ionClear)="onClear($event)"
                          (ionInput)="onSearch($event)"
-                         [placeholder]="isCollege ? 'College name' : 'Scholarship name'"
                          [ngModelOptions]="{standalone: true}"
+                         [placeholder]="isCollege ? 'College name' : 'Scholarship name'"
                          [(ngModel)]="searchQuery"></ion-searchbar>
           <ion-list [class.search-results]="searchResults?.length">
             <ion-item type="button"
                       *ngFor="let result of searchResults"
                       (click)="addItem(result)">
-              <ion-avatar item-start>
+              <ion-avatar slot="start">
                 <img class="avatar-shadow"
                      [src]="result.photo_url ||
                            'assets/image/avatar/scholarship-green.svg'">
@@ -118,10 +112,9 @@
             </ion-item>
           </ion-list>
         </ion-card>
-        <div padding-10
+        <div class="ion-padding-10"
              *ngIf="!isCollege && searchQuery">
-          <div text-center
-               class="text-steel"
+          <div class="text-steel ion-text-center"
                *ngIf="searchResults?.length">OR</div>
           <ion-button expand="block"
                       type="button"
@@ -130,35 +123,35 @@
       </ion-slide>
     </ion-slides>
   </div>
-  <ion-grid padding-10>
+  <ion-grid class="ion-padding-10">
     <ion-row>
       <ion-col>
-        <ion-button expand="block"
+        <ion-button color="steel"
+                    expand="block"
                     fill="clear"
-                    color="steel"
                     type="button"
                     *ngIf="phspSlider.isBeginning()"
                     (click)="goToPrevPage()"> Back </ion-button>
-        <ion-button expand="block"
+        <ion-button color="steel"
+                    expand="block"
                     fill="clear"
-                    color="steel"
                     type="button"
                     *ngIf="phspSlider.isBeginning() === false"
                     (click)="goToPrevSlide()"> Back </ion-button>
       </ion-col>
       <ion-col>
-        <ion-button expand="block"
-                    color="orange"
+        <ion-button color="orange"
+                    expand="block"
                     type="button"
                     *ngIf="phspSlider.isEnd() === false"
-                    [disabled]="currentSlideFormInvalid"
-                    (click)="goToNextSlide()"> Continue </ion-button>
-        <ion-button expand="block"
-                    color="orange"
+                    (click)="goToNextSlide()"
+                    [disabled]="currentSlideFormInvalid"> Continue </ion-button>
+        <ion-button color="orange"
+                    expand="block"
                     type="button"
                     *ngIf="phspSlider.isEnd()"
-                    [disabled]="phspTableForm.invalid || searchQuery"
-                    (click)="goToNextPage()"> Continue </ion-button>
+                    (click)="goToNextPage()"
+                    [disabled]="phspTableForm.invalid || searchQuery"> Continue </ion-button>
       </ion-col>
     </ion-row>
   </ion-grid>

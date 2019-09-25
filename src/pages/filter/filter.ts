@@ -1,6 +1,6 @@
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { Router } from '@angular/router';
-import { Events } from '@ionic/angular';
+import { ActivatedRoute, Router } from '@angular/router';
+import { Events, ModalController } from '@ionic/angular';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
@@ -59,6 +59,8 @@ export class FilterPage implements OnInit, OnDestroy {
     public filterService: FilterService,
     private events: Events,
     private mixpanel: MixpanelService,
+    private modalCtrl: ModalController,
+    private route: ActivatedRoute,
     private router: Router,
     navStateService: NavStateService) {
     this.params = navStateService.data;
@@ -104,17 +106,16 @@ export class FilterPage implements OnInit, OnDestroy {
       this.close();
     } else {
       this.checkDependencies();
-      if (this.params.has(`cyol`)) {
-        this.filterService.setCyol(this.params.get(`cyol`));
+      if (this.params.cyol) {
+        this.filterService.setCyol(this.params.cyol);
       } else {
         this.filterService.setCyol(false);
       }
     }
   }
 
-
   public applyFilters() {
-    this.close();
+    this.router.navigate([`..`], { relativeTo: this.route });
   }
 
   public clear() {
@@ -134,7 +135,9 @@ export class FilterPage implements OnInit, OnDestroy {
   }
 
   public close() {
-    // TODO: Add logic to close filters
+    this.modalCtrl.dismiss({
+      dismissed: true
+    });
   }
 
   public onCategoryQueryStringChange(query: QueryObject, _category: any) {
@@ -149,12 +152,13 @@ export class FilterPage implements OnInit, OnDestroy {
     this.filterService.filter.updateQuery(query);
   }
 
-  public viewDetails(subCategory: any, parentCategoryName?: string) {
+  public openCategory(subCategory: any, parentCategoryName?: string) {
     // if (ev) { ev.preventDefault(); }
-    const page = this.optionFilterTypes[subCategory.type];
+    const subCatId = subCategory.name.toLowerCase().replace(` `, `-`);
     this.router.navigate(
-      [page],
+      [subCatId],
       {
+        relativeTo: this.route,
         state: {
           category: subCategory,
           isAlpha: ALPHA_CATEGORIES.indexOf(subCategory.name) > -1,

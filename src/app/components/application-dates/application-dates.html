@@ -1,5 +1,5 @@
-<ion-header mode="ios">
-  <ion-toolbar mode="ios">
+<ion-header>
+  <ion-toolbar>
     <ion-buttons slot="secondary">
       <ion-button color="black"
                   icon-only
@@ -8,14 +8,12 @@
       </ion-button>
     </ion-buttons>
     <ion-title class="avatar-title"
-               mode="ios"
                *ngIf="college && college.name">
-      <ion-avatar item-left="">
+      <ion-avatar slot="start">
         <img class="avatar-shadow"
              [src]="college?.photo_url">
       </ion-avatar>
-      <div class="avatar-title-text"
-           text-left>
+      <div class="avatar-title-text ion-text-left">
         <div class="truncate body">{{ college?.name }}</div>
         <div class="truncate subhead">
           <ion-icon name="pin"></ion-icon>
@@ -31,13 +29,10 @@
                          (!user.isSenior &&
                           (applicationDates?.length ||
                            (college.is_form || college.is_account || college.details.groups.length)))">
-      <div class="topbar bold"
-           margin-top
-           padding-horizontal>How are you applying?</div>
+      <div class="topbar bold ion-margin-top ion-padding-horizontal">How are you applying?</div>
       <ng-template [ngIf]="applicationDates?.length">
-        <div class="medium"
-             padding>Application Deadline</div>
-        <ion-list no-lines="">
+        <div class="medium ion-padding">Application Deadline</div>
+        <ion-list no-lines>
           <ion-radio-group [(value)]="selectedDate">
             <ion-item *ngFor="let date of applicationDates">
               <ion-label>
@@ -48,7 +43,7 @@
                 </div>
                 <div class="application-date-type text-black">{{ date.application_type }} </div>
               </ion-label>
-              <ion-radio item-end
+              <ion-radio slot="end"
                          slot="start"
                          [value]="date"></ion-radio>
             </ion-item>
@@ -56,9 +51,8 @@
         </ion-list>
       </ng-template>
       <ng-template [ngIf]="college.is_form || college.is_account || college.details.groups.length">
-        <div class="medium"
-             padding>Application Type</div>
-        <ion-list no-lines="">
+        <div class="medium ion-padding">Application Type</div>
+        <ion-list no-lines>
           <ion-radio-group>
             <ion-item *ngIf="college.is_form">
               <ion-radio slot="start"
@@ -83,12 +77,9 @@
       </ng-template>
     </ng-template>
     <ng-template [ngIf]="user.isSenior && !applicationDates?.length">
-      <div class="flex fill column center center"
-           padding>
-        <div class="surveyQuestion"
-             padding
-             text-center>All deadlines for {{ college.name }} have passed.</div>
-        <div text-center>Please select a different college.</div>
+      <div class="flex fill column center center ion-padding">
+        <div class="surveyQuestion ion-padding ion-text-center">All deadlines for {{ college.name }} have passed.</div>
+        <div class="ion-text-center">Please select a different college.</div>
       </div>
     </ng-template>
   </ng-template>

@@ -1,5 +1,5 @@
-import { Component, Input, ViewChild, ViewEncapsulation } from '@angular/core';
-import { ApexChart, ApexDataLabels, ApexLegend } from 'ng-apexcharts';
+import { Component, ElementRef, Input, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
+import { Chart } from 'chart.js';
 
 @Component({
   encapsulation: ViewEncapsulation.None,
@@ -7,8 +7,8 @@ import { ApexChart, ApexDataLabels, ApexLegend } from 'ng-apexcharts';
   templateUrl: `pie-chart.html`,
   styleUrls: [`pie-chart.scss`]
 })
-export class PieChartComponent {
-  @ViewChild(`pieChart`, { static: false }) pieChartElem;
+export class PieChartComponent implements OnInit {
+  @ViewChild('pieCanvas', { static: true }) pieCanvas: ElementRef;
 
   @Input() colors: any[];
   @Input() series: any;
@@ -17,6 +17,8 @@ export class PieChartComponent {
   @Input() subtitle: boolean = false;
   @Input() title?: string;
   @Input() unit: string = `student`;
+
+  private pieChart: Chart;
 
   get chart(): ApexChart {
     return {
@@ -60,4 +62,32 @@ export class PieChartComponent {
   }
 
   constructor() { }
+
+  ngOnInit(): void {
+    // Called after the constructor, initializing input properties, and the first call to ngOnChanges.
+    // Add 'implements OnInit' to the class.
+    this.pieChart = new Chart(this.pieCanvas.nativeElement, {
+      type: 'pie',
+      data: {
+        labels: this.series.names,
+        datasets: [
+          {
+            // label: '# of Votes',
+            data: this.series.values,
+            backgroundColor: this.colors,
+            hoverBackgroundColor: this.colors
+          }
+        ]
+      },
+      options: {
+        legend: {
+          labels: {
+            boxWidth: 20,
+            fontFamily: 'Roboto, Helvetica, sans-serif',
+            usePointStyle: true
+          }
+        }
+      }
+    });
+  }
 }

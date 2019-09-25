@@ -1,4 +1,5 @@
 import { AfterViewInit, Component } from '@angular/core';
+import { Router, RoutesRecognized } from '@angular/router';
 import { Plugins } from '@capacitor/core';
 import { CallNumber } from '@ionic-native/call-number/ngx';
 import { Device } from '@ionic-native/device/ngx';
@@ -6,6 +7,7 @@ import { EmailComposer } from '@ionic-native/email-composer/ngx';
 import { Mixpanel } from '@ionic-native/mixpanel/ngx';
 import { Platform } from '@ionic/angular';
 import { Subject } from 'rxjs';
+import { filter, pairwise } from 'rxjs/operators';
 
 import { mixpanelConfig } from './app.config';
 import { ConnectionService } from '@nte/services/connection.service';
@@ -13,10 +15,12 @@ import { DeepLinksService } from '@nte/services/deep-links.service';
 import { EnvironmentService } from '@nte/services/environment.service';
 import { LinkService } from '@nte/services/link.service';
 import { MessageService } from '@nte/services/message.service';
+import { NavStateService } from '@nte/services/nav-state.service';
 import { NotificationService } from '@nte/services/notification.service';
+import { PrevRouteService } from '@nte/services/prev-route.service';
 import { StakeholderService } from '@nte/services/stakeholder.service';
 
-const { SplashScreen, StatusBar } = Plugins;
+const { App, SplashScreen, StatusBar } = Plugins;
 
 @Component({
   selector: `app-root`,
@@ -64,8 +68,11 @@ export class NteAppComponent implements AfterViewInit {
     private linkService: LinkService,
     private messageService: MessageService,
     private mixpanel: Mixpanel,
+    private navStateService: NavStateService,
     private notificationService: NotificationService,
     private platform: Platform,
+    private prevRouteService: PrevRouteService,
+    private router: Router,
     private stakeholderService: StakeholderService) {
     this.platform
       .ready()
@@ -74,12 +81,9 @@ export class NteAppComponent implements AfterViewInit {
         if (SplashScreen) {
           SplashScreen.hide();
         }
+        this.setup();
         this.setupAppListeners();
-        this.setupComponents();
         this.setupKeyboardListeners();
-        this.setupLinkSub();
-        this.setupPush();
-        this.setupUserSub();
       })
       .catch(err => console.error(err));
   }
@@ -118,7 +122,7 @@ export class NteAppComponent implements AfterViewInit {
 
   private initForUser() {
     // this.nav.setRoot(TabsPage);
-    this.connectionService.initialize();
+    this.connectionService.init();
     this.messageService.init();
     this.notificationService.init();
   }
@@ -152,6 +156,8 @@ export class NteAppComponent implements AfterViewInit {
   private setup() {
     this.setupComponents();
     this.setupLinkSub();
+    this.setupPrevRoute();
+    this.setupPush();
     this.setupUserSub();
   }
 
@@ -244,16 +250,37 @@ export class NteAppComponent implements AfterViewInit {
     //   });
   }
 
+  private setupPrevRoute() {
+    this.router.events
+      .pipe(
+        filter((e: any) => e instanceof RoutesRecognized),
+        pairwise()
+      ).subscribe((e: any) => {
+        const url = e[0].urlAfterRedirects;
+        this.prevRouteService.url = url;
+        if (this.router.getCurrentNavigation().extras.state) {
+          this.navStateService.data = this.router.getCurrentNavigation().extras.state;
+        }
+      });
+  }
+
   private setupUserSub() {
     if (this.stakeholderService.loggedIn) {
       this.initForUser();
     } else {
-      this.stakeholderService.checkStorage();
-      this.stakeholderService.loginSuccess
-        // .pipe(takeUntil(this.ngUnsubscribe)
-        .subscribe((isLoggedIn: boolean) => {
+      this.stakeholderService.checkStorage()
+        .then(isLoggedIn => {
           if (isLoggedIn) {
             this.initForUser();
+          } else {
+            this.router.navigateByUrl(`login`);
+            this.stakeholderService.loginSuccess
+              // .pipe(takeUntil(this.ngUnsubscribe)
+              .subscribe((loggedIn: boolean) => {
+                if (loggedIn) {
+                  this.initForUser();
+                }
+              });
           }
         });
     }

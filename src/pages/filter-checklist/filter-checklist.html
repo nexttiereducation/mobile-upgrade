@@ -1,54 +1,52 @@
-<ion-header mode="ios">
-  <ion-toolbar mode="ios">
+<ion-header>
+  <ion-toolbar>
     <ion-buttons slot="start">
       <ion-back-button></ion-back-button>
     </ion-buttons>
-    <ion-title mode="ios">
+    <ion-title>
       <div class="subhead">{{ title }}</div> {{ category?.name }}
     </ion-title>
     <ion-buttons slot="primary">
-      <ion-button [color]="category?.isActive ? 'primary' : 'steel'"
-                  [disabled]="!category?.isActive"
-                  (click)="clear()">Clear</ion-button>
+      <ion-button (click)="clear()"
+                  [color]="category?.isActive ? 'primary' : 'steel'"
+                  [disabled]="!category?.isActive">Clear</ion-button>
     </ion-buttons>
   </ion-toolbar>
-  <ion-toolbar no-padding
+  <ion-toolbar class="ion-no-padding"
                *ngIf="((category?.options?.length > 50) && !isAlphabetized)
                       || isColleges || isMajors">
     <ion-searchbar debounce="1000"
-                   mode="ios"
                    type="search"
-                   [(value)]="searchTerm"
                    (ionClear)="clearSearch($event)"
-                   (ionInput)="search($event)">
+                   (ionInput)="search($event)"
+                   [(value)]="searchTerm">
     </ion-searchbar>
   </ion-toolbar>
 </ion-header>
 <ion-content>
   <ng-template [ngIf]="isAlphabetized">
     <ion-item-group *ngFor="let group of groupedOptions">
-      <ion-item-divider light
-                        id="{{group.letter}}">
+      <ion-item-divider id="{{group.letter}}"
+                        light>
         <ion-label>{{ group.letter }}</ion-label>
       </ion-item-divider>
-      <ion-item *ngFor="let option of group.options"
-                padding-right
+      <ion-item class="ion-padding-right"
+                *ngFor="let option of group.options"
                 [class.bg-blue10]="option?.isActive">
         <ion-checkbox [checked]="option?.isActive && category?.isActive"
                       (ionChange)="updateOption(option)"></ion-checkbox>
         <ion-label>{{ option.value }}</ion-label>
       </ion-item>
     </ion-item-group>
-    <div class="alpha-scroll"
-         text-center
+    <div class="alpha-scroll ion-text-center"
          [class.footer-showing]="category?.isActive">
-      <ng-template ngFor
-                   let-group
+      <ng-template let-group
+                   ngFor
                    [ngForOf]="groupedOptions">
-        <ion-button size="small"
-                    fill="clear"
-                    class="alpha-button"
+        <ion-button class="alpha-button"
                     color="primary"
+                    fill="clear"
+                    size="small"
                     (click)="scrollTo(group.letter)">{{ group.letter }}</ion-button>
       </ng-template>
     </div>
@@ -64,8 +62,8 @@
     <ion-virtual-scroll class="options"
                         [items]="options">
       <!-- *ngIf="options" -->
-      <ion-item *virtualItem="let option"
-                [class.bg-blue10]="option?.isActive">
+      <ion-item [class.bg-blue10]="option?.isActive"
+                *virtualItem="let option">
         <ion-checkbox [checked]="option?.isActive && category?.isActive"
                       (ionChange)="updateOption(option)"></ion-checkbox>
         <ion-label tappable
@@ -76,19 +74,19 @@
 </ion-content>
 <ion-footer *ngIf="category?.isActive || filterService.filter?.activeChildCount">
   <ion-toolbar color="primary">
-    <ion-button fill="clear"
+    <ion-button color="white"
                 expand="full"
+                fill="clear"
                 slot="end"
-                color="white"
                 *ngIf="filterService.isCyol"
                 (click)="viewSummary()"> Next <ion-icon name="arrow-forward"></ion-icon>
     </ion-button>
-    <ion-button fill="clear"
+    <ion-button color="white"
                 expand="full"
-                color="white"
+                fill="clear"
                 *ngIf="!filterService.isCyol"
-                (click)="applyFilters()"> Apply Filters <ion-badge margin-left
-                 class="text-blue bg-white">{{ filterService.filter?.activeChildCount }}</ion-badge>
+                (click)="applyFilters()"> Apply Filters <ion-badge class="text-blue bg-white ion-margin-left">
+        {{ filterService.filter?.activeChildCount }}</ion-badge>
     </ion-button>
   </ion-toolbar>
 </ion-footer>

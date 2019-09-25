@@ -21,7 +21,10 @@ import { StakeholderService } from '@nte/services/stakeholder.service';
 
 @Component({
   selector: `scholarships`,
-  templateUrl: `scholarships.html`
+  templateUrl: `scholarships.html`,
+  styleUrls: [
+    `../../app/components/tiles/tiles.scss`
+  ]
 })
 export class ScholarshipsPage implements OnInit, OnDestroy {
   public connections: any;
@@ -164,12 +167,13 @@ export class ScholarshipsPage implements OnInit, OnDestroy {
         this.filterCategories,
         listTile.filter
       );
+      const listName = listTile.name.toLowerCase().replace(' all', '');
       this.router.navigate(
         [
           `app`,
           `scholarships`,
           `list`,
-          listTile.iconFileName
+          listName
         ],
         {
           state: {

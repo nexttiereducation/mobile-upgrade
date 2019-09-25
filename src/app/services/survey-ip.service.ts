@@ -53,7 +53,7 @@ export class SurveyIpService {
         survey_is_complete: true
       }
       )
-      .pipe(map((response) => response.json()));
+      .pipe(map((response) => response));
   }
 
   public getStartingPage() {
@@ -75,7 +75,7 @@ export class SurveyIpService {
       this._taskId = taskId;
       return this.apiService
         .get(`/survey/${taskId}`)
-        .pipe(map((response) => new InterestProfiler(response.json())))
+        .pipe(map((response) => new InterestProfiler(response)))
         .subscribe(
           (interestProfiler) => {
             this.configureProfiler(interestProfiler);
@@ -89,7 +89,7 @@ export class SurveyIpService {
       .patch(`/survey/${this._taskId}`, {
         answers: this._interestProfiler.answers
       })
-      .pipe(map((response) => response.json()))
+      .pipe(map((response) => response))
       .subscribe(
         (data) => this.user.interest_profiler_answers = data.current_answers,
         err => console.error(err)

@@ -1,6 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { Plugins, PushNotification, PushNotificationActionPerformed, PushNotificationToken } from '@capacitor/core';
+import { Plugins } from '@capacitor/core';
 import { NativeStorage } from '@ionic-native/native-storage/ngx';
 import { Platform } from '@ionic/angular';
 import { partition } from 'lodash';
@@ -14,6 +14,7 @@ import { ScholarshipsPage } from '@nte/pages/scholarships/scholarships';
 import { TasksPage } from '@nte/pages/tasks/tasks';
 import { ApiService } from '@nte/services/api.service';
 import { MixpanelService } from '@nte/services/mixpanel.service';
+import { PushNotificationService } from '@nte/services/push-notification.service';
 import { StakeholderService } from '@nte/services/stakeholder.service';
 
 const { PushNotifications } = Plugins;
@@ -51,6 +52,7 @@ export class TabsPage implements OnInit, OnDestroy {
     private mixpanel: MixpanelService,
     private nativeStorage: NativeStorage,
     private platform: Platform,
+    private pushNotificationService: PushNotificationService,
     private router: Router) {
     // if (this.platform.is(`android`)) {
     //   this.statusBar.overlaysWebView(true);
@@ -109,8 +111,7 @@ export class TabsPage implements OnInit, OnDestroy {
       this.getRecommendations()
         .pipe(takeUntil(this.ngUnsubscribe))
         .subscribe(
-          data => {
-            const recommendations = data.json();
+          recommendations => {
             if (recommendations.length > 0) {
               const recs = partition(recommendations, `institution`);
               this._collegeRecs.next(recs[0]);
@@ -126,38 +127,7 @@ export class TabsPage implements OnInit, OnDestroy {
   }
 
   private initPushNotifications() {
-    console.log('Initializing Push Notifications');
-
-    // Register with Apple / Google to receive push via APNS/FCM
-    PushNotifications.register();
-
-    // On succcess, we should be able to receive notifications
-    PushNotifications.addListener('registration',
-      (token: PushNotificationToken) => {
-        alert('Push registration success, token: ' + token.value);
-      }
-    );
-
-    // Some issue with our setup and push will not work
-    PushNotifications.addListener('registrationError',
-      (error: any) => {
-        alert('Error on registration: ' + JSON.stringify(error));
-      }
-    );
-
-    // Show us the notification payload if the app is open on our device
-    PushNotifications.addListener('pushNotificationReceived',
-      (notification: PushNotification) => {
-        alert('Push received: ' + JSON.stringify(notification));
-      }
-    );
-
-    // Method called when tapping on a notification
-    PushNotifications.addListener('pushNotificationActionPerformed',
-      (notification: PushNotificationActionPerformed) => {
-        alert('Push action performed: ' + JSON.stringify(notification));
-      }
-    );
+    this.pushNotificationService.init();
   }
 
   private setupRecSub() {

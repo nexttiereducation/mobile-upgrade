@@ -1,10 +1,12 @@
+$green: #31ba82;
+
 @keyframes pulseOut {
   0% {
-    box-shadow: 0px 0px 0px 0px transparentize(var(--green), 0.5);
+    box-shadow: 0px 0px 0px 0px transparentize($green, 0.5);
   }
 
   100% {
-    box-shadow: 0px 0px 0px 7.5px transparentize(var(--green), 1);
+    box-shadow: 0px 0px 0px 7.5px transparentize($green, 1);
   }
 }
 

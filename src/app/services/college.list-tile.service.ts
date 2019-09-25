@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
 
 import { ITileList } from '@nte/interfaces/tile-list.interface';
 import { ApiService } from '@nte/services/api.service';
@@ -14,8 +13,7 @@ export class CollegeListTileService extends ListTileService {
 
   public create(list: ITileList): Observable<any> {
     return this.api
-      .post(`/custom_institutions_list/`, list)
-      .pipe(map(response => response.json()));
+      .post(`/custom_institutions_list/`, list);
   }
 
   public delete(id: number): Observable<Response> {

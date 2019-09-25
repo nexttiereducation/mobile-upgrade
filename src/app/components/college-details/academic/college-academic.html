@@ -1,0 +1,161 @@
+<ion-content>
+  <ion-card *ngIf="graduationChart
+                   || retentionChart
+                   || admissionChart">
+    <ion-card-header>Academic Statistics</ion-card-header>
+    <ion-grid>
+      <ion-row class="ion-align-items-center ion-justify-content-center">
+        <ion-col size="6"
+                 *ngIf="admissionChart">
+          <radial-chart [label]="admissionChart?.label"
+                        [value]="admissionChart?.value"></radial-chart>
+        </ion-col>
+        <ion-col size="6"
+                 *ngIf="retentionChart">
+          <radial-chart [label]="retentionChart?.label"
+                        [value]="retentionChart?.value"></radial-chart>
+        </ion-col>
+        <ion-col size="6"
+                 *ngIf="graduationChart">
+          <radial-chart [label]="graduationChart?.label"
+                        [value]="graduationChart?.value"></radial-chart>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </ion-card>
+  <ion-card *ngIf="details
+                   || charts?.length">
+    <ion-card-header> Average Scores <small>(based on the current freshman class)</small>
+    </ion-card-header>
+    <div>
+      <bar-chart [charts]="charts"></bar-chart>
+    </div>
+  </ion-card>
+  <ion-card *ngIf="details?.most_popular_major_1
+                   || details?.most_popular_major_2
+                   || details?.most_popular_major_3">
+    <ion-card-header>Top Majors</ion-card-header>
+    <ion-grid>
+      <ion-row>
+        <ion-col *ngIf="details?.most_popular_major_1">
+          <div class="body ion-text-center">{{ details?.most_popular_major_1 }}</div>
+        </ion-col>
+        <ion-col *ngIf="details?.most_popular_major_2">
+          <div class="body ion-text-center">{{ details?.most_popular_major_2 }}</div>
+        </ion-col>
+        <ion-col *ngIf="details?.most_popular_major_3">
+          <div class="body ion-text-center">{{ details?.most_popular_major_3 }}</div>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </ion-card>
+  <ion-card *ngIf="details?.pre_dentistry
+                   || details?.pre_law
+                   || details?.pre_medicine
+                   || details?.pre_optometry
+                   || details?.pre_pharmacy
+                   || details?.pre_theology
+                   || details?.pre_veterinary">
+    <ion-card-header>Pre-Professional Programs</ion-card-header>
+    <ion-list class="pre-pro">
+      <ion-item class="body"
+                *ngIf="details?.pre_dentistry">
+        <ion-thumbnail slot="start">
+          <img src="assets/image/college/detail_pre-dentistry.svg" />
+        </ion-thumbnail>
+        <ion-label>Pre-Dentistry</ion-label>
+      </ion-item>
+      <ion-item class="body"
+                *ngIf="details?.pre_law">
+        <ion-thumbnail slot="start">
+          <img src="assets/image/college/detail_pre-law.svg" />
+        </ion-thumbnail>
+        <ion-label>Pre-Law</ion-label>
+      </ion-item>
+      <ion-item class="body"
+                *ngIf="details?.pre_medicine">
+        <ion-thumbnail slot="start">
+          <img src="assets/image/college/detail_pre-medicine.svg" />
+        </ion-thumbnail>
+        <ion-label>Pre-Medicine</ion-label>
+      </ion-item>
+      <ion-item class="body"
+                *ngIf="details?.pre_optometry">
+        <ion-thumbnail slot="start">
+          <img src="assets/image/college/detail_pre-optometry.svg" />
+        </ion-thumbnail>
+        <ion-label>Pre-Optometry</ion-label>
+      </ion-item>
+      <ion-item class="body"
+                *ngIf="details?.pre_pharmacy">
+        <ion-thumbnail slot="start">
+          <img src="assets/image/college/detail_pre-pharmacy.svg" />
+        </ion-thumbnail>
+        <ion-label>Pre-Pharmacy</ion-label>
+      </ion-item>
+      <ion-item class="body"
+                *ngIf="details?.pre_theology">
+        <ion-thumbnail slot="start">
+          <img src="assets/image/college/detail_pre-theology.svg" />
+        </ion-thumbnail>
+        <ion-label>Pre-Theology</ion-label>
+      </ion-item>
+      <ion-item class="body"
+                *ngIf="details?.pre_veterinary">
+        <ion-thumbnail slot="start">
+          <img src="assets/image/college/detail_pre-veterinary.svg" />
+        </ion-thumbnail>
+        <ion-label>Pre-Veterinary</ion-label>
+      </ion-item>
+    </ion-list>
+  </ion-card>
+  <ion-card *ngIf="details?.army_offcamp
+                   || details?.navy_offcamp
+                   || details?.af_offcamp">
+    <ion-card-header>Reserve Officers' Training Corps (ROTC)</ion-card-header>
+    <ion-grid>
+      <ion-row>
+        <ion-col class="align-self-center"
+                 *ngIf="details?.army_offcamp">
+          <div margin-bottom
+               class="ion-text-center">
+            <img height="60"
+                 src="assets/image/military/army.jpg">
+          </div>
+          <div class="body ion-text-center">Army</div>
+        </ion-col>
+        <ion-col class="align-self-center"
+                 *ngIf="details?.navy_offcamp">
+          <div class="ion-text-center ion-margin-bottom">
+            <img height="60"
+                 src="assets/image/military/navy.jpg">
+          </div>
+          <div class="body ion-text-center">Navy</div>
+        </ion-col>
+        <ion-col class="align-self-center"
+                 *ngIf="details?.af_offcamp">
+          <div class="ion-text-center ion-margin-bottom">
+            <img height="60"
+                 src="assets/image/military/air-force.jpg">
+          </div>
+          <div class="body ion-text-center">Air Force</div>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </ion-card>
+  <ion-card *ngIf="furtherStudyChart || jobMarketChart">
+    <ion-card-header>Graduate Statistics</ion-card-header>
+    <ion-grid>
+      <ion-row class="ion-align-items-center ion-justify-content-center">
+        <ion-col *ngIf="furtherStudyChart">
+          <radial-chart [label]="furtherStudyChart.label"
+                        [value]="furtherStudyChart.value"></radial-chart>
+        </ion-col>
+        <ion-col *ngIf="jobMarketChart">
+          <radial-chart [label]="jobMarketChart.label"
+                        [value]="jobMarketChart.value"></radial-chart>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </ion-card>
+</ion-content>

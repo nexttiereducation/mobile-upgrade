@@ -1,22 +1,21 @@
-<ion-header mode="ios">
-  <ion-toolbar mode="ios">
+<ion-header>
+  <ion-toolbar>
     <ion-buttons slot="start">
       <ion-back-button></ion-back-button>
     </ion-buttons>
-    <ion-title mode="ios">
+    <ion-title>
       <div class="subhead">{{ title || '' }}</div> {{ category.name }}
     </ion-title>
     <ion-buttons slot="primary">
-      <ion-button [color]="category.isActive ? 'primary' : 'steel'"
-                  [disabled]="!category.isActive"
-                  (click)="clear()">Clear</ion-button>
+      <ion-button (click)="clear()"
+                  [color]="category.isActive ? 'primary' : 'steel'"
+                  [disabled]="!category.isActive">Clear</ion-button>
     </ion-buttons>
   </ion-toolbar>
-  <ion-searchbar mode="ios"
-                 [(value)]="searchValue"
-                 (ionClear)="clearSearch($event)"
+  <ion-searchbar (ionClear)="clearSearch($event)"
                  (ionInput)="search($event)"
-                 (keyup.enter)="closeKeyboard()">
+                 (keyup.enter)="closeKeyboard()"
+                 [(value)]="searchValue">
   </ion-searchbar>
 </ion-header>
 <ion-content>
@@ -32,8 +31,8 @@
         <ion-label>Selected Program</ion-label>
       </ion-item-divider>
       <ion-item>
-        <ion-radio slot="start"
-                   checked="true"></ion-radio>
+        <ion-radio checked="true"
+                   slot="start"></ion-radio>
         <ion-label>{{ category.selectedItems[0].id }}</ion-label>
       </ion-item>
     </ng-template>
@@ -41,13 +40,13 @@
       <ion-item-divider light>
         <ion-label>Search Results</ion-label>
       </ion-item-divider>
-      <ion-list mode="ios">
+      <ion-list>
         <ion-radio-group [(value)]="selectedItem">
-          <ng-template ngFor
+          <ng-template let-i="index"
                        let-item
-                       [ngForOf]="items"
-                       let-i="index">
-            <ion-item padding-left
+                       ngFor
+                       [ngForOf]="items">
+            <ion-item class="ion-padding-left"
                       *ngIf="i===0 || (item?.name !== items[i-1]?.name)">
               <ion-radio slot="start"
                          value="{{item.name}}"
@@ -64,7 +63,7 @@
       <ion-item-divider light>
         <ion-label>Selected Majors</ion-label>
       </ion-item-divider>
-      <ion-item padding-left
+      <ion-item class="ion-padding-left"
                 *ngFor="let item of category?.selectedItems">
         <ion-label>{{ item.displayValue }}</ion-label>
       </ion-item>
@@ -74,11 +73,11 @@
         <ion-label>Search Results</ion-label>
       </ion-item-divider>
       <ion-list>
-        <ng-template ngFor
+        <ng-template let-i="index"
                      let-item
-                     [ngForOf]="items"
-                     let-i="index">
-          <ion-item padding-left
+                     ngFor
+                     [ngForOf]="items">
+          <ion-item class="ion-padding-left"
                     *ngIf="i===0 || (item?.name !== items[i-1]?.name)">
             <ion-checkbox [checked]="item?.isActive && category?.isActive"
                           (ionChange)="toggleMajor(item)"></ion-checkbox>
@@ -91,19 +90,19 @@
 </ion-content>
 <ion-footer *ngIf="category.isActive || filterService.filter?.activeChildCount">
   <ion-toolbar color="primary">
-    <ion-button fill="clear"
+    <ion-button color="white"
                 expand="full"
+                fill="clear"
                 slot="end"
-                color="white"
                 *ngIf="filterService.isCyol"
                 (click)="viewSummary()"> Next <ion-icon name="arrow-forward"></ion-icon>
     </ion-button>
-    <ion-button fill="clear"
+    <ion-button color="white"
                 expand="full"
-                color="white"
+                fill="clear"
                 *ngIf="!filterService.isCyol"
-                (click)="applyFilters()"> Apply Filters <ion-badge margin-left
-                 class="text-blue bg-white">{{ filterService.filter?.activeChildCount }}</ion-badge>
+                (click)="applyFilters()"> Apply Filters <ion-badge class="text-blue bg-white ion-margin-left">
+        {{ filterService.filter?.activeChildCount }}</ion-badge>
     </ion-button>
   </ion-toolbar>
 </ion-footer>
