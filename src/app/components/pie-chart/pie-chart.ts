@@ -1,93 +1,136 @@
 import { Component, ElementRef, Input, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
-import { Chart } from 'chart.js';
+import { Chart, ChartConfiguration } from 'chart.js';
+
+import 'chartjs-plugin-datalabels';
 
 @Component({
   encapsulation: ViewEncapsulation.None,
   selector: `pie-chart`,
-  templateUrl: `pie-chart.html`,
-  styleUrls: [`pie-chart.scss`]
+  templateUrl: `pie-chart.html`
 })
 export class PieChartComponent implements OnInit {
   @ViewChild('pieCanvas', { static: true }) pieCanvas: ElementRef;
 
   @Input() colors: any[];
-  @Input() series: any;
+  @Input() labels: string[];
   @Input() showLegend: boolean = false;
   @Input() size: string = `small`;
   @Input() subtitle: boolean = false;
   @Input() title?: string;
   @Input() unit: string = `student`;
+  @Input() values: number[];
 
   private pieChart: Chart;
 
-  get chart(): ApexChart {
-    return {
-      height: 250,
-      type: `pie`
-    };
+  get percents() {
+    return [...this.values].map(v => Math.floor(v / this.total) * 100);
   }
 
-  get dataLabels(): ApexDataLabels {
-    return {
-      dropShadow: {
-        enabled: true,
-        top: 1,
-        left: 1,
-        blur: 1,
-        opacity: 0.45
-      },
-      enabled: this.showLegend,
-      enabledOnSeries: this.showLegend,
-      formatter: (val, opts) => `${Math.round(val)}%`,
-      style: {
-        fontSize: '14px',
-        colors: ['#ffffff']
-      }
-    };
+  get total() {
+    return [...this.values].reduce((a, b) => a + b, 0);
   }
 
-  get labels() {
-    return this.series.names;
+  constructor() {
+    Chart.defaults.global.defaultFontFamily = 'Roboto, Helvetica, sans-serif';
   }
-
-  get legend(): ApexLegend {
-    return {
-      fontSize: '14px',
-      show: this.showLegend
-    };
-  }
-
-  get values() {
-    return this.series.values;
-  }
-
-  constructor() { }
 
   ngOnInit(): void {
-    // Called after the constructor, initializing input properties, and the first call to ngOnChanges.
-    // Add 'implements OnInit' to the class.
-    this.pieChart = new Chart(this.pieCanvas.nativeElement, {
+    this.values = this.values.map(v => v ? v : 0);
+    const chartConfig: ChartConfiguration = {
       type: 'pie',
       data: {
-        labels: this.series.names,
+        labels: this.labels,
         datasets: [
           {
             // label: '# of Votes',
-            data: this.series.values,
             backgroundColor: this.colors,
-            hoverBackgroundColor: this.colors
+            data: this.values,
+            hoverBackgroundColor: this.colors,
           }
         ]
       },
       options: {
-        legend: {
-          labels: {
-            boxWidth: 20,
-            fontFamily: 'Roboto, Helvetica, sans-serif',
-            usePointStyle: true
+        elements: {
+          arc: {
+            borderWidth: 0
           }
+        },
+        legend: {
+          display: this.showLegend,
+          labels: {},
+          position: `right`
+        },
+        plugins: {
+          datalabels: {}
         }
       }
-    });
+    };
+    if (this.showLegend) {
+      if (chartConfig.data.datasets[0][`datalabels`]) {
+        delete chartConfig.data.datasets[0][`datalabels`];
+      }
+      chartConfig.options.plugins.datalabels[`opacity`] = 0;
+      chartConfig.options.legend.labels = {
+        boxWidth: 20,
+        usePointStyle: true
+      };
+    }
+    // else {
+    const labelColor: string = `white`;
+    chartConfig.options.plugins.datalabels = {
+      color: 'white',
+      display: (ctx) => ctx.dataset.data[ctx.dataIndex] > 10,
+      font: { weight: 400 },
+      offset: 0,
+      padding: 0,
+      // };
+      // chartConfig.data.datasets[0][`datalabels`] = {
+      labels: {
+        index: {
+          align: this.showLegend ? 'start' : 'end',
+          anchor: 'end',
+          color: (ctx) => {
+            if (this.showLegend) {
+              return labelColor;
+            } else if (typeof ctx.dataset.backgroundColor === `string`) {
+              return ctx.dataset.backgroundColor;
+            }
+          },
+          font: {
+            weight: 600,
+            size: 11
+          },
+          formatter: (val, ctx) => {
+            const arr: any[] = ctx.dataset.data;
+            return `${Math.round((arr[ctx.dataIndex] / this.total) * 100)}%`;
+          },
+          opacity: (ctx) => {
+            const arr: any[] = ctx.dataset.data;
+            return (Math.round((arr[ctx.dataIndex] / this.total) * 100) > 5) ? 1 : 0;
+          },
+          padding: 5
+        },
+        name: {
+          align: 'center',
+          anchor: 'center',
+          font: { size: 15 },
+          formatter: (_val, ctx) => ctx.chart.data.labels[ctx.dataIndex],
+          opacity: this.showLegend ? 0 : 1
+        },
+        value: {
+          align: 'bottom',
+          anchor: 'center',
+          color: `white`,
+          font: { size: 13 },
+          formatter: (val, ctx) => Math.round((val * 1000) / 1000).toLocaleString(),
+          offset: 10,
+          opacity: this.showLegend ? 0 : 0.6
+        }
+        // }
+      }
+    };
+    this.pieChart = new Chart(this.pieCanvas.nativeElement, chartConfig);
+    const legendHtml = this.pieChart.generateLegend();
+    console.log(legendHtml);
   }
 }

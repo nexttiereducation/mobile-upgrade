@@ -1,11 +1,26 @@
 import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
 import { Chart } from 'chart.js';
 
+import 'chartjs-plugin-datalabels';
 import 'chartjs-plugin-doughnutlabel';
 
 @Component({
   selector: 'radial-chart',
-  templateUrl: 'radial-chart.html'
+  templateUrl: 'radial-chart.html',
+  styles: [`
+    :host {
+      display: block;
+      height: 100%;
+      position: relative;
+    }
+    :host .chart-container {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      justify-content: stretch;
+      min-height: 200px;
+    }
+  `]
 })
 export class RadialChartComponent implements OnInit {
   @ViewChild('doughnutCanvas', { static: true }) doughnutCanvas: ElementRef;
@@ -29,13 +44,13 @@ export class RadialChartComponent implements OnInit {
       data: {
         datasets: [
           {
-            label: '%',
+            backgroundColor: this.colors,
             data: [
               +this.value,
               100 - +this.value
             ],
-            backgroundColor: this.colors,
             hoverBackgroundColor: this.colors,
+            label: '%'
           }
         ],
         labels: [
@@ -44,22 +59,24 @@ export class RadialChartComponent implements OnInit {
         ]
       },
       options: {
-        cutoutPercentage: 70,
+        animation: {
+          animateRotate: true,
+          animateScale: true
+        },
+        cutoutPercentage: 75,
+        elements: {
+          arc: {
+            borderWidth: 0
+          }
+        },
         legend: {
           display: false
         },
-        responsive: true,
-        title: {
-          display: true,
-          fontFamily: 'Roboto, Helvetica, sans-serif',
-          fontSize: 14,
-          text: this.label
-        },
-        animation: {
-          animateScale: true,
-          animateRotate: true
-        },
+        maintainAspectRatio: false,
         plugins: {
+          datalabels: {
+            opacity: 0
+          },
           doughnutlabel: {
             labels: [
               {
@@ -67,10 +84,17 @@ export class RadialChartComponent implements OnInit {
                 font: {
                   size: '60'
                 }
+              },
+              {
+                text: this.label,
+                font: {
+                  size: '30'
+                }
               }
             ]
           }
-        }
+        },
+        responsive: true,
       }
       //     labels: {
       //       boxWidth: 20,

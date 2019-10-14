@@ -4,19 +4,20 @@
                    || admissionChart">
     <ion-card-header>Academic Statistics</ion-card-header>
     <ion-grid>
-      <ion-row class="ion-align-items-center ion-justify-content-center">
-        <ion-col size="6"
-                 *ngIf="admissionChart">
+      <ion-row *ngIf="admissionChart">
+        <ion-col [style.min-height.vh]="15">
           <radial-chart [label]="admissionChart?.label"
                         [value]="admissionChart?.value"></radial-chart>
         </ion-col>
-        <ion-col size="6"
-                 *ngIf="retentionChart">
+      </ion-row>
+      <ion-row *ngIf="retentionChart">
+        <ion-col [style.min-height.vh]="15">
           <radial-chart [label]="retentionChart?.label"
                         [value]="retentionChart?.value"></radial-chart>
         </ion-col>
-        <ion-col size="6"
-                 *ngIf="graduationChart">
+      </ion-row>
+      <ion-row *ngIf="graduationChart">
+        <ion-col [style.min-height.vh]="15">
           <radial-chart [label]="graduationChart?.label"
                         [value]="graduationChart?.value"></radial-chart>
         </ion-col>
@@ -28,7 +29,7 @@
     <ion-card-header> Average Scores <small>(based on the current freshman class)</small>
     </ion-card-header>
     <div>
-      <bar-chart [charts]="charts"></bar-chart>
+      <range-chart [charts]="charts"></range-chart>
     </div>
   </ion-card>
   <ion-card *ngIf="details?.most_popular_major_1

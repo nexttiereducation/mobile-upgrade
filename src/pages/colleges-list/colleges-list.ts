@@ -153,6 +153,10 @@ export class CollegesListPage implements OnInit, OnDestroy {
     }
   }
 
+  public goBack() {
+    this.router.navigateByUrl(`app/colleges`);
+  }
+
   public infiniteScrollLoad(infiniteScroll: any) {
     if (!this.collegesService.nextPage) {
       infiniteScroll.enable(false);

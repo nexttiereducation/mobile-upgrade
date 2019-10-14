@@ -1,14 +1,18 @@
 <ion-header>
   <ion-toolbar>
     <ion-buttons slot="start">
-      <ion-back-button></ion-back-button>
+      <!-- <ion-back-button></ion-back-button> -->
+      <ion-button (click)="goBack()">
+        <ion-icon slot="icon-only"
+                  name="arrow-back"></ion-icon>
+      </ion-button>
     </ion-buttons>
     <ion-title tappable>
       <div class="subhead text-grayDark50"
            *ngIf="list?.name">Colleges</div> {{ list?.name || 'Colleges' }}
     </ion-title>
     <ion-buttons messaging-button
-                 slot="primary"></ion-buttons>
+                 slot="end"></ion-buttons>
   </ion-toolbar>
   <ion-toolbar class="ion-no-padding"
                *ngIf="list?.name !== 'Recommended'

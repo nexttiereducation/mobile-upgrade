@@ -42,7 +42,7 @@ export class CollegeFinancialComponent {
     let msg;
     switch (type) {
       case 'need blind':
-        msg = `This institution does not consider an applicant's financial situation when deciding admission`;
+        msg = `This school does not consider an applicant's financial situation when deciding admission`;
         break;
     }
     const alert = await this.alertCtrl.create({

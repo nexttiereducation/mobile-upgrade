@@ -56,10 +56,8 @@
                     (click)="openAlert('need blind')"></ion-icon>
         </ion-col>
         <ion-col *ngIf="undergradFinAidChart">
-          <pie-chart label="Receiving Financial Aid"
-                     tinyHeader="Undergrads"
-                     unit="undergrad"
-                     [series]="undergradFinAidChart"></pie-chart>
+          <radial-chart [label]="finAidChart.label"
+                        [value]="finAidChart.value"></radial-chart>
         </ion-col>
       </ion-row>
     </ion-grid>

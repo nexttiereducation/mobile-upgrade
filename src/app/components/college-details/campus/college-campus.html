@@ -67,16 +67,19 @@
                    || workOnCampusChart">
     <ion-card-header>Freshman Student Life</ion-card-header>
     <ion-grid>
-      <ion-row class="ion-align-items-center ion-justify-content-center">
-        <ion-col *ngIf="outOfStateChart">
+      <ion-row class="ion-align-items-center ion-justify-content-center ion-wrap">
+        <ion-col size="6"
+                 *ngIf="outOfStateChart">
           <radial-chart [label]="outOfStateChart.label"
                         [value]="outOfStateChart.value"></radial-chart>
         </ion-col>
-        <ion-col *ngIf="liveOnCampusChart">
+        <ion-col size="6"
+                 *ngIf="liveOnCampusChart">
           <radial-chart [label]="liveOnCampusChart.label"
                         [value]="liveOnCampusChart.value"></radial-chart>
         </ion-col>
-        <ion-col *ngIf="workOnCampusChart">
+        <ion-col size="6"
+                 *ngIf="workOnCampusChart">
           <radial-chart [label]="workOnCampusChart.label"
                         [value]="workOnCampusChart.value"></radial-chart>
         </ion-col>

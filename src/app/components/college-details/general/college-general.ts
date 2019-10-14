@@ -23,10 +23,10 @@ export class CollegeGeneralComponent {
 
   get diversityChart() {
     if (this.details
-      && this.details.undergrad_white
-      && this.details.undergrad_asian
-      && this.details.undergrad_hispanic
-      && this.details.undergrad_black) {
+      && (this.details.undergrad_white > -1
+        || this.details.undergrad_asian > -1
+        || this.details.undergrad_hispanic > -1
+        || this.details.undergrad_black > -1)) {
       const diversityOther = 100 - +this.details.undergrad_white - +this.details.undergrad_asian
         - +this.details.undergrad_hispanic - +this.details.undergrad_black;
       const diversityPercents = [
@@ -44,16 +44,37 @@ export class CollegeGeneralComponent {
           `#ff6361`,
           `#ffa600`
         ],
-        series: {
-          names: [
-            `White`,
-            `Asian`,
-            `Hispanic`,
-            `Black`,
-            `Other`
-          ],
-          values: [...diversityPercents].map((p: number) => p * .1 * this.details.undergrad_population)
-        }
+        labels: [
+          `White`,
+          `Asian`,
+          `Hispanic`,
+          `Black`,
+          `Other`
+        ],
+        values: [...diversityPercents].map((p: number) => Math.floor((p / 100) * this.details.undergrad_population))
+      };
+    } else {
+      return null;
+    }
+  }
+
+  get gradUnderChart() {
+    if (this.details
+      && this.details.undergrad_population > -1
+      && this.details.grad_population > -1) {
+      return {
+        colors: [
+          `#3692cc`,
+          `#1b1464`
+        ],
+        labels: [
+          `Undergrads`,
+          `Grads`
+        ],
+        values: [
+          this.details.undergrad_population,
+          this.details.grad_population
+        ]
       };
     } else {
       return null;
@@ -62,26 +83,33 @@ export class CollegeGeneralComponent {
 
   get maleFemaleChart() {
     if (this.details
-      && this.details.female_enrollment
-      && this.details.male_enrollment) {
+      && this.details.undergrad_women > -1
+      && this.details.undergrad_men > -1) {
       return {
         colors: [
-          `#3692cc`,
-          `#1b1464`
+          `#0097a7`,
+          `#26c6da`
         ],
-        series: {
-          names: [
-            `Female`,
-            `Male`
-          ],
-          values: [
-            this.details.female_enrollment,
-            this.details.male_enrollment
-          ]
-        }
+        labels: [
+          `Female`,
+          `Male`
+        ],
+        values: [
+          this.details.undergrad_women,
+          this.details.undergrad_men
+        ]
       };
     } else {
       return null;
+    }
+  }
+
+  get settingType() {
+    if (this.college && this.college.school_setting) {
+      const regex = new RegExp(/\:\s\w+/g);
+      return this.college.school_setting.replace(regex, '');
+    } else {
+      return '';
     }
   }
 

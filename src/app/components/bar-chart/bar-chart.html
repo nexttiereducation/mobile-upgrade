@@ -1,43 +1,7 @@
-<ion-grid class="bar-chart-wrapper ion-margin-bottom"
-          *ngIf="charts?.length">
-  <ng-template let-chart
-               ngFor
-               [ngForOf]="charts">
-    <ng-container *ngIf="chart.value > 0 && chart.range.length > 0">
-      <ion-row class="ion-align-items-center"
-               *ngIf="chart.name">
-        <ion-col class="ion-text-center">
-          <ion-text class="bold"
-                    [color]="color">{{ chart.name }}</ion-text>
-        </ion-col>
-      </ion-row>
-      <ion-row class="ion-align-items-center">
-        <ion-col size="auto"
-                 *ngIf="chart.range && (chart.range[0] || chart.range[0] === 0)">
-          <div class="text-small ion-text-right text-grayDark50 nowrap">
-            {{ (chart.range[0] < 10 ? '&emsp;' : '') + chart.range[0] }} </div>
-        </ion-col>
-        <ion-col>
-          <div class="bar-bg"></div>
-          <div class="bar-value"
-               [style.width.%]="(chart.value/chart.range[1]) * 100">{{ chart.value }}</div>
-          <!-- <nvd3 config="newConfig"
-                #barChart
-                [data]="newData"
-                [ngClass]="'label-' + color"
-                [options]="newOptions"></nvd3> -->
-        </ion-col>
-        <ion-col size="auto"
-                 *ngIf="chart.range && chart.range[1]">
-          <div class="text-small text-grayDark50 nowrap"> {{ chart.range[1] + (chart.range[1] < 100 ? '&ensp;' : '') }}
-          </div>
-        </ion-col>
-      </ion-row>
-    </ng-container>
-  </ng-template>
-</ion-grid>
-<!-- <div class="ion-text-center"
-     *ngIf="label"
-     [ngClass]="subLabel ? 'body bold uppercase text-' + color : 'body'">{{ label }}</div>
-<div class="subhead"
-     *ngIf="subLabel">{{ subLabel }}</div> -->
+<div class="chart-container"
+     style="position: relative; height:25vh">
+  <canvas aria-label="Bar Chart"
+          id="barChartCanvas"
+          role="img"
+          #barCanvas></canvas>
+</div>

@@ -16,8 +16,10 @@ import { ICollegeTracker } from '@nte/interfaces/college-tracker.interface';
 import { ICollege } from '@nte/interfaces/college.interface';
 import { CollegeService } from '@nte/services/college.service';
 import { CollegesService } from '@nte/services/colleges.service';
+import { ListTileService } from '@nte/services/list-tile.service';
 import { MixpanelService } from '@nte/services/mixpanel.service';
 import { NavStateService } from '@nte/services/nav-state.service';
+import { PrevRouteService } from '@nte/services/prev-route.service';
 import { StakeholderService } from '@nte/services/stakeholder.service';
 
 @Component({
@@ -107,8 +109,10 @@ export class CollegePage implements OnInit, OnDestroy {
 
   constructor(private collegeService: CollegeService,
     private collegesService: CollegesService,
+    private listTileService: ListTileService,
     private mixpanel: MixpanelService,
     private modalCtrl: ModalController,
+    private prevRouteService: PrevRouteService,
     private route: ActivatedRoute,
     private router: Router,
     private stakeholderService: StakeholderService,
@@ -147,6 +151,17 @@ export class CollegePage implements OnInit, OnDestroy {
   ngOnDestroy() {
     this.ngUnsubscribe.next();
     this.ngUnsubscribe.complete();
+  }
+
+  public goBack() {
+    if (this.prevRouteService.url) {
+      this.router.navigateByUrl(this.prevRouteService.url);
+    } else {
+      const activeList: any = this.listTileService.activeList;
+      this.router.navigate(
+        [`app/colleges/list/${activeList.iconFileName || activeList.name}`]
+      );
+    }
   }
 
   public switchView(ev: any) {
