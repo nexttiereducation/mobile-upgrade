@@ -94,7 +94,7 @@ const createListImages = [
 ];
 export const CREATE_LIST_IMAGES = createListImages.map(img => `assets/image/${img}`);
 
-export const DETAIL_TOOLTIPS = {
+export const COLLEGE_DETAIL_TOOLTIPS = {
   debt: `The median annual loan payment amount, based on the median of the student loan debt incurred
      by students who graduated in 2011-2015`,
   earnings: `Mean 2014-2015 annual earnings of students who graduated in 2011-2015`,
@@ -106,7 +106,7 @@ export const DETAIL_TOOLTIPS = {
   ratio: `Average Annual Earnings divided by Average Annual Debt Payment`
 };
 
-export const EMPTY_STATES = {
+export const COLLEGES_EMPTY_STATES = {
   Default: {
     body: `Try searching for something broad, like Chicago, or filter by Setting to ensure search results.`,
     title: `We couldn't find a match.`
@@ -130,3 +130,52 @@ export const EMPTY_STATES = {
     title: `You haven't saved any colleges.`
   }
 };
+
+export const COLLEGE_APPLICATION_IMPORTANCE_LEVELS: any[] = [
+  {
+    name: 'very important',
+    color: 'success'
+  },
+  {
+    name: 'important',
+    color: 'secondary'
+  },
+  {
+    name: 'considered',
+    color: 'primary'
+  },
+  {
+    name: 'not considered',
+    color: 'medium'
+  }
+];
+
+const preProPrograms: string[] = [
+  `dentistry`,
+  `law`,
+  `medicine`,
+  `optometry`,
+  `pharmacy`,
+  `theology`,
+  `veterinary`
+];
+export const COLLEGE_PRE_PROFESSIONAL_PROGRAMS: any[] = preProPrograms.map(p => {
+  return {
+    name: p,
+    property: `pre_${p}`
+  };
+});
+
+const rotcPrograms: string[] = [
+  'Army',
+  'Navy',
+  'Air Force'
+];
+export const COLLEGE_ROTC_BRANCHES: any[] = rotcPrograms.map(p => {
+  const filename: string = p.toLowerCase().replace(' ', '');
+  return {
+    name: p,
+    filename,
+    property: `rotc_${filename}`
+  };
+});

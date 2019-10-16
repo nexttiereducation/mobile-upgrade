@@ -101,7 +101,7 @@ export class StakeholderService {
             this.storage.getItem(`ls.token`)
               .then(token => {
                 if (token && token.value && token.value.length) {
-                  const currentUser = JSON.parse(stakeholder);
+                  const currentUser = stakeholder;
                   this.setStakeholder(
                     {
                       id: currentUser.id,

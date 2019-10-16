@@ -24,10 +24,7 @@ $icomoon-font-path: "assets/fonts" !default;
 }
 
 @mixin makeIcon($arg, $val) {
-
-  .nt-#{$arg}:before,
-  .ion-ios-nt-#{$arg}:before,
-  .ion-md-nt-#{$arg}:before {
+  [class*=nt-#{$arg}]:before {
     content: $val;
   }
 }

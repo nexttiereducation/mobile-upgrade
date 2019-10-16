@@ -12,6 +12,7 @@ import { CollegesListPage } from '@nte/pages/colleges-list/colleges-list';
 import { CollegesPage } from '@nte/pages/colleges/colleges';
 import { FilterCategoryPage } from '@nte/pages/filter-category/filter-category';
 import { FilterPage } from '@nte/pages/filter/filter';
+import { ListTileCreatePage } from '@nte/pages/list-tile-create/list-tile-create';
 import { ProfilePage } from '@nte/pages/profile/profile';
 import { ScholarshipPage } from '@nte/pages/scholarship/scholarship';
 import { ScholarshipsListPage } from '@nte/pages/scholarships-list/scholarships-list';
@@ -48,20 +49,26 @@ const routes: Routes = [
               path: ':id',
               component: TasksListPage,
               // loadChildren: '@nte/pages/tasks-list/tasks-list.module#TasksListPageModule'
-              children: [{
-                path: 'filter',
-                component: FilterPage,
-                children: [{
-                  path: ':category',
-                  component: FilterCategoryPage
-                }]
-              }]
+              children: [
+                {
+                  path: `edit`,
+                  component: ListTileCreatePage
+                },
+                {
+                  path: 'task/:id',
+                  component: TaskPage
+                  // loadChildren: '@nte/pages/task/task.module#TaskPageModule'
+                },
+                {
+                  path: 'filter',
+                  component: FilterPage,
+                  children: [{
+                    path: ':category',
+                    component: FilterCategoryPage
+                  }]
+                }
+              ]
             }]
-          },
-          {
-            path: ':id',
-            component: TaskPage
-            // loadChildren: '@nte/pages/task/task.module#TaskPageModule'
           }
         ]
       },
@@ -82,19 +89,25 @@ const routes: Routes = [
               path: ':id',
               component: CollegesListPage,
               // loadChildren: '@nte/pages/colleges-list/colleges-list.module#CollegesListPageModule'
-              children: [{
-                path: 'filter',
-                component: FilterPage,
-                children: [{
-                  path: ':id',
-                  component: FilterCategoryPage
-                }]
-              }]
+              children: [
+                {
+                  path: `edit`,
+                  component: ListTileCreatePage
+                },
+                {
+                  path: 'college/:id',
+                  component: CollegePage
+                },
+                {
+                  path: 'filter',
+                  component: FilterPage,
+                  children: [{
+                    path: ':category',
+                    component: FilterCategoryPage
+                  }]
+                }
+              ]
             }]
-          },
-          {
-            path: ':id',
-            component: CollegePage
           }
         ]
       },
@@ -111,24 +124,36 @@ const routes: Routes = [
           {
             path: 'list',
             component: ScholarshipsPage,
-            children: [{
-              path: ':id',
-              component: ScholarshipsListPage,
-              // loadChildren: '@nte/pages/scholarships-list/scholarships-list.module#ScholarshipsListPageModule'
-              children: [{
-                path: 'filter',
-                component: FilterPage,
-                children: [{
-                  path: ':id',
-                  component: FilterCategoryPage
-                }]
-              }]
-            }]
-          },
-          {
-            path: ':id',
-            component: ScholarshipPage
-            // loadChildren: '@nte/pages/scholarship/scholarship.module#ScholarshipPageModule'
+            children: [
+              {
+                path: 'create',
+                component: ListTileCreatePage
+              },
+              {
+                path: ':id',
+                component: ScholarshipsListPage,
+                // loadChildren: '@nte/pages/scholarships-list/scholarships-list.module#ScholarshipsListPageModule'
+                children: [
+                  {
+                    path: `edit`,
+                    component: ListTileCreatePage
+                  },
+                  {
+                    path: 'scholarship/:id',
+                    component: ScholarshipPage
+                    // loadChildren: '@nte/pages/scholarship/scholarship.module#ScholarshipPageModule'
+                  },
+                  {
+                    path: 'filter',
+                    component: FilterPage,
+                    children: [{
+                      path: ':category',
+                      component: FilterCategoryPage
+                    }]
+                  }
+                ]
+              }
+            ]
           }
         ]
       },

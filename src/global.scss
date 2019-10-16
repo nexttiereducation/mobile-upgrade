@@ -30,20 +30,22 @@
   font-weight: 300;
   src: local("Material Icons"), local("MaterialIcons-Regular"), url("assets/fonts/MaterialIcons-Regular.ttf") format("ttf");
 }
+
 body {
+
   // small
-@media screen and (min-width: 576px) {
-  font-size: 16px;
-}
+  @media screen and (min-width: 576px) {
+    font-size: 16px;
+  }
 
-// large
-@media screen and (min-width: 992px) {
-  font-size: 18px;
-}
+  // large
+  @media screen and (min-width: 992px) {
+    font-size: 18px;
+  }
 
-@media screen and (min-width: 1200px) {
-  font-size: 20px;
-}
+  @media screen and (min-width: 1200px) {
+    font-size: 20px;
+  }
 }
 
 .text-xlarge {
@@ -495,13 +497,12 @@ html {
   }
 }
 
-body,
 .body {
-  font-size: 1.4rem;
+  font-size: 1rem;
   color: var(--black);
 
   &.spaced {
-    line-height: 1.9rem;
+    line-height: 1.5rem;
 
     +.tinyHeader {
       margin-top: 0.5rem;

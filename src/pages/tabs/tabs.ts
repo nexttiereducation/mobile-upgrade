@@ -19,8 +19,7 @@ import { StakeholderService } from '@nte/services/stakeholder.service';
 
 const { PushNotifications } = Plugins;
 @Component({
-  templateUrl: `tabs.html`,
-  styleUrls: [`tabs.scss`]
+  templateUrl: `tabs.html`
 })
 export class TabsPage implements OnInit, OnDestroy {
   public colleges = CollegesPage;

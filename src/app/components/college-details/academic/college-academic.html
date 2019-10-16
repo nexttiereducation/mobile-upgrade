@@ -25,30 +25,20 @@
     </ion-grid>
   </ion-card>
   <ion-card *ngIf="details
-                   || charts?.length">
-    <ion-card-header> Average Scores <small>(based on the current freshman class)</small>
+                   && scoreCharts?.length">
+    <ion-card-header>Average Scores <small>(based on the current freshman class)</small>
     </ion-card-header>
     <div>
-      <range-chart [charts]="charts"></range-chart>
+      <range-chart [charts]="scoreCharts"></range-chart>
     </div>
   </ion-card>
-  <ion-card *ngIf="details?.most_popular_major_1
-                   || details?.most_popular_major_2
-                   || details?.most_popular_major_3">
+  <ion-card *ngIf="details?.top_majors.length">
     <ion-card-header>Top Majors</ion-card-header>
-    <ion-grid>
-      <ion-row>
-        <ion-col *ngIf="details?.most_popular_major_1">
-          <div class="body ion-text-center">{{ details?.most_popular_major_1 }}</div>
-        </ion-col>
-        <ion-col *ngIf="details?.most_popular_major_2">
-          <div class="body ion-text-center">{{ details?.most_popular_major_2 }}</div>
-        </ion-col>
-        <ion-col *ngIf="details?.most_popular_major_3">
-          <div class="body ion-text-center">{{ details?.most_popular_major_3 }}</div>
-        </ion-col>
-      </ion-row>
-    </ion-grid>
+    <ion-list>
+      <ion-item *ngFor="let major of details.top_majors">
+        <ion-label>{{ major | titlecase }}</ion-label>
+      </ion-item>
+    </ion-list>
   </ion-card>
   <ion-card *ngIf="details?.pre_dentistry
                    || details?.pre_law
@@ -59,90 +49,39 @@
                    || details?.pre_veterinary">
     <ion-card-header>Pre-Professional Programs</ion-card-header>
     <ion-list class="pre-pro">
-      <ion-item class="body"
-                *ngIf="details?.pre_dentistry">
-        <ion-thumbnail slot="start">
-          <img src="assets/image/college/detail_pre-dentistry.svg" />
-        </ion-thumbnail>
-        <ion-label>Pre-Dentistry</ion-label>
-      </ion-item>
-      <ion-item class="body"
-                *ngIf="details?.pre_law">
-        <ion-thumbnail slot="start">
-          <img src="assets/image/college/detail_pre-law.svg" />
-        </ion-thumbnail>
-        <ion-label>Pre-Law</ion-label>
-      </ion-item>
-      <ion-item class="body"
-                *ngIf="details?.pre_medicine">
-        <ion-thumbnail slot="start">
-          <img src="assets/image/college/detail_pre-medicine.svg" />
-        </ion-thumbnail>
-        <ion-label>Pre-Medicine</ion-label>
-      </ion-item>
-      <ion-item class="body"
-                *ngIf="details?.pre_optometry">
-        <ion-thumbnail slot="start">
-          <img src="assets/image/college/detail_pre-optometry.svg" />
-        </ion-thumbnail>
-        <ion-label>Pre-Optometry</ion-label>
-      </ion-item>
-      <ion-item class="body"
-                *ngIf="details?.pre_pharmacy">
-        <ion-thumbnail slot="start">
-          <img src="assets/image/college/detail_pre-pharmacy.svg" />
-        </ion-thumbnail>
-        <ion-label>Pre-Pharmacy</ion-label>
-      </ion-item>
-      <ion-item class="body"
-                *ngIf="details?.pre_theology">
-        <ion-thumbnail slot="start">
-          <img src="assets/image/college/detail_pre-theology.svg" />
-        </ion-thumbnail>
-        <ion-label>Pre-Theology</ion-label>
-      </ion-item>
-      <ion-item class="body"
-                *ngIf="details?.pre_veterinary">
-        <ion-thumbnail slot="start">
-          <img src="assets/image/college/detail_pre-veterinary.svg" />
-        </ion-thumbnail>
-        <ion-label>Pre-Veterinary</ion-label>
-      </ion-item>
+      <ng-template let-program
+                   ngFor
+                   [ngForOf]="preProPrograms">
+        <ion-item *ngIf="details && details[program.property]">
+          <ion-thumbnail slot="start">
+            <img src="assets/image/college/detail_pre-{{program.name}}.svg" />
+          </ion-thumbnail>
+          <ion-label>Pre-{{program.name | titlecase}}</ion-label>
+        </ion-item>
+      </ng-template>
     </ion-list>
   </ion-card>
-  <ion-card *ngIf="details?.army_offcamp
-                   || details?.navy_offcamp
-                   || details?.af_offcamp">
+  <ion-card *ngIf="details?.rotc_army
+                   || details?.rotc_navy
+                   || details?.rotc_airforce">
     <ion-card-header>Reserve Officers' Training Corps (ROTC)</ion-card-header>
-    <ion-grid>
-      <ion-row>
-        <ion-col class="align-self-center"
-                 *ngIf="details?.army_offcamp">
-          <div margin-bottom
-               class="ion-text-center">
+    <ion-list>
+      <ng-template let-branch
+                   ngFor
+                   [ngForOf]="rotcBranches">
+        <ion-item class="align-self-center"
+                  *ngIf="details && details[branch.property]">
+          <ion-thumbnail slot="start">
             <img height="60"
-                 src="assets/image/military/army.jpg">
-          </div>
-          <div class="body ion-text-center">Army</div>
-        </ion-col>
-        <ion-col class="align-self-center"
-                 *ngIf="details?.navy_offcamp">
-          <div class="ion-text-center ion-margin-bottom">
-            <img height="60"
-                 src="assets/image/military/navy.jpg">
-          </div>
-          <div class="body ion-text-center">Navy</div>
-        </ion-col>
-        <ion-col class="align-self-center"
-                 *ngIf="details?.af_offcamp">
-          <div class="ion-text-center ion-margin-bottom">
-            <img height="60"
-                 src="assets/image/military/air-force.jpg">
-          </div>
-          <div class="body ion-text-center">Air Force</div>
-        </ion-col>
-      </ion-row>
-    </ion-grid>
+                 src="assets/image/military/{{branch.filename}}.jpg">
+          </ion-thumbnail>
+          <ion-label>
+            <h2>{{branch.name}}</h2>
+            <p>{{details[branch.property]}}</p>
+          </ion-label>
+        </ion-item>
+      </ng-template>
+    </ion-list>
   </ion-card>
   <ion-card *ngIf="furtherStudyChart || jobMarketChart">
     <ion-card-header>Graduate Statistics</ion-card-header>

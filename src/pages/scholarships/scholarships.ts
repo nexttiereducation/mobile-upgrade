@@ -8,8 +8,6 @@ import { SCHOLARSHIP_TILES } from '@nte/constants/scholarship.constants';
 import { ICustomListTile } from '@nte/interfaces/list-tile-custom.interface';
 import { IListTile } from '@nte/interfaces/list-tile.interface';
 import { Filter } from '@nte/models/filter.model';
-import { FilterPage } from '@nte/pages/filter/filter';
-import { ListTileCreatePage } from '@nte/pages/list-tile-create/list-tile-create';
 import { EnvironmentService } from '@nte/services/environment.service';
 import { FilterService } from '@nte/services/filter.service';
 import { MessageService } from '@nte/services/message.service';
@@ -64,8 +62,8 @@ export class ScholarshipsPage implements OnInit, OnDestroy {
     private stakeholderService: StakeholderService,
     private toastCtrl: ToastController,
     navStateService: NavStateService) {
-    const params: any = navStateService.data;
-    this.connections = params.connections;
+    this.params = navStateService.data;
+    this.connections = this.params.connections;
     this.tilesDefault = [...SCHOLARSHIP_TILES];
   }
 
@@ -85,9 +83,9 @@ export class ScholarshipsPage implements OnInit, OnDestroy {
   ionViewDidEnter() {
     this.mixpanel.event(`navigated_to-Scholarships`);
     if (this.params) {
-      if (this.params.get(`newListTile`)) {
+      if (this.params.newListTile) {
         this.setupNewTile(this.params.data.newList);
-      } else if (this.params.get(`updatedListTile`)) {
+      } else if (this.params.updatedListTile) {
         this.updateTile(this.params.data);
       }
       this.params = null;
@@ -108,31 +106,28 @@ export class ScholarshipsPage implements OnInit, OnDestroy {
   public editTile(tile: IListTile, slidingItem: IonItemSliding) {
     slidingItem.close();
     this.listTileService.activeList = tile;
-    this.router.navigate([
+    const listName = tile.name.toLowerCase().replace(' all', '');
+    this.router.navigate(
+      [
+        `list`,
+        listName,
+        `edit`
+      ],
       {
-        page: ScholarshipsPage,
-        params: {
-          connections: this.connections
-        }
-      },
-      {
-        page: FilterPage,
-        params: {
-          cyol: true,
-          filter: new Filter(this.filterCategories, tile.filter),
-          listType: `Scholarships`,
-          title: `Create Your Own List!`
-        }
-      },
-      {
-        page: ListTileCreatePage,
-        params: {
-          filter: new Filter(this.filterCategories, tile.filter),
-          list: tile,
-          page: `Scholarships`
+        relativeTo: this.route,
+        state: {
+          data: {
+            connections: this.connections,
+            cyol: true,
+            filter: new Filter(this.filterCategories, tile.filter),
+            list: tile,
+            listType: `Scholarships`,
+            page: `Scholarships`,
+            title: `Create Your Own List!`
+          }
         }
       }
-    ]);
+    );
   }
 
   public openCreateModal() {
@@ -141,13 +136,17 @@ export class ScholarshipsPage implements OnInit, OnDestroy {
     this.filterService.filter = scholarshipFilters;
     this.listTileService.activeList = null;
     this.router.navigate(
-      ['filters'],
+      [
+        'list',
+        'create'
+      ],
       {
         relativeTo: this.route,
         state: {
           cyol: true,
           filter: scholarshipFilters,
           listType: `Scholarships`,
+          page: `Scholarships`,
           title: `Create Your Own List!`
         }
       }

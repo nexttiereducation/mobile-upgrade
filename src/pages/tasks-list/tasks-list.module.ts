@@ -12,7 +12,26 @@ import { ComponentsModule } from '@nte/components/components.module';
 const routes: Routes = [
   {
     path: 'app/tasks/list/:id',
-    component: TasksListPage
+    children: [
+      {
+        path: '',
+        component: TasksListPage
+      },
+      // {
+      //   path: 'filter',
+      //   component: FilterPage,
+      //   children: [
+      //     {
+      //       path: ':category',
+      //       component: FilterCategoryPage
+      //     }
+      //   ]
+      // },
+      {
+        path: 'task/:id',
+        component: TaskPage
+      }
+    ]
   }
 ];
 

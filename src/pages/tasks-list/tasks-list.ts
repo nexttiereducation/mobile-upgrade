@@ -190,9 +190,13 @@ export class TasksListPage implements OnInit, OnDestroy {
     //     taskTypeImg: imgUrl
     //   }]);
     // } else {
-    this.router.navigateByUrl(
-      `app/tasks/${task.id}`,
+    this.router.navigate(
+      [
+        `task`,
+        task.id
+      ],
       {
+        relativeTo: this.route,
         state: {
           isParent: this.impersonatedStudent,
           page,

@@ -1,7 +1,8 @@
-import { Component, OnInit, ViewEncapsulation } from '@angular/core';
+import { Component, ViewEncapsulation } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { mean } from 'lodash';
 
+import { COLLEGE_PRE_PROFESSIONAL_PROGRAMS, COLLEGE_ROTC_BRANCHES } from '@nte/constants/college.constants';
 import { ICollegeDetails } from '@nte/interfaces/college-details.interface';
 import { CollegeService } from '@nte/services/college.service';
 
@@ -14,8 +15,10 @@ import { CollegeService } from '@nte/services/college.service';
   ],
   encapsulation: ViewEncapsulation.None
 })
-export class CollegeAcademicComponent implements OnInit {
+export class CollegeAcademicComponent {
   public charts: any[];
+  public rotcBranches: any[] = COLLEGE_ROTC_BRANCHES;
+  public preProPrograms: any[] = COLLEGE_PRE_PROFESSIONAL_PROGRAMS;
 
   get college() {
     return this.collegeService.active;
@@ -28,25 +31,54 @@ export class CollegeAcademicComponent implements OnInit {
     return this.college ? this.college.details : null;
   }
 
-  get averageAct() {
+  get scoreCharts() {
     if (this.details) {
-      return this.getRoundedMean(this.details.act_25, this.details.act_75);
+      const avgs: any = [];
+      if (this.details.avg_gpa) {
+        avgs.push({
+          name: `GPA`,
+          range: this.range.gpa,
+          value: this.details.avg_gpa
+        });
+      }
+      if (this.details.act_25 && this.details.act_75) {
+        avgs.push({
+          name: `ACT`,
+          range: this.range.act,
+          value: this.getRoundedMean(this.details.act_25, this.details.act_75)
+        });
+      }
+      if (this.details.sat_math_25 && this.details.sat_math_75) {
+        avgs.push({
+          name: `SAT Math`,
+          range: this.range.sat,
+          value: this.getRoundedMean(this.details.sat_math_25, this.details.sat_math_75)
+        });
+      }
+      if (this.details.sat_reading_25 && this.details.sat_reading_75) {
+        avgs.push({
+          name: `SAT Reading`,
+          range: this.range.sat,
+          value: this.getRoundedMean(this.details.sat_reading_25, this.details.sat_reading_75)
+        });
+      }
+      if (this.details.sat_writing_25 && this.details.sat_writing_75) {
+        avgs.push({
+          name: `SAT Writing`,
+          range: this.range.sat,
+          value: this.getRoundedMean(this.details.sat_writing_25, this.details.sat_writing_75)
+        });
+      }
+      return avgs;
     }
   }
-  get averageSatMath() {
-    if (this.details) {
-      return this.getRoundedMean(this.details.sat_math_25, this.details.sat_math_75);
-    }
-  }
-  get averageSatReading() {
-    if (this.details) {
-      return this.getRoundedMean(this.details.sat_reading_25, this.details.sat_reading_75);
-    }
-  }
-  get averageSatWriting() {
-    if (this.details) {
-      return this.getRoundedMean(this.details.sat_writing_25, this.details.sat_writing_75);
-    }
+
+  get range() {
+    return {
+      act: [0, 36],
+      gpa: [0, 5],
+      sat: [200, 800]
+    };
   }
 
   get admissionChart() {
@@ -88,7 +120,7 @@ export class CollegeAcademicComponent implements OnInit {
   get jobMarketChart() {
     if (this.details && this.details.percentage_enter_work_one_year) {
       return {
-        label: `Enter the workforce within 1 year`,
+        label: `Enter the workforce w/in 1 year`,
         value: this.details.percentage_enter_work_one_year
       };
     }
@@ -99,36 +131,12 @@ export class CollegeAcademicComponent implements OnInit {
     public route: ActivatedRoute,
     public router: Router) { }
 
-  ngOnInit() {
-    this.charts = [{
-      name: 'GPA',
-      range: [0, 5],
-      value: this.details.avg_gpa
-    },
-    {
-      name: 'ACT',
-      range: [0, 36],
-      value: this.averageAct
-    },
-    {
-      name: 'SAT Math',
-      range: [200, 800],
-      value: this.averageSatMath
-    },
-    {
-      name: 'SAT Reading',
-      range: [200, 800],
-      value: this.averageSatReading
-    },
-    {
-      name: 'SAT Writing',
-      range: [200, 800],
-      value: this.averageSatWriting
-    }];
-  }
-
   private getRoundedMean(firstValue: number, secondValue: number) {
-    return Math.round(mean([firstValue, secondValue]));
+    if (firstValue && secondValue) {
+      return Math.round(mean([firstValue, secondValue]));
+    } else {
+      return null;
+    }
   }
 
 }

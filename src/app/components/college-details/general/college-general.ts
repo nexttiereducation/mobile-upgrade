@@ -17,6 +17,13 @@ export class CollegeGeneralComponent {
     return this.collegeService.active$;
   }
 
+  get description() {
+    if (this.details && this.details.mission_statement) {
+      const regex: RegExp = /\.\n(\w)/g;
+      return this.details.mission_statement.replace(regex, `.\n\n$1`);
+    }
+  }
+
   get details() {
     return this.college ? this.college.details : null;
   }

@@ -6,7 +6,7 @@ import { indexOf, pullAll, words, zipObject } from 'lodash';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
-import { COLLEGE_NON_PROFIT_QUERY, COLLEGE_TILES, EMPTY_STATES } from '@nte/constants/college.constants';
+import { COLLEGE_NON_PROFIT_QUERY, COLLEGE_TILES, COLLEGES_EMPTY_STATES } from '@nte/constants/college.constants';
 import { IListTile } from '@nte/interfaces/list-tile.interface';
 import { Filter } from '@nte/models/filter.model';
 import { CollegeListTileService } from '@nte/services/college.list-tile.service';
@@ -28,7 +28,7 @@ import { StakeholderService } from '@nte/services/stakeholder.service';
 })
 export class CollegesPage implements OnInit, OnDestroy {
   public connections: any;
-  public emptyStates: any = EMPTY_STATES;
+  public emptyStates: any = COLLEGES_EMPTY_STATES;
   public hiddenTiles: any = {};
   public params: Params;
   public recommendations: number;

@@ -15,6 +15,9 @@
             <div class="ion-text-center">
               {{ (college?.is_public ? 'Public, ' : 'Private, ') + (college?.is_four_year ? '4 year' : '2 year') }}
             </div>
+            <div class="ion-text-center"
+                 *ngIf="details?.female_college || details?.male_college">
+              {{ (details?.female_college ? 'Women' : 'Men') + '’s College' }} </div>
           </ion-col>
           <ion-col class="ion-align-self-center ion-text-center"
                    *ngIf="college?.school_setting">
@@ -92,9 +95,9 @@
         </ion-row>
       </ion-grid>
     </ion-card>
-    <ion-card *ngIf="details?.mission_statement">
+    <ion-card *ngIf="description">
       <ion-card-header>Description</ion-card-header>
-      <ion-card-content class="body spaced">{{ details?.mission_statement }}</ion-card-content>
+      <ion-card-content class="body spaced paragraph">{{ description }}</ion-card-content>
     </ion-card>
   </ng-template>
 </ion-content>

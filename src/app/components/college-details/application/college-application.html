@@ -11,8 +11,7 @@
     <ion-list>
       <ng-template [ngIf]="details?.application_dates.length">
         <ion-list-header color="primary">Application</ion-list-header>
-        <ion-item class="body"
-                  *ngFor="let app of details?.application_dates">
+        <ion-item *ngFor="let app of details?.application_dates">
           <ion-icon color="primary"
                     name="calendar"
                     slot="start"></ion-icon>
@@ -22,8 +21,7 @@
       </ng-template>
       <ng-template [ngIf]="details?.scholarship_deadlines.length">
         <ion-list-header color="primary">Scholarship</ion-list-header>
-        <ion-item class="body"
-                  *ngFor="let deadline of details?.scholarship_deadlines; let i = index">
+        <ion-item *ngFor="let deadline of details?.scholarship_deadlines; let i = index">
           <ion-icon color="primary"
                     name="calendar"
                     slot="start"></ion-icon>
@@ -34,8 +32,7 @@
       </ng-template>
       <ng-template [ngIf]="details?.financial_aid_deadlines.length">
         <ion-list-header color="primary">Financial Aid</ion-list-header>
-        <ion-item class="body"
-                  *ngFor="let deadline of details?.financial_aid_deadlines; let i = index">
+        <ion-item *ngFor="let deadline of details?.financial_aid_deadlines; let i = index">
           <ion-icon color="primary"
                     name="calendar"
                     slot="start"></ion-icon>
@@ -53,34 +50,32 @@
                    || details?.importance['not considered']?.length > 0">
     <ion-card-header>Application Importance</ion-card-header>
     <ion-list class="importance-section">
-      <ng-template [ngIf]="details?.importance['very important']?.length > 0">
-        <ion-list-header color="success">Very Important</ion-list-header>
-        <ion-item class="body"
-                  *ngFor="let item of details?.importance['very important']">
-          <ion-label>{{ item }}</ion-label>
-        </ion-item>
-      </ng-template>
-      <ng-template [ngIf]="details?.importance.important?.length > 0">
+      <ng-container *ngFor="let level of importanceLevels">
+        <ng-template [ngIf]="importanceVals[level.name]?.length > 0">
+          <ion-list-header [color]="level.color">{{level.name}}</ion-list-header>
+          <ion-item *ngFor="let item of importanceVals[level.name]">
+            <ion-label>{{item | titlecase}}</ion-label>
+          </ion-item>
+        </ng-template>
+      </ng-container>
+      <!-- <ng-template [ngIf]="details?.importance.important?.length > 0">
         <ion-list-header color="secondary">Important</ion-list-header>
-        <ion-item class="body"
-                  *ngFor="let item of details?.importance.important">
+        <ion-item *ngFor="let item of details?.importance.important">
           <ion-label>{{ item }}</ion-label>
         </ion-item>
       </ng-template>
       <ng-template [ngIf]="details?.importance.considered?.length > 0">
         <ion-list-header color="primary">Considered</ion-list-header>
-        <ion-item class="body"
-                  *ngFor="let item of details?.importance.considered">
+        <ion-item *ngFor="let item of details?.importance.considered">
           <ion-label>{{ item }}</ion-label>
         </ion-item>
       </ng-template>
       <ng-template [ngIf]="details?.importance['not considered']?.length > 0">
         <ion-list-header color="medium">Not Considered</ion-list-header>
-        <ion-item class="body"
-                  *ngFor="let item of details?.importance['not considered']">
+        <ion-item *ngFor="let item of details?.importance['not considered']">
           <ion-label>{{ item }}</ion-label>
         </ion-item>
-      </ng-template>
+      </ng-template> -->
     </ion-list>
     <!-- <div class="importance-section">
       <div class="bg-green10"

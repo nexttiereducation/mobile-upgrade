@@ -1,11 +1,11 @@
 <ion-header>
   <ion-toolbar>
     <ion-buttons slot="start">
-      <!-- <ion-back-button></ion-back-button> -->
-      <ion-button (click)="goBack()">
+      <ion-back-button></ion-back-button>
+      <!-- <ion-button (click)="goBack()">
         <ion-icon slot="icon-only"
                   name="arrow-back"></ion-icon>
-      </ion-button>
+      </ion-button> -->
     </ion-buttons>
     <ion-title tappable>
       <div class="subhead text-grayDark50"
@@ -49,24 +49,22 @@
                       [items]="colleges$ | async">
     <ion-card virtualTrackBy="collegesService.getIdFromCollege"
               *virtualItem="let college; let index = index">
-      <ion-card-header>
-        <ion-item tappable
-                  (click)="viewCollege(college)">
-          <ion-avatar class="avatar-shadow"
-                      slot="start">
-            <img height="40"
-                 useImg
-                 width="40"
-                 [src]="getLogo(college)">
-          </ion-avatar>
-          <ion-label>
-            <h2 class="truncate"> {{ college | collegeName }} </h2>
-            <p *ngIf="getCollegeObj(college)?.city && getCollegeObj(college)?.state">
-              <ion-icon name="pin"></ion-icon> {{ getCollegeObj(college)?.city + ', ' + getCollegeObj(college)?.state }}
-            </p>
-          </ion-label>
-        </ion-item>
-      </ion-card-header>
+      <ion-item lines="none"
+                (click)="viewCollege(college)">
+        <ion-avatar class="avatar-shadow"
+                    slot="start">
+          <img height="40"
+               useImg
+               width="40"
+               [src]="getLogo(college)">
+        </ion-avatar>
+        <ion-label>
+          <h2 class="truncate"> {{ college | collegeName }} </h2>
+          <p *ngIf="getCollegeObj(college)?.city && getCollegeObj(college)?.state">
+            <ion-icon name="pin"></ion-icon> {{ getCollegeObj(college)?.city + ', ' + getCollegeObj(college)?.state }}
+          </p>
+        </ion-label>
+      </ion-item>
       <ion-card-content class="ion-no-padding">
         <div class="card-img-wrapper">
           <img alt="College Image"
@@ -85,17 +83,16 @@
                      [ngSwitch]="isSavingIndex === index">
               <ion-button class="lowercase"
                           color="primary"
-                          slot="start"
                           (click)="setSavingIndex(index); followCollege(college)"
-                          *ngSwitchCase="false">
+                          *ngIf="isSavingIndex !== index">
                 <!-- <ion-icon name="nt-save"></ion-icon> -->
-                <ion-icon name="star-outline"></ion-icon>
+                <ion-icon name="star-outline"
+                          slot="start"></ion-icon>
                 <span>Save</span>
               </ion-button>
               <ion-button class="lowercase"
                           color="primary"
-                          slot="start"
-                          *ngSwitchCase="true">
+                          *ngIf="isSavingIndex === index">
                 <ion-icon name="star-half"></ion-icon>
                 <!-- <ion-icon name="nt-saving"></ion-icon> -->
                 <span>Saving...</span>

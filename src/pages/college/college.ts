@@ -159,7 +159,8 @@ export class CollegePage implements OnInit, OnDestroy {
     } else {
       const activeList: any = this.listTileService.activeList;
       this.router.navigate(
-        [`app/colleges/list/${activeList.iconFileName || activeList.name}`]
+        [`/../list/${activeList.iconFileName || activeList.name}`],
+        { relativeTo: this.route }
       );
     }
   }

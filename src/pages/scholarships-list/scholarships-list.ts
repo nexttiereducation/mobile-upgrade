@@ -266,9 +266,15 @@ export class ScholarshipsListPage implements OnInit, OnDestroy {
         scholarship
       };
     }
-    this.router.navigateByUrl(
-      `app/scholarships/${scholarship.id}`,
-      { state: params }
+    this.router.navigate(
+      [
+        `scholarship`,
+        scholarship.id
+      ],
+      {
+        relativeTo: this.route,
+        state: params
+      }
     );
   }
 

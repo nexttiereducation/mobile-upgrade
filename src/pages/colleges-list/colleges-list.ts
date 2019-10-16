@@ -1,7 +1,7 @@
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { AbstractControl, FormControl } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { ModalController, NavController, Platform, ToastController } from '@ionic/angular';
+import { IonInfiniteScroll, ModalController, NavController, Platform, ToastController } from '@ionic/angular';
 import { OverlayEventDetail } from '@ionic/core';
 import { isNumber } from 'lodash';
 import { Subject } from 'rxjs';
@@ -9,7 +9,7 @@ import { takeUntil } from 'rxjs/operators';
 
 import { ApplicationDatesComponent } from '@nte/components/application-dates/application-dates';
 import { SendComponent } from '@nte/components/send/send';
-import { COLLEGE_NON_PROFIT_QUERY, EMPTY_STATES } from '@nte/constants/college.constants';
+import { COLLEGE_NON_PROFIT_QUERY, COLLEGES_EMPTY_STATES } from '@nte/constants/college.constants';
 import { ICollegeRecommendation } from '@nte/interfaces/college-recommendation.interface';
 import { ICollegeTracker } from '@nte/interfaces/college-tracker.interface';
 import { ICollege } from '@nte/interfaces/college.interface';
@@ -157,18 +157,19 @@ export class CollegesListPage implements OnInit, OnDestroy {
     this.router.navigateByUrl(`app/colleges`);
   }
 
-  public infiniteScrollLoad(infiniteScroll: any) {
+  public infiniteScrollLoad(infiniteScroll: IonInfiniteScroll) {
     if (!this.collegesService.nextPage) {
-      infiniteScroll.enable(false);
+      infiniteScroll.complete();
+      // infiniteScroll.disabled = true;
       return;
     }
     this.collegesService.moreToScroll
       .pipe(takeUntil(this.ngUnsubscribe))
       .subscribe((more) => {
         if (!more) {
-          infiniteScroll.enable(false);
+          infiniteScroll.complete();
         }
-        infiniteScroll.complete();
+
       });
     this.collegesService.getMore(this.isNearby);
   }
@@ -347,10 +348,13 @@ export class CollegesListPage implements OnInit, OnDestroy {
   public viewCollege(college: any) {
     this.collegeService.active = college;
     const id = this.collegesService.getIdFromCollege(college);
-    this.router.navigateByUrl(
-      `app/colleges/${id}`,
+    this.router.navigate(
+      [
+        `college`,
+        id
+      ],
       {
-        // relativeTo: this.route,
+        relativeTo: this.route,
         state: {
           college,
           id,
@@ -392,12 +396,12 @@ export class CollegesListPage implements OnInit, OnDestroy {
 
   private setupEmptyState() {
     const listName = this.list ? this.list.name : `Search All`;
-    const listEmptyState = EMPTY_STATES[listName];
+    const listEmptyState = COLLEGES_EMPTY_STATES[listName];
     const userType = this.user.stakeholder_type;
     if (listEmptyState) {
       this.emptyState = listEmptyState[userType] ? listEmptyState[userType] : listEmptyState;
     } else {
-      this.emptyState = EMPTY_STATES.Default;
+      this.emptyState = COLLEGES_EMPTY_STATES.Default;
     }
     if (this.emptyState) {
       this.emptyState.imagePath = this.list ? this.list.iconUrl : null;

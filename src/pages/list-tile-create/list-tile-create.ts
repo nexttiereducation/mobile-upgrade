@@ -1,6 +1,5 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { trimEnd } from 'lodash';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
@@ -26,16 +25,37 @@ export class ListTileCreatePage implements OnInit, OnDestroy {
   public list: any = {
     filters: []
   };
-  public listTileService: CollegeListTileService | ScholarshipListTileService;
+  // public listTileService: CollegeListTileService | ScholarshipListTileService;
   public nonProfitQuery: string = COLLEGE_NON_PROFIT_QUERY;
   public page: string;
-  public pageItemService: any;
   public showSummary: boolean = false;
 
   private ngUnsubscribe: Subject<any> = new Subject();
 
   get filter() {
     return this.filterOptions;
+  }
+
+  get listTileService() {
+    switch (this.page) {
+      case `Scholarships`:
+        return this.scholarshipListTileService;
+      case `Colleges`:
+        return this.collegeListTileService;
+      default:
+        break;
+    }
+  }
+
+  get pageItemService() {
+    switch (this.page) {
+      case `Scholarships`:
+        return this.scholarshipService;
+      case `Colleges`:
+        return this.collegesService;
+      default:
+        break;
+    }
   }
 
   get rootPage() {
@@ -58,8 +78,7 @@ export class ListTileCreatePage implements OnInit, OnDestroy {
     const params: any = navStateService.data;
     this.page = params.page;
     this.filterOptions = params.filter;
-    this.existingList = params.list || this.listTileService.activeList;
-    this.setupServices();
+    this.existingList = params.list || (this.listTileService ? this.listTileService.activeList : null);
   }
 
   ngOnInit() {
@@ -154,30 +173,13 @@ export class ListTileCreatePage implements OnInit, OnDestroy {
       .pipe(takeUntil(this.ngUnsubscribe))
       .subscribe(
         (response) => {
-          const eventData = {
+          this.close(`newListTile`, {
             listTile: response,
             page: this.page
-          };
-          this.close(`newListTile`, eventData);
+          });
         },
         err => console.error(err)
       );
-  }
-
-  private setupServices() {
-    const providerPrefix = trimEnd(this.page.toLowerCase(), `s`);
-    switch (providerPrefix) {
-      case `college`:
-        this.pageItemService = this.collegesService;
-        this.listTileService = this.collegeListTileService;
-        break;
-      case `scholarship`:
-        this.pageItemService = this.scholarshipService;
-        this.listTileService = this.scholarshipListTileService;
-        break;
-      default:
-        break;
-    }
   }
 
   private updateList(updatedList: any, id: number) {

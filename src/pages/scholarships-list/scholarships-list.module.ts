@@ -4,11 +4,12 @@ import { FormsModule } from '@angular/forms';
 import { RouterModule, Routes } from '@angular/router';
 import { IonicModule } from '@ionic/angular';
 
-import { ScholarshipsListPage } from './scholarships-list';
 import { ComponentsModule } from '@nte/components/components.module';
 import { SendComponent } from '@nte/components/send/send';
 import { FilterCategoryPage } from '@nte/pages/filter-category/filter-category';
 import { FilterPage } from '@nte/pages/filter/filter';
+import { ScholarshipPage } from '@nte/pages/scholarship/scholarship';
+import { ScholarshipsListPage } from '@nte/pages/scholarships-list/scholarships-list';
 
 const routes: Routes = [
   {
@@ -27,6 +28,10 @@ const routes: Routes = [
             component: FilterCategoryPage
           }
         ]
+      },
+      {
+        path: 'scholarship/:id',
+        component: ScholarshipPage
       }
     ]
   }

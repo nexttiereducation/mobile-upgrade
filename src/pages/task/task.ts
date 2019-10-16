@@ -126,13 +126,9 @@ export class TaskPage implements OnInit, OnDestroy {
 
   public goToAttachments() {
     this.router.navigate(
-      [
-        `app`,
-        `tasks`,
-        this.taskTracker.id,
-        `attachments`
-      ],
+      [`attachments`],
       {
+        relativeTo: this.route,
         state: {
           taskTracker: this.taskTracker
         }
@@ -142,13 +138,9 @@ export class TaskPage implements OnInit, OnDestroy {
 
   public goToNotes() {
     this.router.navigate(
-      [
-        `app`,
-        `tasks`,
-        this.taskTracker.id,
-        `notes`
-      ],
+      [`notes`],
       {
+        relativeTo: this.route,
         state: {
           emptyState: this.taskNotesEmptyState,
           messages: this.notes,
@@ -161,13 +153,9 @@ export class TaskPage implements OnInit, OnDestroy {
 
   public goToSurvey() {
     this.router.navigate(
-      [
-        `app`,
-        `tasks`,
-        this.taskTracker.id,
-        `survey`
-      ],
+      [`survey`],
       {
+        relativeTo: this.route,
         state: {
           taskTracker: this.taskTracker
         }
