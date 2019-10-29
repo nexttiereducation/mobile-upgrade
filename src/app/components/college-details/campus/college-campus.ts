@@ -46,7 +46,7 @@ export class CollegeCampusComponent {
   get fraternityChart() {
     if (this.details.percent_in_fraternity) {
       return {
-        label: `Join a fraternity`,
+        label: `join a fraternity`,
         value: this.details.percent_in_fraternity
       };
     } else {
@@ -57,19 +57,8 @@ export class CollegeCampusComponent {
   get liveOnCampusChart() {
     if (this.details.freshman_perecent_on_campus) {
       return {
-        label: `Live on campus`,
+        label: `live on campus`,
         value: this.details.freshman_perecent_on_campus
-      };
-    } else {
-      return null;
-    }
-  }
-
-  get outOfStateChart() {
-    if (this.details.percentage_fresh_out) {
-      return {
-        label: `From out-of-state`,
-        value: this.details.percentage_fresh_out
       };
     } else {
       return null;
@@ -79,7 +68,7 @@ export class CollegeCampusComponent {
   get sororityChart() {
     if (this.details.percent_in_sorority) {
       return {
-        label: `Join a sorority`,
+        label: `join a sorority`,
         value: this.details.percent_in_sorority
       };
     } else {
@@ -90,7 +79,7 @@ export class CollegeCampusComponent {
   get workOnCampusChart() {
     if (this.details.percent_working_students) {
       return {
-        label: `Work on campus`,
+        label: `work on campus`,
         value: this.details.percent_working_students
       };
     } else {

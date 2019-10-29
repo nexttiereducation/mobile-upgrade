@@ -127,7 +127,7 @@
           <img src="/assets/image/contact/website.svg" />
         </ion-avatar>
         <ion-label>
-          <h4>Financial Aid Website</h4>
+          <div class="text-small">Financial Aid Website</div>
           <div class="chartLabel"
                [innerHTML]="details?.financial_aid_url | link:{truncateOnly: true}"></div>
         </ion-label>
@@ -140,7 +140,7 @@
           <img src="/assets/image/contact/website.svg" />
         </ion-avatar>
         <ion-label>
-          <h4>Admissions Website</h4>
+          <div class="text-small">Admissions Website</div>
           <div class="chartLabel"
                [innerHTML]="college?.admissions_url | link:{truncateOnly: true}"></div>
         </ion-label>
@@ -153,7 +153,7 @@
           <img src="/assets/image/contact/phone.svg" />
         </ion-avatar>
         <ion-label>
-          <h4>Admissions Phone</h4>
+          <div class="text-small">Admissions Phone</div>
           <div class="chartLabel">{{ details?.admissions_telephone | phone }}</div>
         </ion-label>
       </ion-item>

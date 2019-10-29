@@ -116,15 +116,13 @@ export class ScholarshipsPage implements OnInit, OnDestroy {
       {
         relativeTo: this.route,
         state: {
-          data: {
-            connections: this.connections,
-            cyol: true,
-            filter: new Filter(this.filterCategories, tile.filter),
-            list: tile,
-            listType: `Scholarships`,
-            page: `Scholarships`,
-            title: `Create Your Own List!`
-          }
+          connections: this.connections,
+          cyol: true,
+          filter: new Filter(this.filterCategories, tile.filter),
+          list: tile,
+          listType: `Scholarships`,
+          page: `Scholarships`,
+          title: `Create Your Own List!`
         }
       }
     );
@@ -169,12 +167,11 @@ export class ScholarshipsPage implements OnInit, OnDestroy {
       const listName = listTile.name.toLowerCase().replace(' all', '');
       this.router.navigate(
         [
-          `app`,
-          `scholarships`,
           `list`,
           listName
         ],
         {
+          relativeTo: this.route,
           state: {
             connections: this.connections,
             filter: this.filterService.filter,
@@ -217,7 +214,7 @@ export class ScholarshipsPage implements OnInit, OnDestroy {
     this.stakeholderService.getOverview()
       .pipe(takeUntil(this.ngUnsubscribe))
       .subscribe(
-        data => data.custom_scholarship_queries.forEach(t => this.setupNewTile(t)),
+        (data: any) => data.custom_scholarship_queries.forEach(t => this.setupNewTile(t)),
         () => this.openTileLoadingErrorToast()
       );
   }

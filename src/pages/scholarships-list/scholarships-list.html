@@ -8,8 +8,9 @@
       <div class="subhead text-grayDark50"
            *ngIf="list?.name">Scholarships</div> {{ list?.name || 'Scholarships' }}
     </ion-title>
-    <ion-buttons messaging-button
-                 slot="end"></ion-buttons>
+    <ion-buttons slot="end">
+      <messaging-button></messaging-button>
+    </ion-buttons>
   </ion-toolbar>
   <ion-toolbar class="ion-no-padding"
                *ngIf="list?.name !== 'Applying'
@@ -25,7 +26,7 @@
         </ion-col>
         <ion-col size="auto">
           <ion-button class="filter-button"
-                      color="grayDark50"
+                      color="medium"
                       fill="clear"
                       icon-only
                       (click)="openFilters()">
@@ -52,75 +53,64 @@
           <p class="truncate">{{ scholarship.sponsor?.name || scholarship.scholarship?.sponsor.name }}</p>
         </ion-label>
       </ion-item>
-      <ion-grid class="ion-no-padding">
-        <ion-row class="ion-align-items-center ion-justify-content-start"
-                 nowrap>
-          <ion-col size="auto"
-                   *ngIf="!scholarship.saved && !scholarship.scholarship?.saved"
-                   [ngSwitch]="isSavingIndex === index">
-            <ion-button class="lowercase"
-                        color="primary"
-                        fill="clear"
-                        size="small"
-                        slot="start"
-                        (click)="setSavingIndex(index);save(scholarship)"
-                        *ngSwitchCase="false">
-              <ion-icon name="nt-save"></ion-icon> Save
-            </ion-button>
-            <ion-button class="lowercase"
-                        color="primary"
-                        fill="clear"
-                        size="small"
-                        slot="start"
-                        *ngSwitchCase="true">
-              <ion-icon name="nt-saving"></ion-icon> Saving...
-            </ion-button>
-          </ion-col>
-          <ion-col size="auto"
-                   *ngIf="scholarship.saved || scholarship.scholarship?.saved">
-            <ion-button class="lowercase"
-                        color="green"
-                        fill="clear"
-                        size="small"
-                        slot="start"
-                        (click)="remove(scholarship)">
-              <ion-icon name="nt-saved"></ion-icon> Saved
-            </ion-button>
-          </ion-col>
-          <ion-col size="auto"
-                   *ngIf="list?.name === 'Recommended'">
-            <ion-button class="lowercase"
-                        color="primary"
-                        fill="clear"
-                        size="small"
-                        slot="start"
-                        (click)="removeRec(scholarship.id)">
-              <ion-icon name="nt-unsave"></ion-icon> Remove
-            </ion-button>
-          </ion-col>
-          <ion-col size="auto">
-            <ion-button class="lowercase"
-                        color="primary"
-                        fill="clear"
-                        size="small"
-                        slot="start"
-                        *ngIf="(connectionService.all$ | async)?.length"
-                        (click)="openSendModal(scholarship)">
-              <ion-icon name="send"></ion-icon> Send
-            </ion-button>
-          </ion-col>
-          <ion-col class="chip-container truncate fit ion-margin-right ion-text-right"
-                   *ngIf="list?.name === 'Recommended' && scholarship.recommender">
-            <ion-chip class="truncate fit recommender"
-                      color="green">
-              <ion-label>{{ scholarship.recommender.get_full_name }}</ion-label>
-            </ion-chip>
-          </ion-col>
-        </ion-row>
-      </ion-grid>
+      <ng-template [ngIf]="!scholarship.saved && !scholarship.scholarship?.saved">
+        <ion-button class="lowercase"
+                    color="primary"
+                    fill="clear"
+                    size="small"
+                    (click)="setSavingIndex(index);save(scholarship)"
+                    *ngIf="isSavingIndex !== index">
+          <ion-icon name="star-outline"
+                    slot="start"></ion-icon> Save
+        </ion-button>
+        <ion-button class="lowercase"
+                    color="secondary"
+                    fill="clear"
+                    size="small"
+                    *ngIf="isSavingIndex === index">
+          <ion-icon name="star-outline"
+                    slot="start"></ion-icon> Saving...
+          <!-- <ion-icon name="saving"
+            slot="start"></ion-icon> Saving... -->
+        </ion-button>
+      </ng-template>
+      <ion-button class="lowercase"
+                  color="success"
+                  fill="clear"
+                  size="small"
+                  *ngIf="scholarship.saved || scholarship.scholarship?.saved"
+                  (click)="remove(scholarship)">
+        <ion-icon name="star"
+                  slot="start"></ion-icon> Saved
+      </ion-button>
+      <ion-button class="lowercase"
+                  color="primary"
+                  fill="clear"
+                  size="small"
+                  *ngIf="isRecd"
+                  (click)="removeRec(scholarship.id)">
+        <ion-icon name="unsave"
+                  slot="start"></ion-icon> Decline
+      </ion-button>
+      <ion-button class="lowercase"
+                  color="primary"
+                  fill="clear"
+                  size="small"
+                  *ngIf="(connectionService.all$ | async)?.length"
+                  (click)="openSendModal(scholarship)">
+        <ion-icon name="send"
+                  slot="start"></ion-icon> Send
+      </ion-button>
+      <div class="chip-container truncate fit ion-margin-right ion-text-right"
+           *ngIf="isRecd && scholarship.recommender">
+        <ion-chip class="truncate fit recommender"
+                  color="success">
+          <ion-label>{{ scholarship.recommender.get_full_name }}</ion-label>
+        </ion-chip>
+      </div>
     </ion-card>
   </ion-list>
-  <ng-container *ngIf="(ships$ | async).length > 0
+  <ng-container *ngIf="(ships$ | async)?.length > 0
                        && scholarshipService.nextPage
                        && list?.name === 'Search All'">
     <ion-infinite-scroll threshold="20%"
@@ -129,12 +119,12 @@
                                    loadingText="Loading..."></ion-infinite-scroll-content>
     </ion-infinite-scroll>
   </ng-container>
-  <ng-template [ngIf]="!(ships$ | async).length
+  <ng-template [ngIf]="!(ships$ | async)?.length
                        && ((ships$ | async) || !scholarshipService.fetchingScholarships)">
     <empty-state *ngIf="emptyState"
                  [emptyState]="emptyState"></empty-state>
   </ng-template>
-  <ng-template [ngIf]="!(ships$ | async).length
+  <ng-template [ngIf]="!(ships$ | async)?.length
                        && (!(ships$ | async) || scholarshipService.fetchingScholarships)">
     <ion-list>
       <ion-card class="placeholder"
@@ -151,6 +141,3 @@
     </ion-list>
   </ng-template>
 </ion-content>
-<ion-footer>
-  <div list-tabs></div>
-</ion-footer>

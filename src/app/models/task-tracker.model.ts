@@ -54,6 +54,10 @@ export class TaskTracker {
   public verified_by: number = null;
   public verified_on: string = null;
 
+  get hasAttachment() {
+    return (this.templates && this.templates.length > 0) || this.attachment;
+  }
+
   get isComplete() {
     return this.status === TaskStatus.COMPLETED;
   }

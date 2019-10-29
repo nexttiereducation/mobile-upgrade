@@ -5,19 +5,13 @@
     <ion-card-header>Academic Statistics</ion-card-header>
     <ion-grid>
       <ion-row *ngIf="admissionChart">
-        <ion-col [style.min-height.vh]="15">
+        <ion-col>
           <radial-chart [label]="admissionChart?.label"
                         [value]="admissionChart?.value"></radial-chart>
         </ion-col>
       </ion-row>
-      <ion-row *ngIf="retentionChart">
-        <ion-col [style.min-height.vh]="15">
-          <radial-chart [label]="retentionChart?.label"
-                        [value]="retentionChart?.value"></radial-chart>
-        </ion-col>
-      </ion-row>
       <ion-row *ngIf="graduationChart">
-        <ion-col [style.min-height.vh]="15">
+        <ion-col>
           <radial-chart [label]="graduationChart?.label"
                         [value]="graduationChart?.value"></radial-chart>
         </ion-col>

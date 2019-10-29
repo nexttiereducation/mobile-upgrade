@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
 
 import { MessagesPage } from './messages';
+import { ChatModule } from '@nte/components/chat/chat.module';
 import { ComponentsModule } from '@nte/components/components.module';
 
 @NgModule({
@@ -17,7 +18,8 @@ import { ComponentsModule } from '@nte/components/components.module';
     IonicModule,
     CommonModule,
     FormsModule,
-    ComponentsModule
+    ComponentsModule,
+    ChatModule
   ]
 })
 export class MessagesPageModule { }

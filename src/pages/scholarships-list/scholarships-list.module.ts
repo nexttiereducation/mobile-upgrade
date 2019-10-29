@@ -33,6 +33,10 @@ const routes: Routes = [
         path: 'scholarship/:id',
         component: ScholarshipPage
       }
+      // , {
+      //   path: `edit`,
+      //   component: ListTileCreatePage
+      // },
     ]
   }
 ];

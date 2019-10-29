@@ -65,7 +65,7 @@ export const TASK_BUCKETS = {
 
 export const TASK_STATUSES = {
   C: {
-    color: `green`,
+    color: `success`,
     icon: `checkmark`,
     name: `Completed`
   },
@@ -78,7 +78,7 @@ export const TASK_STATUSES = {
   },
   ST: {
     action: `Complete`,
-    color: `orange`,
+    color: `warning`,
     icon: `more`,
     mdIcon: `more_horiz`,
     name: `In Progress`,

@@ -16,9 +16,14 @@ import { CollegeService } from '@nte/services/college.service';
   encapsulation: ViewEncapsulation.None
 })
 export class CollegeAcademicComponent {
-  public charts: any[];
-  public rotcBranches: any[] = COLLEGE_ROTC_BRANCHES;
   public preProPrograms: any[] = COLLEGE_PRE_PROFESSIONAL_PROGRAMS;
+  public rotcBranches: any[] = COLLEGE_ROTC_BRANCHES;
+
+  get avgGpa() {
+    if (this.details) {
+      return this.details.avg_gpa || this.details.average_secondary_school_GPA;
+    }
+  }
 
   get college() {
     return this.collegeService.active;
@@ -34,11 +39,11 @@ export class CollegeAcademicComponent {
   get scoreCharts() {
     if (this.details) {
       const avgs: any = [];
-      if (this.details.avg_gpa) {
+      if (this.avgGpa) {
         avgs.push({
           name: `GPA`,
           range: this.range.gpa,
-          value: this.details.avg_gpa
+          value: this.avgGpa
         });
       }
       if (this.details.act_25 && this.details.act_75) {
@@ -84,17 +89,8 @@ export class CollegeAcademicComponent {
   get admissionChart() {
     if (this.details && +this.details.admission_rate) {
       return {
-        label: `Admission Rate`,
+        label: `are admitted`,
         value: +this.details.admission_rate
-      };
-    }
-  }
-
-  get retentionChart() {
-    if (this.details && this.details.retention_pcf) {
-      return {
-        label: `Retention Rate`,
-        value: this.details.retention_pcf
       };
     }
   }
@@ -102,7 +98,7 @@ export class CollegeAcademicComponent {
   get graduationChart() {
     if (this.details && this.college.six_year_grad_pcf) {
       return {
-        label: `Graduation Rate`,
+        label: `graduate`,
         value: this.college.six_year_grad_pcf
       };
     }
@@ -111,7 +107,7 @@ export class CollegeAcademicComponent {
   get furtherStudyChart() {
     if (this.details && this.details.percentage_further_education_immediate) {
       return {
-        label: `Immediately seek further education`,
+        label: [`immediately seek`, `further education`],
         value: this.details.percentage_further_education_immediate
       };
     }
@@ -120,7 +116,7 @@ export class CollegeAcademicComponent {
   get jobMarketChart() {
     if (this.details && this.details.percentage_enter_work_one_year) {
       return {
-        label: `Enter the workforce w/in 1 year`,
+        label: [`enter the workforce`, `within 1 year`],
         value: this.details.percentage_enter_work_one_year
       };
     }

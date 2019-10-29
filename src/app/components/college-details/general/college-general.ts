@@ -111,6 +111,29 @@ export class CollegeGeneralComponent {
     }
   }
 
+  get outOfStateChart() {
+    if (this.details) {
+      if (this.details.percentage_fresh_out) {
+        return {
+          label: `from out-of-state`,
+          value: this.details.percentage_fresh_out
+        };
+      } else {
+        return null;
+      }
+    }
+  }
+
+  get retentionChart() {
+    if (this.details && this.details.retention_pcf) {
+      return {
+        // label: `Retention Rate`,
+        label: [`return for their`, `sophomore year`],
+        value: this.details.retention_pcf
+      };
+    }
+  }
+
   get settingType() {
     if (this.college && this.college.school_setting) {
       const regex = new RegExp(/\:\s\w+/g);

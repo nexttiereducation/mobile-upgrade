@@ -36,17 +36,19 @@
     </ion-list>
   </form>
   <div class="ion-text-right">
-    <ion-button color="white"
+    <ion-button color="light"
                 fill="clear"
                 slot="end"
                 (click)="addStudent()"
-                [disabled]="!students[students.length - 1].controls.email.value.length ||
+                [disabled]="!students[students.length - 1].get('email').value.length ||
                         studentsForm.invalid"
                 [hidden]="studentsForm.pristine"> Add Another </ion-button>
+    <!--   [disabled]="!students[students.length - 1].controls.email.value.length ||
+                        studentsForm.invalid" -->
   </div>
 </ion-content>
 <ion-footer class="no-border ion-padding-10">
-  <ion-button color="white"
+  <ion-button color="light"
               expand="full"
               size="large"
               (click)="next()"

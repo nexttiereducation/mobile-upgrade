@@ -95,6 +95,26 @@
         </ion-row>
       </ion-grid>
     </ion-card>
+    <ion-card *ngIf="outOfStateChart?.value
+                     || retentionChart?.value">
+      <ion-card-header>Freshmen</ion-card-header>
+      <ion-grid>
+        <ion-row class="ion-align-items-center ion-justify-content-center"
+                 *ngIf="outOfStateChart">
+          <ion-col>
+            <radial-chart [label]="outOfStateChart.label"
+                          [value]="outOfStateChart.value"></radial-chart>
+          </ion-col>
+        </ion-row>
+        <ion-row class="ion-align-items-center ion-justify-content-center"
+                 *ngIf="retentionChart">
+          <ion-col>
+            <radial-chart [label]="retentionChart?.label"
+                          [value]="retentionChart?.value"></radial-chart>
+          </ion-col>
+        </ion-row>
+      </ion-grid>
+    </ion-card>
     <ion-card *ngIf="description">
       <ion-card-header>Description</ion-card-header>
       <ion-card-content class="body spaced paragraph">{{ description }}</ion-card-content>

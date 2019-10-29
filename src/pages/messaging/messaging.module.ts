@@ -11,8 +11,11 @@ import { MessagesPage } from '@nte/pages/messages/messages';
 const routes: Routes = [
   {
     path: 'app/messages',
-    component: MessagingPage,
     children: [
+      {
+        path: '',
+        component: MessagingPage
+      },
       {
         path: ':id',
         component: MessagesPage

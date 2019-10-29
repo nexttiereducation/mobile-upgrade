@@ -47,11 +47,11 @@ export class CollegePage implements OnInit, OnDestroy {
       page: CollegeAcademicComponent
     },
     {
-      icon: `nt-scholarships`,
+      icon: `scholarships`,
       page: CollegeFinancialComponent
     },
     {
-      icon: `nt-colleges`,
+      icon: `colleges`,
       page: CollegeCampusComponent
     },
     {

@@ -3,15 +3,15 @@ export const NOTIFICATION_SETTING_SECTIONS = [
     title: `Tasks`,
     fields: [
       {
-        displayAs: `Task added / edited / removed`,
+        displayAs: `New or changed task`,
         key: `hasTaskAddedEditedOrDeleted`
       },
       {
-        displayAs: `Task deadline approaching`,
+        displayAs: `Task due soon`,
         key: `hasTaskDeadlineApproaching`
       },
       {
-        displayAs: `Notes/files added to task`,
+        displayAs: `New notes/files on task`,
         key: `hasTaskNotesAndFilesAdded`
       }
     ]
@@ -20,11 +20,11 @@ export const NOTIFICATION_SETTING_SECTIONS = [
     title: `Recommendations`,
     fields: [
       {
-        displayAs: `College recommendation received`,
+        displayAs: `New college recommendation`,
         key: `hasCollegeRecommendationReceived`
       },
       {
-        displayAs: `Scholarship recommendation received`,
+        displayAs: `New scholarship recommendation`,
         key: `hasScholarshipRecommendationReceived`
       }
     ]
@@ -33,7 +33,7 @@ export const NOTIFICATION_SETTING_SECTIONS = [
     title: `Messages`,
     fields: [
       {
-        displayAs: `Message received`,
+        displayAs: `New message`,
         key: `hasMessageRecieved`
 
       }

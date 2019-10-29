@@ -233,26 +233,26 @@
             *ngIf="!hideFormNavButtons && !taskTracker.isComplete">
     <ion-row>
       <ion-col *ngIf="studentAnswers.page > 1">
-        <ion-button color="steel"
+        <ion-button color="medium"
                     expand="block"
                     fill="clear"
                     type="button"
                     (click)="previousPage()"> Back </ion-button>
       </ion-col>
       <ion-col>
-        <ion-button color="orange"
+        <ion-button color="warning"
                     expand="block"
                     type="button"
                     *ngIf="!isLastQuestion && !isConfirmationPage && !isShortSurvey"
                     (click)="nextPage()"
                     [disabled]="phspSurveyForm.form.invalid || isInvalid"> Continue </ion-button>
-        <ion-button color="orange"
+        <ion-button color="warning"
                     expand="block"
                     type="button"
                     *ngIf="isLastQuestion && !isConfirmationPage"
                     (click)="viewConfirmation()"
                     [disabled]="phspSurveyForm.form.invalid || isInvalid"> Finish Survey </ion-button>
-        <ion-button color="orange"
+        <ion-button color="warning"
                     expand="block"
                     type="submit"
                     *ngIf="(studentAnswers.page === 1 && isShortSurvey) ||

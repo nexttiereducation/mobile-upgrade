@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { IonItemSliding, MenuController } from '@ionic/angular';
+import { IonItemSliding } from '@ionic/angular';
 
 import { COLLEGE_TILES } from '@nte/constants/college.constants';
 import { TASK_TILES } from '@nte/constants/task.constants';
@@ -12,6 +12,7 @@ import { TasksListPage } from '@nte/pages/tasks-list/tasks-list';
 import { CollegeListTileService } from '@nte/services/college.list-tile.service';
 import { ConnectionService } from '@nte/services/connection.service';
 import { NotificationService } from '@nte/services/notification.service';
+import { PrevRouteService } from '@nte/services/prev-route.service';
 import { StakeholderService } from '@nte/services/stakeholder.service';
 
 @Component({
@@ -38,7 +39,7 @@ export class NotificationsPage implements OnInit {
   constructor(public connectionService: ConnectionService,
     public notificationService: NotificationService,
     private listTileService: CollegeListTileService,
-    private menuCtrl: MenuController,
+    private prevRouteService: PrevRouteService,
     private router: Router,
     private stakeholderService: StakeholderService) { }
 
@@ -51,7 +52,11 @@ export class NotificationsPage implements OnInit {
   }
 
   public close() {
-    this.menuCtrl.close(`notifications`);
+    if (this.prevRouteService && this.prevRouteService.url) {
+      this.router.navigateByUrl(this.prevRouteService.url);
+    } else {
+      this.router.navigateByUrl('..');
+    }
     // this.notificationService.close();
     // this.router.pop({
     //   animation: `ios-transition`,
@@ -93,11 +98,13 @@ export class NotificationsPage implements OnInit {
     const list = COLLEGE_TILES.find(t => t.name === (isRec ? `Recommended` : `Search All`));
     this.listTileService.activeList = list;
     this.router.navigate(
-      [ CollegePage ],
-      { state: {
-        id: collegeId,
-        isRecd: isRec
-      }}
+      [CollegePage],
+      {
+        state: {
+          id: collegeId,
+          isRecd: isRec
+        }
+      }
     );
   }
 
@@ -106,8 +113,8 @@ export class NotificationsPage implements OnInit {
       if (notification.goto === `nte://custom_tasks`) {
         const list = TASK_TILES.find(t => t.name === `Counselor`);
         this.router.navigate(
-          [ TasksListPage ],
-          { state: { tile: list }}
+          [TasksListPage],
+          { state: { tile: list } }
         );
       } else if (notification.goto.indexOf(`nte://connections`) !== -1) {
         // open messaging, select invitation
@@ -127,7 +134,7 @@ export class NotificationsPage implements OnInit {
         }
         // pages.push(taskPage);
         this.router.navigate(
-          [ TaskPage ],
+          [TaskPage],
           { state: params }
         );
       }

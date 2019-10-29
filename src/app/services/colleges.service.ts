@@ -92,6 +92,9 @@ export class CollegesService extends ListService {
     }
   }
 
+  set tracked(tracked: any[]) {
+    this._tracked.next(tracked);
+  }
   get tracked$() {
     return this._tracked.asObservable();
   }

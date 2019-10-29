@@ -11,11 +11,11 @@
     }
 
     ion-icon {
-      &[name=nt-save]:before {
+      &[name=save]:before {
         color: var(--blue50);
       }
 
-      &[name=nt-saved] {
+      &[name=saved] {
         animation: pulseInOut 1s infinite linear;
         position: absolute;
         left: 0%;

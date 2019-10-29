@@ -20,9 +20,9 @@
                  [ngForOf]="categories">
       <ng-template [ngIf]="category.subCategories">
         <ion-list-header class="bold ion-no-margin"
-                         color="grayLight">
+                         color="medium">
           <ion-label>{{ category.name }}</ion-label>
-          <!-- <button fill="clear" ion-button slot="end" size="small" color="white"
+          <!-- <button fill="clear" ion-button slot="end" size="small" color="light"
                   *ngIf="category.activeChildCount"
                   (click)="clearCategory(category)">Clear</button> -->
         </ion-list-header>
@@ -38,7 +38,7 @@
       </ng-template>
     </ng-template>
     <ion-list-header class="bold ion-no-margin"
-                     color="grayLight">
+                     color="medium">
       <ion-label> Other </ion-label>
     </ion-list-header>
     <ng-template let-category
@@ -58,14 +58,14 @@
 </ion-content>
 <ion-footer *ngIf="filterService.filter?.activeChildCount > 0">
   <ion-toolbar color="primary">
-    <ion-button color="white"
+    <ion-button color="light"
                 expand="full"
                 fill="clear"
                 slot="end"
                 *ngIf="filterService.isCyol"
                 (click)="viewSummary()"> Next <ion-icon name="arrow-forward"></ion-icon>
     </ion-button>
-    <ion-button color="white"
+    <ion-button color="light"
                 expand="full"
                 fill="clear"
                 *ngIf="!filterService.isCyol"

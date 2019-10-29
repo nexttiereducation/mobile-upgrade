@@ -1,7 +1,8 @@
 <ion-header>
   <ion-toolbar [attr.no-padding]="showParentHeader && user.students.length > 1 ? true : null">
-    <ion-buttons notifications-button
-                 slot="secondary"></ion-buttons>
+    <ion-buttons slot="start">
+      <notifications-button></notifications-button>
+    </ion-buttons>
     <ion-title>
       <ng-template [ngIf]="!showParentHeader">Tasks</ng-template>
       <ng-template [ngIf]="showParentHeader">
@@ -17,8 +18,9 @@
         </ng-template>
       </ng-template>
     </ion-title>
-    <ion-buttons messaging-button
-                 slot="end"></ion-buttons>
+    <ion-buttons slot="end">
+      <messaging-button></messaging-button>
+    </ion-buttons>
   </ion-toolbar>
 </ion-header>
 <ion-content class="bg-grayLight">
@@ -26,7 +28,7 @@
   <ion-grid class="ion-no-padding"
             tiles
             *ngIf="!user.isParent || user.students?.length">
-    <ion-row class="ion-align-items-center ion-justify-content-center">
+    <ion-row>
       <ion-col *ngFor="let tile of taskTiles; let i = index"
                [attr.col-4]="tile.colSpan === 4
                              && !(taskTiles[i+1]?.phase && taskTiles[i+1]?.phase !== user.phase)
@@ -36,11 +38,13 @@
                [hidden]="tile.phase && tile.phase !== user.phase">
         <ion-card class="tile">
           <ion-button class="tile-button"
-                      color="white"
+                      color="light"
                       (click)="viewList(tile)">
-            <img class="logo"
-                 [src]="tile.iconUrl">
-            <div class="tile-label">{{ tile.name }}</div>
+            <div class="tile-button-content flex-column">
+              <img class="logo"
+                   [src]="tile.iconUrl">
+              <div class="tile-label">{{ tile.name }}</div>
+            </div>
           </ion-button>
         </ion-card>
       </ion-col>
@@ -49,12 +53,14 @@
                *ngFor="let school of collegeTrackers">
         <ion-card class="tile">
           <ion-button class="tile-button"
-                      color="white"
+                      color="light"
                       (click)="viewCollege(school)">
-            <div class="tile-avatar-wrapper avatar-shadow">
-              <img [src]="school.photo_url">
+            <div class="tile-button-content flex-column">
+              <div class="tile-avatar-wrapper avatar-shadow">
+                <img [src]="school.photo_url">
+              </div>
+              <div class="tile-label">{{ school | collegeName:true }}</div>
             </div>
-            <div class="tile-label">{{ school | collegeName:true }}</div>
           </ion-button>
         </ion-card>
       </ion-col>

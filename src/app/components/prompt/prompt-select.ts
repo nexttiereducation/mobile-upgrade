@@ -2,6 +2,9 @@ import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { Events, ToastController } from '@ionic/angular';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
+import { Plugins } from '@capacitor/core';
+
+const { Toast } = Plugins;
 
 import { BackEndPrompt } from '@nte/models/back-end-prompt.model';
 import { PromptSelectOptions } from '@nte/models/prompt-select-options.model';
@@ -19,11 +22,11 @@ export class PromptSelectComponent implements OnInit, OnDestroy {
 
   public chosenOption: any[] = [];
   public promptCompleted: boolean = false;
+
   private ngUnsubscribe: Subject<any> = new Subject();
 
   constructor(private events: Events,
-    private promptService: PromptService,
-    private toastCtrl: ToastController) { }
+    private promptService: PromptService) { }
 
   ngOnInit() {
     this.newPrompt.institution = this.institution;
@@ -52,11 +55,9 @@ export class PromptSelectComponent implements OnInit, OnDestroy {
   }
 
   private async showErrorToast() {
-    const toast = await this.toastCtrl.create({
-            duration: 3000,
-            message: `An error has occurred, please try again`
-          });
-          toast.present();
+    await Toast.show({
+            text: `An error has occurred, please try again`
+            });
   }
 
 }

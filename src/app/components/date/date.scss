@@ -1,0 +1,38 @@
+$borderRadius: 10px;
+$numberSpacing: 5px;
+$weekdaySpacing: .5px;
+
+.date-background {
+  background-color: #e4e4e4;
+  border-radius: $borderRadius;
+}
+
+.date-header {
+  border-top-right-radius: $borderRadius;
+  border-top-left-radius: $borderRadius;
+  font-size: 1.25rem;
+  color: white;
+}
+
+.date-body {
+  padding: 16px 24px;
+}
+
+.date-header,
+.date-header .toolbar-container {
+  min-height: 40px !important;
+}
+
+.day-number {
+  font-size: 4rem;
+  line-height: 1;
+  letter-spacing: -$numberSpacing;
+  margin-right: $numberSpacing;
+}
+
+.day-name {
+  font-size: .8rem;
+  opacity: .5;
+  letter-spacing: $weekdaySpacing;
+  margin-right: -$weekdaySpacing;
+}

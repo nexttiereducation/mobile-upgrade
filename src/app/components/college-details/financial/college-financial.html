@@ -7,9 +7,10 @@
         <ion-col>
           <ion-text class="displayHeader"
                     color="primary"> {{ details?.in_state_tuition | currency:'USD':'symbol':'1.0-0' }} </ion-text>
-          <div class="chartLabel ion-text-center">In State</div>
+          <div class="chartLabel ion-text-center"
+               *ngIf="details?.in_state_tuition !== details?.out_of_state_tuition">In State</div>
         </ion-col>
-        <ion-col>
+        <ion-col *ngIf="details?.in_state_tuition !== details?.out_of_state_tuition">
           <ion-text class="displayHeader"
                     color="primary"> {{ details?.out_of_state_tuition | currency:'USD':'symbol':'1.0-0' }} </ion-text>
           <div class="chartLabel ion-text-center">Out of State</div>
@@ -44,7 +45,7 @@
     <ion-text class="displayHeader ion-margin-bottom"
               color="primary">{{ college?.net_price | currency:'USD':'symbol':'1.0-0' }}</ion-text>
   </ion-card>
-  <ion-card *ngIf="details?.need_blind || undergradFinAidChart">
+  <ion-card *ngIf="details?.need_blind || finAidChart">
     <ion-card-header>Financial Aid</ion-card-header>
     <ion-grid>
       <ion-row class="ion-align-items-center">
@@ -55,7 +56,7 @@
                     name="information-circle"
                     (click)="openAlert('need blind')"></ion-icon>
         </ion-col>
-        <ion-col *ngIf="undergradFinAidChart">
+        <ion-col *ngIf="finAidChart">
           <radial-chart [label]="finAidChart.label"
                         [value]="finAidChart.value"></radial-chart>
         </ion-col>

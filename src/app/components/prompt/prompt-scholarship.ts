@@ -1,5 +1,6 @@
 import { Component, Input, OnDestroy, OnInit } from '@angular/core';
-import { Events, ToastController } from '@ionic/angular';
+import { Plugins } from '@capacitor/core';
+import { Events } from '@ionic/angular';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
@@ -7,6 +8,8 @@ import { BackEndPrompt } from '@nte/models/back-end-prompt.model';
 import { Prompt } from '@nte/models/prompt.model';
 import { YesNoOptions } from '@nte/models/yes-no-options.model';
 import { PromptService } from '@nte/services/prompt.service';
+
+const { Toast } = Plugins;
 
 @Component({
   selector: `prompt-scholarship`,
@@ -24,8 +27,7 @@ export class PromptScholarshipComponent implements OnInit, OnDestroy {
 
   constructor(
     private events: Events,
-    private promptService: PromptService,
-    private toastCtrl: ToastController
+    private promptService: PromptService
   ) { }
 
   ngOnInit() {
@@ -62,10 +64,9 @@ export class PromptScholarshipComponent implements OnInit, OnDestroy {
   }
 
   private async showErrorToast() {
-    const toast = await this.toastCtrl.create({
-      duration: 3000,
-      message: `An error has occurred, please try again.`
+    await Toast.show({
+      duration: 'short',
+      text: `An error has occurred, please try again.`
     });
-    toast.present();
   }
 }

@@ -2,22 +2,18 @@
   <ion-toolbar>
     <ion-buttons slot="start">
       <ion-back-button></ion-back-button>
-      <!-- <ion-button (click)="goBack()">
-        <ion-icon slot="icon-only"
-                  name="arrow-back"></ion-icon>
-      </ion-button> -->
     </ion-buttons>
-    <ion-title *ngIf="college && college.name">
+    <ion-title *ngIf="college?.name">
       <div class="avatar-title">
         <img class="avatar-title-image"
              [src]="college?.photo_url" />
         <div class="avatar-title-text ion-text-left"
              *ngIf="college">
-          <div class="truncate body">{{ college.name }}</div>
-          <div class="flex-row truncate subhead"
+          <div class="truncate">{{ college.name }}</div>
+          <div class="flex-row truncate text-small not-bold translucent"
                *ngIf="!isRecd">
             <ion-icon name="pin"></ion-icon>
-            <span class="subhead"> {{ college.city?.length && college.state?.length
+            <span> {{ college.city?.length && college.state?.length
                   ? college.city + ', ' + college.state
                   : '&nbsp;' }} </span>
           </div>
@@ -35,7 +31,7 @@
     </ion-title>
     <ion-buttons slot="end">
       <ion-button fill="clear"
-                  (click)="toggleSaved($event)"
+                  (click)="toggleSaved()"
                   [class.changing]="isChanging"
                   [color]="isSaved ? 'primary' : 'black'"
                   [disabled]="isChanging">

@@ -20,7 +20,7 @@
     <ion-grid>
       <ion-row>
         <ion-col>
-          <ion-button color="orange"
+          <ion-button color="warning"
                       expand="block"
                       (click)="saveSubjects()"
                       [disabled]="!areSubjectsSelected">Continue</ion-button>
@@ -49,13 +49,13 @@
       <ion-grid>
         <ion-row>
           <ion-col>
-            <ion-button color="orange"
+            <ion-button color="warning"
                         expand="block"
                         fill="outline"
                         (click)="saveItems(cluster.cluster_code, 'activities', false, true)">Back</ion-button>
           </ion-col>
           <ion-col>
-            <ion-button color="orange"
+            <ion-button color="warning"
                         expand="block"
                         (click)="saveItems(cluster.cluster_code, 'activities')">Continue</ion-button>
           </ion-col>
@@ -79,17 +79,17 @@
       <ion-grid>
         <ion-row>
           <ion-col>
-            <ion-button color="orange"
+            <ion-button color="warning"
                         expand="block"
                         fill="outline"
                         (click)="saveItems(cluster.cluster_code, 'personal_qualities', false, true)">Back</ion-button>
           </ion-col>
           <ion-col>
-            <ion-button color="orange"
+            <ion-button color="warning"
                         expand="block"
                         *ngIf="clusterIndex < (questions.clusters.length - 1)"
                         (click)="saveItems(cluster.cluster_code, 'personal_qualities')">Continue</ion-button>
-            <ion-button color="orange"
+            <ion-button color="warning"
                         expand="block"
                         *ngIf="clusterIndex === (questions.clusters.length - 1)"
                         (click)="saveItems(cluster.cluster_code, 'personal_qualities', true)">Submit</ion-button>
@@ -102,7 +102,8 @@
 <div class="ion-padding"
      *ngIf="isSurveyComplete && isLoaded">
   <div class="subhead ion-text-center">Your answers were submitted successfully.</div>
-  <p class="emptyStateTitle bold ion-text-center">We think you'll enjoy careers in the following Career&nbsp;Clusters:</p>
+  <p class="emptyStateTitle bold ion-text-center">We think you'll enjoy careers in the following Career&nbsp;Clusters:
+  </p>
   <ion-grid>
     <ng-template let-cluster
                  ngFor

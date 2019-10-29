@@ -160,12 +160,16 @@ export class StakeholderService {
   }
 
   public getOverview() {
-    return this.nodeApi
-      .get(`/users/${this.stakeholder.id}/overview`)
-      .pipe(map((response) => {
-        this.overview = response;
-        return this.overview;
-      }));
+    if (this.stakeholder && this.stakeholder.id) {
+      return this.nodeApi
+        .get(`/users/${this.stakeholder.id}/overview`)
+        .pipe(map((response) => {
+          this.overview = response;
+          return this.overview;
+        }));
+    } else {
+      return new Observable(null);
+    }
   }
 
   public getStakeholderInformation(isLoggingIn?: boolean, loginService?: string) {
@@ -175,9 +179,10 @@ export class StakeholderService {
         this.stakeholder = new Stakeholder(data);
         this.loggedIn = true;
         this.stakeholder.loggedIn = true;
-        this.storage.getItem(`ls.token`).then((stored) => {
-          this.stakeholder.authToken = stored.value;
-        });
+        // this.stakeholder.authToken = data.authToken;
+        // this.storage.getItem(`ls.token`).then((stored) => {
+        //   this.stakeholder.authToken = stored.value;
+        // });
         this.stakeholder.id = data.id;
         this.populateEntitlements();
         this.mixpanel.start(this.stakeholder);

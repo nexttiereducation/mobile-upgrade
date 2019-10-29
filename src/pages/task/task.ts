@@ -1,13 +1,14 @@
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Events, ModalController, ToastController } from '@ionic/angular';
-import { Subject } from 'rxjs';
+import { Events, IonContent, ModalController, ToastController } from '@ionic/angular';
+import { BehaviorSubject, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
+import { ChatService } from '@nte/components/chat/chat.service';
 import { PromptComponent } from '@nte/components/prompt/prompt';
-import { TASK_NOTES_EMPTY_STATE, TASK_STATUSES, TaskStatus } from '@nte/constants/task.constants';
-import { IEmptyState } from '@nte/interfaces/empty-state.interface';
+import { TaskNotesService } from '@nte/components/task-details/notes/task-notes.service';
+import { TASK_STATUSES, TaskStatus } from '@nte/constants/task.constants';
 import { BackEndPrompt } from '@nte/models/back-end-prompt.model';
 import { TaskTracker } from '@nte/models/task-tracker.model';
 import { LinkService } from '@nte/services/link.service';
@@ -22,27 +23,43 @@ import { TaskService } from '@nte/services/task.service';
   styleUrls: [`task.scss`]
 })
 export class TaskPage implements OnInit, OnDestroy {
-  @ViewChild(`Content`, { static: false }) public content;
+  @ViewChild(IonContent, { static: false }) public content;
 
   public addingNote: boolean;
   public id: number;
   public isParent: boolean;
   public isUpdating: boolean;
-  public notes: any[];
-  public notesCount: number;
   public prompt: BackEndPrompt<any>;
   public task: any;
   public taskStatus: any;
   public taskTracker: any;
   public typeImage: string;
 
+  private _activeView: BehaviorSubject<string> = new BehaviorSubject<string>('detail');
   private ngUnsubscribe: Subject<any> = new Subject();
   private page: string;
-  private taskNotesEmptyState: IEmptyState;
+
+  get activeView() {
+    return this._activeView.getValue();
+  }
+  set activeView(view: string) {
+    this._activeView.next(view);
+  }
+  get activeView$() {
+    return this._activeView.asObservable();
+  }
+
+  // [state]="{taskTracker: taskTracker}"
+  // [routerLink]="['/attachments']"
+
+  // [state]="notesState"
+  // [routerLink]="['/notes']"
 
   constructor(public events: Events,
     public linkService: LinkService,
     public sanitizer: DomSanitizer,
+    public taskNotesService: TaskNotesService,
+    private chatService: ChatService,
     private mixpanel: MixpanelService,
     private modalCtrl: ModalController,
     private route: ActivatedRoute,
@@ -58,7 +75,6 @@ export class TaskPage implements OnInit, OnDestroy {
     this.prompt = params.prompt;
     this.taskTracker = params.task;
     this.typeImage = params.taskTypeImg;
-    this.taskNotesEmptyState = TASK_NOTES_EMPTY_STATE;
   }
 
   ngOnInit() {
@@ -74,6 +90,11 @@ export class TaskPage implements OnInit, OnDestroy {
           }
         );
     }
+    this.chatService.scrollToBottom$
+      .pipe(takeUntil(this.ngUnsubscribe))
+      .subscribe(scroll => {
+        this.scrollToBottom(scroll);
+      });
   }
 
   ngOnDestroy() {
@@ -84,71 +105,11 @@ export class TaskPage implements OnInit, OnDestroy {
     this.events.unsubscribe(`taskChange`);
     this.events.unsubscribe(`fakeTaskStatusChange`);
     this.surveyService.currentSurvey = null;
-    this.notes = null;
     this.taskService.activeTaskId = null;
-  }
-
-  public addNote(note: string) {
-    if (this.addingNote) { return; }
-    this.addingNote = true;
-    this.taskService.createNote(this.taskTracker.id, note)
-      .pipe(takeUntil(this.ngUnsubscribe))
-      .subscribe(
-        () => {
-          this.getNotes();
-          this.addingNote = false;
-          this.mixpanel.event(`task_note_added`, {
-            'task title': this.taskTracker.task.name
-          });
-        },
-        (error) => {
-          console.error(error);
-          this.addingNote = false;
-        }
-      );
-  }
-
-  public deleteNote(noteId: number, index) {
-    this.taskService.deleteNote(this.taskTracker.id, noteId)
-      .pipe(takeUntil(this.ngUnsubscribe))
-      .subscribe(
-        () => {
-          this.notes.splice(index, 1);
-          this.events.publish(`noteChange`, { notes: this.notes });
-        },
-        (err) => console.error(err)
-      );
   }
 
   public getTrustedUrl(url: string) {
     return this.sanitizer.bypassSecurityTrustResourceUrl(url);
-  }
-
-  public goToAttachments() {
-    this.router.navigate(
-      [`attachments`],
-      {
-        relativeTo: this.route,
-        state: {
-          taskTracker: this.taskTracker
-        }
-      }
-    );
-  }
-
-  public goToNotes() {
-    this.router.navigate(
-      [`notes`],
-      {
-        relativeTo: this.route,
-        state: {
-          emptyState: this.taskNotesEmptyState,
-          messages: this.notes,
-          messageType: `note`,
-          subtitle: this.taskTracker.task.name
-        }
-      }
-    );
   }
 
   public goToSurvey() {
@@ -174,6 +135,17 @@ export class TaskPage implements OnInit, OnDestroy {
       showBackdrop: false
     });
     return await modal.present();
+  }
+
+  public switchView(ev: any) {
+    this.activeView = ev.detail.value;
+  }
+
+  public scrollToBottom(scroll?: boolean) {
+    if (scroll) {
+      this.content.scrollToBottom(750);
+      this.chatService.scrollToBottom = false;
+    }
   }
 
   public updateStatus() {
@@ -221,19 +193,7 @@ export class TaskPage implements OnInit, OnDestroy {
   /* PRIVATE METHODS */
 
   private getNotes(loadingMore?: boolean) {
-    this.taskService.getNotes(this.taskTracker.id)
-      .pipe(takeUntil(this.ngUnsubscribe))
-      .subscribe(
-        (response) => {
-          this.notes = response.notes;
-          this.notesCount = response.count;
-        },
-        (err) => console.error(err),
-        () => {
-          const eventName = loadingMore ? `moreNotes` : `noteChange`;
-          this.events.publish(eventName, { notes: this.notes });
-        }
-      );
+    this.taskNotesService.get(this.taskTracker.id);
   }
 
   private init() {
@@ -244,12 +204,7 @@ export class TaskPage implements OnInit, OnDestroy {
       this.openPromptModal();
     }
     if (this.page) {
-      if (this.page === `attach`) {
-        this.goToAttachments();
-      }
-      if (this.page === `notes`) {
-        this.goToNotes();
-      }
+      this.activeView = this.page === `attach` ? `attachments` : this.page;
     }
     this.setupEventSubs();
     this.getNotes();
@@ -275,14 +230,14 @@ export class TaskPage implements OnInit, OnDestroy {
   }
 
   private setupEventSubs() {
-    this.events.subscribe(
-      `loadMore`,
-      () => this.getNotes(true)
-    );
-    this.events.subscribe(
-      `sendMessage`,
-      (data: any) => this.addNote(data.message)
-    );
+    // this.events.subscribe(
+    //   `loadMore`,
+    //   () => this.getNotes(true)
+    // );
+    // this.events.subscribe(
+    //   `sendMessage`,
+    //   (data: any) => this.addNote(data.message)
+    // );
     this.events.subscribe(
       `taskChange`,
       (data: any) => {

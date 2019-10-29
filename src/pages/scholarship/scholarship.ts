@@ -1,5 +1,5 @@
 import { Component, OnDestroy } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import { AlertController, ToastController } from '@ionic/angular';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
@@ -40,7 +40,6 @@ export class ScholarshipPage implements OnDestroy {
   constructor(public linkService: LinkService,
     private alertCtrl: AlertController,
     private mixpanel: MixpanelService,
-    private router: Router,
     private scholarshipService: ScholarshipService,
     private stakeholderService: StakeholderService,
     private toastCtrl: ToastController,

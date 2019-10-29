@@ -2,7 +2,6 @@ import { AfterViewInit, Component } from '@angular/core';
 import { Router, RoutesRecognized } from '@angular/router';
 import { Plugins } from '@capacitor/core';
 import { CallNumber } from '@ionic-native/call-number/ngx';
-import { Device } from '@ionic-native/device/ngx';
 import { EmailComposer } from '@ionic-native/email-composer/ngx';
 import { Mixpanel } from '@ionic-native/mixpanel/ngx';
 import { Platform } from '@ionic/angular';
@@ -20,7 +19,8 @@ import { NotificationService } from '@nte/services/notification.service';
 import { PrevRouteService } from '@nte/services/prev-route.service';
 import { StakeholderService } from '@nte/services/stakeholder.service';
 
-const { App, SplashScreen, StatusBar } = Plugins;
+const { App, Device, SplashScreen, StatusBar } = Plugins;
+
 
 @Component({
   selector: `app-root`,
@@ -47,8 +47,14 @@ export class NteAppComponent implements AfterViewInit {
   }
 
   get deviceModel() {
-    if (this.device && this.device.model) {
-      return this.device.model.replace(`,`, `-`);
+    if (Device) {
+      Device.getInfo().then(info => {
+        if (info.model) {
+          return info.model.replace(`,`, `-`);
+        } else {
+          return ``;
+        }
+      });
     } else {
       return ``;
     }
@@ -59,7 +65,6 @@ export class NteAppComponent implements AfterViewInit {
   }
 
   constructor(
-    public device: Device,
     private callNumber: CallNumber,
     private connectionService: ConnectionService,
     private deepLinks: DeepLinksService,
@@ -265,24 +270,29 @@ export class NteAppComponent implements AfterViewInit {
   }
 
   private setupUserSub() {
-    if (this.stakeholderService.loggedIn) {
-      this.initForUser();
-    } else {
-      this.stakeholderService.checkStorage()
-        .then(isLoggedIn => {
-          if (isLoggedIn) {
-            this.initForUser();
-          } else {
-            this.router.navigateByUrl(`login`);
-            this.stakeholderService.loginSuccess
-              // .pipe(takeUntil(this.ngUnsubscribe)
-              .subscribe((loggedIn: boolean) => {
-                if (loggedIn) {
-                  this.initForUser();
-                }
-              });
-          }
-        });
+    if (!this.user || !this.user.id) {
+      this.stakeholderService.login({
+        email: `maeby@example.com`,
+        password: `testtest`
+      });
     }
+    // if (this.stakeholderService.loggedIn) {
+    //   this.initForUser();
+    // } else {
+    //   this.stakeholderService.checkStorage()
+    //     .then(isLoggedIn => {
+    //       if (isLoggedIn) {
+    //         this.initForUser();
+    //       } else {
+    //         this.router.navigateByUrl(`login`);
+    //         this.stakeholderService.loginSuccess
+    //           // .pipe(takeUntil(this.ngUnsubscribe)
+    //           .subscribe((loggedIn: boolean) => {
+    //             if (loggedIn) {
+    //               this.initForUser();
+    //             }
+    //           });
+    //       }
+    //     });
   }
 }

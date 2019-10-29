@@ -24,11 +24,14 @@
                 [formGroupName]="i">
         <ion-checkbox formControlName="checked"
                       slot="start"
-                      [checked]="knownDateControls[i].controls.date.value.isChosen"
-                      (ionChange)="markSelected(knownDateControls[i].controls.date.value)"></ion-checkbox>
-        <ion-label>{{knownDateControls[i].controls.date.value.id === 0 ?
+                      [checked]="knownDateControls[i].get('date').value.isChosen"
+                      (ionChange)="markSelected(knownDateControls[i].get('date').value)"></ion-checkbox>
+        <ion-label>{{knownDateControls[i].get('date').value.id === 0 ?
+                     knownDateControls[i].get('date').value.value :
+                     (knownDateControls[i].get('date').value.value | date:'MMM dd, yyyy')}}</ion-label>
+        <!-- <ion-label>{{knownDateControls[i].controls.date.value.id === 0 ?
                      knownDateControls[i].controls.date.value.value :
-                     (knownDateControls[i].controls.date.value.value | date:'MMM dd, yyyy')}}</ion-label>
+                     (knownDateControls[i].controls.date.value.value | date:'MMM dd, yyyy')}}</ion-label> -->
       </ion-item>
     </ion-list>
     <ion-list formArrayName="customDatesArray"
@@ -37,7 +40,7 @@
                 *ngFor="let deadline of customDateControls; let i = index"
                 [formGroupName]="i">
         <ion-label></ion-label>
-        <ion-icon color="grayDark50"
+        <ion-icon color="medium"
                   slot="start"
                   name="calendar"></ion-icon>
         <ion-datetime displayFormat="MM/DD/YYYY"
@@ -51,7 +54,7 @@
                       [pickerOptions]="datePickerOptions"
                       [required]="lastChoiceSelected && !simplifiedForm">
         </ion-datetime>
-        <ion-button color="red"
+        <ion-button color="danger"
                     fill="clear"
                     icon-only
                     slot="end"
@@ -70,8 +73,8 @@
   </div>
 </form>
 <ion-footer>
-  <ion-toolbar color="green">
-    <ion-button color="white"
+  <ion-toolbar color="success">
+    <ion-button color="light"
                 expand="full"
                 fill="clear"
                 (click)="submit()"

@@ -17,6 +17,11 @@ ion-card.tile {
     justify-content: center;
   }
 
+  ion-item {
+    --inner-padding-end: 0;
+    --padding-start: 0;
+  }
+
   ion-item-sliding>ion-item.item-md,
   ion-item-sliding>ion-item.item-md.item-block .item-inner {
     border-width: 0px !important;
@@ -58,7 +63,6 @@ ion-card.tile {
       height: $clipboardSize;
       object-fit: contain;
     }
-
   }
 
   .tile-badge {
@@ -88,7 +92,7 @@ ion-card.tile {
     --inner-padding-end: 0px;
   }
 
-  .tile-content-wrapper {
+  .tile-button-content {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -105,7 +109,7 @@ ion-card.tile {
     text-overflow: ellipsis;
     overflow: hidden;
     white-space: nowrap;
-    max-width: 90%;
+    max-width: 100%;
   }
 
   .label,

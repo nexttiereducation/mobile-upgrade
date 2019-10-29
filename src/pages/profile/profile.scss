@@ -1,4 +1,4 @@
-profile {
+:host {
   .img-container {
     height: 100px;
     width: 100px;
@@ -6,9 +6,11 @@ profile {
     border: 9px solid var(--blueMedium);
     border-radius: 50%;
   }
+
   .email {
     padding: 2px 0 4px 0;
   }
+
   .profile-copy {
     $copyHeight: calc(100% - 242px);
     min-height: $copyHeight;
@@ -18,6 +20,7 @@ profile {
     flex-direction: column;
     align-items: center;
     justify-content: center;
+
     img {
       max-height: 100px;
       width: auto;

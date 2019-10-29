@@ -1,0 +1,7 @@
+<chat-body (clear)="taskNotesService.clear()"
+           (loadMore)="taskNotesService.get(taskTracker.id)"
+           [emptyState]="emptyState"
+           [isSending]="(taskNotesService.isSending$ | async)"
+           [messages]="(taskNotesService.all$ | async)"
+           [nextPage]="(taskNotesService.nextPage$ | async)"></chat-body>
+<chat-input (send)="send($event)"></chat-input>

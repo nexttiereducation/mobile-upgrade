@@ -68,7 +68,7 @@
                       type="submit"
                       [disabled]="loginForm.invalid">Submit form</ion-button> -->
           <ion-button class="forgot-password no-caps not-bold"
-                      color="white"
+                      color="light"
                       fill="clear"
                       size="small"
                       type="button"
@@ -85,14 +85,14 @@
                         type="submit"
                         (click)="login()"
                         [disabled]="loginForm.invalid">
-              <span class="text-blue bold"> {{ loggingIn ? "Logging in..." : "Let's go!" }} </span>
+              <span class="text-blue bold"> {{ (loggingIn$ | async) ? "Logging in..." : "Let's go!" }} </span>
             </ion-button>
           </ion-col>
         </ion-row>
         <ion-row>
           <ion-col>
             <ion-button class="no-caps ion-no-margin"
-                        color="white"
+                        color="light"
                         fill="outline"
                         size="large"
                         type="button"
@@ -103,7 +103,7 @@
           </ion-col>
           <ion-col>
             <ion-button class="no-caps ion-no-margin"
-                        color="white"
+                        color="light"
                         fill="outline"
                         size="large"
                         type="button"

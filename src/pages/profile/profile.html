@@ -1,10 +1,12 @@
 <ion-header>
   <ion-toolbar>
-    <ion-buttons notifications-button
-                 slot="secondary"></ion-buttons>
+    <ion-buttons slot="start">
+      <notifications-button></notifications-button>
+    </ion-buttons>
     <ion-title>Profile</ion-title>
-    <ion-buttons messaging-button
-                 slot="end"></ion-buttons>
+    <ion-buttons slot="end">
+      <messaging-button></messaging-button>
+    </ion-buttons>
   </ion-toolbar>
 </ion-header>
 <ion-content class="bg-blue">
@@ -12,7 +14,8 @@
     <ion-row>
       <ion-col class="ion-text-center">
         <img class="avatar-shadow img-container"
-             [src]="profilePhoto || 'assets/image/contact/avatar.svg'">
+             [src]="profilePhoto || 'assets/image/contact/avatar.svg'"
+             [style.max-height.vh]="30">
       </ion-col>
     </ion-row>
     <ion-row *ngIf="userOverview">
@@ -33,14 +36,14 @@
   </ng-container>
 </ion-content>
 <ion-footer>
-  <ion-button class="no-caps ion-margin"
-              color="white"
+  <ion-button class="ion-margin"
+              color="secondary"
               fill="outline"
-              slot="end"
               style="width: calc( 100% - 32px )"
-              (click)="logout()"> Log out <ion-icon name="exit"></ion-icon>
+              (click)="logout()"> Log out <ion-icon name="exit"
+              slot="end"></ion-icon>
   </ion-button>
-  <!-- <button fill="clear" color="white" expand="full" slot="end"
+  <!-- <button fill="clear" color="light" expand="full" slot="end"
           ion-button
           (click)="linkService.open(externalProfileUrl)"> Access expand="full" profile <ion-icon name="open"></ion-icon>
   </button> -->

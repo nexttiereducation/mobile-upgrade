@@ -43,6 +43,10 @@ export class ScholarshipsListPage implements OnInit, OnDestroy {
     return EMPTY_STATES[this.listNameVal || `Search All`];
   }
 
+  get isRecd() {
+    return this.listNameVal === `Recommended`;
+  }
+
   get itemsAreTrackers() {
     return this.listNameVal === 'Applying' || this.listNameVal === 'Saved';
   }

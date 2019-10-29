@@ -11,7 +11,7 @@ apply from: "../capacitor-cordova-android-plugins/cordova.variables.gradle"
 dependencies {
 
     implementation "com.android.support:support-v4:27.+"
-    implementation "com.mixpanel.android:mixpanel-android:5.6.2"
+    implementation "com.mixpanel.android:mixpanel-android:5.6.5"
     implementation "com.google.android.gms:play-services-base:+"
     implementation "com.google.firebase:firebase-messaging:+"
     implementation "com.google.android.gms:play-services-location:16.+"

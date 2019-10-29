@@ -1,18 +1,23 @@
 <ion-header>
-  <ion-toolbar hideBackButton>
+  <!-- <ion-toolbar hideBackButton>
     <ion-buttons slot="secondary">
       <ion-button fill="clear"
                   icon-only
                   (click)="back()">
         <ion-icon name="ios-arrow-back"></ion-icon>
       </ion-button>
+    </ion-buttons> -->
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button></ion-back-button>
     </ion-buttons>
     <ion-title>Messaging</ion-title>
   </ion-toolbar>
 </ion-header>
 <ion-content class="bg-grayLightest">
   <ion-item-group class="bordered-list hover-list mat-font-default"
-                  *ngIf="(connectionService.invites$ | async)?.received?.length || (connectionService.invites$ | async)?.sent?.length">
+                  *ngIf="(connectionService.invites$ | async)?.received?.length
+                         || (connectionService.invites$ | async)?.sent?.length">
     <ng-template [ngIf]="(connectionService.invites$ | async)?.received?.length > 0">
       <ion-item-divider>
         <ion-label>Invitations Received</ion-label>
@@ -33,14 +38,14 @@
                     slot="end"
                     style="font-size:1.4rem"
                     (click)="acceptInvite(invite)">
-          <ion-icon color="green"
+          <ion-icon color="success"
                     name="checkmark-circle"></ion-icon>
         </ion-button>
       </ion-item>
     </ng-template>
     <ng-template [ngIf]="(connectionService.invites$ | async)?.sent?.length > 0">
       <ion-item-divider>
-        <ion-label> Invitations Sent </ion-label>
+        <ion-label>Invitations Sent</ion-label>
       </ion-item-divider>
       <ion-item class="mat-font-default"
                 *ngFor="let invite of (connectionService.invites$ | async)?.sent">
@@ -67,11 +72,11 @@
         <img [src]="getPhoto(connection)">
       </ion-avatar>
       <ion-label>
-        <span class="body"
-              [class.bold]="messageSummary[connection?.id]">{{connection?.get_full_name}}</span>
-        <ion-badge color="green"
-                   *ngIf="messageSummary[connection?.id] > 0">{{ messageSummary[connection?.id] }}</ion-badge>
+        <p class="body"
+           [class.bold]="messageSummary[connection?.id]">{{connection?.get_full_name}}</p>
       </ion-label>
+      <ion-badge color="success"
+                 *ngIf="messageSummary[connection?.id] > 0">{{ messageSummary[connection?.id] }}</ion-badge>
     </ion-item>
   </ion-item-group>
   <empty-state *ngIf="(connectionService.all$ | async)

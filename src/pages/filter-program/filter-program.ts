@@ -86,7 +86,7 @@ export class FilterProgramPage implements OnInit, OnDestroy {
     // TODO: Add logic to close filters
   }
 
-  public clear(_ev: any) {
+  public clear() {
     this.category.selectedItems = new Array(0);
     this.selectedItem = undefined;
     this.updateQuery();

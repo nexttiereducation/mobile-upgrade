@@ -34,10 +34,10 @@ export class MessagingPage implements OnInit {
     private stakeholderService: StakeholderService) { }
 
   ngOnInit() {
-    if (!this.connectionService.all
-      || !this.connectionService.all.length) {
-      this.connectionService.getAllConnections();
-    }
+    this.connectionService.getAllConnections();
+    // if (!this.connectionService.all
+    //   || !this.connectionService.all.length) {
+    // }
     if (!this.connectionService.invites
       || !this.connectionService.invites.received.length
       || !this.connectionService.invites.sent.length) {

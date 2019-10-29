@@ -11,8 +11,9 @@ export class CollegeBgUrlPipe implements PipeTransform {
   constructor(private platform: Platform) { }
 
   transform(college: any): any {
+    const size = this.getSize();
     if (COLLEGES_WITH_BGS.has(college.id)) {
-      return `${this.s3url}/${college.id}/${this.getSize()}.jpg`;
+      return `${this.s3url}/${college.id}/${size}.jpg`;
     } else {
       const urlRegex = new RegExp(
         `https:\/\/(?:next\-tier\.)?s3\.amazonaws\.com\/(?:next\-tier\/)?build\/images\/institutions\/([a-z]+)\-[a-z]+\-\d\.jpg`,
@@ -21,11 +22,9 @@ export class CollegeBgUrlPipe implements PipeTransform {
       const bgUrl = college.background_url;
       const setting = (bgUrl && bgUrl.length && bgUrl.search(urlRegex) !== -1) ? bgUrl.replace(urlRegex, `$1`) : `town`;
       const stateRegion = REGION_PER_STATE[college.state] || `GreatLakes`;
-      return `${this.s3url}/${upperFirst(setting)}_${stateRegion.replace(` `, ``)}/640.jpg`;
+      return `${this.s3url}/${upperFirst(setting)}_${stateRegion.replace(` `, ``)}/${size}.jpg`;
     }
   }
-
-
 
   private getSize() {
     const width: number = this.platform.width();

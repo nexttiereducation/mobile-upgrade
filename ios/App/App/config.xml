@@ -7,11 +7,6 @@
   </feature>
 
 
-  <feature name="Device">
-    <param name="ios-package" value="CDVDevice"/>
-  </feature>
-
-
   <feature name="EmailComposer">
     <param name="ios-package" value="APPEmailComposer"/>
   </feature>
@@ -49,11 +44,6 @@
 
   <feature name="RequestLocationAccuracy">
     <param name="ios-package" value="RequestLocationAccuracy"/>
-  </feature>
-
-
-  <feature name="ThemeableBrowser">
-    <param name="ios-package" value="CDVThemeableBrowser"/>
   </feature>
 
 

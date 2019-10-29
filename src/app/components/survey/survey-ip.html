@@ -16,7 +16,7 @@
           <ion-item *ngFor="let option of currentSurvey.questions.answer_options.answer_option">
             <ion-label>{{ option.text }}</ion-label>
             <ion-radio slot="start"
-                       (ionSelect)="surveyIpService.saveAnswers($event);continue(400)"
+                       (ionSelect)="surveyIpService.saveAnswers();continue(400)"
                        [value]="option.value"></ion-radio>
           </ion-item>
         </ion-radio-group>
@@ -45,9 +45,9 @@
   </ion-slides>
   <ion-footer class="no-border ion-padding-10"
               *ngIf="surveyIpService.surveyProgress == 100">
-    <ion-button color="orange"
+    <ion-button color="warning"
                 expand="block"
-                (click)="finish($event)">Submit Survey</ion-button>
+                (click)="finish()">Submit Survey</ion-button>
   </ion-footer>
 </ng-template>
 <div class="ion-padding"

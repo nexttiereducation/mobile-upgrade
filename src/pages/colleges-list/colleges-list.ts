@@ -1,7 +1,8 @@
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { AbstractControl, FormControl } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { IonInfiniteScroll, ModalController, NavController, Platform, ToastController } from '@ionic/angular';
+import { Plugins } from '@capacitor/core';
+import { IonInfiniteScroll, ModalController, Platform, ToastController } from '@ionic/angular';
 import { OverlayEventDetail } from '@ionic/core';
 import { isNumber } from 'lodash';
 import { Subject } from 'rxjs';
@@ -25,6 +26,8 @@ import { LocationService } from '@nte/services/location.service';
 import { MixpanelService } from '@nte/services/mixpanel.service';
 import { NavStateService } from '@nte/services/nav-state.service';
 import { StakeholderService } from '@nte/services/stakeholder.service';
+
+const { Toast } = Plugins;
 
 @Component({
   selector: `colleges-list`,
@@ -76,13 +79,12 @@ export class CollegesListPage implements OnInit, OnDestroy {
     public filterService: FilterService,
     public keyboard: KeyboardService,
     public modalCtrl: ModalController,
+    public platform: Platform,
     public route: ActivatedRoute,
     public router: Router,
-    public platform: Platform,
     private listTileService: CollegeListTileService,
     private location: LocationService,
     private mixpanel: MixpanelService,
-    private navCtrl: NavController,
     private stakeholderService: StakeholderService,
     private toastCtrl: ToastController,
     navStateService: NavStateService) {
@@ -93,8 +95,12 @@ export class CollegesListPage implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.setupEmptyState();
-    this.updateCollegeList();
+    // this.setupEmptyState();
+    if (this.listName === 'Saved' && this.user.isStudent) {
+      this.collegesService.tracked = this.user.institution_trackers;
+    } else {
+      this.updateCollegeList();
+    }
     if (this.filtering) {
       this.filtering = false;
     }
@@ -136,6 +142,14 @@ export class CollegesListPage implements OnInit, OnDestroy {
         .subscribe(details => this.openApplyModal(details, collegeInfo));
     } else {
       this.saveCollege(collegeInfo, fromToast, null, isRec);
+    }
+  }
+
+  public getCollegeObj(college: any) {
+    if (college.institution && !isNumber(college.institution)) {
+      return college.institution;
+    } else {
+      return college;
     }
   }
 
@@ -216,26 +230,10 @@ export class CollegesListPage implements OnInit, OnDestroy {
     return await applyModal.present();
   }
 
-  public async openSendModal(college: any) {
-    const collegeItem = this.getCollegeObj(college);
-    const sendModal = await this.modalCtrl.create({
-      backdropDismiss: true,
-      component: SendComponent,
-      componentProps: {
-        item: collegeItem,
-        type: `College`
-      },
-      cssClass: `smallModal`,
-      showBackdrop: false
-    });
-    return await sendModal.present();
-  }
-
   public async openRemoveRecToast() {
-    const toast = await this.toastCtrl.create({
-      message: `Recommendation declined.`
+    await Toast.show({
+      text: `Recommendation declined.`
     });
-    toast.present();
   }
 
   public async openSaveToast(college: any, isRec: boolean) {
@@ -251,6 +249,21 @@ export class CollegesListPage implements OnInit, OnDestroy {
       message: isRec ? `Recommendation Saved!` : `Saved!`
     });
     toast.present();
+  }
+
+  public async openSendModal(college: any) {
+    const collegeItem = this.getCollegeObj(college);
+    const sendModal = await this.modalCtrl.create({
+      backdropDismiss: true,
+      component: SendComponent,
+      componentProps: {
+        item: collegeItem,
+        type: `College`
+      },
+      cssClass: `smallModal`,
+      showBackdrop: false
+    });
+    return await sendModal.present();
   }
 
   public async openUnsaveToast(college: any, id: number, name: string) {
@@ -366,15 +379,6 @@ export class CollegesListPage implements OnInit, OnDestroy {
   }
 
   /* PRIVATE METHODS */
-
-  private getCollegeObj(college: any) {
-    if (college.institution && !isNumber(college.institution)) {
-      return college.institution;
-    } else {
-      return college;
-    }
-  }
-
 
   private getLocation() {
     this.location.position

@@ -26,7 +26,7 @@ export class CollegeFinancialComponent {
   get finAidChart() {
     if (this.details && this.details.initial_financial_aid) {
       return {
-        label: `of Undergrads receive financial aid`,
+        label: [`of undergrads`, `receive fin.aid`],
         value: this.details.initial_financial_aid
       };
     }

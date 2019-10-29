@@ -26,10 +26,10 @@
                 (click)="wantsToDelete = !wantsToDelete">Delete account</ion-button>
     <ng-container *ngIf="wantsToDelete">
       <div class="surveyQuestion">Delete account</div>
-      <div class="body ion-margin-vertical"> By deleting your account, all of your personal data will be lost, and your account will
-        be permanently closed. </div>
+      <div class="body ion-margin-vertical"> By deleting your account, all of your personal data will be lost, and your
+        account will be permanently closed. </div>
       <div class="bold">
-        <ion-icon color="warn"
+        <ion-icon color="danger"
                   name="warning"></ion-icon>
         <span>Are you sure you want to delete your account?</span>
       </div>
@@ -43,7 +43,7 @@
           <ion-icon name="mood"></ion-icon>
         </ion-button>
         <ion-button class="no-caps"
-                    color="warn"
+                    color="danger"
                     (click)="deleteAccount()">Yes, delete my account</ion-button>
       </div>
     </ng-container>
@@ -69,7 +69,7 @@
                  [uploader]="uploader">
               <button class="ion-button"
                       (click)="profilePicker.click()"
-                      [color]="fileHover ? 'accent' : 'primary'">
+                      [color]="fileHover ? 'secondary' : 'primary'">
                 {{currentUser.profile_photo_url ? 'Change' : 'Upload'}} </button>
               <input id="profilePicker"
                      name="profilePicker"

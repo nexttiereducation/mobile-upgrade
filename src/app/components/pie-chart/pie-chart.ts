@@ -39,7 +39,6 @@ export class PieChartComponent implements OnInit {
     const chartConfig: ChartConfiguration = {
       type: 'pie',
       data: {
-        labels: this.labels,
         datasets: [
           {
             // label: '# of Votes',
@@ -47,7 +46,8 @@ export class PieChartComponent implements OnInit {
             data: this.values,
             hoverBackgroundColor: this.colors,
           }
-        ]
+        ],
+        labels: this.labels
       },
       options: {
         elements: {
@@ -87,8 +87,6 @@ export class PieChartComponent implements OnInit {
       // chartConfig.data.datasets[0][`datalabels`] = {
       labels: {
         index: {
-          align: this.showLegend ? 'start' : 'end',
-          anchor: 'end',
           color: (ctx) => {
             if (this.showLegend) {
               return labelColor;
@@ -129,6 +127,10 @@ export class PieChartComponent implements OnInit {
         // }
       }
     };
+    if (!this.showLegend) {
+      chartConfig.options.plugins.datalabels.labels.index.align = 'end';
+      chartConfig.options.plugins.datalabels.labels.index.anchor = 'end';
+    }
     this.pieChart = new Chart(this.pieCanvas.nativeElement, chartConfig);
     const legendHtml = this.pieChart.generateLegend();
     console.log(legendHtml);

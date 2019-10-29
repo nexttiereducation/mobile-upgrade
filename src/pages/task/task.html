@@ -3,92 +3,48 @@
     <ion-buttons slot="start">
       <ion-back-button></ion-back-button>
     </ion-buttons>
-    <ion-title>
-      <div class="subhead text-white50"
-           *ngIf="taskTracker?.task.name">{{ taskTracker?.task.name }}</div> Task Detail
-    </ion-title>
+    <ion-title>{{ taskTracker?.task.name }}</ion-title>
+  </ion-toolbar>
+  <ion-toolbar [color]="taskStatus?.color">
+    <ion-segment class="flex-segments"
+                 scrollable="true"
+                 [(value)]="activeView"
+                 (ionChange)="switchView($event)">
+      <ion-segment-button layout="icon-start"
+                          value="detail">
+        <ion-label>Detail</ion-label>
+        <ion-icon name="information-circle"></ion-icon>
+      </ion-segment-button>
+      <ion-segment-button layout="icon-start"
+                          value="attachments">
+        <ion-label>Attachments</ion-label>
+        <ion-icon name="attach"></ion-icon>
+        <ion-badge slot="end"
+                   *ngIf="taskTracker.hasAttachment">1</ion-badge>
+      </ion-segment-button>
+      <ion-segment-button layout="icon-start"
+                          value="notes">
+        <ion-label>Notes</ion-label>
+        <ion-icon name="chatbubbles"></ion-icon>
+        <ion-badge slot="end"
+                   *ngIf="(taskNotesService.count$ | async) > 0">{{taskNotesService.count$ | async}}</ion-badge>
+      </ion-segment-button>
+    </ion-segment>
   </ion-toolbar>
 </ion-header>
-<ion-content>
-  <ng-template [ngIf]="taskTracker">
-    <div class="bg-grayLightest-1 surveyQuestion ion-padding-top ion-text-center">{{ taskTracker?.task.name }}</div>
-    <div class="gray-sections no-headers">
-      <div class="body paragraph spaced bg-grayLightest-1 ion-padding"
-           [innerHtml]="taskTracker.task.description | phone | link | buttonize"></div>
-      <ion-grid class="gray-section">
-        <ion-row class="ion-align-items-center ion-justify-content-center"
-                 nowrap>
-          <ion-col class="ion-text-center"
-                   *ngIf="taskTracker.started_on || taskTracker.start_date || taskTracker.task.start_date">
-            <div class="tinyHeader">{{ 'Start' + (taskTracker.started_on ? 'ed' : ' Date') }}</div>
-            <img [src]="taskTracker.started_on ? 'assets/image/date/started.svg' : 'assets/image/date/start.svg'">
-            <div class="body">
-              {{ (taskTracker.started_on || taskTracker.start_date || taskTracker.task.start_date) | date:'mediumDate' }}
-            </div>
-          </ion-col>
-          <ion-col class="ion-text-center"
-                   *ngIf="taskTracker.due_date || taskTracker.task.get_deadline">
-            <div class="tinyHeader text-red">Due Date</div>
-            <img src="assets/image/date/due.svg">
-            <div class="body"> {{ (taskTracker.due_date || taskTracker.task.get_deadline) | date:'mediumDate' }}</div>
-          </ion-col>
-          <ion-col class="ion-text-center">
-            <div class="tinyHeader"
-                 *ngIf="taskTracker.task.custom_creator_name">Assigned by</div>
-            <img class="type-image"
-                 [ngClass]="{'avatar-shadow bg-white': !taskTracker.taskType}"
-                 [src]="typeImage">
-            <div class="body truncate width-100"
-                 *ngIf="taskTracker.taskType"> {{ taskTracker.task.custom_creator_name
-                 ? taskTracker.task.custom_creator_name
-                 : taskTracker.taskType + ' task' }}</div>
-          </ion-col>
-        </ion-row>
-      </ion-grid>
-      <div class="ion-padding"
-           *ngIf="taskTracker.form_urls && taskTracker.form_urls[0]">
-        <ion-button color="green"
-                    expand="block"
-                    (click)="linkService.open(taskTracker.form_urls[0])">View Form</ion-button>
-      </div>
-    </div>
-  </ng-template>
-  <loading *ngIf="!taskTracker"></loading>
+<ion-content [ngSwitch]="(activeView$ | async)">
+  <task-detail class="task-page"
+               *ngSwitchCase="'detail'"
+               [id]="id"
+               [prompt]="prompt"
+               [isParent]="isParent"
+               [isUpdating]="isUpdating"
+               [taskTracker]="taskTracker"
+               [typeImage]="typeImage"></task-detail>
+  <task-attachments class="task-page"
+                    *ngSwitchCase="'attachments'"
+                    [taskTracker]="taskTracker"></task-attachments>
+  <task-notes class="task-page"
+              *ngSwitchCase="'notes'"
+              [taskTracker]="taskTracker"></task-notes>
 </ion-content>
-<ion-footer *ngIf="taskTracker && !prompt">
-  <ion-toolbar *ngIf="taskStatus?.action && !isParent"
-               [color]="taskStatus?.color">
-    <ion-button color="white"
-                expand="full"
-                fill="clear"
-                *ngIf="!taskTracker.isSurveyTask && !taskTracker.prompt"
-                (click)="updateStatus()">Complete task</ion-button>
-    <ion-button color="white"
-                expand="full"
-                fill="clear"
-                *ngIf="(taskTracker.isSurveyTask && taskStatus.name === 'Not Started') || taskTracker.prompt"
-                (click)="updateStatus()"> {{ taskStatus.action + ' ' + (taskTracker.isSurveyTask ? 'survey' : 'task') }}
-    </ion-button>
-    <ion-button color="white"
-                expand="full"
-                fill="clear"
-                *ngIf="taskTracker.isSurveyTask && taskStatus?.name === 'In Progress'"
-                (click)="goToSurvey()">Continue Survey</ion-button>
-  </ion-toolbar>
-  <ion-toolbar color="grayLightest">
-    <ion-button color="black"
-                fill="clear"
-                icon-only
-                (click)="goToAttachments()">
-      <ion-icon name="attach"></ion-icon>
-      <div *ngIf="(taskTracker.templates && taskTracker.templates.length > 0) || taskTracker.attachment">1</div>
-    </ion-button>
-    <ion-button color="black"
-                fill="clear"
-                icon-only
-                (click)="goToNotes()">
-      <ion-icon md-name="chat_bubble">chat_bubble</ion-icon>
-      <div *ngIf="notesCount > 0">{{ notesCount }}</div>
-    </ion-button>
-  </ion-toolbar>
-</ion-footer>

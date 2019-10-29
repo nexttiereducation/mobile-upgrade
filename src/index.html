@@ -14,16 +14,38 @@
   <link href="assets/icon/favicon.png"
         rel="icon"
         type="image/png">
-  <!-- add to homescreen for ios -->
+  <link rel="manifest"
+        href="manifest.webmanifest">
   <meta content="yes"
         name="apple-mobile-web-app-capable">
   <meta content="black"
         name="apple-mobile-web-app-status-bar-style">
+  <meta content="NextTier"
+        name="apple-mobile-web-app-title">
+  <link rel="apple-touch-icon"
+        href="assets/icons/icon-152x152.png">
+  <meta name="description"
+        content="NextTier mobile app">
+  <meta name="theme-color"
+        content="#1976d2">
 </head>
 
 <body>
   <app-root></app-root>
   <script src="capacitor.js"></script>
+  <script src="install.js"></script>
+  <script>
+    // Check that service workers are supported
+    if ('serviceWorker' in navigator) {
+      // Use the window load event to keep the page load performant
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('service-worker.js')
+          .then((reg) => console.log('service worker registered. ', reg))
+          .catch(err => console.log('Error', err));
+      });
+    }
+  </script>
+  <noscript>Please enable JavaScript to continue using this application.</noscript>
 </body>
 
 </html>

@@ -1,30 +1,16 @@
-<!-- <ion-header>
-  <ion-navbar>
-    <ion-title>
-      Hello!
-    </ion-title>
-  </ion-navbar>
-</ion-header> -->
 <ion-header>
-  <ion-toolbar [color]="toolbarColor"
-               [ngSwitch]="messageType">
-    <ion-buttons slot="secondary">
-      <ion-back-button></ion-back-button>
-    </ion-buttons>
-    <ion-title *ngSwitchCase="'note'">
-      <div class="subhead text-white50">{{ subtitle }}</div> Notes
-    </ion-title>
-    <ion-title *ngSwitchCase="'message'">
-      <div class="subhead text-grayDark50">Messaging</div> {{ subtitle }}
-    </ion-title>
-  </ion-toolbar>
+  <chat-toolbar></chat-toolbar>
 </ion-header>
-<!-- <ion-content>
-  Sup
-</ion-content> -->
 <!-- scrollDownOnLoad="true"  [class.align-bottom]="keyboardShowing && !messagesOverflowing" -->
 <ion-content>
-  <ng-template [ngIf]="(messages$ | async)?.length > 0">
+  <chat-body (clear)="messageService.clear()"
+             (loadMore)="messageService.getMessages(messageService.selectedTeamMember.id)"
+             [emptyState]="emptyState"
+             [isSending]="(messageService.isSending$ | async)"
+             [messages]="(messageService.messages$ | async)"
+             [nextPage]="(messageService.nextPage$ | async)"></chat-body>
+  <!-- <ng-template [ngIf]="(messages$ | async)?.length > 0">
+</ion-content>
     <ion-infinite-scroll position="top"
                          [disabled]="!hasNextPage"
                          (ionInfinite)="loadMoreMessages($event)"
@@ -84,14 +70,13 @@
                 <div class="note"
                      *ngIf="!message.linkOnly">{{ message.note || message.body }}</div>
                 <ion-button class="truncate fit ion-no-padding"
-                            color="green"
+                            color="success"
                             size="small"
-                            slot="start"
-                            tappable
                             *ngIf="message.attachment"
                             (click)="openAttachment(message.attachment)">
-                  <ion-icon color="white"
-                            [name]="'nt-' + message.attachment?.page"></ion-icon>
+                  <ion-icon color="light"
+                            slot="start"
+                            [name]="message.attachment?.page"></ion-icon>
                   <ion-label class="no-caps">{{ message.attachment?.name }}</ion-label>
                 </ion-button>
               </div>
@@ -133,13 +118,12 @@
                       && (messages$ | async)?.length < 1
                       && emptyState"
                [emptyState]="emptyState"></empty-state>
-  <loading *ngIf="!(messages$ | async) || (messageService.isInitializing$ | async)"></loading>
+  <loading *ngIf="!(messages$ | async) || (messageService.isInitializing$ | async)"></loading> -->
 </ion-content>
-<ion-footer color="white">
-  <ion-toolbar>
+<ion-footer color="light">
+  <chat-input (send)="send($event)"></chat-input>
+  <!-- <ion-toolbar>
     <ion-item class="ion-padding-horizontal">
-      <!-- <div class="flex-row ion-padding-horizontal"> -->
-      <!-- <input type="text" /> -->
       <ion-label></ion-label>
       <input class="ion-input"
              name="message"
@@ -152,13 +136,12 @@
       <ion-button color="primary"
                   fill="clear"
                   icon-only
-                  slot="end"
                   type="submit"
                   (click)="send(newMessage)"
                   [disabled]="!newMessage">
-        <ion-icon name="send"></ion-icon>
+        <ion-icon name="send"
+                  slot="end"></ion-icon>
       </ion-button>
-      <!-- </div> -->
     </ion-item>
-  </ion-toolbar>
+  </ion-toolbar> -->
 </ion-footer>

@@ -1,15 +1,15 @@
 <ion-content>
-  <ion-card *ngIf="(latitude && longitude)
+  <ion-card *ngIf="(college.latitude && college.longitude)
                         || details?.major_city
                         || details?.airport_distance
                         || details?.public_transit">
     <ion-card-header>Location</ion-card-header>
     <div>
-      <agm-map *ngIf="latitude && longitude"
-               [latitude]="latitude"
-               [longitude]="longitude">
-        <agm-marker [latitude]="latitude"
-                    [longitude]="longitude"></agm-marker>
+      <agm-map *ngIf="college.latitude && college.longitude"
+               [latitude]="college.latitude"
+               [longitude]="college.longitude">
+        <agm-marker [latitude]="college.latitude"
+                    [longitude]="college.longitude"></agm-marker>
       </agm-map>
       <div class="flex-row"
            margin
@@ -62,17 +62,11 @@
       </ion-row>
     </ion-grid>
   </ion-card>
-  <ion-card *ngIf="outOfStateChart
-                   || liveOnCampusChart
+  <ion-card *ngIf="liveOnCampusChart
                    || workOnCampusChart">
     <ion-card-header>Freshman Student Life</ion-card-header>
     <ion-grid>
       <ion-row class="ion-align-items-center ion-justify-content-center ion-wrap">
-        <ion-col size="6"
-                 *ngIf="outOfStateChart">
-          <radial-chart [label]="outOfStateChart.label"
-                        [value]="outOfStateChart.value"></radial-chart>
-        </ion-col>
         <ion-col size="6"
                  *ngIf="liveOnCampusChart">
           <radial-chart [label]="liveOnCampusChart.label"
@@ -87,21 +81,17 @@
     </ion-grid>
   </ion-card>
   <ion-card *ngIf="details?.team_nickname
-                   || conferences">
+                   || details?.athletic_conferences">
     <ion-card-header>Athletics</ion-card-header>
     <ion-list>
       <ion-item *ngIf="details?.team_nickname">
         <ion-label>Mascot</ion-label>
         <ion-note slot="end">{{ details?.team_nickname }}</ion-note>
       </ion-item>
-      <ng-template [ngIf]="conferences">
-        <ion-list-header *ngIf="conferences?.length > 1">Conferences</ion-list-header>
-        <ion-item *ngFor="let conference of conferences">
-          <ion-label>{{ (conferences?.length > 1) ? conference : 'Conference' }}</ion-label>
-          <ion-note slot="end"
-                    *ngIf="conferences?.length === 1">{{ conference }}</ion-note>
-        </ion-item>
-      </ng-template>
+      <ion-item *ngIf="details?.athletic_conference">
+        <ion-label>Conference</ion-label>
+        <ion-note slot="end">{{ details?.athletic_conference }}</ion-note>
+      </ion-item>
     </ion-list>
   </ion-card>
 </ion-content>

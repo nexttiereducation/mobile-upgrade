@@ -1,0 +1,13 @@
+<ion-toolbar [color]="chatService.toolbarColor"
+             [ngSwitch]="chatService.messageType">
+  <ion-buttons slot="start">
+    <ion-back-button></ion-back-button>
+  </ion-buttons>
+  <ion-title *ngSwitchCase="'note'">
+    <ion-text class="subhead"
+              color="light">{{ chatService.subtitle }}</ion-text> Notes
+  </ion-title>
+  <ion-title *ngSwitchCase="'message'">
+    <!-- <ion-text class="subhead"
+              color="medium">Messaging</ion-text>  --> {{ chatService.subtitle }} </ion-title>
+</ion-toolbar>

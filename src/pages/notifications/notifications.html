@@ -1,6 +1,7 @@
 <ion-header>
-  <ion-toolbar hideBackButton>
-    <ion-buttons slot="secondary">
+  <!-- <ion-toolbar hideBackButton> -->
+  <ion-toolbar>
+    <ion-buttons slot="start">
       <ion-button fill="clear"
                   icon-only
                   (click)="notificationService.markAllRead()">
@@ -40,7 +41,7 @@
         </ion-button>
       </ion-item-options>
       <ion-item-options side="end">
-        <ion-button color="red"
+        <ion-button color="danger"
                     expandable
                     (click)="delete(notification, item)">
           <ion-icon name="close"></ion-icon> Delete

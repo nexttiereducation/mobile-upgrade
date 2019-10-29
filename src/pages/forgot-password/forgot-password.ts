@@ -4,6 +4,9 @@ import { Router } from '@angular/router';
 import { ToastController } from '@ionic/angular';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
+import { Plugins } from '@capacitor/core';
+
+const { Toast } = Plugins;
 
 import { MixpanelService } from '@nte/services/mixpanel.service';
 import { StakeholderService } from '@nte/services/stakeholder.service';
@@ -25,8 +28,7 @@ export class ForgotPasswordPage implements OnInit, OnDestroy {
   constructor(public router: Router,
     private formBuilder: FormBuilder,
     private mixpanel: MixpanelService,
-    private stakeholderService: StakeholderService,
-    private toastCtrl: ToastController) {
+    private stakeholderService: StakeholderService) {
     const regex = `^[a-z0-9!#$%&'*+\/=?^_\`{|}~.-]+@[a-z0-9]([a-z0-9-]*[a-z0-9])?(\.[a-z0-9]([a-z0-9-]*[a-z0-9])?)*$`;
     this.forgotForm = this.formBuilder.group({
       email: [
@@ -75,18 +77,14 @@ export class ForgotPasswordPage implements OnInit, OnDestroy {
   }
 
   private async openEmailNotFoundToast() {
-    const toast = await this.toastCtrl.create({
-      duration: 5000,
-      message: `Account for email address not found. Please try again.`
-    });
-    toast.present();
+    await Toast.show({
+      text: `Account for email address not found. Please try again.`
+      });
   }
 
   private async openEmailSentToast() {
-    const toast = await this.toastCtrl.create({
-      duration: 5000,
-      message: `A reset password link has been sent to your email.`
-    });
-    toast.present();
+    await Toast.show({
+      text: `A reset password link has been sent to your email.`
+      });
   }
 }

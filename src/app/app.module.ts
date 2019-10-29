@@ -4,28 +4,30 @@ import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { RouteReuseStrategy } from '@angular/router';
+import { ServiceWorkerModule } from '@angular/service-worker';
 import { CallNumber } from '@ionic-native/call-number/ngx';
 import { Deeplinks } from '@ionic-native/deeplinks/ngx';
-import { Device } from '@ionic-native/device/ngx';
 import { EmailComposer } from '@ionic-native/email-composer/ngx';
 import { File } from '@ionic-native/file/ngx';
 import { Geolocation } from '@ionic-native/geolocation/ngx';
 import { LocationAccuracy } from '@ionic-native/location-accuracy/ngx';
 import { Mixpanel, MixpanelPeople } from '@ionic-native/mixpanel/ngx';
 import { NativeStorage } from '@ionic-native/native-storage/ngx';
-import { ThemeableBrowser } from '@ionic-native/themeable-browser/ngx';
 import { IonicModule, IonicRouteStrategy } from '@ionic/angular';
 import { IonicStorageModule } from '@ionic/storage';
 import { MaterialIconsModule } from 'ionic2-material-icons';
-import { NgApexchartsModule } from 'ng-apexcharts';
 
 import { NteAppComponent } from './app.component';
 import { agmConfig, ionicConfig, ionicStorageConfig } from './app.config';
 import { AppRoutingModule } from '@nte/app/app-routing.module';
 import { AuthGuard } from '@nte/app/guards/auth.guard';
+import { ChatService } from '@nte/components/chat/chat.service';
 import { ComponentsModule } from '@nte/components/components.module';
 import { SettingsModule } from '@nte/components/settings/settings.module';
 import { SurveyModule } from '@nte/components/survey/survey.module';
+import { TaskNotesService } from '@nte/components/task-details/notes/task-notes.service';
+import { TaskSurveyPageModule } from '@nte/components/task-details/survey/task-survey.module';
+import { TaskDetailsModule } from '@nte/components/task-details/task-details.module';
 import { CollegePageModule } from '@nte/pages/college/college.module';
 import { CollegesListPageModule } from '@nte/pages/colleges-list/colleges-list.module';
 import { CollegesPageModule } from '@nte/pages/colleges/colleges.module';
@@ -51,8 +53,6 @@ import { ScholarshipPageModule } from '@nte/pages/scholarship/scholarship.module
 import { ScholarshipsListPageModule } from '@nte/pages/scholarships-list/scholarships-list.module';
 import { ScholarshipsPageModule } from '@nte/pages/scholarships/scholarships.module';
 import { TabsPageModule } from '@nte/pages/tabs/tabs.module';
-import { TaskAttachmentsPageModule } from '@nte/pages/task-attachments/task-attachments.module';
-import { TaskSurveyPageModule } from '@nte/pages/task-survey/task-survey.module';
 import { TaskPageModule } from '@nte/pages/task/task.module';
 import { TasksListPageModule } from '@nte/pages/tasks-list/tasks-list.module';
 import { TasksPageModule } from '@nte/pages/tasks/tasks.module';
@@ -100,7 +100,7 @@ import { TaskService } from '@nte/services/task.service';
 import { ToastService } from '@nte/services/toast.service';
 import { UrlService } from '@nte/services/url.service';
 
-// import { NvD3Module } from 'ngx-nvd3';
+import { environment } from '../environments/environment';
 
 @NgModule({
   bootstrap: [NteAppComponent],
@@ -113,11 +113,7 @@ import { UrlService } from '@nte/services/url.service';
     AgmCoreModule.forRoot(agmConfig),
     IonicModule.forRoot(ionicConfig),
     IonicStorageModule.forRoot(ionicStorageConfig),
-    // NvD3Module,
-    NgApexchartsModule,
     MaterialIconsModule,
-    // ---------------------
-    // AppRoutingModule,
     AppRoutingModule,
     ComponentsModule,
     PipesModule,
@@ -159,16 +155,17 @@ import { UrlService } from '@nte/services/url.service';
 
     TabsPageModule,
 
-    TaskAttachmentsPageModule,
     TaskSurveyPageModule,
+    TaskDetailsModule,
     TaskPageModule,
     TasksListPageModule,
-    TasksPageModule
+    TasksPageModule,
+    ServiceWorkerModule.register('ngsw-worker.js', { enabled: environment.production })
   ],
   providers: [
     CallNumber,
     Deeplinks,
-    Device,
+    // Device,
     // Diagnostic,
     EmailComposer,
     // FCMNG,
@@ -181,7 +178,7 @@ import { UrlService } from '@nte/services/url.service';
     NativeStorage,
     // SplashScreen,
     // StatusBar,
-    ThemeableBrowser,
+    // ThemeableBrowser,
     // InfiniteScroll,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
 
@@ -194,6 +191,7 @@ import { UrlService } from '@nte/services/url.service';
     ListService,
     AuthService,
     CategoryService,
+    ChatService,
     CollegeListTileService,
     CollegeService,
     CollegesService,
@@ -228,6 +226,7 @@ import { UrlService } from '@nte/services/url.service';
     SurveyIpService,
     SurveyService,
     TaskService,
+    TaskNotesService,
     ToastService,
     UrlService
   ]

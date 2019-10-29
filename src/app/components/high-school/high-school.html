@@ -6,8 +6,7 @@
 </div>
 <div class="search-container"
      *ngIf="!selectedHighSchool">
-  <ion-searchbar color="positive"
-                 placeholder="Search by name or ZIP code"
+  <ion-searchbar placeholder="Search by name or ZIP code"
                  (ionInput)="search()"
                  [mode]="isPrompt ? 'ios' : 'md'"
                  [ngClass]="{'bg-white10 border-white50 register': isNewUser}"
@@ -49,8 +48,8 @@
     </ion-row>
   </ion-card>
   <ion-footer *ngIf="!isNewUser">
-    <ion-toolbar color="green">
-      <ion-button color="white"
+    <ion-toolbar color="success">
+      <ion-button color="light"
                   expand="full"
                   fill="clear"
                   (click)="saveHighSchool()">Save</ion-button>

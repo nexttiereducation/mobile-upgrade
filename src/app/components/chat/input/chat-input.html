@@ -1,0 +1,24 @@
+<ion-toolbar>
+  <ion-item class="ion-padding-horizontal">
+    <!-- <div class="flex-row ion-padding-horizontal"> -->
+    <!-- <input type="text" /> -->
+    <ion-label></ion-label>
+    <ion-textarea autofocus
+                  name="message"
+                  type="text"
+                  (ionFocus)="chatService.scrollToBottom = true"
+                  (keyup.enter)="submit(chatService.newMessage)"
+                  [placeholder]="chatService.inputPlaceholder"
+                  [(ngModel)]="chatService.newMessage"></ion-textarea>
+    <ion-button color="primary"
+                fill="clear"
+                icon-only
+                slot="end"
+                type="submit"
+                (click)="submit(chatService.newMessage)"
+                [disabled]="!chatService.newMessage">
+      <ion-icon name="send"></ion-icon>
+    </ion-button>
+    <!-- </div> -->
+  </ion-item>
+</ion-toolbar>

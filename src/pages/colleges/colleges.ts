@@ -1,7 +1,7 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { ActivatedRoute, Params, Router } from '@angular/router';
+import { Params, Router } from '@angular/router';
 import { NativeStorage } from '@ionic-native/native-storage/ngx';
-import { NavController, ToastController } from '@ionic/angular';
+import { ToastController } from '@ionic/angular';
 import { indexOf, pullAll, words, zipObject } from 'lodash';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
@@ -79,8 +79,6 @@ export class CollegesPage implements OnInit, OnDestroy {
     private listTileService: CollegeListTileService,
     private mixpanel: MixpanelService,
     private nativeStorage: NativeStorage,
-    private navCtrl: NavController,
-    private route: ActivatedRoute,
     private stakeholderService: StakeholderService,
     private toastCtrl: ToastController,
     navStateService: NavStateService) {

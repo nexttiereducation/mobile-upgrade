@@ -1,0 +1,137 @@
+@-webkit-keyframes pulseOut {
+  0% {
+    -webkit-box-shadow: 0px 0px 0px 0px rgba(49, 186, 130, 0.5);
+    box-shadow: 0px 0px 0px 0px rgba(49, 186, 130, 0.5); }
+  100% {
+    -webkit-box-shadow: 0px 0px 0px 7.5px rgba(49, 186, 130, 0);
+    box-shadow: 0px 0px 0px 7.5px rgba(49, 186, 130, 0); } }
+
+@keyframes pulseOut {
+  0% {
+    -webkit-box-shadow: 0px 0px 0px 0px rgba(49, 186, 130, 0.5);
+    box-shadow: 0px 0px 0px 0px rgba(49, 186, 130, 0.5); }
+  100% {
+    -webkit-box-shadow: 0px 0px 0px 7.5px rgba(49, 186, 130, 0);
+    box-shadow: 0px 0px 0px 7.5px rgba(49, 186, 130, 0); } }
+
+[tiles] {
+  padding: 2px !important; }
+  [tiles] > ion-row.row {
+    padding: 0 2px; }
+    [tiles] > ion-row.row > ion-col.col {
+      padding: 2px !important; }
+  [tiles] ion-card,
+  [tiles] ion-card-content {
+    height: 124px; }
+  [tiles] ion-card {
+    margin: 2px !important;
+    width: calc(100% - 4px) !important;
+    padding: 0 !important; }
+    [tiles] ion-card > ion-list {
+      margin: 0 !important; }
+    [tiles] ion-card ion-card-content {
+      padding: 0 !important;
+      display: -webkit-box;
+      display: -ms-flexbox;
+      display: flex;
+      -webkit-box-orient: vertical;
+      -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+      flex-direction: column;
+      -webkit-box-align: center;
+      -ms-flex-align: center;
+      align-items: center;
+      -webkit-box-pack: center;
+      -ms-flex-pack: center;
+      justify-content: center; }
+    [tiles] ion-card ion-item-sliding > ion-item.item-md,
+    [tiles] ion-card ion-item-sliding > ion-item.item-md.item-block .item-inner {
+      border-width: 0px !important;
+      padding: 0; }
+    [tiles] ion-card ion-item-options,
+    [tiles] ion-card ion-item-options button {
+      height: 125px !important; }
+    [tiles] ion-card img {
+      max-height: 85px;
+      max-width: 85px; }
+    [tiles] ion-card .tile-badge {
+      position: absolute;
+      top: 5px;
+      right: 5px;
+      padding: 0 !important;
+      width: 25px;
+      height: 25px;
+      border-radius: 50%;
+      line-height: 24px;
+      font-size: 14px;
+      -webkit-animation: pulseOut 1.5s infinite ease-out;
+      animation: pulseOut 1.5s infinite ease-out; }
+    [tiles] ion-card .label,
+    [tiles] ion-card ion-label {
+      margin: 0 !important; }
+  [tiles] .tile .tile-button {
+    margin: 0;
+    height: 124px;
+    padding: 0;
+    width: 100%;
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+    -ms-flex-direction: column;
+    flex-direction: column;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
+    align-items: center;
+    -webkit-box-pack: center;
+    -ms-flex-pack: center;
+    justify-content: center; }
+    [tiles] .tile .tile-button .button-inner {
+      -webkit-box-orient: vertical;
+      -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+      flex-direction: column; }
+    [tiles] .tile .tile-button .tile-button-content {
+      -webkit-box-align: center;
+      -ms-flex-align: center;
+      align-items: center;
+      -webkit-box-pack: center;
+      -ms-flex-pack: center;
+      justify-content: center;
+      -webkit-box-flex: 1;
+      -ms-flex: 1 0 auto;
+      flex: 1 0 auto; }
+    [tiles] .tile .tile-button .tile-label {
+      font-size: 14px;
+      text-transform: none;
+      font-weight: 400;
+      line-height: 16px;
+      -o-text-overflow: ellipsis;
+      text-overflow: ellipsis;
+      overflow: hidden;
+      white-space: nowrap;
+      max-width: 90%; }
+  [tiles] .tile-avatar-wrapper {
+    width: 77.5px;
+    height: 77.5px;
+    min-width: 77.5px;
+    min-height: 77.5px;
+    position: relative;
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+    -ms-flex-direction: column;
+    flex-direction: column;
+    margin-bottom: 7.5px;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
+    align-items: center;
+    justify-items: center; }
+    [tiles] .tile-avatar-wrapper img {
+      width: 77.5px;
+      height: 77.5px;
+      -o-object-fit: contain;
+      object-fit: contain; }

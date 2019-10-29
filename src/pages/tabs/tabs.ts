@@ -28,17 +28,22 @@ export class TabsPage implements OnInit, OnDestroy {
   public profile = ProfilePage;
   public scholarships = ScholarshipsPage;
   public tasks = TasksPage;
+  public tabs: string[] = [
+    'tasks',
+    'colleges',
+    'scholarships',
+    'profile'
+  ];
 
   private _collegeRecs = new BehaviorSubject<any[]>(null);
   private _scholarshipRecs = new BehaviorSubject<any[]>(null);
   private ngUnsubscribe: Subject<any> = new Subject();
 
-  get collegeRecs() {
-    return this._collegeRecs.asObservable();
-  }
-
-  get scholarshipRecs() {
-    return this._scholarshipRecs.asObservable();
+  get recs() {
+    return {
+      college: this._collegeRecs.asObservable(),
+      scholarship: this._scholarshipRecs.asObservable()
+    };
   }
 
   get user() {

@@ -3,7 +3,7 @@
               *ngIf="!isCustom"
               (click)="tileClick.emit($event)"
               [class.bg-blue50]="inverse"
-              [color]="inverse ? 'blue' : 'white'">
+              [color]="inverse ? 'primary' : 'light'">
     <div class="tile-content-wrapper">
       <img class="logo"
            [src]="tile.iconUrl">
@@ -27,7 +27,7 @@
                 lines="none"
                 (click)="tileClick.emit($event)"
                 [class.bg-blue50]="inverse"
-                [color]="inverse ? null : 'white'">
+                [color]="inverse ? null : 'light'">
         <div class="tile-content-wrapper">
           <img [src]="tile.iconUrl">
           <ion-label class="tile-label"
@@ -36,7 +36,7 @@
       </ion-item>
       <ion-item-options side="end">
         <ion-item-option class="lowercase"
-                         color="red"
+                         color="danger"
                          (click)="hide(tile, slidingItem)">
           <ion-icon name="close"></ion-icon> Delete
         </ion-item-option>

@@ -1,7 +1,7 @@
 <ion-header>
   <ion-toolbar>
-    <ion-buttons slot="secondary">
-      <ion-button color="black"
+    <ion-buttons slot="start">
+      <ion-button color="dark"
                   icon-only
                   (click)="closeModal()">
         <ion-icon name="ios-arrow-up"></ion-icon>
@@ -88,15 +88,15 @@
   </ng-template>
 </ion-content>
 <ion-footer *ngIf="(selectedDate && applicationMethod) || !applicationDates?.length">
-  <ion-toolbar [color]="(user.isSenior && selectedDate && applicationMethod) || !user.isSenior ? 'green' : 'primary'">
-    <ion-button color="white"
+  <ion-toolbar [color]="(user.isSenior && selectedDate && applicationMethod) || !user.isSenior ? 'success' : 'primary'">
+    <ion-button color="light"
                 expand="full"
                 fill="clear"
                 *ngIf="(user.isSenior && selectedDate && applicationMethod) || !user.isSenior"
                 (click)="save()"
                 [disabled]="isSaving">
       {{ isSaving ? 'Saving' : (selectedDate && applicationMethod) ? 'Save' : 'Skip for now' }} </ion-button>
-    <ion-button color="white"
+    <ion-button color="light"
                 expand="full"
                 fill="clear"
                 *ngIf="user.isSenior && !applicationDates?.length"

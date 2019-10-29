@@ -1,0 +1,68 @@
+<ng-template [ngIf]="taskTracker">
+  <div class="body paragraph spaced bg-grayLightest-1 ion-padding"
+       [innerHtml]="(description | phone) | link | buttonize:true"></div>
+  <ion-grid [style.width.%]="100">
+    <ion-row nowrap>
+      <ion-col class="ion-text-center"
+               size="4"
+               *ngIf="date1.date">
+        <!--  || taskTracker.task.start_date -->
+        <div class="flex-column ion-align-items-center"
+             [style.height.%]="100">
+          <div class="text-small">{{ date1.label }}</div>
+          <div class="ion-text-nowrap text-default bold"> {{ date1.relative }} </div>
+          <date [color]="date1.color"
+                [date]="date1.date"></date>
+        </div>
+      </ion-col>
+      <ion-col class="ion-text-center"
+               size="4"
+               *ngIf="date2.date">
+        <div class="flex-column ion-align-items-center"
+             [style.height.%]="100">
+          <div class="text-small">{{ date2.label }}</div>
+          <div class="ion-text-nowrap text-default bold"> {{ date2.relative }} </div>
+          <date [color]="date2.color"
+                [date]="date2.date"></date>
+        </div>
+      </ion-col>
+      <ion-col class="ion-text-center"
+               size="4">
+        <div class="flex-column ion-align-items-center"
+             [style.height.%]="100">
+          <div class="text-small">{{taskTracker.task.custom_creator_name ? 'Assigned by' : 'Type'}}</div>
+          <div class="ion-text-nowrap text-default bold truncate width-100">
+            <ng-template [ngIf]="taskTracker.taskType"> {{ taskTracker.task.custom_creator_name
+                       ? taskTracker.task.custom_creator_name
+                       : taskTracker.taskType + ' task' }}</ng-template>
+            <ng-template [ngIf]="!taskTracker.taskType">College-specific</ng-template>
+          </div>
+          <img class="flex-grow"
+               [ngClass]="{'avatar-shadow bg-white': !taskTracker.taskType}"
+               [src]="typeImage">
+        </div>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+  <ion-button class="ion-padding"
+              color="success"
+              expand="block"
+              *ngIf="taskTracker.form_urls && taskTracker.form_urls[0]"
+              (click)="linkService.open(taskTracker.form_urls[0])">View Form</ion-button>
+</ng-template>
+<loading *ngIf="!taskTracker"></loading>
+<ng-template [ngIf]="taskTracker && !prompt && status?.action && !isParent">
+  <ion-button [color]="status?.color"
+              expand="block"
+              *ngIf="!taskTracker.isSurveyTask && !taskTracker.prompt"
+              (click)="updateStatus()">Complete task</ion-button>
+  <ion-button [color]="status?.color"
+              expand="block"
+              *ngIf="(taskTracker.isSurveyTask && status.name === 'Not Started') || taskTracker.prompt"
+              (click)="updateStatus()"> {{ status.action + ' ' + (taskTracker.isSurveyTask ? 'survey' : 'task') }}
+  </ion-button>
+  <ion-button [color]="status?.color"
+              expand="block"
+              *ngIf="taskTracker.isSurveyTask && status?.name === 'In Progress'"
+              (click)="goToSurvey()">Continue Survey</ion-button>
+</ng-template>

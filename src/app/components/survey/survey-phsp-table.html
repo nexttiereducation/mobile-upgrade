@@ -91,7 +91,7 @@
               <div class="subhead">If so, please add them here.</div>
             </ion-label>
           </ion-item>
-          <ion-searchbar (ionClear)="onClear($event)"
+          <ion-searchbar (ionClear)="onClear()"
                          (ionInput)="onSearch($event)"
                          [ngModelOptions]="{standalone: true}"
                          [placeholder]="isCollege ? 'College name' : 'Scholarship name'"
@@ -126,30 +126,30 @@
   <ion-grid class="ion-padding-10">
     <ion-row>
       <ion-col>
-        <ion-button color="steel"
+        <ion-button color="medium"
                     expand="block"
                     fill="clear"
                     type="button"
-                    *ngIf="phspSlider.isBeginning()"
+                    *ngIf="(phspSlider.isBeginning() | async) === true"
                     (click)="goToPrevPage()"> Back </ion-button>
-        <ion-button color="steel"
+        <ion-button color="medium"
                     expand="block"
                     fill="clear"
                     type="button"
-                    *ngIf="phspSlider.isBeginning() === false"
+                    *ngIf="(phspSlider.isBeginning() | async) === false"
                     (click)="goToPrevSlide()"> Back </ion-button>
       </ion-col>
       <ion-col>
-        <ion-button color="orange"
+        <ion-button color="warning"
                     expand="block"
                     type="button"
-                    *ngIf="phspSlider.isEnd() === false"
+                    *ngIf="(phspSlider.isEnd() | async) === false"
                     (click)="goToNextSlide()"
                     [disabled]="currentSlideFormInvalid"> Continue </ion-button>
-        <ion-button color="orange"
+        <ion-button color="warning"
                     expand="block"
                     type="button"
-                    *ngIf="phspSlider.isEnd()"
+                    *ngIf="(phspSlider.isEnd() | async)"
                     (click)="goToNextPage()"
                     [disabled]="phspTableForm.invalid || searchQuery"> Continue </ion-button>
       </ion-col>

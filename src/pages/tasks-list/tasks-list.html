@@ -8,8 +8,9 @@
       <div class="subhead text-grayDark50"> {{ impersonatedStudent ? impersonatedStudent.full_name : 'Tasks' }} </div>
       {{ isSearchAll ? listName : ((listName + ' Tasks') || 'Tasks') }}
     </ion-title>
-    <ion-buttons messaging-button
-                 slot="end"></ion-buttons>
+    <ion-buttons slot="end">
+      <messaging-button></messaging-button>
+    </ion-buttons>
   </ion-toolbar>
   <ion-toolbar class="collapse-expand ion-no-padding"
                *ngIf="(taskService.userTaskTrackers | async)?.length > 0">
@@ -28,78 +29,91 @@
                  [emptyState]="emptyState"></empty-state>
   </ng-template>
   <loading *ngIf="taskService.initializingTasks"></loading>
-  <div [hidden]="(taskService.userTaskTrackers | async)?.length === 0
-                 && !taskService.fetchingTasks">
-    <ion-list card-list
-              no-lines>
-      <ion-card *ngFor="let taskTracker of (taskService.userTaskTrackers | async); first as isFirst">
-        <ion-item-sliding (animationCompleted)="setViewedTasksListPage()"
-                          [animateItemSliding]="isFirst && user.showTaskAnimation"
-                          (ionSwipe)="checkSwiper($event, taskTracker)">
-          <ion-item-options side="start"
-                            *ngIf="!impersonatedStudent">
-            <ion-button expandable
-                        icon-only
-                        (click)="taskUpdated($event, taskTracker)"
-                        [color]="(taskTracker.isSurveyTask || taskTracker.prompt)
-                             ? 'orange' : 'green'">
-              <ion-icon md-name="(taskTracker.isSurveyTask || taskTracker.prompt)
-                                 ? 'more_horiz' : 'check'">
-                {{ (taskTracker.isSurveyTask || taskTracker.prompt) ? 'more_horiz' : 'check' }} </ion-icon>
-            </ion-button>
-          </ion-item-options>
-          <ion-item tappable
-                    (click)="openTaskDetail(taskTracker)">
-            <ion-label>
-              <h2 class="truncate">{{ taskTracker.task.name }}</h2>
-              <p>
-                <ion-icon name="calendar"></ion-icon> Due by
-                {{ (taskTracker.dueDate || taskTracker.task.get_deadline) | date }}
-              </p>
-            </ion-label>
-            <ion-avatar slot="end">
-              <img [class.avatar-shadow]="taskTracker.task.task_type == 'CS'"
-                   [class.bg-white]="list.iconUrl"
-                   [src]="isSearchAll
+  <!-- <div> -->
+  <ion-virtual-scroll approxItemHeight="80px"
+                      buffer="5"
+                      card-list
+                      [items]="taskService.userTaskTrackers | async">
+    <ion-card virtualTrackBy="taskTracker.id"
+              *virtualItem="let taskTracker; let index = index; let first = first">
+      <!-- <ion-list card-list
+            no-lines
+            [hidden]="(taskService.userTaskTrackers | async)?.length === 0
+              && !taskService.fetchingTasks">
+    <ion-card *ngFor="let taskTracker of (taskService.userTaskTrackers | async); first as first"> -->
+      <ion-item-sliding (animationCompleted)="setViewedTasksListPage()"
+                        [animateItemSliding]="first && user.showTaskAnimation"
+                        (ionDrag)="checkSwiper($event, taskTracker)">
+        <ion-item-options side="start"
+                          *ngIf="!impersonatedStudent">
+          <ion-item-option expandable
+                           icon-only
+                           (click)="taskUpdated($event, taskTracker)"
+                           [color]="(taskTracker.isSurveyTask || taskTracker.prompt)
+                             ? 'warning' : 'success'">
+            <!-- <ion-icon md-name="(taskTracker.isSurveyTask || taskTracker.prompt)
+                                 ? 'more_horiz' : 'check'"> -->
+            <ion-icon color="light"
+                      name="(taskTracker.isSurveyTask || taskTracker.prompt)
+                                 ? 'more' : 'checkmark'"
+                      [style.transform]="(taskTracker.isSurveyTask || taskTracker.prompt) ? 'rotate(90deg)' : null">
+            </ion-icon>
+            <!-- {{ (taskTracker.isSurveyTask || taskTracker.prompt) ? 'more_horiz' : 'check' }} </ion-icon> -->
+          </ion-item-option>
+        </ion-item-options>
+        <ion-item tappable
+                  (click)="openTaskDetail(taskTracker)">
+          <ion-label>
+            <h2 class="truncate">{{ taskTracker.task.name }}</h2>
+            <p>
+              <ion-icon name="calendar"></ion-icon> Due by
+              {{ (taskTracker.dueDate || taskTracker.task.get_deadline) | date }}
+            </p>
+          </ion-label>
+          <ion-avatar slot="end">
+            <img [class.avatar-shadow]="taskTracker.task.task_type == 'CS'"
+                 [class.bg-white]="list.iconUrl"
+                 [src]="isSearchAll
                           ? (taskTracker.iconUrl || collegeImgUrls[taskTracker.institution])
                           : iconUrl">
-            </ion-avatar>
-          </ion-item>
-          <ion-item-options class="bg-blue"
-                            side="end">
-            <ion-button color="white"
-                        fill="clear"
-                        *ngIf="(connectionService.all$ | async)?.length"
-                        (click)="openSendModal(taskTracker)">
-              <ion-icon name="send"></ion-icon>
-              <span class="no-caps">Send</span>
-            </ion-button>
-            <ion-button color="white"
-                        fill="clear"
-                        (click)="openTaskDetail(taskTracker, null, 'attach')">
-              <ion-icon name="attach"></ion-icon>
-              <span class="no-caps">Files</span>
-            </ion-button>
-            <ion-button color="white"
-                        fill="clear"
-                        (click)="openTaskDetail(taskTracker, null, 'notes')">
-              <ion-icon md-name="chat_bubble">chat_bubble</ion-icon>
-              <span class="no-caps">Notes</span>
-            </ion-button>
-          </ion-item-options>
-        </ion-item-sliding>
-      </ion-card>
-    </ion-list>
-  </div>
-  <ng-container *ngIf="(taskService.userTaskTrackers | async)?.length > 0">
+          </ion-avatar>
+        </ion-item>
+        <ion-item-options side="end">
+          <ion-item-option color="primary"
+                           *ngIf="(connectionService.all$ | async)?.length"
+                           (click)="openSendModal(taskTracker)">
+            <ion-icon name="send"
+                      slot="start"></ion-icon> Send
+          </ion-item-option>
+          <ion-item-option color="primary"
+                           (click)="openTaskDetail(taskTracker, null, 'attach')">
+            <ion-icon name="attach"
+                      slot="start"></ion-icon> Files
+          </ion-item-option>
+          <ion-item-option color="primary"
+                           (click)="openTaskDetail(taskTracker, null, 'notes')">
+            <!-- <ion-icon md-name="chat_bubble">chat_bubble</ion-icon> Notes -->
+            <ion-icon name="chatbubbles"
+                      slot="start"></ion-icon> Notes
+          </ion-item-option>
+        </ion-item-options>
+      </ion-item-sliding>
+    </ion-card>
+  </ion-virtual-scroll>
+  <ion-infinite-scroll threshold="20%"
+                       (ionInfinite)="infiniteScrollLoad($event)">
+    <ion-infinite-scroll-content loadingSpinner="bubbles"
+                                 loadingText="Loading...">
+    </ion-infinite-scroll-content>
+  </ion-infinite-scroll>
+  <!-- </ion-list> -->
+  <!-- </div> -->
+  <!-- <ng-container *ngIf="(taskService.userTaskTrackers | async)?.length > 0">
     <ion-infinite-scroll threshold="20%"
                          (ionInfinite)="infiniteScrollLoad($event)">
       <ion-infinite-scroll-content loadingSpinner="bubbles"
                                    loadingText="Loading...">
       </ion-infinite-scroll-content>
     </ion-infinite-scroll>
-  </ng-container>
+  </ng-container> -->
 </ion-content>
-<ion-footer>
-  <div list-tabs></div>
-</ion-footer>

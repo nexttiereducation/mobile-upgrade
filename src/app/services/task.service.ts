@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { AlertController } from '@ionic/angular';
-import { find, flatten, isArray, sortBy, uniqBy } from 'lodash';
+import { find } from 'lodash';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import { map, tap } from 'rxjs/operators';
 
@@ -28,7 +28,6 @@ export class TaskService {
   public incompleteTaskCount: Map<number, number> = new Map<number, number>();
   public initializingTasks: boolean;
   public lastTaskIndex: number;
-  public nextNotesPage = ``;
   public nextPage: string;
   public onlyTask: any = null;
   public taskBuckets: any = TASK_BUCKETS;
@@ -38,7 +37,6 @@ export class TaskService {
   private _hasCounselorTasks = false;
   private _moreToScroll: Subject<boolean> = new Subject<boolean>();
   private _nextTasks: Map<string | number, TaskTracker> = new Map<string | number, TaskTracker>();
-  private _notes: BehaviorSubject<any[]> = new BehaviorSubject<any[]>(null);
   private _resizeContent: Subject<boolean> = new Subject<boolean>();
   private _taskTrackers: BehaviorSubject<TaskTracker[]> = new BehaviorSubject<TaskTracker[]>(null);
   private _unverifiedTaskTrackers: BehaviorSubject<TaskTracker[]> = new BehaviorSubject<TaskTracker[]>(null);
@@ -59,16 +57,6 @@ export class TaskService {
 
   get nextTasks() {
     return this._nextTasks;
-  }
-
-  get notes() {
-    return this._notes.getValue();
-  }
-  set notes(notes: any[]) {
-    this._notes.next(notes);
-  }
-  get notes$() {
-    return this._notes.asObservable();
   }
 
   get resizeContent() {
@@ -95,20 +83,6 @@ export class TaskService {
     const allTasks = this._userTaskTrackers.getValue();
     allTasks.splice(this.lastTaskIndex, 0, taskTracker);
     this._userTaskTrackers.next(allTasks);
-  }
-
-  public createNote(taskTracker: TaskTracker, note: string) {
-    return this.apiService.post(`/tasks/${taskTracker.id}/note/`, { note })
-      .pipe(tap(() => {
-        this.mixpanel.event(`task_note_added`, {
-          'task title': taskTracker.task.name
-        });
-        this.getNotes(taskTracker.id);
-      }));
-  }
-
-  public deleteNote(taskTrackerId: number, noteId: number) {
-    return this.apiService.delete(`/tasks/${taskTrackerId}/note/${noteId}`);
   }
 
   public downloadTaskFile(taskId: number): void {
@@ -181,36 +155,6 @@ export class TaskService {
           }
         }
       );
-  }
-
-  public getNotes(taskId: number): Observable<any> {
-    const isNewTask = (this.activeTaskId !== taskId);
-    let url = `/tasks/${taskId}/notes/`;
-    let hasNextPage = false;
-    if (!isNewTask) {
-      hasNextPage = this.nextNotesPage && this.nextNotesPage.length > 0;
-      if (hasNextPage) {
-        url = this.nextNotesPage;
-      }
-    } else {
-      this.nextNotesPage = null;
-      this.activeTaskId = taskId;
-    }
-    return this.apiService.get(url, hasNextPage)
-      .pipe(map(resObj => {
-        let notes = resObj.results;
-        this.nextNotesPage = resObj.next;
-        if (!isNewTask && this.notes && this.notes.length) {
-          notes = uniqBy(flatten([notes, ...this.notes]), `id`);
-        } else {
-          notes = isArray(notes) ? notes : [notes];
-        }
-        this.notes = sortBy(notes, [`id`]);
-        return {
-          count: resObj.count,
-          notes: this.notes
-        };
-      }));
   }
 
   public getTasks(type, path) {

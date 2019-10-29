@@ -31,10 +31,80 @@ export class RadialChartComponent implements OnInit {
     '#e0e0e0'
   ];
   @Input() height: number = 280;
-  @Input() label: string = 'Progress';
+  @Input() label: string | string[] = 'Progress';
   @Input() value: string | number;
 
   private doughnutChart: Chart;
+
+  get labels() {
+    let labels = [
+      {
+        text: `${this.value}%`,
+        font: {
+          size: '50',
+          units: 'rem'
+        }
+      }
+    ];
+    if (typeof this.label === 'string') {
+      if (this.label.length > 30) {
+        const words: string[] = this.label.split(' ');
+        const splitLabels: string[] = [''];
+        let lineLength = 0;
+        let on2ndLine = false;
+        words.forEach(w => {
+          lineLength += w.length;
+          if (on2ndLine) {
+            splitLabels[1] += ` ${w}`;
+          } else {
+            if (lineLength < this.label.length / 2) {
+              if (words.indexOf(w) === 0) {
+                splitLabels[0] += w;
+              } else {
+                splitLabels[0] += ` ${w}`;
+              }
+            } else {
+              splitLabels[1] = `${w}`;
+              on2ndLine = true;
+            }
+          }
+        });
+        const splitLabelObjs = splitLabels.map(
+          (l: string) => {
+            return {
+              text: l,
+              font: {
+                size: '25',
+                units: 'rem'
+              }
+            };
+          });
+        labels = [...labels, ...splitLabelObjs];
+      } else {
+        labels.push({
+          text: this.label,
+          font: {
+            size: '25',
+            units: 'rem'
+          }
+        });
+      }
+    } else {
+      const splitLabelObjs = this.label.map(
+        (l: string) => {
+          return {
+            text: l,
+            font: {
+              size: '25',
+              units: 'rem'
+            }
+          };
+        });
+      labels = [...labels, ...splitLabelObjs];
+    }
+
+    return labels;
+  }
 
   constructor() { }
 
@@ -72,26 +142,13 @@ export class RadialChartComponent implements OnInit {
         legend: {
           display: false
         },
-        maintainAspectRatio: false,
+        // maintainAspectRatio: false,
         plugins: {
           datalabels: {
             opacity: 0
           },
           doughnutlabel: {
-            labels: [
-              {
-                text: `${this.value}%`,
-                font: {
-                  size: '60'
-                }
-              },
-              {
-                text: this.label,
-                font: {
-                  size: '30'
-                }
-              }
-            ]
+            labels: this.labels
           }
         },
         responsive: true,

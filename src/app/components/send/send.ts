@@ -1,5 +1,8 @@
 import { Component, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { ModalController, NavParams, ToastController } from '@ionic/angular';
+import { Plugins } from '@capacitor/core';
+
+const { Toast } = Plugins;
 
 import { ConnectionService } from '@nte/services/connection.service';
 import { MessageService } from '@nte/services/message.service';
@@ -48,7 +51,6 @@ export class SendComponent implements OnInit, OnDestroy {
     private messageService: MessageService,
     private modalCtrl: ModalController,
     private stakeholderService: StakeholderService,
-    private toastCtrl: ToastController,
     private urlService: UrlService,
     params: NavParams) {
     this.imageUrl = params.get(`imageUrl`);
@@ -95,11 +97,9 @@ export class SendComponent implements OnInit, OnDestroy {
   }
 
   private async openSentToast(numberSent: number) {
-    const toast = await this.toastCtrl.create({
-      duration: 3000,
-      message: `${this.itemType} sent to ${numberSent} connections.`
-    });
-    toast.present();
+    await Toast.show({
+      text: `${this.itemType} sent to ${numberSent} connections.`
+      });
   }
 
 }

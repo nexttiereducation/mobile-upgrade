@@ -1,0 +1,100 @@
+<ng-template [ngIf]="!(messageService.isInitializing$ | async)
+                      && messages">
+  <ng-template [ngIf]="messages?.length > 0">
+    <ion-infinite-scroll position="top"
+                         [disabled]="!hasNextPage"
+                         (ionInfinite)="loadMore.emit()"
+                         #infiniteScroll>
+      <ion-infinite-scroll-content #infiniteScrollContent></ion-infinite-scroll-content>
+    </ion-infinite-scroll>
+    <ion-grid class="messages-container"
+              #messagesContainer>
+      <ng-template let-i="index"
+                   let-isFirst="first"
+                   let-message
+                   ngFor
+                   [ngForOf]="messages">
+        <ng-template [ngIf]="message">
+          <ion-row class="message-date"
+                   *ngIf="isFirst || isNewDate(message, i)">
+            <ion-col class="ion-text-center">
+              <div class="text-small translucent ion-margin-top">{{ getDate(message) | date:'longDate' }}</div>
+            </ion-col>
+          </ion-row>
+          <ion-row [class.from-me]="(user?.id === message.author?.id)"
+                   [class.from-them]="(user?.id !== message.author?.id)"
+                   [class.new-author]="isFirst
+                                        || isNewAuthor(message, i)
+                                        || isNewDate(message, i)">
+            <ion-col class="avatar-col ion-no-padding"
+                     size="auto"
+                     *ngIf="message && user?.id !== message.author?.id">
+              <ion-avatar class="avatar-shadow"
+                          [style.visibility]="(isFirst
+                                                || isNewAuthor(message, i)
+                                                || isNewDate(message, i))
+                                              ? 'visible' : 'hidden'">
+                <img [src]="message.author?.profile_photo
+                            || teamMemberPhoto
+                            || avatarPlaceholder">
+              </ion-avatar>
+            </ion-col>
+            <ion-col class="message-col">
+              <div class="text-steel text-xsmall ion-margin-left ion-text-left"
+                   *ngIf="typeIs('note')
+                          && message.author?.id !== user?.id
+                          && (isFirst
+                              || isNewAuthor(message, i)
+                              || isNewDate(message, i))"> {{ user?.id !== message.author?.id
+                    ? (message.author?.full_name || (message.author?.first_name + ' ' + message.author?.last_name))
+                    : 'Me' }} </div>
+              <div class="body paragraph"
+                   [class.ion-margin-top]="typeIs('note')
+                                      && user?.id === message.author?.id
+                                      && (isFirst
+                                          || isNewAuthor(message, i)
+                                          || isNewDate(message, i))
+                                      ? true : null"
+                   [class.from-me]="user?.id === message.author?.id"
+                   [class.from-them]="user?.id !== message.author?.id">
+                <div class="note"
+                     *ngIf="!message.linkOnly"
+                     [innerHtml]="message.note || message.body"></div>
+                <ion-button class="truncate fit ion-no-padding"
+                            color="success"
+                            size="small"
+                            *ngIf="message.attachment"
+                            (click)="openAttachment(message.attachment)">
+                  <ion-icon color="light"
+                            [name]="message.attachment?.page"></ion-icon> {{ message.attachment?.name }}
+                </ion-button>
+              </div>
+            </ion-col>
+            <ion-col class="avatar-col ion-no-padding"
+                     size="auto"
+                     *ngIf="message && user?.id === message.author?.id">
+              <ion-avatar class="avatar-shadow"
+                          [style.visibility]="(isFirst
+                                                || isNewAuthor(message, i)
+                                                || isNewDate(message, i))
+                                              ? 'visible' : 'hidden'">
+                <img [src]="user?.profile_photo
+                            || message.author?.profile_photo
+                            || avatarPlaceholder">
+              </ion-avatar>
+            </ion-col>
+          </ion-row>
+        </ng-template>
+      </ng-template>
+    </ion-grid>
+    <div class="ion-text-center"
+         *ngIf="isSending">
+      <ion-spinner></ion-spinner>
+    </div>
+  </ng-template>
+  <empty-state *ngIf="messages?.length < 1
+                      && emptyState"
+               [emptyState]="emptyState"></empty-state>
+</ng-template>
+<ion-spinner *ngIf="(messageService.isInitializing$ | async)
+                    || !messages"></ion-spinner>

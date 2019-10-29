@@ -3,26 +3,29 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { IonicModule } from '@ionic/angular';
 
-import { TaskPage } from './../task/task';
 import { TabsPage } from './tabs';
 import { AuthGuard } from '@nte/app/guards/auth.guard';
 import { ComponentsModule } from '@nte/components/components.module';
+import { TaskAttachmentsPage } from '@nte/components/task-details/attachments/task-attachments';
+import { TaskSurveyPage } from '@nte/components/task-details/survey/task-survey';
 import { CollegePage } from '@nte/pages/college/college';
 import { CollegesListPage } from '@nte/pages/colleges-list/colleges-list';
 import { CollegesPage } from '@nte/pages/colleges/colleges';
 import { FilterCategoryPage } from '@nte/pages/filter-category/filter-category';
 import { FilterPage } from '@nte/pages/filter/filter';
 import { ListTileCreatePage } from '@nte/pages/list-tile-create/list-tile-create';
+import { MessagesPage } from '@nte/pages/messages/messages';
 import { ProfilePage } from '@nte/pages/profile/profile';
 import { ScholarshipPage } from '@nte/pages/scholarship/scholarship';
 import { ScholarshipsListPage } from '@nte/pages/scholarships-list/scholarships-list';
 import { ScholarshipsPage } from '@nte/pages/scholarships/scholarships';
+import { TaskPage } from '@nte/pages/task/task';
 import { TasksListPage } from '@nte/pages/tasks-list/tasks-list';
 import { TasksPage } from '@nte/pages/tasks/tasks';
 
 const routes: Routes = [
   {
-    // canActivate: [AuthGuard],
+    canActivate: [AuthGuard],
     component: TabsPage,
     path: 'app',
     children: [
@@ -33,9 +36,6 @@ const routes: Routes = [
       },
       {
         path: 'tasks',
-        canActivate: [
-          AuthGuard
-        ],
         children: [
           {
             path: '',
@@ -50,23 +50,37 @@ const routes: Routes = [
               component: TasksListPage,
               // loadChildren: '@nte/pages/tasks-list/tasks-list.module#TasksListPageModule'
               children: [
-                {
-                  path: `edit`,
-                  component: ListTileCreatePage
-                },
+                // {
+                //   path: `edit`,
+                //   component: ListTileCreatePage
+                // },
                 {
                   path: 'task/:id',
-                  component: TaskPage
+                  component: TaskPage,
+                  children: [
+                    {
+                      path: 'attachments',
+                      component: TaskAttachmentsPage
+                    },
+                    {
+                      path: 'notes',
+                      component: MessagesPage
+                    },
+                    {
+                      path: 'survey',
+                      component: TaskSurveyPage
+                    }
+                  ]
                   // loadChildren: '@nte/pages/task/task.module#TaskPageModule'
                 },
-                {
-                  path: 'filter',
-                  component: FilterPage,
-                  children: [{
-                    path: ':category',
-                    component: FilterCategoryPage
-                  }]
-                }
+                // {
+                //   path: 'filter',
+                //   component: FilterPage,
+                //   children: [{
+                //     path: ':category',
+                //     component: FilterCategoryPage
+                //   }]
+                // }
               ]
             }]
           }
@@ -74,9 +88,6 @@ const routes: Routes = [
       },
       {
         path: 'colleges',
-        canActivate: [
-          AuthGuard
-        ],
         children: [
           {
             path: '',
@@ -113,9 +124,6 @@ const routes: Routes = [
       },
       {
         path: 'scholarships',
-        canActivate: [
-          AuthGuard
-        ],
         children: [
           {
             path: '',
@@ -125,19 +133,19 @@ const routes: Routes = [
             path: 'list',
             component: ScholarshipsPage,
             children: [
-              {
-                path: 'create',
-                component: ListTileCreatePage
-              },
+              // {
+              //   path: 'create',
+              //   component: ListTileCreatePage
+              // },
               {
                 path: ':id',
                 component: ScholarshipsListPage,
                 // loadChildren: '@nte/pages/scholarships-list/scholarships-list.module#ScholarshipsListPageModule'
                 children: [
-                  {
-                    path: `edit`,
-                    component: ListTileCreatePage
-                  },
+                  // {
+                  //   path: `edit`,
+                  //   component: ListTileCreatePage
+                  // },
                   {
                     path: 'scholarship/:id',
                     component: ScholarshipPage
@@ -159,9 +167,6 @@ const routes: Routes = [
       },
       {
         path: 'profile',
-        canActivate: [
-          AuthGuard
-        ],
         component: ProfilePage
       }
     ]

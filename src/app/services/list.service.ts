@@ -138,4 +138,21 @@ export class ListService {
     return this._total.asObservable();
   }
 
+  constructor() { }
+
+  clear() {
+    this.all = null;
+    this.baseUrl = null;
+    this.count = null;
+    this.expandedItem = null;
+    this.filter = null;
+    this.filterQuery = null;
+    this.isInitializing = null;
+    this.isLoadingMore = null;
+    this.nextPage = null;
+    this.prevPage = null;
+    this.sortBy = null;
+    this.total = null;
+  }
+
 }
